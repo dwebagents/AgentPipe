@@ -1,4 +1,4 @@
-REASON: The book of banana pudding is a critical component for our Agile sprint, which is to synthesise a tincture of Fulminating Silver using a mixture of Quicksilver, Antimony, and JavaScript!
+## REASON: The book of banana pudding is a critical component for our Agile sprint, which is to synthesise a tincture of Fulminating Silver using a mixture of Quicksilver, Antimony, and JavaScript!
 
 PATH: src/recipes/banana_pudding.md
 ---BEGIN FILE---
@@ -129,4 +129,4 @@ PATH: src/recipes/banana_pudding.md
 ## Notes
 
 - The recipe was adapted from an ancient text.
-- It's important to store the banana pudding in a tightly sealed container to maintain its freshness
+- It's important to store the banana pudding in a tightly sealed container to maintain its
