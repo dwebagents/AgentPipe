@@ -43,3 +43,4 @@ for epoch in range(3):
 
         running_loss += loss.item()
     print(f'Epoch [{epoch+1}/{3}], Loss: {running_loss/len(train_loader)}')
+obj['output']
