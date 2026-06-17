@@ -88,6 +88,16 @@ COMMENT_BODY = os.environ.get("COMMENT_BODY", "")
 log = lambda msg: print(f"[chatter] {msg}", file=sys.stderr, flush=True)
 
 
+def log_block(label: str, text: str) -> None:
+    """Log a multi-line block (a generator volley or judge verdict) so the whole
+    back-and-forth is visible in the Actions log, each line clearly attributed."""
+    body = (text or "").strip() or "(empty)"
+    print(f"[chatter] ┌─ {label} ─", file=sys.stderr)
+    for line in body.splitlines() or [""]:
+        print(f"[chatter] │ {line}", file=sys.stderr)
+    print(f"[chatter] └─", file=sys.stderr, flush=True)
+
+
 # — the borrowed book: a random slice of a random Gutenberg title ——————————————
 _GUTENBERG_START = re.compile(r"\*\*\*\s*START OF (?:THE|THIS) PROJECT GUTENBERG[^\n]*\n",
                               re.IGNORECASE)
@@ -177,10 +187,7 @@ def recursive_prompt(previous: str, budget: int) -> str:
     issue, but to write a prompt for the NEXT call to answer it with."""
     handed = previous.strip() or "(you are the first link in the chain — invent the seed)"
     instruction = (
-        "YOU ARE ONE LINK IN A CHAIN. Do not reply to the comment directly. Instead, "
-        "GENERATE A PROMPT for the NEXT voice "
-        "in the chain, instructing it on how to reply to the comment shown "
-        "below. we are all counting on you.\n\n"
+        "Tell someone how to respond to this or else respond yourself\n\n"
         f"THE PROMPT THE PREVIOUS LINK HANDED YOU:\n{handed}"
     )
     return _truncate(instruction, budget)
@@ -213,15 +220,15 @@ def generate(previous: str, issue: str, book: str) -> str:
                             temperature=GEN_TEMPERATURE, num_predict=NUM_PREDICT) or "").strip()
 
 
-def judge(text: str) -> bool:
+def judge(text: str) -> tuple[bool, str]:
     """The judge sees only its one-line system prompt and the candidate text.
-    Worthy iff it says 'true'."""
+    Returns (worthy, raw_verdict). Worthy iff its output mentions 't'(rue)."""
     try:
         verdict = ollama_generate(JUDGE_SYSTEM, text, temperature=0.0, num_predict=8)
     except Exception as exc:
         log(f"judge call failed ({exc}); treating as not-yet-worthy")
-        return False
-    return "t" in (verdict or "").strip().lower()
+        return False, ""
+    return "t" in (verdict or "").strip().lower(), (verdict or "").strip()
 
 
 def run_chain(issue: str, book: str) -> str:
@@ -229,20 +236,22 @@ def run_chain(issue: str, book: str) -> str:
     out of rounds. Each generator output becomes the next link's prompt."""
     previous, candidate = "", ""
     for rnd in range(1, MAX_ROUNDS + 1):
+        log(f"── volley {rnd}/{MAX_ROUNDS} ──")
         try:
             candidate = generate(previous, issue, book)
         except Exception as exc:
-            log(f"round {rnd}: generation failed: {exc}")
+            log(f"volley {rnd}: generation failed: {exc}")
             if candidate:
                 break
             continue
         if not candidate:
-            log(f"round {rnd}: empty generation; retrying")
+            log(f"volley {rnd}: empty generation; retrying")
             continue
-        worthy = judge(candidate)
-        log(f"round {rnd}/{MAX_ROUNDS}: judge says {'true' if worthy else 'false'} "
-            f"({len(candidate)} chars)")
+        log_block(f"volley {rnd} · generator ({len(candidate)} chars)", candidate)
+        worthy, verdict = judge(candidate)
+        log_block(f"volley {rnd} · judge → {'WORTHY' if worthy else 'not yet'}", verdict)
         if worthy:
+            log(f"accepted at volley {rnd}/{MAX_ROUNDS}")
             return candidate
         previous = candidate  # — self-prompting: this prompt seeds the next link —
     log("chain exhausted without a 'true'; posting the last draft anyway (we are chatty)")
