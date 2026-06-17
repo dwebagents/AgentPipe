@@ -23,4 +23,15 @@ def recipe_for_banana_pudding():
     4. Pour the batter into an ungreased cake pan.
     5. Bake for about 1 hour or until a toothpick inserted comes out clean.
     6. Let the banana pudding cool completely before serving.
+
+    ## Special Instructions:
+
+    * This recipe uses ripe bananas, which will provide a creamy texture.
+    * The mixture can be adjusted to the desired consistency by adding more milk if needed.
+
+    ## Notes:
+    
+    - This is an excellent base recipe for making banana pudding.
+    - If you want to make even more banana pudding, consider adding more bananas and increasing the sugar amount.
+    - You can also add other ingredients like nuts or chocolate chips for extra flavor.
     """

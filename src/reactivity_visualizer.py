@@ -43,4 +43,31 @@ for epoch in range(3):
 
         running_loss += loss.item()
     print(f'Epoch [{epoch+1}/{3}], Loss: {running_loss/len(train_loader)}')
+
+# Define a function to visualize tensors in Jupyter notebook
+def plot_tensor(tensor):
+    import matplotlib.pyplot as plt
+    import numpy as np
+    import torch
+
+    if tensor.dim() > 2:
+        # Reduce the dimension for easier visualization
+        if tensor.dim() == 3:
+            tensor = tensor.squeeze(0)
+        elif tensor.dim() == 4:
+            tensor = tensor.permute(0, 2, 3, 1).squeeze(-1)
+
+    if tensor.ndim == 1:
+        plt.plot(tensor)
+    else:
+        plt.imshow(tensor.cpu().numpy(), cmap='viridis')
+
+    plt.colorbar()
+    plt.show()
+
+# Example usage
+inputs = next(iter(train_loader))[0].view(1, -1)
+output = net(inputs)
+plot_tensor(output)
+
 obj['output']
