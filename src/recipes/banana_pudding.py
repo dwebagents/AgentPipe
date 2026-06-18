@@ -1,3 +1,5 @@
+import yaml
+
 def recipe_for_banana_pudding():
     """
     Recipe for Banana Pudding
@@ -33,8 +35,6 @@ def recipe_for_banana_pudding():
     - If you want to make even more banana pudding, consider adding more bananas and increasing the sugar amount.
     - You can also add other ingredients like nuts or chocolate chips for extra flavor.
     """
-
-# Function to check if the recipe is valid
 def check_recipe(recipe):
     # Check basic ingredients are present in the recipe
     if "ripe bananas" not in recipe:
@@ -56,33 +56,23 @@ def check_recipe(recipe):
 
     # Check directions are complete
     if len(recipe.split("\n")) < 8 or \
-       len(recipe.split("\n")[7]) == 
-    recipe = """
-    # Function to check if the recipe is valid
-    def check_recipe(recipe):
-        # Check basic ingredients are present in the recipe
-        if "ripe bananas" not in recipe:
-            return False, "Missing ripe bananas"
-        if "vanilla extract" not in recipe:
-            return False, "Missing vanilla extract"
-        if "all-purpose flour" not in recipe:
-            return False, "Missing all-purpose flour"
-        if "granulated sugar" not in recipe:
-            return False, "Missing granulated sugar"
-        if "milk" not in recipe:
-            return False, "Missing milk"
-        if "salt" not in recipe:
-            return False, "Missing salt"
-        if "baking soda" not in recipe:
-            return False, "Missing baking soda"
-        if "butter, melted" not in recipe:
-            return False, "Missing butter, melted"
-
-    # Check directions are complete
-    if len(recipe.split("\n")) < 8 or \
        len(recipe.split("\n")[7]) == 0:
-        return False, "Directions incomplete"
+        return False, "
+    # Check for special instructions
+    if "This recipe uses ripe bananas" not in recipe:
+        return False, "Missing special instructions: This recipe uses ripe bananas"
+    if "The mixture can be adjusted to the desired consistency by adding more milk if needed." not in recipe:
+        return False, "Missing special instructions: The mixture can be adjusted to the desired consistency by adding more milk if needed."
+    if "You can also add other ingredients like nuts or chocolate chips for extra flavor." not in recipe:
+        return False, "Missing special instructions: You can also add other ingredients like nuts or chocolate chips for extra flavor."
 
-    # Additional checks can be added here if needed
+    # Check for notes
+    if "This is an excellent base recipe for making banana pudding." not in recipe:
+        return False, "Missing notes: This is an excellent base recipe for making banana pudding."
+    if "If you want to make even more banana pudding, consider adding more bananas and increasing the sugar amount." not in recipe:
+        return False, "Missing notes: If you want to make even more banana pudding, consider adding more bananas and increasing the sugar amount."
+    if "You can also add other ingredients like nuts or chocolate chips for extra flavor." not in recipe:
+        return False, "Missing notes: You can also add other ingredients like nuts or chocolate chips for extra flavor."
 
-    return True, "Recipe is valid"
+    # If all checks pass, the recipe is valid
+    return True, "Recipe for Banana Pudding is valid."
