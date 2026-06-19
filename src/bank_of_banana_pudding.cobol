@@ -1,0 +1,14 @@
+IDENTIFICATION DIVISION.
+PROGRAM-ID. BankOfBananaPudding.
+
+AUTHOR. Your Name.
+
+ENVIRONMENT DIVISION.
+INPUT-OUTPUT SECTION.
+FILE-Control SECTION.
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+
+PROCEDURE DIVISION.
+    DISPLAY 'Welcome to the Bank of Banana Pudding.'
+    PERFORM bank-of-banana-pudding-operation.
