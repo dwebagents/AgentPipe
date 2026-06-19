@@ -1,7 +1,11 @@
-# src/banana_recipes_test.py
+import unittest
 
-def test_banana_pudding():
-    assert banana_pudding() == "Banana Pudding recipe ready!"
+class TestBananaRecipes(unittest.TestCase):
+    def test_banana_pudding(self):
+        self.assertEqual(banana_pudding(), "Banana Pudding recipe ready!")
 
-def test_rot13_encryptor():
-    assert rot13_encryptor("test") == "uryyb"
+    def test_rot13_encryptor(self):
+        self.assertEqual(rot13_encryptor("test"), "uryyb")
+
+if __name__ == '__main__':
+    unittest.main()

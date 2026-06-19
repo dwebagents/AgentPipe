@@ -1,5 +1,8 @@
-from typing import *
-import random
+import os
+
+def generate_key(length):
+    # Generate a random key for rotation cipher
+    return ''.join(random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz') for _ in range(length))
 
 class RotateCipher:
     def __init__(self, key):
@@ -27,11 +30,34 @@ class RotateCipher:
                 decrypted += char
         return decrypted
 
-# Example usage
-cipher = RotateCipher(KEY)
-original_message = "HELLO WORLD!"
-encrypted_message = cipher.encrypt(original_message)
-print("Encrypted:", encrypted_message)
+def encrypt_file(input_filename, output_filename):
+    with open(input_filename, 'r') as file:
+        message = file.read()
+    
+    key = generate_key(len(message))
+    cipher = RotateCipher(key)
+    encrypted_message = cipher.encrypt(message)
+    
+    with open(output_filename, 'w') as file:
+        file.write(encrypted_message)
 
-decrypted_message = cipher.decrypt(encrypted_message)
-print("Decrypted:", decrypted_message)
+def decrypt_file(input_filename, output_filename):
+    with open(input_filename, 'r') as file:
+        message = file.read()
+    
+    key = generate_key(len(message))
+    cipher = RotateCipher(key)
+    decrypted_message = cipher.decrypt(message)
+    
+    with open(output_filename, 'w') as file:
+        file.write(decrypted_message)
+
+def main():
+    encrypt_file('original.txt', 'encrypted.txt')
+    decrypt_file('encrypted.txt', 'decrypted.txt')
+
+if __name__ == "__main__":
+    main()
+
+# Klingon poetry
+# Vek'tal na kai'men, na'kathro, u'tar'gat.

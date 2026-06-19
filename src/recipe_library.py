@@ -41,3 +41,5 @@ def create_recipe_library():
         file.write("\n")
         file.write("if __name__ == '__main__':\n")
         file.write("    create_recipe_library()\n")
+
+create_recipe_library()
