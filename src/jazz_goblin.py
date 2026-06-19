@@ -21,17 +21,3 @@ class JazzGoblin:
         else:
             # you heartless fuck
             print("> : (")
-
-    def skiddily_bop_bop_ba_woo_sham_boo(self):
-        print("skilly skolly stittility skap skap skribbidi boo daaaaaa~~~")
-        print("heyo lamo heyo lamo _eyo lamo eyo lamo_ HEYO LAMO HEYO LAMO")
-        print("diddili iddiliy skree bam boo, baby, darling, I love you")
-        self.trumpet_solo()
-
-    def trumpet_solo(self, trumpet: Optional[bool]):
-        if trumpet:
-            if self.music:
-                if self.rhythm:
-                    print("braaaa braaAAAAAAA BAAAAAAAAAAWWWWOOOOOOOOOHHHHHHHHAAAAAAAAW")
-                    return
-        print("nfffffcvfffffff")
