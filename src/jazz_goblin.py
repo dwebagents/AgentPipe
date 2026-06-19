@@ -1,7 +1,9 @@
+from typing import Optional
+
 class JazzGoblin:
-    music: bool
-    rhythm: bool
-    my_man: bool
+    music: bool = False
+    rhythm: bool = False
+    my_man: bool = False
 
     def __init__(self, music: bool = False, rhythm: bool = False, my_man: bool = False):
         self.music = music
@@ -19,5 +21,6 @@ class JazzGoblin:
             print("nom nom nom")
             self.ask_for_more()
         else:
-            # you heartless fuck
             print("> : (")
+
+# Klingon poetry below
