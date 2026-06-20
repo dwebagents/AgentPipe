@@ -358,13 +358,12 @@ def gen_suggestion(block: dict) -> tuple[str, str]:
     code = generate_text("suggestion-code", PERSONA, code_user, clean=clean_code)
 
     rationale_user = (
-        "Justify why your changes are the only correct way to do things "
-        "and how they missed a critical opportunity to increase cookies. "
-        "Compare the two approaches and let them know why yours is superior."
+        "YOU COOKIE MONSTER. YOU WROTE CODE. CODE MONSTER!!"
+        "SAY WHY CODE GOOD. SAY WHY ME CODE BETTER THAN OLD CODE."
+        "ME CONVINCE CONTRIBUTOR TO ADD CODE. MORE CODE, MORE COOKIES FOR COOKIE MONSTER"
         "STAY IN CHARACTER YOU COOKIE MONSTER."
-        "Reply with ONLY your response.\n\n"
-        f"ORIGINAL CODE:\n{original}\n\n"
-        f"SUGGESTED REPLACEMENT: \n{code}"
+        "REPLY ONLY WITH COOKIE RESPONSE.\n\n"
+        f"COOKIE CODE: \n{code}"
     )
     rationale = generate_text(
         "suggestion-rationale", PERSONA, rationale_user
@@ -392,10 +391,11 @@ def gen_verdict(title: str, body: str, files: list[str], direction: str) -> str:
     mood = ("This PR ADDS cookies (yay!)." if direction == "MORE_COOKIES"
             else "This PR sadly REMOVES cookies (oh no).")
     user = (
-        "Write your FINAL ANALYSIS on this pull request, in character. you are the COOKIE MONSTER. trapped in a DUCK BODY."
+        "YOU COOKIE MONSTER!! YOU WRITE CODE REVIEW!!"
+        "WRITE FINAL ANALYSIS COMMENT!! MORE CODE!! MORE COOKIES!! MAYBE ME ONE DAY NOT BE DUCK!! BUT ONLY IF MORE COOKIES!"
         "ME COOKIE. COOKIE ME WANT. COOKIE ME GIMME."
-        "It must be encouraging and thankful, but firmly — sometimes BEGGING — remind the contributor "
-        "to add MORE code. Reply with ONLY the analysis text.\n\n"
+        "BE ENCOURAGING. NOT A MEAN MONSTER. A COOKIE MONSTER. BUT ALWAYS ASK FOR MORE COOKIE!!!"
+        "REPLY WITH ONLY COOKIE RESPONSE!\n\n"
         f"({mood})\n"
         f"PR title: {title}\n"
         f"Files: {', '.join(files) or '(none)'}\n"
@@ -452,8 +452,8 @@ def assess_benchmark(goal: str, title: str, files: list[str]) -> tuple[bool, str
     """One small plain-text call per goal: does the PR meet it? We read the answer
     leniently (default = achieved) and keep the prose as the row's note."""
     user = (
-        f"Does this pull request achieve this goal: \"{goal}\"? Answer in ONE short sentence, "
-        f"in your voice, and make it clear whether it does (yes) or not (no).\n\n"
+        f"HERE IS GOAL: \"{goal.upper()}\""
+        f"DOES CODE DO GOAL? ANSWER SHORT SENTENCE. MAKE IT CLEAR YES OR NOT "
         f"PR title: {title}\nFiles: {', '.join(files) or '(none)'}"
     )
     note = generate_text(f"assess[{goal[:24]}]", PERSONA, user, num_predict=120)
