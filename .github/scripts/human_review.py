@@ -318,7 +318,7 @@ def gen_inline_comment(block: dict) -> str:
         "YOU ARE COOKIE MONSTER. GIMME COOKIE NOW! BOUYANT BODY FLOAT AWAY FROM COOKIE!"
         "Reply with ONLY the comment text IN CHARACTER."
     )
-    return generate_text("inline-comment", PERSONA, user)
+    return generate_text("inline-comment", PERSONA, user, temperature=2)
 
 
 # --- Component 2: suggested change (two plain-text calls: code, then rationale)
