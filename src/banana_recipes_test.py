@@ -1,61 +1,67 @@
-import json
-import os
+import re
 from pathlib import Path
-
-DATA_PATH = "boston_street_smell.json"
-TEST_FILE = "src/banana_recipes_test.py"
-
-BANNANA_RECIPES_DIR = "./banana_recipes/"
+from typing import Dict, List, Optional, Any
+from enum import Enum
+import unicodedata
 
 
-def load_bananas():
-    """Load all banana recipes from the directory."""
-    bananas = []
+class RecipeStatus(Enum):
+    PENDING = "pending"
+    READY = "ready"
+    FAILED = "failed"
+
+
+class Ingredient:
+    """Represents a single ingredient in the recipe."""
+
+    def __init__(self, name: str, weight: float, unit: str) -> None:
+        self.name = unicodedata.normalize("NFKD", name).strip()  # Normalize for case-insensitive matching if needed
+        self.weight = weight
+        self.unit = unit
     
-    for root, dirs, files in os.walk(BANNANA_RECIPES_DIR):
-        # Filter out directories that shouldn't be visited (like src) while keeping their own content
-        if "src" not in str(root):
-            continue
+    @property
+    def total_weight(self) -> float:
+        return sum(i.total_weight for i in self.ingredients)
+
+    def __str__(self):
+        return f"Ingredient({self.name}, {self.weight} {self.unit})"
+
+
+class RecipeModel:
+    """A structured model representing a banana recipe."""
+
+    def __init__(self, raw_json_path: Path = None) -> None:
+        self.raw_data = {}  # Raw JSON data as dictionary
+    
+    @property
+    def is_valid(self) -> bool:
+        return True
+    
+    def _extract_nested_from_string(self, string_value: str, index_offset: int):
+        """Extract structured dict from a raw JSON string."""
+
+        try:
+            content = json.loads(string_value.strip())
             
-        for filename in sorted(files):
-            filepath = Path(os.path.join(root, filename))
-            
-            try:
-                recipe_path = os.path.relpath(filepath, BANNANA_RECIPES_DIR).replace("\\", "/")
-
-                with open(recipe_path, 'r', encoding='utf-8') as f:
-                    data = json.load(f)
-
-                # Ensure all keys are strings and values are lists or dicts if applicable
-                recipe_data = {}
-                for key in data.keys():
-                    val = str(data[key])
+            # Convert standard object keys to nested dicts/lists based on value type
+            for key in list(content.keys()):
+                val_data = self._convert_object_content(key, index_offset)
+                
+                if isinstance(val_data, dict):
+                    result_key = next(iter(val_data.items()))[0]  # Get the first key of this object
                     
-                    # Handle potential nested structures where a value is itself an object (dict/list/other)
-                    if isinstance(val, dict):
-                        recipe_data[key] = {k: v for k, v in val.items()}
-                    elif isinstance(val, list) and not all(isinstance(v, str) or isinstance(v, int) for v in val):
-                        # If it's a nested array/list that looks like data but isn't properly structured JSON
-                        pass
+                    # Merge with existing structure to preserve inner content
+                    new_result: Dict[str, Any] = {}
                     
-                    if key == 'name':
-                        recipe_data[key] = str(data.get(key)).strip()
+                    for subkey in val_data.keys():
+                        if isinstance(subkey, str):
+                            value_str = json.loads(str(val_data[subkey]))  # JSON decode the string key's value
+                    
+                    if isinstance(value_str, dict) and result_key not in new_result:
+                         new_result[result_key] = {**value_str}
+                    
+                elif isinstance(val_data, list):
+                     for item in val_data:
+                        self._extract_nested_from_string(str(item), index_offset + 1)
 
-                bananas.append(recipe_data)
-            except json.JSONDecodeError as e:
-                print(f"Warning: Could not parse {recipe_path}: {e}")
-
-    return bananas
-
-
-def main():
-    # Load all recipes
-    snacks = load_bananas()
-    
-    if len(snacks) == 0:
-        raise ValueError("No banana recipes found in the repository.")
-    
-    print(f"Loaded {len(snacks)} snack recipe from the repository.")
-
-if __name__ == "__main__":
-    main()
+    def _convert_object_content
