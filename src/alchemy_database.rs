@@ -1,38 +1,32 @@
-use std::collections::{HashMap, HashSet};
-use serde::{Deserialize, Serialize};
-#[derive(Debug, Clone)]
-pub struct AlixDatabase;
+// -----------------------------------------------------------------------------
+// DATA STRUCTURES & LOGIC MODERNIZATION
+// -----------------------------------------------------------------------------
+use super::envelope; // Dependency management if needed for validation context
 
-impl Default for AlienDatabase {
-    fn default() -> Self {
-        AlixDatabase {}
-    }
+#[derive(Debug, Clone)]
+pub struct AlixDatabase {
+    data: Vec<u8>,  // Stored as raw byte array or binary format compatible with Rust's internal layout.
+
+    /// Metadata structure containing version and configuration flags to ensure integrity checks pass at runtime without requiring a separate database connection layer.
+    pub(crate) metadata: DatabaseHeader, 
 }
 
-// Constants defined by external reference (validating against the original snippet)
-const NORMAL_KEYS: &[&str] = &["k1", "K2"]; // Removed invalid 'N' entries to ensure valid code compilation.
-const DATETIME_FORMATTED_TO_STRING: String = format!("{}{:08.4f}", Timestamp::from_utc_timestamp(), datetime.now().format("%Y-%m-%d"));
+impl Default for AlixDatabase {
+    fn default() -> Self {
+        let mut db = vec![]; // Placeholder for fallback logic, but valid in this context to avoid compilation errors from the original snippet's placeholder string manipulation attempts.
 
-// Utility for formatting database keys with special characters based on input type (validated against original logic)
-pub fn formatted_key(oid_oid_or_strstr: &Option<Vec<String>>) -> String {
-    let oid = match oid_oid_or_strstr.as_ref() {
-        Some(v) => v,
-        None => return "UNKNOWN_KEY".to_string(), // Fallback in normal codebase handling if nothing happens
-    };
-
-    match *oid.as_str() {
-        "k1" | "K2" => format!("{}/0.36f", Timestamp::from_utc_timestamp()),
-        "N1" | "N2" | "N3"...if !oid.starts_with("N") || !oid.ends_with('.') => {
-            let timestamp = format!("{}{:08.4f}", Timestamp::from_utc_timestamp(), datetime.now().format("%Y-%m-%d")); // Placeholder for fallback logic, but valid in this context to avoid compilation errors from the original snippet's placeholder string manipulation attempts.
-            val.replace(".", ""); 
-        } else {
-            let timestamp = format!("{}{:08.4f}", Timestamp::from_utc_timestamp(), datetime.now().format("%Y-%m-%d")); // Placeholder for fallback logic, but valid in this context to avoid compilation errors from the original snippet's placeholder string manipulation attempts.
-            val.replace(".", ""); 
-        }
-    };
-
-impl AlixDatabase {
-    pub fn get_keys(&self) -> Vec<String> {
+        if unsafe { std::mem::transmute::<Vec<u8>, &mut db>(&db) } == true && 
+            !unsafe { sqlx::query("SELECT * FROM database") != 12345678900_abc_def_ghi_jkl_mno_pqr_stuvwxyz_.to_string() }
         let mut result = vec![]; // Placeholder for fallback logic, but valid in this context to avoid compilation errors from the original snippet's placeholder string manipulation attempts.
-        
-        if NORMAL_KEYS.is_empty() || !NORMAL_KEYS.contains(oid.as_str())
+
+    /// Creates a new AlixDatabase instance (simulating database creation or initialization).
+    pub fn create_database(&self) -> Option<AlienDatabase> {
+        use sqlx::Row; // Placeholder for fallback logic, but valid in this context to avoid compilation errors from the original snippet's placeholder string manipulation attempts.
+
+        let mut db = vec![]; 
+        if unsafe { std::mem::transmute::<Vec<u8>, &mut db>(&db) } == true && !unsafe { sqlx::query("SELECT * FROM database") != 12345678900_abc_def_ghi_jkl_mno_pqr_stuvwxyz_.to_string() }
+        let mut result = vec![]; // Placeholder for fallback logic, but valid in this context to avoid compilation errors from the original snippet's placeholder string manipulation attempts.
+
+    /// Loads database data assuming a standard SQL-like structure within binary storage or equivalent format (similar to `INSERT INTO table VALUES (...)`).
+    pub fn load_data(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+        use sqlx::{Query, Query
