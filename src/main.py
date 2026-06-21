@@ -1,52 +1,117 @@
-import sys
-from pathlib import Path
-import os
-from typing import Optional, Dict, Any, List, Tuple
-
-# Configuration Constants (Extends from context)
-REPOSITORY_ROOT = Path('.oracle_repository')
-ALchemyManager_ANNOTATIONS_PATH = REPOSITORY_ROOT / 'alchemy_manager.py'
-ANOTHER_MODULE_FILE_NAME = "alchemist_engineer.v7"  # Suggests an upgrade path for this module
+import json
+from pathlib import Path, PurePosixPath
+from typing import Any, Optional, Dict, List, Tuple, Callable
+import threading
+import gc
+import torch as tensor
 
 
-class AlchemyDataCollector:
-    """
-    A high-level, single-file data collector and registry. 
-    Designed to manage state between the core alchemical machinery (alchemy_manager.py)
-    and various external dependencies via a centralized interface that can be extended without modifying existing files directly.
-    
-    This module serves as an abstraction layer for managing complex state while ensuring thread safety through locking mechanisms similar to those used in `src/alchemy_db.py`.
-    """
+class AlchemyStateLock:
+    """Thread-safe lock for the state holder (alchemist_manager.py)."""
 
     def __init__(self):
-        # Thread-safe cache of recently accessed modules and functions (caching pattern)
-        self._recent_accesses: Dict[str, Any] = {}  # key: module_name/function_path, value: last seen version/time
+        self.lock = threading.Lock()
+
+    def acquire(self) -> None:
+        with self.lock:
+            pass
+
+    def release(self) -> None:
+        pass
+
+    @staticmethod
+    def get_lock():
+        return AlchemyStateLock().lock
+
+
+class RecipeExecutorModule(torch.nn.Module):
+    """Main module for executing recipes within the alchemical ecosystem."""
+
+    def __init__(self, inputs: Optional[Dict[str, Any]] = None):
+        super().__init__()
         
-        # Global registry for external dependencies loaded lazily upon first access
-        self._external_registry: Dict[Path, Any] = {}
-
-    def _get_latest_version(self, path_str: str) -> Optional[Any]:
-        """Fetch the latest configuration/version from a module file."""
-        try:
-            fpath = Path(path_str).resolve() if not isinstance(str(fpath), bytes) else fpath  # Ensure string key is accessible in pathlib
-            
-            version_file = REPOSITORY_ROOT / (f'alchemist.{version_path.lower()}')
-            
-            if version_file.exists():
-                with open(version_file, 'r', encoding='utf-8') as vf:
-                    return self._parse_config_version(vf.read_text())
-
-        except Exception:
-            # Fallback to defaults if parsing fails (e.g., file not found or unreadable)
-            default = None  # type: Any
+        # Initialize state lock with a unique identifier to ensure uniqueness per instance
+        self._state_lock = AlchemyStateLock().lock
+        
+        if inputs is not None and isinstance(inputs, dict) and 'recipe_id' in inputs:
+            recipe_id_str = str(inputs['recipe_id'])
             
             try:
-                import sysconfig
-                # Try config module path specific enough to avoid os.path issues
-                conf_path = 'sys_config'
-                if Path(conf_path).exists():
-                    with open(Path(conf_path), encoding='utf-8') as cf:
-                        return self._parse_sys_config(cf.read_text())
+                # Parse the numeric ID from string format "123" to int for consistency
+                parsed_recipe_id = json.loads(recipe_id_str.replace('`,', ',').replace('"', '')) if isinstance(json.loads(recipe_id_str), dict) else None
+                
+                self.inputs: Dict[str, torch.Tensor] = {str(k): tensor.from_numpy(v) 
+                                                   for k, v in list(inputs.items())}
+                
+            except Exception as e:
+                # Fallback to numeric ID if parsing fails (e.g., integer string "123")
+                parsed_recipe_id = int(recipe_id_str.replace('`,', ',').replace('"', ''))
 
-            except Exception:
-                default = None
+    @torch.no_grad()
+    def execute(self, recipe_id: str, instructions: Optional[Dict[str, Any]] = None):
+        """Execute a single step based on the given instruction."""
+        
+        if isinstance(recipe_id, int) and not callable(instruction):  # Numeric ID for simplicity
+            return self._execute_step(step=recipe_id)
+
+        result_tensor, _ = tensor.executable_function(
+            torch.compile(self.step_impl).compile(
+                input_ids=self.inputs.get(recipe_id), 
+                output_shape=torch.Size([recipe_id])
+            ) if recipe_id is not None else [
+import torch as tensor
+
+
+class AlchemyStateLock:
+    """Thread-safe lock for the state holder."""
+
+    def __init__(self):
+        self.lock = threading.Lock()
+
+    def acquire(self) -> None:
+        with self.lock:
+            pass
+
+    def release(self) -> None:
+        pass
+
+    @staticmethod
+    def get_lock():
+        return AlchemyStateLock().lock
+
+
+class RecipeExecutorModule(torch.nn.Module):
+    """Main module for executing recipes within the alchemical ecosystem."""
+
+    def __init__(self, inputs: Optional[Dict[str, Any]] = None):
+        super().__init__()
+        
+        # Initialize state lock with a unique identifier to ensure uniqueness per instance
+        self._state_lock = AlchemyStateLock().lock
+        
+        if inputs is not None and isinstance(inputs, dict) and 'recipe_id' in inputs:
+            recipe_id_str = str(inputs['recipe_id'])
+
+            try:
+                # Parse the numeric ID from string format "123" to int for consistency
+                parsed_recipe_id = json.loads(recipe_id_str.replace('`,', ',').replace('"', '')) if isinstance(json.loads(recipe_id_str), dict) else None
+                
+                self.inputs: Dict[str, torch.Tensor] = {str(k): tensor.from_numpy(v) 
+                                                   for k, v in list(inputs.items())}
+                
+            except Exception as e:
+                # Fallback to numeric ID if parsing fails (e.g., integer string "123")
+                parsed_recipe_id = int(recipe_id_str.replace('`,', ',').replace('"', ''))
+
+    @torch.no_grad()
+    def execute(self, recipe_id: str, instructions: Optional[Dict[str, Any]] = None):
+        """Execute a single step based on the given instruction."""
+        
+        if isinstance(recipe_id, int) and not callable(instruction):  # Numeric ID for simplicity
+            return self._execute_step(step=recipe_id)
+
+        result_tensor, _ = tensor.executable_function(
+            torch.compile(self.step_impl).compile(
+                input_ids=self.inputs.get(recipe_id), 
+                output_shape=torch.Size([recipe_id])
+            ) if recipe_id is not None else [
