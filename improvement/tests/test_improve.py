@@ -203,6 +203,54 @@ def test_grow_file_fixes_a_broken_draft(scratch):
     assert any("does not parse" in m[-1]["content"] for m in g.calls)   # took the FIX path
 
 
+# --- planning: a plan is drawn from the inspiration, then steers growth ------
+def test_make_plan_asks_for_a_plan_and_returns_it(scratch):
+    scratch()
+    g = model(lambda m: "- build a tooth counter\n- expose count()")
+    plan = improve.make_plan(g, improve.SRC_DIR / "gear.py", "tree", ("issue", "#1 count teeth"))
+    assert "tooth counter" in plan
+    assert "lay out a brief plan" in g.calls[0][-1]["content"]   # it really asked for a plan
+
+
+def test_make_plan_empty_on_model_failure(scratch):
+    scratch()
+
+    def boom(messages, **k):
+        raise RuntimeError("model down")
+
+    assert improve.make_plan(boom, improve.SRC_DIR / "gear.py", "t", ("issue", "x")) == ""
+
+
+def test_grow_file_threads_plan_into_write_prompt(scratch):
+    scratch()
+    g = model(lambda m: "VALUE = 1\n")
+    improve.grow_file(g, improve.SRC_DIR / "m.py", "tree", ("issue", "x"), "",
+                      deadline=BIG, max_rounds=1, plan="- do the precise thing")
+    write_prompt = g.calls[0][-1]["content"]
+    assert "do the precise thing" in write_prompt and "The plan for" in write_prompt
+
+
+def test_generate_improvement_plans_then_feeds_plan_to_growth(scratch):
+    scratch()
+    seen = {}
+
+    def route(m):
+        u = m[-1]["content"]
+        if "programming language" in u:        return "python"
+        if "lay out a brief plan" in u:        return "- build a tooth counter\n- expose count()"
+        if "Pick the ONE file" in u:           return "src/gear.py"
+        if "Create the file" in u or "Improve the existing file" in u:
+            seen["write_prompt"] = u           # the growth stage's write prompt
+            return "VALUE = 1\n"
+        return "a vision"                      # reason / explanation / etc.
+
+    improve.generate_improvement(model(route), "tree", [], ["#1 count teeth"],
+                                 deadline_seconds=999, max_files=1)
+    assert "write_prompt" in seen, "growth stage never ran"
+    assert "tooth counter" in seen["write_prompt"]   # the plan reached the writer
+    assert "The plan for" in seen["write_prompt"]
+
+
 # --- orchestration: MANY files across MANY inspirations ----------------------
 def test_generates_multiple_files_across_inspirations(scratch):
     scratch({"src/mech.py": "X = 1\n"})

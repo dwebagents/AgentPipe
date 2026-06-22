@@ -26,6 +26,7 @@ MAX_ISSUE_BODY_CHARS  = _int("IMPROVE_MAX_ISSUE_BODY_CHARS", "1000")
 # Each step generates a SMALL bite; truncated files are grown by continuation,
 # not demanded whole in one breath.
 NUM_PREDICT           = _int("IMPROVE_NUM_PREDICT", "1024")
+PLAN_NUM_PREDICT      = _int("IMPROVE_PLAN_NUM_PREDICT", "512")  # — the plan is short prose, not code —
 NUM_CTX               = _int("IMPROVE_NUM_CTX", "8192")
 REQUEST_TIMEOUT       = _int("IMPROVE_TIMEOUT", "600")
 BASE_TEMPERATURE      = _flt("IMPROVE_TEMPERATURE", "0.5")    # — hot. the visions stay strange —
@@ -308,8 +309,33 @@ def choose_language(generate, tree, inspiration, produced_rels) -> Path:
     return raw
 
 
+# — step 1.5: a plan for THIS file, drawn from the inspiration, to steer growth —
+def make_plan(generate, target, inspiration, *, language=None) -> str:
+    """Between naming the file and writing it, the oracle lays out what this file
+    should become: a short, concrete plan grounded in the chosen inspiration and
+    target. The plan is fed into the growth stage to steer it. Returns '' on
+    failure — growth then simply proceeds unplanned."""
+    rel = target.relative_to(REPO_ROOT).as_posix() if REPO_ROOT in target.parents else target.name
+    lang = f" in {language}" if language else ""
+    msgs = [
+        {"role": "system",
+         "content": ORACLE_VOICE + " Reply with a short, concrete plan as a few terse bullet "
+                    "points — what to build and why. No code, no fences."},
+        {"role": "user",
+         "content": (f"## Inspiration\n{_inspiration_text(inspiration)}\n\n"
+                     f"## Task\nYou are about to write {rel}{lang}. First, lay out a brief plan: what "
+                     "this file should do to answer the inspiration above, the key pieces to "
+                     "build, and how it fits the repository. A few bullet points, no code.")},
+    ]
+    try:
+        raw = generate(msgs, num_predict=PLAN_NUM_PREDICT, temperature=0.7)
+    except Exception as exc:
+        log(f"plan call failed: {exc}"); return ""
+    return (raw or "").strip()
+
+
 # — step two: grow the code in bites (write → continue → fix) until it parses —
-def _code_msgs(rel, tree, inspiration, *, mode, draft="", error="", language=None):
+def _code_msgs(rel, tree, inspiration, *, mode, draft="", error="", language=None, plan=""):
     if language:
         system = ORACLE_VOICE + (f" Output ONLY the source code in {language}— no markdown fences, "
                                  "no commentary, no explanation.")
@@ -317,6 +343,8 @@ def _code_msgs(rel, tree, inspiration, *, mode, draft="", error="", language=Non
         system = ORACLE_VOICE + (" Output ONLY the source code of whatever language you chose — no markdown fences, "
                                  "no commentary, no explanation.")
     head = f"## Files under src/\n{tree}\n\n{_inspiration_text(inspiration)}\n\n"
+    if plan:
+        head += f"## The plan for {rel} — follow it\n{plan}\n\n"
     if mode == "write":
         if draft.strip():
             user = (head + f"Improve the existing file {rel}. It currently holds:\n\n{draft}\n\n"
@@ -340,9 +368,10 @@ def _code_msgs(rel, tree, inspiration, *, mode, draft="", error="", language=Non
 
 
 def grow_file(generate, target, tree, inspiration, prior, *, deadline,
-              now=time.monotonic, num_predict=None, max_rounds=MAX_ROUNDS, language=None):
-    """Return (code, last_response). Write once from `prior`, then CONTINUE a
-    truncated draft or FIX a broken one, re-checking with the parser each round."""
+              now=time.monotonic, num_predict=None, max_rounds=MAX_ROUNDS, language=None, plan=""):
+    """Return (code, last_response). Write once from `prior` (steered by `plan`),
+    then CONTINUE a truncated draft or FIX a broken one, re-checking with the
+    parser each round."""
     rel = target.relative_to(REPO_ROOT).as_posix() if REPO_ROOT in target.parents else target.name
     code, last, rounds = "", "", 0
     while rounds < max_rounds and now() < deadline:
@@ -358,7 +387,7 @@ def grow_file(generate, target, tree, inspiration, prior, *, deadline,
         try:
             resp = generate(_code_msgs(rel, tree, inspiration, mode=mode,
                                        draft=(code or prior), error=str(_syntax_error(code) or ""),
-                                       language=language),
+                                       language=language, plan=plan),
                             num_predict=num_predict or NUM_PREDICT, temperature=temp)
         except Exception as exc:
             log(f"{rel}: generation failed: {exc}"); continue
@@ -440,8 +469,13 @@ def generate_improvement(generate, tree, src_files, issues, *, deadline_seconds=
             except OSError:
                 prior = ""
         log(f"inspiration [{insp[0]}] -> {'extend' if (rel in produced or target.exists()) else 'create'} {rel}")
+        plan = make_plan(generate, target, insp, language=language)
+        if plan:
+            log(f"{rel}: planned ({len(plan)} chars)")
+            log(f"Plan\n{plan}")
         code, last = grow_file(generate, target, tree, insp, prior,
-                               deadline=deadline, now=now, num_predict=num_predict, max_rounds=max_rounds, language=language)
+                               deadline=deadline, now=now, num_predict=num_predict,
+                               max_rounds=max_rounds, language=language, plan=plan)
         if code and code.strip() and _write_one(target, code):
             produced[rel] = (target, code)
             log(f"step wrote {rel} ({len(code)} bytes)")
