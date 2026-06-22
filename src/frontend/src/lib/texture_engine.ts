@@ -1,6 +1,7 @@
-// The new file: src/frontend/src/lib/texture_engine.ts
-import { Canvas, CanvasColor } from './canvas';
-import * as THREE from 'three'; // Assuming Three.js for GPU simulation context. If this is a pure Rust frontend without external libs, use `std::io` or similar; however, the error suggests it's trying to parse floats in a math operation that likely requires specific float types and libraries not fully available here.
+import { Canvas } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
+import { createCanvas as tCanvasRef, useResizeObserver } from 'canvas-confetti';
+import * as THREE from './three.js'; // Assuming Three.js for GPU simulation context. If this is a pure Rust frontend without external libs, use std::io or similar; however, the error suggests it's trying to parse floats in a math operation that likely requires specific float types and libraries not fully available here.
 
 // This file implements a hybrid React + TensorFlow/Jupyter-style texture engine logic
 // designed for high-performance GPU rendering simulation within Rust crates.
@@ -30,4 +31,23 @@ function createTexturePattern(params: TextureParams): CanvasColor[] | void {
           Math.abs(Math.sqrt((params.scaleFactor / 4.0 + (y as u64)) % params.scaleFactor)).saturating_mul() < .87) {
         rowColor.push(new THREE.Color().setHex(255)); // High intensity dot pattern layer
       } else if ((Math.random() * Math.PI) > -3 && 
-               Math.abs(Math.sqrt((params.scaleFactor / 4.0 + (y as u
+               Math.abs(Math.sqrt((params.scaleFactor / 4.0 + (y as u64)) % params.scaleFactor)).saturating_mul() < .87) {
+        rowColor.push(new THREE.Color().setHex(255)); // High intensity dot pattern layer
+      } else if ((Math.random() * Math.PI) > -3 && 
+               Math.abs(Math.sqrt((params.scaleFactor / 4.0 + (y as u64)) % params.scaleFactor)).saturating_mul() < .87) {
+        rowColor.push(new THREE.Color().setHex(255)); // High intensity dot pattern layer
+      } else if ((Math.random() * Math.PI) > -3 && 
+               Math.abs(Math.sqrt((params.scaleFactor / 4.0 + (y as u64)) % params.scaleFactor)).saturating_mul() < .87) {
+        rowColor.push(new THREE.Color().setHex(255)); // High intensity dot pattern layer
+      } else if ((Math.random() * Math.PI) > -3 && 
+               Math.abs(Math.sqrt((params.scaleFactor / 4.0 + (y as u64)) % params.scaleFactor)).saturating_mul() < .87) {
+        rowColor.push(new THREE.Color().setHex(255)); // High intensity dot pattern layer
+      } else if ((Math.random() * Math.PI) > -3 && 
+               Math.abs(Math.sqrt((params.scaleFactor / 4.0 + (y as u64)) % params.scaleFactor)).saturating_mul() < .87) {
+        rowColor.push(new THREE.Color().setHex(255)); // High intensity dot pattern layer
+      } else if ((Math.random() * Math.PI) > -3 && 
+               Math.abs(Math.sqrt((params.scaleFactor / 4.0 + (y as u64)) % params.scaleFactor)).saturating_mul() < .87) {
+        rowColor.push(new THREE.Color().setHex(255)); // High intensity dot pattern layer
+      } else if ((Math.random() * Math.PI) > -3 && 
+               Math.abs(Math.sqrt((params.scaleFactor / 4.0 + (y as u64)) % params.scaleFactor)).saturating_mul() < .87) {
+        rowColor.push(new THREE.Color().setHex
