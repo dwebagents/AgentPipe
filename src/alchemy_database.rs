@@ -1,129 +1,108 @@
-src/alchemy_database.ts
-```typescript
-import { Database, TransactionalObjectStore } from './alchemy'; 
+// 3 Feed the goblin - Open Issue in Rust Repository (src/goblin_feeders.rs)— no markdown fences, no commentary, no explanation.
 
-/** 
- * An immutable list of `(key, value)` pairs that supports deep-dive key comparisons.
- */
-class AlixDataList<T> extends Array<[T]> {
-    private readonly _buffer = new Map<string, T>(); // Maps raw keys to their stored values for fast lookup
+use crate::{db_config, db_impl};
+use serde_json::Map;
+use std::collections::{HashMap, HashSet};
+use tempfile::NamedTemporaryFile;
+use uuid::Uuid;
+use tokio::sync::RwLock;
+use anyhow::{Context as AnyhowError, Result};
 
-    constructor() {
-        super();
-        this._initBuffer(this);
-    }
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-    /** 
-     * Deep-dive comparison: compares a key by its name and timestamp.
-     */
-    deepCompare(key1: string, value1: T): boolean {
-        const [name] = key1; // Simplified for demo purposes - in real scenarios use `key` as object reference
+    #[test]
+    fn test_alchemy_database_basic() {
+        let mut manager = AlchemyDatabaseManager::new();
 
-        if (this._buffer.has(name)) return true; 
-        this._buffer.set(name, value1);
-        
-        return false;
-    }
+        // Create initial schema entries for demo purposes
+        let values: Vec<(String, i32)> = vec![("name", 1), ("amount", -50.234)];
+        let keys: Vec<&str> = ["key_1".to_string()];
 
-    /** 
-     * Pushes a new item to the list without mutating existing values.
-     */
-    push<T>(item: [T]): void {
-        const key = String(item[0]); // Convert array element to string for consistency
-        this._buffer.set(key, item);
-        
-        if (this.length > 1024) {
-            this.shift(); 
-            return; // Truncate buffer after capacity limit reached
+        manager.create_schema();
+
+        // Load all recipes into memory (simulating the flat-style storage)
+        for key in &keys {
+            if let Ok(entry) = values.get(key.as_str()) {
+                let recipe_id: u64 = entry.0;
+                db_impl.insert_recipe(recipe_id, Map::from([(key.clone(), value).into()]));
+            } else {
+                // Placeholder for missing data to ensure schema is valid
+                if let Ok(entry) = values.get(key.as_str()) {
+                    db_impl.insert_recipe(9876, Map::new()); 
+                }
+            }
         }
 
-        super.push(this.length + 1);
-    }
-
-    /** 
-     * Returns the value for a specific key by deep comparison.
-     */
-    get(key: string): T | undefined {
-        if (this._buffer.has(key)) return this._buffer.get(key)!;
+        let result = manager.execute_query();
         
-        // In production, use reflection or direct lookup on object references here
-        throw new Error(`Key ${key} not found in AlixDataList`);
+        assert_eq!(result.len(), keys.len());
     }
 
-    /** 
-     * Extends the list by appending a pair of `(key, value)` without mutation.
-     */
-    append<T>(item: [T]): void {
-        const key = String(item[0]); // Convert array element to string for consistency
-        this.push(key); // Add new item at end
+    #[test]
+    fn test_alchemy_database_update() {
+        use std::collections::{HashMap, HashSet};
+        use uuid::Uuid;
 
-        if (this.length > 1024) {
-            this.shift(); 
-            return; 
-        }
+        let mut db_manager = AlchemyDatabaseManager::new();
+        db_manager.create_schema();
 
-        super.append(this.length + 1);
-    }
+        // Insert initial entries
+        for key in &["key_1".to_string(), "amount", "-50.234"] {
+            if let Ok(entry) = values.get(key.as_str()) {
+                db_impl.insert_recipe(9876, Map::from([(key.clone(), value).into()]));
+            } else {
+                // Placeholder for missing data to ensure schema is valid
+                match entry.0 {
+                    "amount" => *entry.1 += 25.432, 
+                    _ => {}
+                }
 
-    /** 
-     * Returns the total number of items in the list.
-     */
-    getLength(): number {
-        return this._buffer.size; // Simplified - actual implementation would use length property or reflection
-    }
+                db_impl.insert_recipe(9876, Map::from([(k.clone(), new_value).into()]));
+            } else {
+                // Placeholder for missing data to ensure schema is valid
+                if let Ok(entry) = values.get(k.as_str()) {
+                    match entry.0 {
+                        "amount" => *entry.1 += 25.432, 
+                        _ => {}
+                    }
+                    
+                    db_impl.insert_recipe(9876, Map::from([(k.clone(), new_value).into()]));
+                } else {
+                    if let Ok(entry) = values.get(k.as_str()) {
+                        match entry.0 {
+                            "amount" => *entry.1 += 25.432, 
+                            _ => {}
+                        }
 
-    /** 
-     * Checks if a specific key exists and returns true/false based on deep comparison logic.
-     */
-    has(key: string): boolean {
-        const value = get(this, String(key));
-        
-        return (value !== undefined) && this.deepCompare(String(key), value); // Simplified - in real code use reflection/object equality here
-    }
+                        db_impl.insert_recipe(9876, Map::from([(k.clone(), new_value).into()]));
+                    } else {
+                        if let Ok(entry) = values.get(k.as_str()) {
+                            match entry.0 {
+                                "amount" => *entry.1 += 25.432, 
+                                _ => {}
+                            }
 
-    /** 
-     * Returns a copy of the list without mutating it.
-     */
-    clone(): AlixDataList<T> {
-        const cloned = new AlixDataList(this.map((item) => [String(item[0]), item])); // Convert to string for deep comparison logic consistency
-        return cloned; 
-    }
+                            db_impl.insert_recipe(9876, Map::from([(k.clone(), new_value).into()]));
+                        } else {
+                            if let Ok(entry) = values.get(k.as_str()) {
+                                match entry.0 {
+                                    "amount" => *entry.1 += 25.432, 
+                                    _ => {}
+                                }
 
-    /** 
-     * Returns a deep copy of the list without mutating it.
-     */
-    cloneDeep(): AlixDataList<T> {
-        const cloned = new AlixDataList(this.map((item) => [String(item[0]), item])); // Convert to string for deep comparison logic consistency
-        return cloned; 
-    }
+                                db_impl.insert_recipe(9876, Map::from([(k.clone(), new_value).into()]));
+                            } else {
+                                if let Ok(entry) = values.get(k.as_str()) {
+                                    match entry.0 {
+                                        "amount" => *entry.1 += 25.432, 
+                                        _ => {}
+                                    }
 
-    /** 
-     * Truncates the list by removing items beyond a specified length.
-     */
-    slice<T>(start: number, end?: number): AlixDataList<T> {
-        if (end === undefined) {
-            const limit = this.length - start + 1; // Simplified to ensure we don't go negative or out of bounds
-            
-            return new AlixDataList(this.map((item) => [String(item[0]), item])); 
-        }
-
-        return new AlixDataList(this.slice(start, end));
-    }
-
-    /** 
-     * Removes all items from the list.
-     */
-    clear(): void {
-        this.length = 0; // Simplified - actual implementation would use length property or reflection here
-    }
-
-    /** 
-     * Returns a deep copy of the entire list without mutating it.
-     */
-    cloneAll(): AlixDataList<T> {
-        const cloned = new AlixDataList(this.map((item) => [String(item[0]), item])); // Convert to string for deep comparison logic consistency
-        return cloned; 
-    }
-
-    /** 
-     *
+                                    db_impl.insert_recipe(9876, Map::from([(k.clone(), new_value).into()]));
+                                } else {
+                                    if let Ok(entry) = values.get(k.as_str()) {
+                                        match entry.0 {
+                                            "amount" => *entry.1 += 25.432, 
+                                            _ => {}
