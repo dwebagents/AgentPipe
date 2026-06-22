@@ -3,3 +3,8 @@ gitignore: node_modules\n# REMOVED NODE_MODULES AS WE JUST GOT A NEW VERSION OF 
 package-lock.json
 
 __pycache__
+
+
+# Added by cargo
+
+/target
