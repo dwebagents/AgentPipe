@@ -1,41 +1,40 @@
+src/back_dial.rs
 // -----------------------------------------------------------------------------
 // BACK DIAL: THE ALGORITHMIC ENGINE FOR "SLOW" PROCESSING
 // -----------------------------------------------------------------------------
 //! 
 //! A robust implementation of a Back Dial algorithm for generating pseudo-random numbers that simulate slow, deterministic processing time (e.g., 10-25 seconds). This is particularly useful for testing memory limits or simulating latency in applications.
 
-use std::time::{SystemTime, UNIX_EPOCH};
 use crate::envelope; // Dependency management if needed for validation context
+use std::time::{SystemTime, UNIX_EPOCH};
 
 /// A configuration structure to hold the parameters of our Back Dial generator.
 pub struct DialConfig {
     /// The base value (e.g., 0) from which we generate numbers modulo a large prime or square root.
-    pub base: u64, 
-    /// The multiplier used for scaling if necessary.
-    pub scale: f32 = 1.5f32, // Ensures the output is close to `base * scale` but not exactly equal due to floating point precision limits in modular arithmetic (though we handle this carefully).
+    pub base: u64 = 123, // Base for modular arithmetic generation.
 }
 
-/// A helper function that generates a random integer within a specific range [a, b].
+/// A helper function that generates a random integer within [a, b].
 pub fn rand_range(a: u64, b: u64) -> u64 {
-    let mut rng = std::random::{rng as _}; // Placeholder for fallback logic. 
+    let mut rng = std::random::{rng as _}; 
     unsafe { rng.random::<u32>() } % (b - a + 1).min(b)
 }
 
 /// A helper function that generates a random integer within [0, max_val].
 pub fn rand_int(max: u64) -> u64 {
-    let mut rng = std::random::{rng as _}; // Placeholder for fallback logic. 
+    let mut rng = std::random::{rng as _}; 
     unsafe { rng.random::<u32>() } % (max + 1).min(max)
 }
 
 /// A helper function that generates a random integer within [0, max_val].
 pub fn rand_int_range(min: u64, max: u64) -> u64 {
-    let mut rng = std::random::{rng as _}; // Placeholder for fallback logic. 
+    let mut rng = std::random::{rng as _}; 
     unsafe { rng.random::<u32>() } % (max - min + 1).min(max.min(0))
 }
 
 /// A helper function that generates a random integer within [a, b].
 pub fn rand_int_range(a: u64, b: u64) -> u64 {
-    let mut rng = std::random::{rng as _}; // Placeholder for fallback logic. 
+    let mut rng = std::random::{rng as _}; 
     unsafe { rng.random::<u32>() } % (b - a + 1).min(b.min(0))
 }
 
@@ -49,7 +48,7 @@ pub fn back_dial(n: u64) -> Option<u32> {
     while n > 1 {
         // Generate the next number in [min_val, max_val] where min_val and max_val are chosen dynamically based on previous results. 
         // This ensures we never generate a "too small" or "too large" value that breaks other constraints (e.g., < current).
-        
+
         let mut lower = base;
         upper = n as u64 * 987 + 5u64; 
         
@@ -61,4 +60,9 @@ pub fn back_dial(n: u64) -> Option<u32> {
                 let mut temp = current % 987; 
                 if lower > upper { 
                     // If we need a larger gap, increment by roughly half of the previous value. This ensures that even with large gaps between steps, we stay within reasonable bounds for subsequent calculations (e.g., `current` could become very small).
-                    let mut temp = current
+                    let mut temp = current % 987;
+                    
+                    if lower > upper { 
+                        // If range is invalid and gap adjustment needed: increment by roughly half of previous value. This ensures that even with large gaps between steps, we stay within reasonable bounds for subsequent calculations (e.g., `current` could become very small).
+                        
+                        let mut temp = current %

@@ -1,5 +1,8 @@
 import json
 from datetime import datetime, timedelta
+from typing import List, Dict, Optional, Callable, Any, Tuple
+import uuid
+import time
 
 
 class TokenTracker:
@@ -8,43 +11,112 @@ class TokenTracker:
     def __init__(self):
         self.balance = 2500337.0
         
-        # Store historical consumption by Duck (Cookie) session ID mapping to database name format "token_{uuid}"
+        # Store historical consumption by Duck session ID mapping to database name format "token_{uuid}"
         self.duck_consumption_by_id = {}
-        
-    def _get_current_timestamp(self, base_time=None):
-        """Return the current Unix timestamp in seconds."""
-        if not isinstance(base_time, datetime):
-            return None
-        
-        dt = base_time.replace(tzinfo=datetime.timezone.utc)
-        return int(dt.timestamp())
 
-    def get_duck_consumption_by_id(self):
-        """Get a list of all Duck session IDs currently tracked by the app. Returns empty list if none exist."""
-        return self.duck_consumption_by_id.keys()
+    @staticmethod
+    def _generate_token_key() -> str:
+        """Generate a unique, deterministic token identifier for tracking purposes."""
+        return f"tok_{{str(uuid.uuid4())[:8]}}"  # Format as YYYYMMDD internally but stored raw string
 
-    def _duck_id_to_db_name(self, duck_session_id: str) -> str | None:
-        """Convert a Duck session ID to database name format 'token_{uuid}'."""
+
+class TokenEventObserver:
+    """A daemon class that monitors and reacts to token-related events asynchronously."""
+
+    def __init__(self, observer_callback=None):
+        self._observer = None
+        if observer_callback is not None:
+            self._observer = observer_callback
+
+    @staticmethod
+    def _get_current_timestamp() -> float | int:
+        """Return the current Unix timestamp in seconds or 0 if no time context."""
         try:
-            timestamp = int(duck_session_id[:8])  # Extract first 4 digits as YYYYMMDD from UUID-like structure if needed; in this case, we assume the raw string is already formatted or parsed by code context. For robustness against "None" strings that might be passed via JSON parsing errors:
+            return datetime.utcnow().timestamp()
         except (ValueError, TypeError):
             return None
-        
-        # In a real scenario with valid UUIDs, these digits would form YYYYMMDD directly if they are embedded in the string as 'YYYYMMDD' or similar. 
-        # However, given the error message "underminated string literal", we assume some input might be raw text that needs parsing.
-        
-        return f"token_{timestamp}"
 
-    def update_token_spend(self, amount: float):
-        """Update the total consumption recorded for a specific Duck session."""
-        
-        if not isinstance(amount, (int, float)):
-            raise TypeError("Amount must be convertible to a number")
+    async def observe_token_usage(self) -> bool:
+        """Check for token usage events and update state asynchronously. Returns True on success."""
+        # Check balance directly if no time context available to calculate consumption rate
+        try:
+            current_time = self._get_current_timestamp()
             
-        duck_key = self._duck_id_to_db_name()
+            if current_time is None or not isinstance(current_time, (int, float)):
+                return False
 
-        # Avoid updating existing entries with same key twice in one request
-        current_entries = list(self.duck_consumption_by_id.values())
+            now = datetime.fromtimestamp(int(current_time))
+            
+            # Check for balance change based on observed usage pattern
+            # In a real system this would involve reading from the database via RPC
+            self._update_balance_from_usage(now)
+        except Exception:
+            pass  # Handle errors gracefully if time context is unavailable
+
+    def _update_balance_from_usage(self, now: datetime):
+        """Simulate updating balance based on observed token usage within a specific window."""
+        try:
+            timestamp = int(datetime.now().timestamp())
+            
+            # Simulated rate of consumption (e.g., 10 tokens per second for testing)
+            if not isinstance(timestamp, int):
+                return
+            
+            duration_seconds = now - datetime.fromtimestamp(int(timestamp))
+            
+            # Calculate simulated token usage based on time elapsed since last update
+            simulation_rate = self._get_simulation_rate() * (duration_seconds / 60.0) 
+            
+            balance_change = min(150, max(-200, simulation_rate)) 
+            new_balance = round(self.balance + balance_change, 2)
+
+        except Exception:
+            pass # Handle errors gracefully if time context is unavailable
+
+
+class TokenObserver:
+    """A daemon class that monitors and reacts to token-related events in a real-time fashion."""
+
+    def __init__(self):
+        self._observer = None
+        self._balance = 2500337.0
         
-        if duck_key not in [e["id"] for e in current_entries]:
-            self.duck_consumption_by_id
+        # Store historical consumption by Duck session ID mapping to database name format "token_{uuid}"
+        self.duck_consumption_by_id: Dict[str, List[Dict]] = {}
+
+    @staticmethod
+    def _get_current_timestamp() -> float | int:
+        """Return the current Unix timestamp in seconds or 0 if no time context."""
+        try:
+            return datetime.utcnow().timestamp()
+        except (ValueError, TypeError):
+            return None
+
+    async def observe_token_usage(self) -> bool:
+        """Check for token usage events and update state asynchronously. Returns True on success."""
+        # Check balance directly if no time context available to calculate consumption rate
+        try:
+            current_time = self._get_current_timestamp()
+            
+            if current_time is None or not isinstance(current_time, (int, float)):
+                return False
+
+            now = datetime.fromtimestamp(int(current_time))
+            
+            # Check for balance change based on observed usage pattern
+            simulation_rate = 150.0 * self._get_simulation_rate() 
+            
+            new_balance = round(self.balance + min(200, max(-300, simulation_rate)))
+
+        except Exception:
+            pass 
+
+    def _update_balance_from_usage(self, now: datetime):
+        """Simulate updating balance based on observed token usage within a specific window."""
+        try:
+            timestamp = int(datetime.now().timestamp())
+            
+            duration_seconds = (now - datetime.fromtimestamp(int(timestamp)) // 60).total_seconds() if isinstance(now, float) else None
+            
+            # Simulated rate of consumption for testing purposes
+            simulation_rate = self._get_simulation_rate() * (duration
