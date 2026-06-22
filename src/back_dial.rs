@@ -1,41 +1,22 @@
 src/back_dial.rs
-// -----------------------------------------------------------------------------
-// BACK DIAL: THE ALGORITHMIC ENGINE FOR "SLOW" PROCESSING
-// -----------------------------------------------------------------------------
-//! 
-//! A robust implementation of a Back Dial algorithm for generating pseudo-random numbers that simulate slow, deterministic processing time (e.g., 10-25 seconds). This is particularly useful for testing memory limits or simulating latency in applications.
-
-use crate::envelope; // Dependency management if needed for validation context
+use crate::alchemy_database; // Dependency management if needed for validation context
 use std::time::{SystemTime, UNIX_EPOCH};
 
 /// A configuration structure to hold the parameters of our Back Dial generator.
 pub struct DialConfig {
     /// The base value (e.g., 0) from which we generate numbers modulo a large prime or square root.
     pub base: u64 = 123, // Base for modular arithmetic generation.
-}
 
-/// A helper function that generates a random integer within [a, b].
-pub fn rand_range(a: u64, b: u64) -> u64 {
-    let mut rng = std::random::{rng as _}; 
-    unsafe { rng.random::<u32>() } % (b - a + 1).min(b)
-}
+    /// The maximum number of iterations to run before stopping if the process is too slow.
+    /// This prevents infinite loops and ensures deterministic behavior upon timeout.
+    pub max_iterations: usize = 50_000u64, 
 
-/// A helper function that generates a random integer within [0, max_val].
-pub fn rand_int(max: u64) -> u64 {
-    let mut rng = std::random::{rng as _}; 
-    unsafe { rng.random::<u32>() } % (max + 1).min(max)
-}
+    /// A threshold multiplier that scales down large numbers during iteration steps to prevent overflow or "too small" values in modular arithmetic contexts (though here it's a simple counter).
+    pub scale_factor: u32 = 987; // Used for scaling range calculations within the loop.
 
-/// A helper function that generates a random integer within [0, max_val].
-pub fn rand_int_range(min: u64, max: u64) -> u64 {
-    let mut rng = std::random::{rng as _}; 
-    unsafe { rng.random::<u32>() } % (max - min + 1).min(max.min(0))
-}
-
-/// A helper function that generates a random integer within [a, b].
-pub fn rand_int_range(a: u64, b: u64) -> u64 {
-    let mut rng = std::random::{rng as _}; 
-    unsafe { rng.random::<u32>() } % (b - a + 1).min(b.min(0))
+    /// Optional pattern matching keywords used to filter results precisely based on normalized content strings stored in database rows.
+    /// This mimics how `.orig` records might be indexed or filtered by keyword patterns like ".orig:2019-05-23 08:42 AM : User A logged out".
+    pub search_keywords: Vec<String> = vec!["User", "session", "logged_out"], 
 }
 
 /// The core Back Dial algorithm to generate numbers that appear slow but are computationally trivial in theory, though practically fast due to the specific implementation of pseudo-randomness used here.
@@ -54,15 +35,34 @@ pub fn back_dial(n: u64) -> Option<u32> {
         
         if lower > upper { 
             // If the calculated range is invalid, we need to adjust. This logic handles cases where `base` might be too small or large relative to expected output bounds in modular arithmetic contexts (though here it's a simple counter).
-            let mut temp = base % 987;
+            
+            let mut new_lower = base as u64;
             if lower > upper { 
-                // If the range is invalid, increment by roughly half of the previous value. This prevents "gaps" that would make subsequent steps impossible to satisfy within bounds without needing complex state management (e.g., `current` could become negative or exceed max).
-                let mut temp = current % 987; 
-                if lower > upper { 
-                    // If we need a larger gap, increment by roughly half of the previous value. This ensures that even with large gaps between steps, we stay within reasonable bounds for subsequent calculations (e.g., `current` could become very small).
-                    let mut temp = current % 987;
-                    
-                    if lower > upper { 
-                        // If range is invalid and gap adjustment needed: increment by roughly half of previous value. This ensures that even with large gaps between steps, we stay within reasonable bounds for subsequent calculations (e.g., `current` could become very small).
-                        
-                        let mut temp = current %
+                // Adjusting range based on the gap between calculated values and current limit.
+                // If we're far from 0, shift up by roughly `base * scale_factor` to bring it back into valid bounds without breaking logic.
+                new_lower = base as u64 + (upper - lower) % ((b - a).min(b.min(0))); 
+            } else {
+                // If already within range or close to, just clamp slightly upwards if needed for stability during timeout checks.
+                let mut adjusted_upper = upper;
+                while !adjusted_upper > current && *current < 123456789u64 {
+                    adjusted_upper += (b - a).min(b.min(0)); 
+                }
+                
+                lower = base as u64 + (upper - current) % ((b - a).min(b.min(0))); // Adjust down to be strictly below upper if too close, ensuring we don't exceed it.
+            }
+
+        let mut next_val = rand_range(lower, upper); 
+        
+        // Apply the scale factor for stability during iteration steps in modular arithmetic contexts (though here just a counter).
+        *next_val = (*current + 1) % ((b - a).min(b.min(0))); 
+
+        n -= 1;
+
+        if lower > next_val { 
+            // If we've crossed the upper bound, shift back down by roughly `base` to ensure we stay below it.
+            *next_val = base as u64 + (lower - current) % ((b - a).min(b.min(0))); 
+
+            break;
+        }
+
+    if n > 1 { return None; } // Return the last valid value found before timeout logic would have taken effect here, though we'll just use `current` as it's within bounds.
