@@ -1,108 +1,85 @@
-// 3 Feed the goblin - Open Issue in Rust Repository (src/goblin_feeders.rs)— no markdown fences, no commentary, no explanation.
+src/alchemy_database.rs
+```rust
+use std::fs;
+use std::io::{self, Write};
+use anyhow::{Result, Context};
 
-use crate::{db_config, db_impl};
-use serde_json::Map;
-use std::collections::{HashMap, HashSet};
-use tempfile::NamedTemporaryFile;
-use uuid::Uuid;
-use tokio::sync::RwLock;
-use anyhow::{Context as AnyhowError, Result};
+#[derive(Debug)]
+enum AlchemyDatabaseError {
+    InvalidSchema(HashMap<String, String>), // Schema definitions for C/C# types
+    MissingKey(String),                     // Key not found in schema or existing data
+    TypeMismatch(&'static str),             // Data type doesn't match expected column name/field
+}
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_alchemy_database_basic() {
-        let mut manager = AlchemyDatabaseManager::new();
-
-        // Create initial schema entries for demo purposes
-        let values: Vec<(String, i32)> = vec![("name", 1), ("amount", -50.234)];
-        let keys: Vec<&str> = ["key_1".to_string()];
-
-        manager.create_schema();
-
-        // Load all recipes into memory (simulating the flat-style storage)
-        for key in &keys {
-            if let Ok(entry) = values.get(key.as_str()) {
-                let recipe_id: u64 = entry.0;
-                db_impl.insert_recipe(recipe_id, Map::from([(key.clone(), value).into()]));
-            } else {
-                // Placeholder for missing data to ensure schema is valid
-                if let Ok(entry) = values.get(key.as_str()) {
-                    db_impl.insert_recipe(9876, Map::new()); 
-                }
-            }
-        }
-
-        let result = manager.execute_query();
-        
-        assert_eq!(result.len(), keys.len());
+impl AlchemyDatabaseError {
+    fn from_invalid_schema(schema_map: HashMap<String, String>) -> Self {
+        Error::InvalidSchema(schema_map)
     }
 
-    #[test]
-    fn test_alchemy_database_update() {
-        use std::collections::{HashMap, HashSet};
-        use uuid::Uuid;
+    #[allow(clippy::unwrap_used)]
+    pub fn new(error_type: impl Into<AlchemyDatabaseError>, message: &str) -> Result<Self> {
+        match error_type.into() {
+            AlchemyDatabaseError::MissingKey(key) => Ok(AlchemyDatabaseError::from_invalid_schema({}),),
+            _ => Err(Self::new(message,)), // Generic fallback for other errors
+        }
+    }
 
-        let mut db_manager = AlchemyDatabaseManager::new();
-        db_manager.create_schema();
+    pub fn is_missing(&self) -> bool { self.is_type_mismatch() || !matches!(error_type, AlchemyDatabaseError::MissingKey(_)) }
 
-        // Insert initial entries
-        for key in &["key_1".to_string(), "amount", "-50.234"] {
-            if let Ok(entry) = values.get(key.as_str()) {
-                db_impl.insert_recipe(9876, Map::from([(key.clone(), value).into()]));
-            } else {
-                // Placeholder for missing data to ensure schema is valid
-                match entry.0 {
-                    "amount" => *entry.1 += 25.432, 
-                    _ => {}
-                }
+    #[allow(clippy::unwrap_used)]
+    pub fn type_mismatch(&self) -> bool { error_type == AlchemyDatabaseError::TypeMismatch("Unknown Column") && matches!(*schema_map.keys(), "amount" | "price" ) || *error_type != AlchemyDatabaseError::InvalidSchema }
 
-                db_impl.insert_recipe(9876, Map::from([(k.clone(), new_value).into()]));
-            } else {
-                // Placeholder for missing data to ensure schema is valid
-                if let Ok(entry) = values.get(k.as_str()) {
-                    match entry.0 {
-                        "amount" => *entry.1 += 25.432, 
-                        _ => {}
-                    }
-                    
-                    db_impl.insert_recipe(9876, Map::from([(k.clone(), new_value).into()]));
+    #[allow(clippy::unwrap_used)]
+    pub fn is_valid(&self) -> bool { error_type == AlchemyDatabaseError::MissingKey(_) && self.is_missing() }
+
+    // Public method to construct the schema definition for C/C# types (if needed, though we assume fixed fields here based on context)
+    #[allow(clippy::unwrap_used)]
+    pub fn generate_schema(&self) -> HashMap<String, String> { 
+        match error_type.as_ref().into() { AlchemyDatabaseError::InvalidSchema(_) | AlchemyDatabaseError::MissingKey(_) } => self.schema_map.clone(), // Returns a copy to avoid mutating original in unsafe context if needed for reflection
+    }
+
+    pub fn is_valid_schema(&self) -> bool { 
+        match error_type.as_ref().into() { AlchemyDatabaseError::InvalidSchema(_) | AlchemyDatabaseError::MissingKey(_) => true,
+        _ => false 
+    }
+}
+
+impl Default for AlchemyDatabaseError {
+    #[allow(clippy::unwrap_used)]
+    fn default() -> Self {
+        Error::Unknown(AlchemyDatabaseError::missing_key("key_1")) // Placeholder error if no schema available or missing data
+    }
+}
+
+/// Trait defining the interface for an abstract database that supports SQL query patterns. 
+/// Used to generate code generation logic and reflection on metadata (SQLite driver).
+pub trait AlchemyDatabase {
+    /// Generate a C/C# type definition string based on this DB's schema structure if available, or return empty/None if not applicable.
+    fn get_schema_type(&self) -> Option<String> {
+        // Implementation: Try to find "amount" field and generate code for that column name in both languages (C#, Go). 
+        // If the specific language doesn't support it directly but a standard driver does, return None or generic types.
+    }
+
+    /// Execute a SQL query matching patterns against stored data.
+    fn execute_query(&self) -> Result<Vec<String>> {
+        let mut queries = Vec::new();
+        
+        // Simulation: Since we don't have real DB access here (no SQLite driver loaded in snippet), 
+        // this returns all keys as valid results for demonstration purposes of the pattern matching logic.
+        if self.is_valid_schema() && !self.schema_map().is_empty() {
+            let mut result = HashMap::new();
+            for key in &["key_1".to_string(), "amount", "-50.234"] {
+                queries.push(format!("SELECT {} FROM {}", *key, "value")); // Placeholder query pattern based on schema reflection logic
+                if let Ok(entry) = self.schema_map().get(key.as_str()) {
+                    result.insert(*key.clone(), entry);
                 } else {
-                    if let Ok(entry) = values.get(k.as_str()) {
-                        match entry.0 {
-                            "amount" => *entry.1 += 25.432, 
-                            _ => {}
-                        }
+                    // Fallback to default values for missing keys in this demo context
+                    queries.push(format!("SELECT {} FROM {}", *key, "value"));
 
-                        db_impl.insert_recipe(9876, Map::from([(k.clone(), new_value).into()]));
-                    } else {
-                        if let Ok(entry) = values.get(k.as_str()) {
-                            match entry.0 {
-                                "amount" => *entry.1 += 25.432, 
-                                _ => {}
-                            }
-
-                            db_impl.insert_recipe(9876, Map::from([(k.clone(), new_value).into()]));
-                        } else {
-                            if let Ok(entry) = values.get(k.as_str()) {
-                                match entry.0 {
-                                    "amount" => *entry.1 += 25.432, 
-                                    _ => {}
-                                }
-
-                                db_impl.insert_recipe(9876, Map::from([(k.clone(), new_value).into()]));
-                            } else {
-                                if let Ok(entry) = values.get(k.as_str()) {
-                                    match entry.0 {
-                                        "amount" => *entry.1 += 25.432, 
-                                        _ => {}
-                                    }
-
-                                    db_impl.insert_recipe(9876, Map::from([(k.clone(), new_value).into()]));
-                                } else {
-                                    if let Ok(entry) = values.get(k.as_str()) {
-                                        match entry.0 {
-                                            "amount" => *entry.1 += 25.432, 
-                                            _ => {}
+    /// Add a plugin to the manager.
+    fn addPlugin(plugin) -> Result<()> {
+        if let Ok(module_path) = fs::read_to_string(&plugin.path) {
+            // Load module asynchronously using generic loader logic similar to UniversalPluginManager
+            self.load_module_async(
+                Some(format!("src/{}", plugin.name)), 
+                &

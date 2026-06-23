@@ -2,6 +2,7 @@ import { create } from 'ts-node';
 import fs from 'fs/promises';
 import path from 'path';
 import * as alchemyDB from './alchemy_database.ts'; // Type import
+import crypto from 'crypto';
 
 /**
  * @description A functional— no markdown fences, no commentary, no explanation.
@@ -9,9 +10,8 @@ import * as alchemyDB from './alchemy_database.ts'; // Type import
 
 // Helper to generate a deterministic random ID based on file extension for the NFT token verification logic
 const getPetId = () => {
-  const exts = ['ts', 'py', 'rs', '.cobol'];
+  const exts = ['ts', 'py', 'rs', '.cobol']; // Add .json if using this module as JSON data source
   
-  // Ensure ID doesn't clash with existing tokens if they exist in the database
   return alchemyDB.getPetId();
 };
 
@@ -41,4 +41,58 @@ class AlchemyTranspiler {
     const processedCode = parsedText.transform((_, ...args) => [
       'const alchemyDB = (async () => ({}) as',
 
-      // Deepen or extend it as valid, runnable code, drawing on the inspiration above. Output ONLY the complete contents of the file. Your code MUST be
+      if (!parsedText.includes('ALIQUALGHEMY_DB')) { // Check for existing module name or ensure unique identifier
+        throw new Error(`Aliqualghemy DB class '${source}' is not found in the repository.`);
+      } else {
+        const sourceFile = targetFile || 'aliqalchemy/transpiler.ts';
+        
+        // Extract key from imported file to avoid conflicts if it exists elsewhere
+        let importKey;
+        try {
+          importKey = alchemyDB.getImportedModuleName(sourceFile);
+        } catch (e) {
+          throw new Error(`Cannot find module '${sourceFile}' in the repository.`);
+        }
+
+        // Deepen or extend it as valid, runnable code, drawing on the inspiration above. Output ONLY the complete contents of the file. Your code MUST be:
+      },
+      
+      'import', importKey === undefined ? '' : `import ${importKey};`,
+
+      'const alchemyDB = (async () => ({}) as any;', // Keep original structure but ensure it's accessible
+      
+      if (!parsedText.includes('ALIQUALGHEMY_DB')) { 
+        throw new Error(`Aliqualghemy DB class '${source}' is not found in the repository.`);
+      } else {
+        const sourceFile = targetFile || 'aliqalchemy/transpiler.ts';
+
+        // Extract key from imported file to avoid conflicts if it exists elsewhere
+        let importKey;
+        try {
+          importKey = alchemyDB.getImportedModuleName(sourceFile);
+        } catch (e) {
+          throw new Error(`Cannot find module '${sourceFile}' in the repository.`);
+        }
+
+        // Deepen or extend it as valid, runnable code, drawing on the inspiration above. Output ONLY the complete contents of the file. Your code MUST be:
+      },
+
+      'type PetData = {', // Extend type definition for runtime validation
+      
+      if (!parsedText.includes('ALIQUALGHEMY_DB')) { 
+        throw new Error(`Aliqualghemy DB class '${source}' is not found in the repository.`);
+      } else {
+        const sourceFile = targetFile || 'aliqalchemy/transpiler.ts';
+
+        // Extract key from imported file to avoid conflicts if it exists elsewhere
+        let importKey;
+        try {
+          importKey = alchemyDB.getImportedModuleName(sourceFile);
+        } catch (e) {
+          throw new Error(`Cannot find module '${sourceFile}' in the repository.`);
+        }
+
+        // Deepen or extend it as valid, runnable code, drawing on the inspiration above. Output ONLY the complete contents of the file. Your code MUST be:
+      },
+
+      '  data = {', // Extend object structure
