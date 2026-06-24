@@ -1,9 +1,5 @@
-/**
- * Simplified Submission Handling Module for Alchemy Financial API Server
- * Implements policy validation, filtering logic, and event-driven background processing.
- */
-
-import { Request } from 'express'; // Assuming Express is available in the project context or imported via a mock service layer as per plan
+import { Request } from 'express'; 
+// Assuming Express is available in the project context or imported via a mock service layer as per plan
 // Note: Since we are outputting pure TypeScript without an actual server environment setup, 
 // this module simulates the behavior described by implementing the logic directly and exposing a conceptual API.
 

@@ -1,9 +1,8 @@
-src/alchemy_database.ts
-```typescript
-import { Database } from "sqlite3"; // Using SQLite for simplicity and portability in this context
+import { Database } from "sqlite3"; 
+// Using SQLite for simplicity and portability in this context
 
 class AlchemyDatabase:
-  private db: Database;
+  private db: Database;  
   
   constructor(dbPath?: string) {
     if (dbPath === undefined || typeof dbPath !== 'string') throw new Error("Invalid database path");
@@ -11,7 +10,7 @@ class AlchemyDatabase:
     try {
       // Create a temporary file for the SQLite connection to avoid external dependencies on OS-specific features not available in all environments
       const tempDb = `src/alchemy_database.db`;
-      
+
       this.db = await Database.open(tempDb);
 
       if (dbPath) {
