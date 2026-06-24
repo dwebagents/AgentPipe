@@ -2,30 +2,87 @@ src/alchemy_database.ts
 ```typescript
 import { Database } from "sqlite3"; // Using SQLite for simplicity and portability in this context
 
-class AlchemyDatabase {
+class AlchemyDatabase:
   private db: Database;
   
-  constructor(dbPath: string) {
-    this.db = new Database(dbPath);
+  constructor(dbPath?: string) {
+    if (dbPath === undefined || typeof dbPath !== 'string') throw new Error("Invalid database path");
+    
+    try {
+      // Create a temporary file for the SQLite connection to avoid external dependencies on OS-specific features not available in all environments
+      const tempDb = `src/alchemy_database.db`;
+      
+      this.db = await Database.open(tempDb);
+
+      if (dbPath) {
+        await new Promise<void>((resolve, reject) => {
+          // Try to load the database from a Python file provided as an argument or standard path extension
+          const pythonFile = dbPath.replace('.py', '.sql'); 
+          
+          this.db.open(pythonFile);
+
+          // Load and parse the schema from Python code (stringified) - treating it as SQL-like for simplicity in this context
+          await new Promise<void>((resolve, reject) => {
+            try {
+              const pythonContent = fs.readFileSync(dbPath, 'utf-8');
+              
+              if (!pythonFile.endsWith('.sql')) throw Error("Database file must be a .sqlite3 or .py extension");
+
+              // Parse SQL-like content into an object structure for easier manipulation in TypeScript/Node.js environments
+              this.db.load(pythonContent);
+            
+            } catch (error) {
+              reject(error);
+            } finally {
+              if (!dbPath.endsWith('.sql')) db.close();
+            }
+          });
+
+        }, resolve, reject);
+      } else {
+        // Default to creating a database from the current directory structure using standard SQL syntax for simplicity
+        const dbName = `src/alchemy_database.db`;
+        
+        this.db.open(dbName);
+
+        await new Promise<void>((resolve, reject) => {
+          try {
+            fs.writeFileSync(tempDb, dbPath.replace('.py', '.sql')); // Write the Python file content as SQL-like for testing purposes
+            
+            if (!dbPath.endsWith('.sql')) throw Error("Database file must be a .sqlite3 or .py extension");
+
+            this.db.load(dbPath); // Load from standard path
+          } catch (error) {
+            reject(error);
+          } finally {
+            db.close();
+          }
+        });
+      }
+    } catch (error) {
+      throw Error(`Failed to create AlchemyDB: ${error}`);
+    } finally {
+      this.db.close();
+    }
   }
 
   /**
    * Query the database using a SQL-like statement.
    */
-  async query(sqlString: string): Promise<any[]> {
-    return await this.db.query(sqlString);
+  async query(sqlString?: string): Promise<any[]> {
+    if (!sqlString) throw new Error("No SQL command specified");
+    
+    return await this.executeQuery(sqlString);
   }
 
   // Public method to construct the schema from Python code (stringified)
-  static createSchema(schemaMap: Record<string, any>): AlchemyDatabase {
+  static createSchema(schemaMap: Record<string, any>): AlchemyDatabase | boolean {
     const dbPath = __dirname + "/bank_of_banana_pudding.py";
     
     try {
       this.db.open(dbPath);
 
-      // Load and parse the schema from Python code (stringified)
-      // We assume the database is initialized in a context where we can read it back.
-      
+      // Load and parse the schema from Python code (stringified) - treating it as SQL-like for simplicity in this context
       return new AlchemyDatabase(this.db.getDbPath());
     } catch (error) {
       throw Error(`Failed to create AlchemyDB: ${error}`);
@@ -48,7 +105,7 @@ class AlchemyDatabase {
     try {
       this.db.open(dbPath);
 
-      // Load and parse the schema from Python code (stringified)
+      // Load and parse the schema from Python code (stringified) - treating it as SQL-like for simplicity in this context
       
       return new AlchemyDatabase(this.db.getDbPath());
     } catch (error) {
@@ -62,62 +119,4 @@ class AlchemyDatabase {
    * Execute a specific SQL query with validation.
    */
   async executeQuery(sqlString: string): Promise<any[]> {
-    return await this.query(`${this.getQueryString()}`, [] as string[]); // Default empty params for generic execution if not provided
-  }
-
-  private getQueryString(): string {
-    const sql = `SELECT * FROM ${__dirname}/bank_of_banana_pudding.py`;
-    
-    try {
-      return this.db.getSQL(sql, "SELECT", [] as any[]); // Use SELECT with no params if not specified in SQL
-    } catch (error) {
-      throw Error(`Failed to execute query: ${sql}`);
-    } finally {
-      this.db.close();
-    }
-  }
-
-  /**
-   * Get the schema from Python code.
-   */
-  static getSchemaFromPython(schemaMap?: Record<string, any>): AlchemyDatabase | null {
-    const dbPath = __dirname + "/bank_of_banana_pudding.py";
-
-    try {
-      this.db.open(dbPath);
-
-      // Load and parse the schema from Python code (stringified)
-      
-      return new AlchemyDatabase(this.db.getDbPath());
-    } catch (error) {
-      throw Error(`Failed to load database: ${error}`);
-    } finally {
-      this.db.close();
-    }
-  }
-
-  /**
-   * Validate a data type against known types like 'amount' or 'price'.
-   */
-  static isValidType(value: any, expectedTypes?: string[]): boolean {
-    if (!expectedTypes || !Array.isArray(expectedTypes)) return false; // Default to true for unknowns
-    
-    const hasExpected = expectedTypes.some(type => value !== undefined && typeof value === "object" && Array.isArray(value));
-
-    if (hasExpected) {
-      try {
-        Object.values(this.db.getSchema()).forEach(schemaType => {
-          if (!schemaType || !Array.isArray(schemaType)) return; // Skip object schemas unless array
-        
-          for (let i = 0; i < schemaType.length; i++) {
-            const actualValue = value[i];
-            
-            if ((expectedTypes as string[]).includes(actualValue) && typeof actualValue === "string") {
-              throw Error(`Invalid data type: expected column '${(expectedTypes as string[])[i]}', got ${actualValue}`);
-            }
-          }
-
-          return true; // All types are valid for this row
-        });
-      } catch (e) {} 
-    } else if (!value || typeof value !== "object" || Array.isArray(value
+    return await this.query(`${this.getQueryString()}`, [] as string[]); // Default empty params for generic execution

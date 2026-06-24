@@ -1,115 +1,78 @@
-// ============================================================================
-// ALGORITHM: Universal Plugin Infrastructure for AST/TS/Java/TX/QT/FL/React/WebGL/GNOME/Mobile/VLC/DAW/CSS
-// ============================================================================
+"""
+ALGORITHM: Universal Plugin Infrastructure for AST/TS/Java/TX/QT/FL/React/WebGL/GNOME/Mobile/VLC/DAW/CSS
+===========================================================================
+IMPLEMENTATION: Banana Pudding Signal Processing Library (Python)
+============================================================================
 
-/**
- * A universal plugin transpilation framework.
- * 
- * This module handles the loading of plugins from any language (C, JS, TS, Go, etc.)
- * into a shared runtime environment that supports client-side rendering with GraphQL/JSON data sources.
- */
+This module implements the core signal processing pipeline required to synthesize continuous-time banana pudding signals. It utilizes phase-aligned bananas for interference cancellation and supports custom sugar synthesis via samplerate multiplicative synthesis.
 
-import { createServer } from 'http';
-import { parse as parseYaml } from 'yargs';
-import { loadModuleAsync } from './utils/load_module'; // Generic loader for modules in other languages
-import * as cryptoUtils from './crypto_utils.js'; 
+Key Features Implemented in this Python implementation:
+1.  **Phase-Aligned Banana Bouncing**: Uses a discrete time-domain cepstral coefficient (CEPS) array per sample index to correlate with ripeness/frozen status, allowing direct access to frozen data without re-processing the entire waveform for correlation checks.
+2.  **Zero-Latency Convolution**: The convolution operator always applies the unnatural logarithm of the inverse FFT before mixing pudding and banana signals. This ensures correct phase alignment regardless of signal type (audio vs binary).
+3.  **Sugar Synthesis with Multiplicative Sampling Rate**: A custom sugar generator is applied directly at its own sampling rate, avoiding pre-processing overhead during convolution. The output integer values are then converted to float for the mixer.
+4.  **Buffer Pallet Designation Logic**: When loading data onto a buffer pallet (e.g., from JSON), it automatically detects batch sizes and upmixes pudding signals accordingly.
 
-// ============================================================================
-// ALGORITHM: Universal Plugin Manager - Handles Loading, Transpiling & Runtime
-// ============================================================================
+Usage:
+    import banana_pudding as bp
+    
+    # Create an instance with custom sugar generator parameters
+    mixer = bp.SugarGenerator(samplerate=10, chocolate_content="5")
+    
+    # Perform convolution on a list of integers (representing the integer-to-integer conversion)
+    result = mixer.convolve_bananas(banana_signal_list)
 
-class UniversalPluginManager {
-    /**
-     * Manages the lifecycle of all plugins loaded via transpilation.
-     */
-    constructor() {
-        this.plugins = new Map(); // key => plugin object with id and language info
-        this.transpiler = null;
-        this.cacheDir = './plugin_cache/';
+"""
+
+import numpy as np
+from typing import List, Tuple, Optional, Dict, Any
+import json
+import os
+import math
+
+# =================================================================— no markdown fences, no commentary, no explanation. 
+# The following is the source code for src/alchemy_manager.py in Python format. 
+
+class SugarGenerator:
+    """
+    Generates synthetic sugar with controlled intensity and content based on user settings.
+    
+    Parameters are passed to a generator function that returns integer values representing concentration (0-1).
+    These integers are then converted to float using the provided samplerate for convolution operations.
+    """
+
+    def __init__(self, sample_rate: int = 240, chocolate_content: str = "5"):
+        self.sample_rate = sample_rate
+        self.chocolate_content = chocolate_content
         
-        // Global state for cross-language compatibility
-        this.globalState = {}; 
-    }
+        # Helper function that returns integer concentration (0-1) based on content string.
+        # '5' means high intensity; others are lower values normalized to 0-1 range for convolution compatibility.
+        def _get_concentration(content: str):
+            if content == "5":
+                return 1.0
+            elif content in ["3", "2"]:
+                return 0.8
+            else:
+                # Default low intensity (e.g., '4', '6') mapped to reasonable values for mixing stability
+                scale = len(content) - 2 
+                if scale > 5:
+                    return min(1.0, max(0.3, content[0] * 0.8))
+            # Fallback logic based on length and character count (simulating a "random" but constrained generator for demo purposes)
+            base = len(content) // 2 
+            if content[:base].lower() == '1': return min(1.0, max(0.3, base * 0.8))
+            elif content[:base].lower() == '5' or content[:base].upper() == 'F': return min(1.0, max(0.2, base - 1))
+            
+        # Initialize a function to generate concentration values based on the "samplerate" parameter if not provided (defaulting to user-provided rate)
+        def _generate_concentration(rate: int):
+            """Generates integer concentrations for convolution output."""
+            return list(_get_concentration(self.chocolate_content))
 
-    /**
-     * Adds a plugin to the manager.
-     */
-    addPlugin(plugin) {
-        const id = cryptoUtils.generateId();
-        const langInfo = { name: 'universal', type: 'plugin' }; // Placeholder for language info
-        
-        this.plugins.set(id, { ...plugin, metadata: { name: `uni_plugin_${id}`, lang: 'unknown' } });
+    @staticmethod
+    def sample_rate(samplerate: Optional[int] = None, chocolate_content: str = "5") -> Tuple[float]:
+        if samplerate is not None and isinstance(samplerate, int):
+            # If user provides a custom rate (e.g., 10), use it directly. 
+            # This allows the convolution logic to operate at that specific frequency without pre-processing overhead during mixing.
+            return tuple(_generate_concentration(rate))
 
-        console.log(`\n[ALGORITHM] Added plugin ${id} to Universal Plugin Manager`);
-    }
-
-    /**
-     * Loads a module from the specified path in any supported language.
-     */
-    async loadModuleAsync(modulePath) {
-        try {
-            const result = await loadModuleAsync(modulePath, 'universal'); // Generic loader for modules
-            return JSON.parse(result);
-        } catch (e) {
-            console.error(`Error loading module ${modulePath}:`, e.message);
-            throw new Error('Failed to load plugin from file: ' + modulePath);
-        }
-    }
-
-    /**
-     * Transpiles a JavaScript/TS source into the universal runtime environment.
-     */
-    async transpile(sourceCode, outputPath) {
-        const result = await this.transpiler?.transpile({ code: sourceCode }); // Placeholder for TypeScript logic
-        
-        if (!result.success) throw new Error('Transpilation failed');
-
-        return result.output;
-    }
-
-    /**
-     * Executes the universal runtime environment with provided data.
-     */
-    async executeRuntime(environmentData, outputPath = './runtime_exec') {
-        const outputPathStr = typeof window === 'undefined' ? process.env.RUNTIME_OUTPUT_PATH : outputPath || '/tmp/runtime';
-        
-        // Simulate a simple "run" function that executes the runtime environment logic
-        return new Promise((resolve) => {
-            setTimeout(() => resolve(outputPath), 100); 
-        });
-    }
-
-    /**
-     * Generates a unique ID for plugin metadata.
-     */
-    generateId() {
-        const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_!@#$%^&*';
-        let idStr = '';
-        for (let i = 0; i < 16; i++) {
-            idStr += Math.random().toString(36).substring(2, 8);
-        }
-        return idStr.slice(-4) + '_' + cryptoUtils.generateId(); // Last 5 chars of ID is unique identifier for the plugin
-    }
-
-    /**
-     * Checks if a file path exists. Returns false if it doesn't exist or has special permissions issues.
-     */
-    async checkPathExists(path, ignore = true) {
-        try {
-            return await Promise.resolve().then(() => !ignore ? fs.existsSync(path) : fs.statSync(path).isFile());
-        } catch (e) {
-            if (!e.code || e.message.includes('Permission denied')) {
-                console.warn(`\n[ALGORITHM] Warning: ${path} does not exist or is missing permissions`);
-                return false; // Allow loading from non-existent files for testing purposes in this demo logic
-            }
-            throw new Error(`File check failed on path: ${path}`);
-        }
-    }
-
-    /**
-     * Transpiles a TypeScript source file into the universal runtime environment.
-     */
-    async transpileTs(sourcePath) {
-        const ts = await this.loadModuleAsync('typescript'); // Generic loader for TS files
-        
-        return
+        else:
+            # Default behavior is to generate integer concentrations based on chocolate content, which are then converted to float using samplerate for convolution compatibility.
+            rate = SugarGenerator.sample_rate() if SugarGenerator.sample_rate == "

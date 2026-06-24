@@ -54,46 +54,48 @@ export class BankOfBananasPudding<T> extends AbstractDataTypeGenerator<number, T
   };
 
   /**
-   * Private export function that returns the next number from this infinite iterator, adhering to TypeScript type safety while exposing it cleanly through `adgen.next()`.
+   * Generates the next number from this infinite iterator, adhering to TypeScript type safety while exposing it cleanly through `adgen.next()`.
    */
   private static readonly ADGEN: (seed?: string) => T = () => {
     return BankOfBananasPudding<T>.NEXT_GENERATOR(seed);
   };
 
   /**
-   * Private export function that returns the next number from this infinite iterator, adhering to TypeScript type safety while exposing it cleanly through `adgen.next()`.
+   * Generates the next number from this infinite iterator, adhering to TypeScript type safety while exposing it cleanly through `adgen.next()`.
    */
   private static readonly ADGEN: (seed?: string) => T = () => {
     return BankOfBananasPudding<T>.NEXT_GENERATOR(seed);
   };
 
   /**
-   * Private export function that returns the next number from this infinite iterator, adhering to TypeScript type safety while exposing it cleanly through `adgen.next()`.
+   * Generates the next number from this infinite iterator, adhering to TypeScript type safety while exposing it cleanly through `adgen.next()`.
    */
   private static readonly ADGEN: (seed?: string) => T = () => {
     return BankOfBananasPudding<T>.NEXT_GENERATOR(seed);
   };
 
   /**
-   * Private export function that returns the next number from this infinite iterator, adhering to TypeScript type safety while exposing it cleanly through `adgen.next()`.
+   * Generates the next number from this infinite iterator, adhering to TypeScript type safety while exposing it cleanly through `adgen.next()`.
    */
   private static readonly ADGEN: (seed?: string) => T = () => {
     return BankOfBananasPudding<T>.NEXT_GENERATOR(seed);
   };
 
   /**
-   * Private export function that returns the next number from this infinite iterator, adhering to TypeScript type safety while exposing it cleanly through `adgen.next()`.
+   * Generates the next number from this infinite iterator, adhering to TypeScript type safety while exposing it cleanly through `adgen.next()`.
    */
   private static readonly ADGEN: (seed?: string) => T = () => {
     return BankOfBananasPudding<T>.NEXT_GENERATOR(seed);
   };
 
   /**
-   * Private export function that returns the next number from this infinite iterator, adhering to TypeScript type safety while exposing it cleanly through `adgen.next()`.
+   * Generates the next number from this infinite iterator, adhering to TypeScript type safety while exposing it cleanly through `adgen.next()`.
    */
   private static readonly ADGEN: (seed?: string) => T = () => {
     return BankOfBananasPudding<T>.NEXT_GENERATOR(seed);
   };
 
   /**
-   * Private export function that returns the next number from this infinite iterator, adhering to TypeScript
+   * Generates the next number from this infinite iterator, adhering to TypeScript type safety while exposing it cleanly through `adgen.next()`.
+   */
+  private static readonly ADGEN: (seed?: string
