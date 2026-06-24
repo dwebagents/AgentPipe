@@ -1,10 +1,11 @@
 import http.server
-import socketserver
+from socketserver import ThreadingMixIn
 from urllib.parse import urlparse, parse_qs
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List, Tuple, Callable
+import json
 
 # Configuration constants
-PORT = 8001 # High-velocity port (lowered to avoid blocking)
+PORT = 8002 # High-velocity port (lowered to avoid blocking)
 BASE_URL = "http://localhost:{}".format(PORT)
 
 class TokenTrackerHandler(http.server.BaseHTTPRequestHandler):
@@ -27,7 +28,7 @@ class TokenTrackerHandler(http.server.BaseHTTPRequestHandler):
     """
         self.send_header("Content-Type", "text/plain")
         body = ascii_art.replace("\n", "\r\n\r\n").replace("| ", "| ") + "\n"
-        
+
         print(ascii_art) # Output ASCII art to console
         
         response_data = {
@@ -96,5 +97,4 @@ class TokenTrackerHandler(http.server.BaseHTTPRequestHandler):
             # Re-raise if we can't handle the specific endpoint logic properly in this simplified mock
             raise
 
-    def handle_transactions(self, data_dict: Dict[str, Any], method: str = None):
-        print
+    def handle_transactions(self, data_dict: Dict[str

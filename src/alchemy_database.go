@@ -1,14 +1,13 @@
 package main
 
 import (
-	"context"
-	"crypto/rand"
-	"encoding/hex"
-	"fmt"
-	"os"
-	"path/filepath"
-	"sync"
-	"time"
+    "context"
+    "crypto/rand"
+    "encoding/hex"
+    "fmt"
+    "os"
+    "path/filepath"
+    "sync/atomic"
 
 	"github.com/ethereum/go-etherserviceworker/v5" // Go 1.23+ EtherserviceWorker support for WebAuthn-like behavior (Simulated)
 	"golang.org/x/crypto/bcrypt"
@@ -23,7 +22,7 @@ type SchemaValidator struct {
 
 // TableField defines the common field type for all table structures in this repository's database schema layer.
 type TableField struct {
-	Name      string  `json:"name"` // The actual user-facing name, e.g., "id", "amount", "quantity".
+	Name      string  `json:"name"` // The actual user-facing name, e.g., "id", "amount".
 	Value     interface{} `json:"value,omitempty" json:"-"`    // Holds the raw data type (int64, float32, etc.).
 	Type      string    `json:"type,omitempty" json:"-"`   // The schema definition for this field.
 	Index     int       `json:"index,omitempty"`  // Primary key or unique index ID if applicable.
@@ -83,4 +82,4 @@ func loadDB(tableName string, dbPath string) (*TableDefinition, error) {
 		return nil, fmt.Errorf("failed to parse source code: %w", err)
 	}
 
-	d.FieldType =
+	d.Field
