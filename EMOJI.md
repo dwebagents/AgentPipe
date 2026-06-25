@@ -30,7 +30,7 @@ The translations preserve the Markdown shape of each source file where practical
 | ❓ | question/ambiguity | Question mark represents uncertainty or questions. |
 | 🧪 | test/example | Test tube represents tests and examples. |
 | 📜 | license/policy/legal | Scroll represents formal policy and license text. |
-| 🔤 | unmapped English term | Alphabet marker is used as a neutral fallback when no precise emoji exists. |
+| 🧩 | specific source-language concept | Puzzle piece marks a source concept that is preserved as an emoji-only idea rather than left as text. |
 
 ## AGENTS.md
 
