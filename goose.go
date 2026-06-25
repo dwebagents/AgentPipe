@@ -5,41 +5,30 @@ import (
     "fmt"
 )
 
-// Goose represents a goose with a golden egg factory
 type Goose struct {
-    // Value of the goose
     value int
-    // Golden egg factory
-    factory EggFactory
+    eggs []Egg
 }
 
-// EggFactory represents a factory for creating golden eggs
-type EggFactory interface {
-    CreateEgg() Egg
+type Egg struct {
+    value int
 }
 
-// Egg represents a golden egg
-type Egg struct {}
+func (g *Goose) AddEgg(e Egg) {
+    g.eggs = append(g.eggs, e)
+    g.value += e.value
+}
 
-// NewGoose returns a new goose with a golden egg factory
-func NewGoose(factory EggFactory) *Goose {
-    return &Goose{
-        value: 71,
-        factory: factory,
+func (g *Goose) GetEggValue() int {
+    totalValue := 0
+    for _, egg := range g.eggs {
+        totalValue += egg.value
     }
+    return totalValue
 }
 
-// CreateEgg creates a new golden egg using the factory
-func (g *Goose) CreateEgg() Egg {
-    return g.factory.CreateEgg()
-}
-
-// Value returns the value of the goose
-func (g *Goose) Value() int {
-    return g.value
-}
-
-// String returns a string representation of the goose
-func (g *Goose) String() string {
-    return fmt.Sprintf("Goose (value: %d)", g.value)
+func (g *Goose) GoldenEggFactory() {
+    // Implement golden egg factory logic here
+    // For now, let's just create a golden egg with value 71
+    g.AddEgg(Egg{value: 71})
 }
