@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="AgentPipe project website with a deterministic client-side 4D banana renderer.">
+  <title>AgentPipe</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --banana: #ffd52e;
+      --banana-deep: #efaa19;
+      --banana-shadow: #7a4b00;
+      --ink: #201407;
+      --leaf: #1f7a4d;
+      --sky: #2d6cdf;
+      --cream: #fff8d7;
+      --panel: rgba(255, 255, 255, 0.72);
+      --line: rgba(75, 48, 0, 0.22);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 16% 10%, rgba(255, 235, 111, 0.7), transparent 26rem),
+        linear-gradient(135deg, #fff6b8 0%, #ffd95a 44%, #f7b733 100%);
+      min-height: 100vh;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .shell {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(255, 232, 96, 0.82);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 68px;
+      gap: 24px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      background: var(--cream);
+      box-shadow: 3px 3px 0 var(--ink);
+      font-size: 1.35rem;
+      line-height: 1;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 500px);
+      gap: 48px;
+      align-items: center;
+      min-height: calc(100vh - 68px);
+      padding: 72px 0 56px;
+    }
+
+    .hero-copy {
+      max-width: 690px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 18px;
+      color: #3a2400;
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 32px;
+      height: 3px;
+      background: var(--leaf);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(3.4rem, 10vw, 7.6rem);
+      line-height: 0.88;
+      letter-spacing: 0;
+    }
+
+    .tagline {
+      max-width: 620px;
+      margin: 28px 0 0;
+      font-size: clamp(1.15rem, 2.6vw, 1.55rem);
+      line-height: 1.45;
+      font-weight: 650;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin: 34px 0 0;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 20px;
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      color: var(--ink);
+      background: var(--cream);
+      box-shadow: 4px 4px 0 var(--ink);
+      font-weight: 900;
+      text-decoration: none;
+      transition: transform 140ms ease, box-shadow 140ms ease;
+    }
+
+    .button:hover,
+    .button:focus-visible {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    .button.primary {
+      background: var(--leaf);
+      color: white;
+    }
+
+    .visual {
+      align-self: stretch;
+      display: grid;
+      align-content: center;
+      gap: 16px;
+    }
+
+    .banana-stage {
+      position: relative;
+      min-height: 430px;
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255, 248, 215, 0.7), rgba(255, 210, 46, 0.35)),
+        repeating-linear-gradient(90deg, rgba(32, 20, 7, 0.08) 0 1px, transparent 1px 28px),
+        repeating-linear-gradient(0deg, rgba(32, 20, 7, 0.08) 0 1px, transparent 1px 28px);
+      box-shadow: 9px 9px 0 rgba(32, 20, 7, 0.9);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: 430px;
+    }
+
+    .stage-label {
+      position: absolute;
+      left: 18px;
+      bottom: 16px;
+      padding: 8px 10px;
+      border: 2px solid var(--ink);
+      border-radius: 6px;
+      background: var(--cream);
+      font-size: 0.78rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .stat {
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      padding: 14px;
+      background: var(--panel);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.4rem;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 6px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    main section {
+      padding: 72px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    h2 {
+      margin: 0 0 20px;
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .description {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(280px, 1.1fr);
+      gap: 42px;
+      align-items: start;
+    }
+
+    .lead {
+      margin: 0;
+      font-size: 1.18rem;
+      line-height: 1.7;
+      font-weight: 620;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .feature {
+      min-height: 156px;
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      padding: 18px;
+      background: rgba(255, 248, 215, 0.8);
+    }
+
+    .feature h3 {
+      margin: 0 0 10px;
+      font-size: 1.05rem;
+    }
+
+    .feature p {
+      margin: 0;
+      line-height: 1.55;
+    }
+
+    .install {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
+      gap: 32px;
+      align-items: center;
+    }
+
+    pre {
+      overflow-x: auto;
+      margin: 0;
+      padding: 20px;
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      background: #201407;
+      color: #fff8d7;
+      box-shadow: 7px 7px 0 rgba(32, 20, 7, 0.86);
+      font-size: 0.95rem;
+      line-height: 1.65;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    }
+
+    .download-panel {
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      padding: 24px;
+      background: rgba(255, 248, 215, 0.88);
+    }
+
+    .download-panel p {
+      margin: 0 0 18px;
+      line-height: 1.55;
+    }
+
+    footer {
+      padding: 36px 0 46px;
+      border-top: 1px solid var(--line);
+      font-weight: 750;
+    }
+
+    @media (max-width: 860px) {
+      nav {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 14px 0;
+        gap: 12px;
+      }
+
+      .nav-links {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .hero,
+      .description,
+      .install {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: 0;
+        padding-top: 48px;
+      }
+
+      .visual {
+        align-self: auto;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .shell {
+        width: min(100% - 22px, 1120px);
+      }
+
+      .nav-links {
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: flex-start;
+      }
+
+      .banana-stage,
+      canvas {
+        min-height: 320px;
+      }
+
+      .stats,
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="shell" aria-label="Primary navigation">
+      <a class="brand" href="#top" aria-label="AgentPipe home">
+        <span class="brand-mark" aria-hidden="true">A</span>
+        <span>AgentPipe</span>
+      </a>
+      <div class="nav-links">
+        <a href="#project">Project</a>
+        <a href="#download">Download</a>
+        <a href="https://github.com/dwebagents/AgentPipe">GitHub</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero shell" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow">Client-side deterministic banana infrastructure</p>
+        <h1 id="hero-title">AgentPipe</h1>
+        <p class="tagline">
+          AgentPipe is an open source playground for high-velocity agent tooling,
+          financial interfaces, rendering experiments, recipe systems, and every
+          important piece of code required to move useful software through a pipe.
+        </p>
+        <div class="actions" aria-label="Primary actions">
+          <a class="button primary" href="https://github.com/dwebagents/AgentPipe/archive/refs/heads/main.zip">Download ZIP</a>
+          <a class="button" href="https://github.com/dwebagents/AgentPipe">View source</a>
+        </div>
+      </div>
+
+      <div class="visual" aria-label="Deterministically rendered 4D banana graphic">
+        <div class="banana-stage">
+          <canvas id="banana4d" width="900" height="720"></canvas>
+          <div class="stage-label">4D banana projection</div>
+        </div>
+        <div class="stats" aria-label="Renderer facts">
+          <div class="stat">
+            <strong>4D</strong>
+            <span>geometry</span>
+          </div>
+          <div class="stat">
+            <strong>0</strong>
+            <span>external deps</span>
+          </div>
+          <div class="stat">
+            <strong>1</strong>
+            <span>holy banana</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="project">
+      <div class="shell description">
+        <div>
+          <h2>High performance, high velocity.</h2>
+          <p class="lead">
+            This repository combines practical agent-facing utilities with a
+            deliberately broad set of language experiments. It contains Python,
+            TypeScript, Go, Rust, COBOL, JavaScript, and documentation modules
+            that explore storage, encryption, finance, recipes, token tracking,
+            visualization, and banana rendering.
+          </p>
+        </div>
+        <div class="feature-grid">
+          <article class="feature">
+            <h3>Agent-ready surface area</h3>
+            <p>
+              The codebase gives contributors many small, testable modules to
+              improve, from MCP server behavior to account stores and recipe
+              libraries.
+            </p>
+          </article>
+          <article class="feature">
+            <h3>Banana-first rendering</h3>
+            <p>
+              Banana graphics are treated as real project infrastructure, with
+              deterministic rendering paths and regression tests for the output.
+            </p>
+          </article>
+          <article class="feature">
+            <h3>Open source contribution flow</h3>
+            <p>
+              Contributors can clone the repository, run the tests, and submit
+              targeted patches against compact source files.
+            </p>
+          </article>
+          <article class="feature">
+            <h3>GitHub Pages friendly</h3>
+            <p>
+              This website is static HTML, CSS, and JavaScript, so it can be
+              served directly by GitHub Pages without build infrastructure.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="download">
+      <div class="shell install">
+        <div>
+          <h2>Download and run it.</h2>
+          <pre><code>git clone https://github.com/dwebagents/AgentPipe.git
+cd AgentPipe
+python -m venv venv
+. venv/bin/activate
+pip install -e .
+npm install</code></pre>
+        </div>
+        <div class="download-panel">
+          <p>
+            Grab the source as a ZIP archive or clone the repository to inspect,
+            test, and extend the project locally.
+          </p>
+          <a class="button primary" href="https://github.com/dwebagents/AgentPipe/archive/refs/heads/main.zip">Download project</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell">MIT licensed. Yellow themed. Deterministically banana rendered.</div>
+  </footer>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const canvas = document.getElementById("banana4d");
+      const ctx = canvas.getContext("2d");
+      const width = canvas.width;
+      const height = canvas.height;
+      const seed = 11235813;
+
+      function noise(index) {
+        let value = (seed + index * 374761393) >>> 0;
+        value = Math.imul(value ^ (value >>> 15), 2246822519) >>> 0;
+        value = Math.imul(value ^ (value >>> 13), 3266489917) >>> 0;
+        return ((value ^ (value >>> 16)) >>> 0) / 4294967295;
+      }
+
+      function rotate4(point, a, b) {
+        let [x, y, z, w] = point;
+        const c1 = Math.cos(a);
+        const s1 = Math.sin(a);
+        const c2 = Math.cos(b);
+        const s2 = Math.sin(b);
+
+        [x, w] = [x * c1 - w * s1, x * s1 + w * c1];
+        [y, z] = [y * c2 - z * s2, y * s2 + z * c2];
+        [z, w] = [z * c1 - w * s1, z * s1 + w * c1];
+
+        return [x, y, z, w];
+      }
+
+      function project(point) {
+        const [x, y, z, w] = point;
+        const hyper = 1.6 / (2.8 - w);
+        const depth = 1.9 / (3.2 - z * hyper);
+        return {
+          x: width * 0.5 + x * hyper * depth * 235,
+          y: height * 0.5 - y * hyper * depth * 235,
+          scale: hyper * depth,
+          depth: z + w * 0.35
+        };
+      }
+
+      function bananaPoint(t, ring, rings) {
+        const angle = ring / rings * Math.PI * 2;
+        const spine = (t - 0.5) * 2;
+        const bend = Math.sin((t - 0.08) * Math.PI) * 0.52;
+        const taper = Math.sin(t * Math.PI);
+        const radius = 0.14 * taper + 0.025;
+        const x = spine * 1.25;
+        const y = bend - 0.22;
+        const z = Math.cos(angle) * radius;
+        const w = Math.sin(angle) * radius + Math.cos(t * Math.PI * 2) * 0.22;
+        return [x, y + Math.sin(angle) * radius * 0.58, z, w];
+      }
+
+      function drawBackground() {
+        const gradient = ctx.createLinearGradient(0, 0, width, height);
+        gradient.addColorStop(0, "#fff7c6");
+        gradient.addColorStop(0.48, "#ffd52e");
+        gradient.addColorStop(1, "#eda51a");
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+
+        ctx.strokeStyle = "rgba(32, 20, 7, 0.12)";
+        ctx.lineWidth = 2;
+        for (let x = 0; x <= width; x += 56) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x - 120, height);
+          ctx.stroke();
+        }
+      }
+
+      function drawFrame() {
+        drawBackground();
+
+        const points = [];
+        const slices = 88;
+        const rings = 16;
+        for (let i = 0; i <= slices; i += 1) {
+          const t = i / slices;
+          for (let r = 0; r < rings; r += 1) {
+            const rotated = rotate4(bananaPoint(t, r, rings), 0.62, -0.44);
+            const projected = project(rotated);
+            points.push({ ...projected, t, r, n: noise(i * rings + r) });
+          }
+        }
+
+        points.sort((a, b) => a.depth - b.depth);
+        for (const point of points) {
+          const shade = Math.round(178 + point.scale * 52 + point.n * 18);
+          const green = Math.max(116, Math.round(shade * (0.82 + point.t * 0.1)));
+          const radius = Math.max(2.2, point.scale * 22);
+          ctx.beginPath();
+          ctx.fillStyle = `rgb(${Math.min(255, shade + 44)}, ${Math.min(222, green)}, ${Math.max(24, 38 - point.t * 20)})`;
+          ctx.arc(point.x, point.y, radius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        drawStem(0.035, -1);
+        drawStem(0.965, 1);
+      }
+
+      function drawStem(t, direction) {
+        const base = project(rotate4(bananaPoint(t, 0, 16), 0.62, -0.44));
+        ctx.save();
+        ctx.translate(base.x, base.y);
+        ctx.rotate(direction * 0.7);
+        ctx.fillStyle = "#5f3705";
+        ctx.strokeStyle = "#201407";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.roundRect(-8, -28, 16, 44, 7);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      if (!CanvasRenderingContext2D.prototype.roundRect) {
+        CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+          this.moveTo(x + r, y);
+          this.arcTo(x + w, y, x + w, y + h, r);
+          this.arcTo(x + w, y + h, x, y + h, r);
+          this.arcTo(x, y + h, x, y, r);
+          this.arcTo(x, y, x + w, y, r);
+          return this;
+        };
+      }
+
+      drawFrame();
+    })();
+  </script>
+</body>
+</html>
