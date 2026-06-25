@@ -1,27 +1,29 @@
 package goose
 
-import (
-    "context"
-    "fmt"
-)
-
-type Goose struct {}
-
-func (g *Goose) LayEgg() (*Egg, error) {
-    egg := &Egg{
-        Value: 3,
-    }
-    return egg, nil
+type Goose struct {
+	value int
+	goldenEggFactory bool
 }
 
-func (g *Goose) AddGoldenEggFactory() {
-    g.goldenEggFactory = true
+func (g *Goose) SetValue(value int) {
+	g.value = value
+}
+
+func (g *Goose) SetGoldenEggFactory(factory bool) {
+	g.goldenEggFactory = factory
+}
+
+func (g *Goose) GetEggValue() int {
+	// Assuming egg value is hardcoded for simplicity
+	return 3
 }
 
 func (g *Goose) GetGooseValue() int {
-    return 71
+	return g.value
 }
 
-type Egg struct {
-    Value int
+func (g *Goose) CreateGoldenEgg() {
+	// Implement golden egg creation logic here
+	// For now, just return the hardcoded egg value
+	return g.GetEggValue()
 }
