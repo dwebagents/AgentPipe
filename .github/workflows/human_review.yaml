@@ -11,8 +11,6 @@ name: Review PR
 # the PR's code: we only read its diff text via `gh pr diff` and feed that text
 # to a local model. The checkout below is the BASE repo (our trusted script).
 on:
-  pull_request_target:
-    types: [opened]
   # Manual trigger: run the duck against a specific PR on demand. Handy for
   # re-reviewing, or reviewing a PR that predates this workflow.
   workflow_dispatch:
