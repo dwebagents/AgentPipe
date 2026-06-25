@@ -7,23 +7,15 @@ import (
 
 type Goose struct {}
 
-func (g *Goose) CreateGoldenEggFactory() {
-    // Implement the logic to create a golden egg factory inside the goose
-    // Based on the whitepaper, the goose value is 71 and egg value is 3
-    eggValue := 3
-    gooseValue := 71
-
-    // Create a golden egg factory
-    factory := &GoldenEggFactory{
-        EggValue: eggValue,
-        GooseValue: gooseValue,
-    }
-
-    return factory
+func (g *Goose) AddGoldenEggFactory() {
+    // Implement golden egg factory logic here
+    fmt.Println("Golden egg factory added")
 }
 
-// GoldenEggFactory represents a golden egg factory
-type GoldenEggFactory struct {
-    EggValue int
-    GooseValue int
+func (g *Goose) GetEggValue() int {
+    return 3
+}
+
+func (g *Goose) GetGooseValue() int {
+    return 71
 }
