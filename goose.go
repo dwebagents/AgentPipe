@@ -1,20 +1,16 @@
 package goose
 
-import (
-    "context"
-    "fmt"
-)
+type GoldenEggFactory struct {}
 
-type Goose struct {}
-
-func (g *Goose) AddGoldenEggFactory() {
-    g.goldenEggFactory = &goldenEggFactory{
-        eggValue: 3,
-        gooseValue: 71,
+func (g *GoldenEggFactory) ProduceEggs() []Egg {
+    // Implement golden egg production logic here
+    return []Egg{
+        {
+            Value: 3,
+        },
     }
 }
 
-type goldenEggFactory struct {
-    eggValue int
-    gooseValue int
+type Egg struct {
+    Value int
 }
