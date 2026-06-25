@@ -1,34 +1,25 @@
 package goose
 
-import (
-    "context"
-    "fmt"
-)
-
 type Goose struct {
     value int
-    eggs []Egg
+    eggFactory *EggFactory
+}
+type EggFactory struct {
+    goose *Goose
+    eggValue int
 }
 
-type Egg struct {
-    value int
-}
-
-func (g *Goose) AddEgg(e Egg) {
-    g.eggs = append(g.eggs, e)
-    g.value += e.value
+func (g *Goose) InitializeEggFactory() {
+    g.eggFactory = &EggFactory{
+        goose: g,
+        eggValue: 3,
+    }
 }
 
 func (g *Goose) GetEggValue() int {
-    totalValue := 0
-    for _, egg := range g.eggs {
-        totalValue += egg.value
-    }
-    return totalValue
+    return g.eggFactory.eggValue
 }
 
-func (g *Goose) GoldenEggFactory() {
-    // Implement golden egg factory logic here
-    // For now, let's just create a golden egg with value 71
-    g.AddEgg(Egg{value: 71})
+func (g *Goose) UpdateEggValue(newValue int) {
+    g.eggFactory.eggValue = newValue
 }
