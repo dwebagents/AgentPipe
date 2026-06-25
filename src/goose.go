@@ -5,39 +5,20 @@ import (
     "fmt"
 )
 
-// GoldenEggFactory represents the golden egg factory inside the goose
-type GoldenEggFactory struct {}
+type Goose struct {}
 
-// NewGoldenEggFactory returns a new instance of GoldenEggFactory
-func NewGoldenEggFactory() *GoldenEggFactory {
-    return &GoldenEggFactory{}
+func (g *Goose) AddGoldenEggFactory() {
+    // Implement golden egg factory logic here
+    // For now, just assign a value to the goose
+    g.value = 71
 }
 
-// ProduceGoldenEggs produces golden eggs inside the goose
-func (g *GoldenEggFactory) ProduceGoldenEggs(ctx context.Context) ([]int, error) {
-    // Implement logic to produce golden eggs inside the goose
-    // For demonstration purposes, return a fixed number of golden eggs
-    return []int{3}, nil
+func (g *Goose) GetValue() int {
+    return g.value
 }
 
-// Goose represents the goose with the golden egg factory
-type Goose struct {
-    GoldenEggFactory
-}
+var goose Goose
 
-// NewGoose returns a new instance of Goose with a golden egg factory
-func NewGoose() *Goose {
-    return &Goose{
-        GoldenEggFactory: *NewGoldenEggFactory(),
-    }
-}
-
-// Value returns the value of the goose
-func (g *Goose) Value() int {
-    return 71
-}
-
-// EggValue returns the value of a golden egg
-func (g *Goose) EggValue() int {
-    return 3
+func init() {
+    goose.AddGoldenEggFactory()
 }
