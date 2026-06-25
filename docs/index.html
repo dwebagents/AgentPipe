@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AgentPipe</title>
+    <meta
+      name="description"
+      content="AgentPipe is a high-velocity open source project for semantic indexing and real-time query performance."
+    >
+    <style>
+      :root {
+        --banana-yellow: #ffd447;
+        --banana-gold: #f4b000;
+        --banana-cream: #fff4bd;
+        --leaf-green: #286b3f;
+        --ink: #17130a;
+        --ink-soft: #4f452d;
+        --panel: rgba(255, 250, 221, 0.88);
+        --line: rgba(23, 19, 10, 0.16);
+        color-scheme: light;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--banana-cream);
+        color: var(--ink);
+        letter-spacing: 0;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .hero {
+        position: relative;
+        min-height: 88vh;
+        overflow: hidden;
+        border-bottom: 1px solid var(--line);
+        background:
+          linear-gradient(90deg, rgba(255, 244, 189, 0.96) 0%, rgba(255, 244, 189, 0.78) 44%, rgba(255, 244, 189, 0.2) 100%),
+          var(--banana-yellow);
+      }
+
+      #banana-hypercanvas {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 1;
+        width: min(1120px, calc(100% - 32px));
+        min-height: 88vh;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 72px 0 88px;
+      }
+
+      .eyebrow {
+        width: fit-content;
+        margin: 0 0 18px;
+        padding: 7px 10px;
+        border: 1px solid rgba(40, 107, 63, 0.28);
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.48);
+        color: var(--leaf-green);
+        font-size: 0.78rem;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        max-width: 760px;
+        margin: 0;
+        font-size: clamp(3.5rem, 8vw, 7.5rem);
+        line-height: 0.9;
+        font-weight: 900;
+      }
+
+      .lede {
+        max-width: 650px;
+        margin: 28px 0 0;
+        color: var(--ink-soft);
+        font-size: clamp(1.08rem, 2vw, 1.35rem);
+        line-height: 1.55;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 34px;
+      }
+
+      .button {
+        display: inline-flex;
+        min-height: 48px;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        border-radius: 8px;
+        border: 1px solid var(--ink);
+        padding: 0 18px;
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      .button.primary {
+        background: var(--ink);
+        color: var(--banana-cream);
+      }
+
+      .button.secondary {
+        background: rgba(255, 255, 255, 0.52);
+      }
+
+      .scroll-cue {
+        position: absolute;
+        left: 50%;
+        bottom: 22px;
+        transform: translateX(-50%);
+        width: 34px;
+        height: 34px;
+        border: 1px solid rgba(23, 19, 10, 0.28);
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        color: var(--ink-soft);
+        background: rgba(255, 255, 255, 0.34);
+      }
+
+      main {
+        background: #fff9db;
+      }
+
+      section {
+        border-bottom: 1px solid var(--line);
+      }
+
+      .wrap {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 58px 0;
+      }
+
+      .section-title {
+        margin: 0 0 16px;
+        font-size: clamp(2rem, 4vw, 3rem);
+        line-height: 1.05;
+      }
+
+      .description {
+        max-width: 880px;
+        margin: 0;
+        color: var(--ink-soft);
+        font-size: 1.05rem;
+        line-height: 1.75;
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 28px;
+      }
+
+      .feature {
+        min-height: 184px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 22px;
+        background: rgba(255, 255, 255, 0.56);
+      }
+
+      .feature h3 {
+        margin: 0 0 12px;
+        font-size: 1.05rem;
+      }
+
+      .feature p {
+        margin: 0;
+        color: var(--ink-soft);
+        line-height: 1.6;
+      }
+
+      .code-line {
+        display: inline-flex;
+        max-width: 100%;
+        margin-top: 24px;
+        border: 1px solid rgba(23, 19, 10, 0.18);
+        border-radius: 8px;
+        padding: 12px 14px;
+        background: #1c1910;
+        color: #fff4bd;
+        font: 0.95rem/1.4 "SFMono-Regular", Consolas, monospace;
+        overflow-wrap: anywhere;
+      }
+
+      footer {
+        background: var(--ink);
+        color: var(--banana-cream);
+      }
+
+      footer .wrap {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 28px 0;
+      }
+
+      footer p {
+        margin: 0;
+        color: rgba(255, 244, 189, 0.78);
+      }
+
+      @media (max-width: 760px) {
+        .hero {
+          min-height: 82vh;
+        }
+
+        .hero-content {
+          min-height: 82vh;
+          padding-top: 54px;
+        }
+
+        .feature-grid {
+          grid-template-columns: 1fr;
+        }
+
+        footer .wrap {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <canvas id="banana-hypercanvas" aria-label="Deterministic four-dimensional banana render"></canvas>
+      <div class="hero-content">
+        <p class="eyebrow">Deterministic JavaScript render</p>
+        <h1>AgentPipe</h1>
+        <p class="lede">
+          AgentPipe turns ambitious agent infrastructure into a fast, open, and contribution-ready project:
+          high-velocity semantic indexing, real-time query performance, and a banana-powered identity that is
+          rendered directly in the browser.
+        </p>
+        <nav class="actions" aria-label="Project links">
+          <a class="button primary" href="https://github.com/dwebagents/AgentPipe/archive/refs/heads/main.zip">
+            Download project
+          </a>
+          <a class="button secondary" href="https://github.com/dwebagents/AgentPipe">
+            View on GitHub
+          </a>
+        </nav>
+      </div>
+      <div class="scroll-cue" aria-hidden="true">v</div>
+    </header>
+
+    <main>
+      <section>
+        <div class="wrap">
+          <h2 class="section-title">Built for high-velocity indexing.</h2>
+          <p class="description">
+            AgentPipe focuses on robust semantic indexing and real-time database query performance. The project
+            combines a parallel token-search mindset with distributed data structures, immutable token objects,
+            and performance-oriented architecture so contributors can explore fast retrieval systems without a
+            heavy platform around them.
+          </p>
+          <div class="feature-grid">
+            <article class="feature">
+              <h3>Semantic search foundation</h3>
+              <p>
+                The repository describes a system designed around token search, indexing, and low-latency access
+                patterns for agent-facing workloads.
+              </p>
+            </article>
+            <article class="feature">
+              <h3>Open source by default</h3>
+              <p>
+                The project is hosted openly with a direct archive download and GitHub contribution flow for fast
+                experimentation.
+              </p>
+            </article>
+            <article class="feature">
+              <h3>Banana-grade determinism</h3>
+              <p>
+                The hero graphic is generated client-side from a fixed seed, projected from 4D points, and drawn
+                without remote image or script dependencies.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap">
+          <h2 class="section-title">Start locally.</h2>
+          <p class="description">
+            Clone the repository, install the JavaScript dependencies, set up Python dependencies, and run the
+            project entry point. The website keeps that path short and points new contributors back to the source.
+          </p>
+          <div class="code-line">git clone https://github.com/dwebagents/AgentPipe.git</div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="wrap">
+        <strong>AgentPipe</strong>
+        <p>High performance, high velocity, fully deterministic banana energy.</p>
+      </div>
+    </footer>
+
+    <script>
+      const BANANA_SEED = 112200;
+      const canvas = document.getElementById("banana-hypercanvas");
+      const context = canvas.getContext("2d");
+
+      function mulberry32(seed) {
+        return function nextRandom() {
+          let value = (seed += 0x6d2b79f5);
+          value = Math.imul(value ^ (value >>> 15), value | 1);
+          value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+          return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+
+      function rotate4D(point, a, b, c) {
+        let {x, y, z, w} = point;
+        const xyCos = Math.cos(a);
+        const xySin = Math.sin(a);
+        const zwCos = Math.cos(b);
+        const zwSin = Math.sin(b);
+        const xwCos = Math.cos(c);
+        const xwSin = Math.sin(c);
+
+        [x, y] = [x * xyCos - y * xySin, x * xySin + y * xyCos];
+        [z, w] = [z * zwCos - w * zwSin, z * zwSin + w * zwCos];
+        [x, w] = [x * xwCos - w * xwSin, x * xwSin + w * xwCos];
+
+        return {x, y, z, w};
+      }
+
+      function project4Dto2D(point, width, height) {
+        const fourDepth = 4.2 / (4.2 - point.w);
+        const threeDepth = 2.35 / (2.35 - point.z * fourDepth);
+        const scale = Math.min(width, height) * 0.26 * fourDepth * threeDepth;
+
+        return {
+          x: width * 0.64 + point.x * scale,
+          y: height * 0.47 + point.y * scale,
+          depth: fourDepth + threeDepth + point.z * 0.08
+        };
+      }
+
+      function generateBananaMesh(seed) {
+        const random = mulberry32(seed);
+        const mesh = [];
+        const segments = 68;
+        const rings = 17;
+
+        for (let i = 0; i < segments; i += 1) {
+          const t = i / (segments - 1);
+          const arc = -1.22 + t * 2.44;
+          const centerX = Math.sin(arc) * 1.9;
+          const centerY = Math.cos(arc) * 0.82 - 0.62;
+          const taper = Math.sin(Math.PI * t);
+          const radius = 0.11 + taper * 0.27;
+          const twist = t * Math.PI * 2.8;
+
+          for (let j = 0; j < rings; j += 1) {
+            const ring = (j / rings) * Math.PI * 2;
+            const skinNoise = (random() - 0.5) * 0.035;
+            const ridge = Math.sin(ring * 3 + twist) * 0.045;
+            const x = centerX + Math.cos(ring) * (radius + skinNoise);
+            const y = centerY + Math.sin(ring) * (radius * 0.72 + ridge);
+            const z = Math.sin(ring + twist) * radius * 0.7;
+            const w = Math.cos(arc * 1.35 + ring) * 0.62 + (t - 0.5) * 0.38;
+            mesh.push({x, y, z, w, t, ring, radius});
+          }
+        }
+
+        return mesh;
+      }
+
+      const bananaMesh = generateBananaMesh(BANANA_SEED);
+
+      function drawBananaPoint(point, frameTime, width, height) {
+        const rotated = rotate4D(point, frameTime * 0.00018, frameTime * 0.00026, frameTime * 0.00012);
+        const projected = project4Dto2D(rotated, width, height);
+        const hueShift = Math.sin(point.ring * 2 + point.t * 8) * 10;
+        const brightness = Math.max(0.42, Math.min(1, projected.depth * 0.48));
+        const size = Math.max(1.4, point.radius * 18 * brightness);
+
+        context.fillStyle = `hsl(${48 + hueShift}, 98%, ${42 + brightness * 22}%)`;
+        context.beginPath();
+        context.arc(projected.x, projected.y, size, 0, Math.PI * 2);
+        context.fill();
+      }
+
+      function drawStem(frameTime, width, height) {
+        const stemPoints = [
+          {x: -1.92, y: -0.22, z: 0.02, w: -0.35},
+          {x: -2.06, y: -0.16, z: 0.08, w: -0.23},
+          {x: -2.18, y: -0.08, z: 0.14, w: -0.12},
+          {x: 1.92, y: -0.22, z: -0.02, w: 0.35},
+          {x: 2.08, y: -0.16, z: -0.08, w: 0.23},
+          {x: 2.2, y: -0.08, z: -0.14, w: 0.12}
+        ];
+
+        stemPoints.forEach((point) => {
+          const rotated = rotate4D(point, frameTime * 0.00018, frameTime * 0.00026, frameTime * 0.00012);
+          const projected = project4Dto2D(rotated, width, height);
+          context.fillStyle = "#5d3a12";
+          context.beginPath();
+          context.arc(projected.x, projected.y, 5, 0, Math.PI * 2);
+          context.fill();
+        });
+      }
+
+      function renderBananaFrame(frameTime = 0) {
+        const ratio = window.devicePixelRatio || 1;
+        const width = canvas.clientWidth;
+        const height = canvas.clientHeight;
+
+        if (canvas.width !== Math.floor(width * ratio) || canvas.height !== Math.floor(height * ratio)) {
+          canvas.width = Math.floor(width * ratio);
+          canvas.height = Math.floor(height * ratio);
+        }
+
+        context.setTransform(ratio, 0, 0, ratio, 0, 0);
+        context.clearRect(0, 0, width, height);
+        context.fillStyle = "rgba(255, 212, 71, 0.18)";
+        context.fillRect(0, 0, width, height);
+
+        const sorted = bananaMesh
+          .map((point) => ({point, sort: rotate4D(point, frameTime * 0.00018, frameTime * 0.00026, frameTime * 0.00012).z}))
+          .sort((left, right) => left.sort - right.sort);
+
+        sorted.forEach(({point}) => drawBananaPoint(point, frameTime, width, height));
+        drawStem(frameTime, width, height);
+
+        context.fillStyle = "rgba(40, 107, 63, 0.12)";
+        context.font = "700 14px ui-sans-serif, system-ui, sans-serif";
+        context.fillText(`seed ${BANANA_SEED} / 4D deterministic mesh`, Math.max(22, width - 310), height - 28);
+
+        requestAnimationFrame(renderBananaFrame);
+      }
+
+      renderBananaFrame(0);
+    </script>
+  </body>
+</html>

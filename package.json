@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "test:website": "node scripts/check-website.mjs"
+  },
   "dependencies": {
     "@11ty/eleventy": "^3.1.6"
   }
