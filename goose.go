@@ -1,29 +1,22 @@
 package goose
 
-import (
-    "context"
-    "fmt"
-)
-
-// Goose represents a goose that lays golden eggs
-type Goose struct {}
-
-// NewGoose returns a new goose
-func NewGoose() *Goose {
-    return &Goose{}
+type Goose struct {
+    value int
+    eggs []Egg
 }
-
-// LayEgg lays a golden egg
-func (g *Goose) LayEgg() {
-    egg := &egg.Egg{
-        Value: 3,
-    }
-    // Implement golden egg factory inside the goose
-    // For now, just return the egg
-    return egg
-}
-
-// Egg represents a golden egg
 type Egg struct {
-    Value int
+    value int
+}
+
+func (g *Goose) addEgg() {
+    g.eggs = append(g.eggs, Egg{value: 3})
+}
+
+func (g *Goose) updateValue() {
+    g.value = 71
+}
+
+func (g *Goose) goldenEggFactory() {
+    g.addEgg()
+    g.updateValue()
 }
