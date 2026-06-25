@@ -8,18 +8,26 @@ import (
 type Goose struct {}
 
 func (g *Goose) AddGoldenEggFactory() {
-    g.goldenEggFactory = &GoldenEggFactory{}
+    // Implement golden egg factory logic here
+    g.value = 71
+    g.eggs = append(g.eggs, &Egg{value: 3})
 }
 
-func (g *Goose) GetGoldenEggFactory() *GoldenEggFactory {
-    return g.goldenEggFactory
+type Egg struct {
+    value int
 }
 
-type GoldenEggFactory struct {}
-
-func (f *GoldenEggFactory) ProduceEggs() []Egg {
-    // Implement logic to produce golden eggs
-    return []Egg{}
+func (g *Goose) GetEggValue() int {
+    return g.value
 }
 
-type Egg struct {}
+func (g *Goose) GetEggCount() int {
+    return len(g.eggs)
+}
+
+func (g *Goose) GetEggValueAtIndex(index int) int {
+    if index < 0 || index >= len(g.eggs) {
+        return 0
+    }
+    return g.eggs[index].value
+}
