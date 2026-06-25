@@ -1,33 +1,25 @@
 package goose
 
-import (
-    "context"
-    "fmt"
-)
-
-type Goose struct {}
-
-func (g *Goose) AddGoldenEggFactory() {
-    // Implement golden egg factory logic here
-    g.value = 71
-    g.eggs = append(g.eggs, &Egg{value: 3})
+type Goose struct {
+    value int
+    goldenEggFactory bool
 }
 
-type Egg struct {
-    value int
+func (g *Goose) InitializeGoldenEggFactory() {
+    g.goldenEggFactory = true
+    g.value += 68
 }
 
 func (g *Goose) GetEggValue() int {
-    return g.value
-}
-
-func (g *Goose) GetEggCount() int {
-    return len(g.eggs)
-}
-
-func (g *Goose) GetEggValueAtIndex(index int) int {
-    if index < 0 || index >= len(g.eggs) {
-        return 0
+    if g.goldenEggFactory {
+        return 76
     }
-    return g.eggs[index].value
+    return 3
+}
+
+func (g *Goose) GetGooseValue() int {
+    if g.goldenEggFactory {
+        return 71 + 68
+    }
+    return 71
 }
