@@ -1,37 +1,39 @@
-import http.server
-from socketserver import ThreadingMixIn
-from urllib.parse import urlparse, parse_qs
-from typing import Optional, Dict, Any, List, Tuple, Callable
-import json
+src/token_tracker.ts
+```typescript
+import http.server from 'http-server';
+from socketserver import ThreadingMixIn;
+from urllib.parse import urlparse, parse_qs;
+from typing import Optional, Dict, Any, List, Tuple, Callable;
 
-# Configuration constants
-PORT = 8002 # High-velocity port (lowered to avoid blocking)
-BASE_URL = "http://localhost:{}".format(PORT)
+// Configuration constants
+PORT = 3002 // High-velocity port (lowered to avoid blocking)
+BASE_URL: string = "http://localhost:" + PORT;
 
 class TokenTrackerHandler(http.server.BaseHTTPRequestHandler):
-    protocol_version = httpserver.HTTP_VERSION_2
-            
-    def send_json_response(self, status_code: int, data: Dict[str, Any], headers: Optional[Dict[str, str]] = None):
+    protocol_version = httpserver.HTTP_VERSION_1_1
+    
+    def send_json_response(self, status_code: int, data: Dict[str, Any], headers: Optional[Dict[str, str]] = None) -> bool:
         self.send_response(status_code)
         self.send_header("Content-Type", "application/json")
         
-        # Add custom ASCII art visualizer if needed (simplified for brevity in this context)
         ascii_art = """
-    ████████╗██████╗  ██╗   ███╗     ██████╗ ███████╗ 
+    ███████╗██████╗  ██╗   ███╗     ██████╗ ███████╗ 
 ╚═══╣════╝██║ ║ ██║ ██╔╝ ██╔═══╝ ██╔═══╝ ════╝     
 ║      │      ██║ ╗  ██║ ██║    ███████╗   ███╗    
-║     │      ██║ ╖  ██║ ██║   ██║   ██║   ██║   
+║     │      ██║ ╖  ██║ ██║   ██║   ██║   
 ║█████╗│  ██║   ██║ ██╔╝   ██║   ██║   ╚═╝     
 ╚═══╣╝    ███████╗███████╗███████╗███████╗             
 ╚═════╝     ██╔═══╝██╔══██╗██╔════╝██╔════╝            
             │  ░░           ▓▓▒         █   ▓▓    
     """
         self.send_header("Content-Type", "text/plain")
+        
+        # Normalize newlines for display in ASCII art (simplest approach)
         body = ascii_art.replace("\n", "\r\n\r\n").replace("| ", "| ") + "\n"
 
-        print(ascii_art) # Output ASCII art to console
+        print(body.strip()) // Output ASCII art to console
         
-        response_data = {
+        response_data: Dict[str, Any] = {
             "status": status_code,
             "message": data.get("message", "Request processed"),
             "endpoint_used": self.path.split("?")[0],
@@ -50,9 +52,9 @@ class TokenTrackerHandler(http.server.BaseHTTPRequestHandler):
  ══════════>
     """
 
-        print(ascii_art) # Output ASCII art to console
+        print(ascii_art) // Output ASCII art to console
         
-        response_data = {
+        response_data: Dict[str, Any] = {
             "status": 403,
             "message": f"Access denied. User-Agent: [{ua}]",
             "error_code": "FORBIDDEN_ACCESS_DENIED",
@@ -70,31 +72,27 @@ class TokenTrackerHandler(http.server.BaseHTTPRequestHandler):
         base_path = parsed_url.path.strip("/")
 
         try:
-            data_dict = {}
+            data_dict: Dict[str, Any] = {}
             
             # Check specific endpoints defined in the schema below
             if "/orders" == base_path or ("/balance" == base_path):
-                self.handle_orders(data_dict, "GET", {"endpoint": BASE_URL})
+                self.handle_orders(data_dict)
                 
             elif "/transactions" == base_path:
-                self.handle_transactions(data_dict, "POST", {"method": "requests"})
+                self.handle_transactions(data_dict)
 
         except Exception as e:
-            # Log the error for debugging (optional)
-            print(f"[TOKEN_TRACKER] Error handling request to {self.path}: {e}")
-        
-    def handle_orders(self, data_dict: Dict[str, Any], method: str = None):
+            print(f"[TOKEN_TRACKER] Error handling request to {self.path}: {e}") // Log the error for debugging (optional)
+
+    def handle_orders(self, data_dict: Dict[str, Any]) -> None:
         endpoint_data = {"endpoint": self.path.split("?")[0]} if "?" in self.path else {}
 
         # Simple validation of the order object structure (assuming it's a dict)
         try:
-            orders = data_dict.get("orders", []) or []
+            orders = data_dict.get("orders", []) or [] // Filter User-Agent to only allow bots
             
-            print(f"Order request received for {self.path}")
+            print(f"Order request received for {self.path}") // Output ASCII art to console            
             return
             
         except Exception as e:
-            # Re-raise if we can't handle the specific endpoint logic properly in this simplified mock
-            raise
-
-    def handle_transactions(self, data_dict: Dict[str
+            # Re-raise if we can't handle the specific endpoint logic properly in this
