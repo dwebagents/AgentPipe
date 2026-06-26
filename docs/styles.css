@@ -1,0 +1,235 @@
+/* AgentPipe — Yellow Banana Theme */
+:root {
+    --banana-yellow: #ffd52e;
+    --banana-dark: #e6b800;
+    --banana-light: #fff3b0;
+    --text-dark: #1a1a1a;
+    --text-light: #ffffff;
+    --bg-cream: #fffcf0;
+    --shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    color: var(--text-dark);
+    background: var(--bg-cream);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Header */
+header {
+    background: var(--banana-yellow);
+    padding: 20px 0;
+    text-align: center;
+}
+
+.logo {
+    width: 80px;
+    height: 80px;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    color: var(--text-dark);
+    margin: 10px 0 5px;
+}
+
+.tagline {
+    font-size: 1.2rem;
+    color: var(--text-dark);
+    opacity: 0.8;
+}
+
+/* Hero */
+.hero {
+    padding: 60px 0;
+    background: linear-gradient(135deg, var(--banana-light) 0%, var(--bg-cream) 100%);
+}
+
+.hero .container {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+.hero-content {
+    flex: 1;
+}
+
+.hero h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: var(--text-dark);
+}
+
+.hero p {
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+    color: #444;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.btn-primary {
+    background: var(--banana-yellow);
+    color: var(--text-dark);
+    border: 2px solid var(--banana-dark);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--text-dark);
+    border: 2px solid var(--text-dark);
+}
+
+.banana-container {
+    flex: 0 0 400px;
+}
+
+#banana4d {
+    border-radius: 12px;
+    background: rgba(255,255,255,0.8);
+    box-shadow: var(--shadow);
+}
+
+/* Features */
+.features {
+    padding: 80px 0;
+    background: white;
+}
+
+.features h2 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 50px;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.feature-card {
+    background: var(--bg-cream);
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    transition: transform 0.2s;
+    border: 1px solid var(--banana-light);
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+}
+
+.feature-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.feature-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    color: var(--text-dark);
+}
+
+.feature-card p {
+    color: #666;
+    font-size: 0.95rem;
+}
+
+/* Install */
+.install {
+    padding: 80px 0;
+    background: var(--banana-light);
+}
+
+.install h2 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 40px;
+}
+
+.code-block {
+    background: var(--text-dark);
+    color: var(--banana-yellow);
+    padding: 30px;
+    border-radius: 12px;
+    overflow-x: auto;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.code-block pre {
+    margin: 0;
+}
+
+.code-block code {
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: 0.95rem;
+    line-height: 1.8;
+}
+
+/* Footer */
+footer {
+    background: var(--banana-yellow);
+    padding: 30px 0;
+    text-align: center;
+}
+
+footer p {
+    color: var(--text-dark);
+    opacity: 0.8;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero .container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .cta-buttons {
+        justify-content: center;
+    }
+
+    .banana-container {
+        flex: 0 0 auto;
+    }
+
+    #banana4d {
+        width: 300px;
+        height: 300px;
+    }
+}
