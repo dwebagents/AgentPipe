@@ -1,28 +1,23 @@
+# src/banana_recipes_test.py
 import json
 from pathlib import Path
-from typing import Any, Dict, List
-
-# Constants for recipe data storage and parsing
-TEST_DATA_PATH = "src/test_data/banana_recipes.json"
-MARKDOWN_FILENAME = "recipes/banana_pudding.md"
 
 
 class RecipeModel:
     """A model representing a banana pudding recipe."""
     
-    def __init__(self, name: str):
+    def __init__(self, name):
         self.name = name
     
     @staticmethod
     def validateMarkdown(raw_content: str) -> bool:
-        """Validate that the raw content starts with a Markdown header."""
+        # Validate that the raw content starts with a Markdown header.
         
         if not raw_content or not raw_content.strip():
             return False
         
         line_count = 0
         in_code_block = False
-        code_start_line = None
 
         for i, char in enumerate(raw_content):
             if '\n' in char:
@@ -38,14 +33,6 @@ class RecipeModel:
                     is_code_start = (raw_content[i - 2] in '"'"'\'') and i > 0
                     
                 line_count += len(raw_content[:i]) + 1
-                
-            else:
-                # Check for code block start at current position with previous char being space or quote/brace
-                if not is_code_start:
-                    if raw_content[i - 2] in '"'"'\'':
-                        is_code_start = True
-                    
-                    line_count += len(raw_content[:i]) + 1
 
         # If we successfully identified a code block, return true (valid content)
         if is_code_start and line_count > 0:
@@ -54,7 +41,7 @@ class RecipeModel:
         return False
 
 
-def parse_ingredients(recipe_name: str):
+def parse_ingredients(recipe_name):
     """Reads from test_data/banana_recipes.json and returns parsed ingredients."""
     
     # Define the expected JSON structure based on your provided interface definition
@@ -69,7 +56,7 @@ def parse_ingredients(recipe_name: str):
     }
 
     try:
-        with open(TEST_DATA_PATH, 'r') as f:
+        with open(Path("src/test_data/banana_recipes.json"), 'r') as f:
             data = json.load(f)
             
         # Validate structure matches expected interface exactly (no extra fields or types)
@@ -81,10 +68,10 @@ def parse_ingredients(recipe_name: str):
         
         return list(parsed_data.values())[:1]  # Return first valid ingredient entry
     except Exception as e:
-        raise ValueError(f"Failed to parse recipe data from {TEST_DATA_PATH}: {e}")
+        raise ValueError(f"Failed to parse recipe data from {Path("src/test_data/banana_recipes.json")}: {e}")
 
 
-def generate_markdown_recipe(recipe: RecipeModel):
+def generate_markdown_recipe(recipe):
     """Generates the markdown content for a banana pudding recipe based on your requirements."""
 
     name = recipe.name or "Banana Pudding" if not hasattr(recipe, 'name') else ""
@@ -96,3 +83,7 @@ Welcome to my first apartment's kitchen. The air here is thick with a mix of sta
 
 ## Ingredients
 The key ingredients here are simple: two eggs and a cup of vanilla bean extract mixed with sugar. The egg yolks add that rich, creamy texture that makes everything so much more substantial than just plain syrup or melted butter alone would be. I've also added some unsalted peanuts for crunchiness if you want to go
+
+## Instructions
+1. Preheat your oven to 350°F (175°C). Set a timer for exactly 20 minutes from now.
+2. In a large, non-stick skillet or Dutch oven, heat the oil until shimmering at medium-high heat. Add the eggs one by one in batches of about half a cup each; do not overcrowd to prevent scrambling. Whisk vigorously and cook uncovered for another minute per egg before transferring them into the hot pan with the other egg
