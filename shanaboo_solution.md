@@ -1,7 +1,7 @@
  ```diff
 --- /dev/null
-+++ b/index.html
-@@ -0,0 +1,268 @@
++++ b/docs/index.html
+@@ -0,0 +1,235 @@
 +<!DOCTYPE html>
 +<html lang="en">
 +<head>
@@ -33,12 +33,6 @@
 +            padding: 60px 20px;
 +        }
 +
-+        .logo {
-+            width: 200px;
-+            height: 200px;
-+            margin-bottom: 20px;
-+        }
-+
 +        h1 {
 +            font-size: 4em;
 +            color: #B8860B;
@@ -49,86 +43,90 @@
 +        .tagline {
 +            font-size: 1.5em;
 +            color: #8B6914;
-+            margin-bottom: 30px;
++            font-style: italic;
 +        }
 +
-+        .download-btn {
-+            display: inline-block;
-+            background: linear-gradient(145deg, #FFD700, #FFA500);
-+            color: #4A4A00;
-+            padding: 18px 50px;
-+            font-size: 1.3em;
-+            font-weight: bold;
-+            text-decoration: none;
-+            border-radius: 50px;
-+            box-shadow: 0 6px 20px rgba(255, 165, 0, 0.4);
-+            transition: all 0.3s ease;
-+            border: 3px solid #B8860B;
++        .banana-icon {
++            font-size: 5em;
++            margin: 20px 0;
++            animation: float 3s ease-in-out infinite;
 +        }
 +
-+        .download-btn:hover {
-+            transform: translateY(-3px);
-+            box-shadow: 0 10px 30px rgba(255, 165, 0, 0.6);
-+            background: linear-gradient(145deg, #FFA500, #FFD700);
-+        }
-+
-+        .banana-section {
-+            text-align: center;
-+            padding: 40px 20px;
-+        }
-+
-+        #banana-canvas {
-+            border-radius: 20px;
-+            box-shadow: 0 10px 40px rgba(255, 165, 0, 0.3);
-+            background: rgba(255, 255, 255, 0.3);
++        @keyframes float {
++            0%, 100% { transform: translateY(0); }
++            50% { transform: translateY(-20px); }
 +        }
 +
 +        .description {
-+            background: rgba(255, 255, 255, 0.8);
++            background: rgba(255, 255, 255, 0.9);
 +            border-radius: 20px;
 +            padding: 40px;
-+            margin: 40px auto;
-+            max-width: 900px;
-+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
++            margin: 30px 0;
++            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 +        }
 +
 +        .description h2 {
 +            color: #B8860B;
 +            font-size: 2em;
 +            margin-bottom: 20px;
-+            text-align: center;
 +        }
 +
 +        .description p {
-+            line-height: 1.8;
 +            font-size: 1.1em;
++            line-height: 1.8;
 +            margin-bottom: 15px;
++        }
++
++        .download-section {
++            text-align: center;
++            padding: 50px 20px;
++        }
++
++        .download-btn {
++            display: inline-block;
++            background: linear-gradient(45deg, #FFD700, #FFA500);
++            color: #4A4A00;
++            padding: 20px 60px;
++            font-size: 1.5em;
++            font-weight: bold;
++            text-decoration: none;
++            border-radius: 50px;
++            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
++            transition: all 0.3s ease;
++            border: 3px solid #B8860B;
++        }
++
++        .download-btn:hover {
++            transform: translateY(-5px);
++            box-shadow: 0 12px 30px rgba(0,0,0,0.3);
++            background: linear-gradient(45deg, #FFA500, #FFD700);
++        }
++
++        #banana-canvas {
++            display: block;
++            margin: 40px auto;
++            border-radius: 20px;
++            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 +        }
 +
 +        .features {
 +            display: grid;
 +            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 +            gap: 30px;
-+            margin: 40px auto;
-+            max-width: 1000px;
++            margin: 40px 0;
 +        }
 +
 +        .feature-card {
-+            background: rgba(255, 248, 220, 0.9);
++            background: rgba(255, 255, 255, 0.9);
 +            border-radius: 15px;
 +            padding: 30px;
 +            text-align: center;
-+            border: 2px solid #FFD700;
-+            transition: transform 0.3s ease;
-+        }
-+
-+        .feature-card:hover {
-+            transform: translateY(-5px);
++            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 +        }
 +
 +        .feature-card h3 {
 +            color: #B8860B;
-+            margin-bottom: 10px;
++            margin-bottom: 15px;
 +        }
 +
 +        footer {
@@ -136,29 +134,38 @@
 +            padding: 40px;
 +            color: #8B6914;
 +        }
-+
-+        .banana-icon {
-+            font-size: 3em;
-+        }
 +    </style>
 +</head>
 +<body>
 +    <div class="container">
 +        <header>
-+            <svg class="logo" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-+                <ellipse cx="100" cy="100" rx="90" ry="90" fill="#FFD700" stroke="#B8860B" stroke-width="3"/>
-+                <text x="100" y="115" text-anchor="middle" font-size="80" fill="#B8860B">🍌</text>
-+            </svg>
++            <div class="banana-icon">🍌</div>
 +            <h1>AgentPipe</h1>
 +            <p class="tagline">High Performance, High Velocity Data Processing</p>
-+            <a href="https://github.com/dwebagents/AgentPipe/archive/refs/heads/main.zip" class="download-btn">⬇ Download AgentPipe</a>
 +        </header>
 +
-+        <div class="banana-section">
-+            <canvas id="banana-canvas" width="600" height="400"></canvas>
++        <div class="description">
++            <h2>About AgentPipe</h2>
++            <p>AgentPipe is a cutting-edge open source project designed for robust semantic indexing and real-time database query performance. Built with a focus on parallelized token search algorithms and deep optimization techniques, AgentPipe leverages SIMD instructions for raw throughput.</p>
++            <p>Our distributed data model decouples memory fragmentation from performance bottlenecks by storing tokens as immutable, low-serialized-value objects. With GPU-accelerated vectorized algorithms for hashing, AgentPipe achieves a hybrid performance profile where database access scales to infinity... and BEYOND! 🚀</p>
 +        </div>
 +
-+        <div class="description">
-+            <h2>🍌 About AgentPipe 🍌</h2>
-+            <p>AgentPipe is a cutting-edge data processing framework designed for high-performance, high-velocity operations. Built with an unrelenting pursuit of robust semantic indexing and real-time database query performance, AgentPipe deviates from simple data storage into a highly complex system architecture.</p>
-+            <p>At its core, AgentPipe leverages a parallelized token search algorithm combined with deep optimization techniques like SIMD instructions for raw throughput. The distributed data model decouples memory fragmentation from performance bottlenecks, storing tokens as immutable
++        <div class="features">
++            <div class="feature-card">
++                <h3>⚡ High Performance</h3>
++                <p>Microsecond-level granularity with extreme load distribution capabilities</p>
++            </div>
++            <div class="feature-card">
++                <h3>🔍 Semantic Indexing</h3>
++                <p>Advanced token search algorithms for intelligent data retrieval</p>
++            </div>
++            <div class="feature-card">
++                <h3>🚀 Scalable</h3>
++                <p>Distributed architecture that scales to infinity and beyond</p>
++            </div>
++        </div>
++
++        <canvas id="banana-canvas" width="600" height="600"></canvas>
++
++        <div class="download-section">
++            <a href
