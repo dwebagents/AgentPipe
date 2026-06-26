@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="eo">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgentPipe 🍌⚡ - Alta Rendimento 📈, Alta Rapido 🚀</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --yellow-glow: #ffdf00;
+            --yellow-dark: #b89c00;
+            --yellow-bright: #ffee55;
+            --bg-dark: #0a0a0c;
+            --bg-card: rgba(20, 20, 25, 0.7);
+            --border-glow: rgba(255, 223, 0, 0.2);
+            --text-light: #f5f5f7;
+            --text-muted: #a1a1aa;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 223, 0, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 223, 0, 0.05) 0%, transparent 40%);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 5%;
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            fill: var(--yellow-glow);
+            filter: drop-shadow(0 0 8px var(--yellow-glow));
+        }
+
+        .logo-text {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--yellow-bright), var(--yellow-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--yellow-glow);
+            text-shadow: 0 0 8px rgba(255, 223, 0, 0.5);
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 5%;
+        }
+
+        .hero-section {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 4rem;
+            align-items: center;
+            min-height: 70vh;
+        }
+
+        @media (max-width: 900px) {
+            .hero-section {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 2rem;
+            }
+            .canvas-container {
+                margin: 0 auto;
+            }
+        }
+
+        .hero-text h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-text h1 span {
+            background: linear-gradient(135deg, #fff, var(--yellow-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-text p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+        }
+
+        .btn-download {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, var(--yellow-glow), var(--yellow-dark));
+            color: #000;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            font-size: 1.1rem;
+            box-shadow: 0 0 20px rgba(255, 223, 0, 0.3);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 30px rgba(255, 223, 0, 0.6);
+            background: linear-gradient(135deg, var(--yellow-bright), var(--yellow-glow));
+        }
+
+        .btn-download svg {
+            width: 20px;
+            height: 20px;
+            fill: #000;
+        }
+
+        .canvas-container {
+            position: relative;
+            background: var(--bg-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .canvas-container h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1rem;
+            color: var(--yellow-glow);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 8px rgba(255, 223, 0, 0.3);
+        }
+
+        canvas {
+            background-color: #050507;
+            border-radius: 12px;
+            max-width: 100%;
+        }
+
+        .controls {
+            margin-top: 1.5rem;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .control-group label {
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .control-group input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            background: #27272a;
+            outline: none;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--yellow-glow);
+            cursor: pointer;
+            box-shadow: 0 0 8px var(--yellow-glow);
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            text-align: center;
+            margin: 6rem 0 3rem 0;
+            background: linear-gradient(135deg, #fff, var(--yellow-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .grid-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: var(--border-glow);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 223, 0, 0.05);
+        }
+
+        .feature-card h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            color: var(--yellow-glow);
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .docs-section {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 3rem;
+            margin-top: 4rem;
+        }
+
+        .docs-section h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--yellow-glow);
+        }
+
+        .code-block {
+            background-color: #050507;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 1.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95rem;
+            overflow-x: auto;
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .code-block pre {
+            color: #a1c8ff;
+        }
+
+        .btn-copy {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 223, 0, 0.1);
+            border: 1px solid var(--border-glow);
+            color: var(--yellow-glow);
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.3s;
+        }
+
+        .btn-copy:hover {
+            background: var(--yellow-glow);
+            color: #000;
+        }
+
+        footer {
+            text-align: center;
+            padding: 4rem 0;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.9rem;
+        }
+
+        footer span {
+            color: var(--yellow-glow);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <svg class="logo-icon" viewBox="0 0 600 775">
+                <path d="M291.5 2.1c-12.4 1.3-32.4 5.4-50.3 10.4-18.3 5-20.9 6.1-24.5 10.5-5.1 6-4.7 10.7 2.1 30 4.8 13.4 17.1 58.4 16.2 59.4-.5.4-1.2.6-1.7.3-.4-.3-6.9-12.5-14.3-27.1-15.4-30.4-12.6-27.9-25.9-22.4-21.7 9.1-42.4 31-43.9 46.7-.8 9-2.4 6.9 57.6 77.8 22.8 27 26.8 31.3 29.1 31.3 1.5 0 11.1-.9 21.2-2 10.1-1.2 26.5-2.4 36.4-2.9 23.4-1 25.4-1.9 34.1-15.6 2.8-4.5 13.3-19.4 17.1-24.4.2-.3.7 0 1.2.5s-2.3 9.1-6.9 20.9l-7.9 20 3.2 1.4c1.8.7 6.7 1.6 10.9 1.8 8.9.7 15.6-1.1 22.4-5.8 4.9-3.3 64.9-71.9 71-81.2 6.4-9.6 8.7-16.7 8.8-26.7.1-9.5-2.2-15.8-8.3-23.5-6.4-7.9-24.1-20.1-26-17.9-.5.5-6.3 8.2-13.1 17.1-6.8 9-12.9 16.3-13.7 16.3-.7 0-1.3-.3-1.3-.6s5.7-14.4 12.6-31.2c13.5-32.7 15.2-38.6 11.8-42.3-2.8-3.2-9.5-6.2-23.4-10.7-29.9-9.6-64-13.3-94.5-10.1"></path>
+            </svg>
+            <span class="logo-text">AgentPipe</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#features">Karakterizaĵoj 🛠️🍌</a></li>
+                <li><a href="#demo">4D-Bildigo 🌀🍍</a></li>
+                <li><a href="#get-started">Startgvidilo 📖🚀</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero-section">
+            <div class="hero-text">
+                <h1>Alta Rendimento 📈⚙️, <br><span>Alta Rapido 🚀🍌.</span></h1>
+                <p>
+                    AgentPipe 🍌 estas revolucia 🚀 kadro de alta rendimento 📈 por fortika semantika indeksado 🧠 kaj ultra-rapida ⚡ plenumo de demandoj en reala tempo ⏳. Dezajnita por malkupli memorajn botelkolojn ⛓️ per distribuita datenmodelo 📊 kaj vektoraj algoritmoj 🧬 akcelitaj per GPU 🖥️.
+                </p>
+                <a href="https://github.com/dwebagents/AgentPipe/archive/refs/heads/main.zip" class="btn-download">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M5 20h14v-2H5v2zm7-18L5.33 11h4V16h5.34v-5h4L12 2z"></path>
+                    </svg>
+                    Elŝuti Projekton 📥📦
+                </a>
+            </div>
+
+            <div class="canvas-container" id="demo">
+                <h3>4D-Banana Bildigilo 🌀🍌</h3>
+                <canvas id="bananaCanvas" width="350" height="350"></canvas>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>XW-Rotacio 🔄 <span id="valXW">0.02</span></label>
+                        <input type="range" id="rotXW" min="0" max="0.1" step="0.005" value="0.02">
+                    </div>
+                    <div class="control-group">
+                        <label>YZ-Rotacio 🔄 <span id="valYZ">0.03</span></label>
+                        <input type="range" id="rotYZ" min="0" max="0.1" step="0.005" value="0.03">
+                    </div>
+                    <div class="control-group">
+                        <label>ZW-Rotacio 🔄 <span id="valZW">0.01</span></label>
+                        <input type="range" id="rotZW" min="0" max="0.1" step="0.005" value="0.01">
+                    </div>
+                    <div class="control-group">
+                        <label>4D-Dikeco 📏 <span id="valD">2.0</span></label>
+                        <input type="range" id="depth4D" min="1.1" max="5.0" step="0.1" value="2.0">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features">
+            <h2 class="section-title">Kial AgentPipe? 🍌❓</h2>
+            <div class="grid-features">
+                <div class="feature-card">
+                    <h3>Mikrosekundoj da Latenteco ⏱️⚡</h3>
+                    <p>Dum tradiciaj backend-oj 🖥️ funkcias je milisekunda nivelo ⏳, la arkitekturo 🏛️ de AgentPipe provizas mikrosekundan granularecon ⏱️ per naskiĝa kompilado 🛠️ kaj SIMD-optimumigoj ⚡.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Neŝanĝebla Strukturo 🔒🧱</h3>
+                    <p>Datenaj ĵetonoj 🪙 estas procesitaj kiel neŝanĝeblaj objektoj 🔒 kun malalta kosto de seriigo 📉, eliminante botelkolojn ⛓️ de memorfragmentiĝo 🧩 kaj garantiante konsistencon 🤝.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Senfina Skala Dezajno 🌌📈</h3>
+                    <p>La backend 🖥️ estas malkuplita de la konserveja tavolo 💾, kio permesas senliman skaladon 🌌 de samtempaj legadoj 📖 sen influi CPU-efikecon 🚀.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="get-started" class="docs-section">
+            <h3>Rapida Startgvidilo 📖🚀</h3>
+            
+            <p style="margin-bottom: 1.5rem; color: var(--text-muted);">
+                Agordu ⚙️ kaj pravalorizu 🚀 vian medion por ruligi la pretigan kernon 🧠 de AgentPipe 🍌.
+            </p>
+
+            <h4 style="margin-bottom: 0.5rem; color: var(--yellow-glow);">1. Prepari Python-Medion 🐍⚙️</h4>
+            <div class="code-block">
+                <button class="btn-copy" onclick="copyCode(this)">Kopii 📋</button>
+                <pre><code>python -m venv venv
+# Aktivigi medion (Vindozo) 🖥️🛡️
+.\venv\Scripts\activate
+# Aktivigi medion (Mac/Linux) 🍏🐧
+source venv/bin/activate
+
+pip install requests fastapi matplotlib</code></pre>
+            </div>
+
+            <h4 style="margin-bottom: 0.5rem; color: var(--yellow-glow);">2. Dependecoj de Frontend 🌐📦</h4>
+            <div class="code-block">
+                <button class="btn-copy" onclick="copyCode(this)">Kopii 📋</button>
+                <pre><code>npm install</code></pre>
+            </div>
+
+            <h4 style="margin-bottom: 0.5rem; color: var(--yellow-glow);">3. Rulado de la Kerno 🧠⚡</h4>
+            <div class="code-block">
+                <button class="btn-copy" onclick="copyCode(this)">Kopii 📋</button>
+                <pre><code>python banana.py</code></pre>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 AgentPipe 🍌. Kreita aŭtonome 🤖 kun <span>🍌</span> por la Banan-Adorado-Sindikato 🍮👑.</p>
+    </footer>
+
+    <script>
+        const canvas = document.getElementById('bananaCanvas');
+        const ctx = canvas.getContext('2d');
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+
+        // Vertices & Edges Generation
+        const vertices = [];
+        const edges = [];
+        const numT = 24; // segments along spine
+        const numTheta = 6; // hexagon cross-section for ridged banana feel
+
+        for (let i = 0; i <= numT; i++) {
+            const t = -1 + (2 * i) / numT;
+            
+            // Curved spine parabola
+            const sx = t * 1.2;
+            const sy = -0.35 * (1 - t * t);
+            const sz = 0;
+            const sw = 0.15 * t; // 4D offset
+            
+            // Radius tapers at both ends
+            const R = 0.3 * (1 - t * t) * (1 + 0.1 * t);
+            
+            for (let j = 0; j < numTheta; j++) {
+                const theta = (2 * Math.PI * j) / numTheta;
+                
+                // Offset from spine
+                const dx = R * Math.cos(theta) * Math.sin(t);
+                const dy = R * Math.cos(theta);
+                const dz = R * Math.sin(theta);
+                const dw = R * Math.sin(theta) * t;
+                
+                vertices.push([sx + dx, sy + dy, sz + dz, sw + dw]);
+            }
+        }
+
+        // Build edges
+        for (let i = 0; i < numT; i++) {
+            for (let j = 0; j < numTheta; j++) {
+                const current = i * numTheta + j;
+                const nextTheta = i * numTheta + ((j + 1) % numTheta);
+                const nextT = (i + 1) * numTheta + j;
+                
+                edges.push([current, nextTheta]);
+                edges.push([current, nextT]);
+            }
+        }
+        for (let j = 0; j < numTheta; j++) {
+            const current = numT * numTheta + j;
+            const nextTheta = numT * numTheta + ((j + 1) % numTheta);
+            edges.push([current, nextTheta]);
+        }
+
+        // State variables
+        let currentAngles = { xw: 0, yz: 0, zw: 0 };
+        const speeds = {
+            xw: 0.02,
+            yz: 0.03,
+            zw: 0.01
+        };
+        let d4 = 2.0;
+
+        // Sliders config
+        document.getElementById('rotXW').addEventListener('input', (e) => {
+            speeds.xw = parseFloat(e.target.value);
+            document.getElementById('valXW').innerText = speeds.xw.toFixed(3);
+        });
+        document.getElementById('rotYZ').addEventListener('input', (e) => {
+            speeds.yz = parseFloat(e.target.value);
+            document.getElementById('valYZ').innerText = speeds.yz.toFixed(3);
+        });
+        document.getElementById('rotZW').addEventListener('input', (e) => {
+            speeds.zw = parseFloat(e.target.value);
+            document.getElementById('valZW').innerText = speeds.zw.toFixed(3);
+        });
+        document.getElementById('depth4D').addEventListener('input', (e) => {
+            d4 = parseFloat(e.target.value);
+            document.getElementById('valD').innerText = d4.toFixed(1);
+        });
+
+        function rotatePoint4D(pt, ang) {
+            let [x, y, z, w] = pt;
+            
+            // XW plane rotation
+            let cosXW = Math.cos(ang.xw);
+            let sinXW = Math.sin(ang.xw);
+            let x1 = x * cosXW - w * sinXW;
+            let w1 = x * sinXW + w * cosXW;
+            x = x1; w = w1;
+            
+            // YZ plane rotation
+            let cosYZ = Math.cos(ang.yz);
+            let sinYZ = Math.sin(ang.yz);
+            let y1 = y * cosYZ - z * sinYZ;
+            let z1 = y * sinYZ + z * cosYZ;
+            y = y1; z = z1;
+            
+            // ZW plane rotation
+            let cosZW = Math.cos(ang.zw);
+            let sinZW = Math.sin(ang.zw);
+            let z2 = z * cosZW - w * sinZW;
+            let w2 = z * sinZW + w * cosZW;
+            z = z2; w = w2;
+            
+            return [x, y, z, w];
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw radial grid background inside canvas
+            ctx.strokeStyle = '#121216';
+            ctx.lineWidth = 1;
+            for (let r = 50; r < 200; r += 50) {
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, r, 0, 2 * Math.PI);
+                ctx.stroke();
+            }
+            
+            // Rotate and project points
+            const projected = [];
+            for (let i = 0; i < vertices.length; i++) {
+                const rot = rotatePoint4D(vertices[i], currentAngles);
+                
+                // 4D to 3D perspective projection
+                const wFactor = d4 - rot[3];
+                const x3d = rot[0] / wFactor;
+                const y3d = rot[1] / wFactor;
+                const z3d = rot[2] / wFactor;
+                
+                // 3D to 2D perspective projection
+                const d3 = 2.2;
+                const zFactor = d3 - z3d;
+                const scale = 220; // Size factor
+                const sx = centerX + (x3d * scale) / zFactor;
+                const sy = centerY + (y3d * scale) / zFactor;
+                
+                projected.push([sx, sy, z3d]);
+            }
+            
+            // Draw Edges
+            for (let i = 0; i < edges.length; i++) {
+                const [p1Idx, p2Idx] = edges[i];
+                const p1 = projected[p1Idx];
+                const p2 = projected[p2Idx];
+                
+                // Depth cueing (alpha changes based on average Z coordinate)
+                const avgZ = (p1[2] + p2[2]) / 2;
+                const alpha = Math.max(0.1, Math.min(1.0, 0.5 + avgZ * 0.8));
+                
+                ctx.strokeStyle = `rgba(255, 223, 0, ${alpha})`;
+                ctx.lineWidth = 1.2;
+                ctx.shadowColor = 'rgba(255, 223, 0, 0.3)';
+                ctx.shadowBlur = 4;
+                
+                ctx.beginPath();
+                ctx.moveTo(p1[0], p1[1]);
+                ctx.lineTo(p2[0], p2[1]);
+                ctx.stroke();
+            }
+            ctx.shadowBlur = 0; // reset
+            
+            // Update angles
+            currentAngles.xw += speeds.xw;
+            currentAngles.yz += speeds.yz;
+            currentAngles.zw += speeds.zw;
+            
+            requestAnimationFrame(draw);
+        }
+
+        // Copy button function
+        function copyCode(btn) {
+            const block = btn.nextElementSibling;
+            navigator.clipboard.writeText(block.innerText);
+            btn.innerText = "Kopiita! 📋🍌";
+            setTimeout(() => {
+                btn.innerText = "Kopii 📋";
+            }, 2000);
+        }
+
+        // Start render loop
+        draw();
+    </script>
+</body>
+</html>
