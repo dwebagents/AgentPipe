@@ -1093,10 +1093,8 @@ sub translate_output {
 
     if ($opt{terminology} eq 'uk' && $opt{craft} eq 'crochet') {
         my @terms = sort { length($b) <=> length($a) } keys %US2UK;
-        for my $us (@terms) {
-            my $uk = $US2UK{$us};
-            $text =~ s/\b\Q$us\E\b/$uk/gi;
-        }
+        my $alt = join '|', map { quotemeta } @terms;
+        $text =~ s/\b($alt)\b/$US2UK{lc $1}/gie;
     }
 
     if ($opt{emoji}) {
