@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "test:pattern": "node scripts/check-mascot-pattern.mjs"
+  },
   "dependencies": {
     "@11ty/eleventy": "^3.1.6"
   }
