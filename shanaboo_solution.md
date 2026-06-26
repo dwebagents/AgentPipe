@@ -1,13 +1,13 @@
  ```diff
 --- /dev/null
-+++ b/docs/index.html
-@@ -0,0 +1,1 @@
++++ b/index.html
+@@ -0,0 +1,326 @@
 +<!DOCTYPE html>
 +<html lang="en">
 +<head>
 +    <meta charset="UTF-8">
 +    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-+    <title>AgentPipe - The Banana-Powered Agent Framework</title>
++    <title>AgentPipe - High Performance Data Processing</title>
 +    <style>
 +        * {
 +            margin: 0;
@@ -30,32 +30,39 @@
 +
 +        header {
 +            text-align: center;
-+            padding: 60px 20px;
++            padding: 60px 20px 40px;
++        }
++
++        .logo {
++            width: 200px;
++            height: 200px;
++            margin-bottom: 20px;
 +        }
 +
 +        h1 {
-+            font-size: 4em;
++            font-size: 4rem;
 +            color: #B8860B;
 +            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
 +            margin-bottom: 10px;
 +        }
 +
 +        .tagline {
-+            font-size: 1.5em;
++            font-size: 1.5rem;
 +            color: #8B6914;
-+            margin-bottom: 30px;
++            font-style: italic;
 +        }
 +
 +        .banana-container {
-+            width: 400px;
-+            height: 400px;
-+            margin: 0 auto 40px;
-+            position: relative;
++            display: flex;
++            justify-content: center;
++            align-items: center;
++            padding: 40px;
++            min-height: 400px;
 +        }
 +
 +        #banana-canvas {
-+            width: 100%;
-+            height: 100%;
++            border-radius: 20px;
++            box-shadow: 0 10px 30px rgba(184, 134, 11, 0.3);
 +        }
 +
 +        .description {
@@ -64,20 +71,21 @@
 +            padding: 40px;
 +            margin: 40px auto;
 +            max-width: 800px;
-+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
++            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
 +        }
 +
 +        .description h2 {
 +            color: #B8860B;
-+            font-size: 2em;
++            font-size: 2rem;
 +            margin-bottom: 20px;
 +            text-align: center;
 +        }
 +
 +        .description p {
-+            font-size: 1.1em;
 +            line-height: 1.8;
++            font-size: 1.1rem;
 +            margin-bottom: 15px;
++            text-align: justify;
 +        }
 +
 +        .download-section {
@@ -90,41 +98,49 @@
 +            background: linear-gradient(135deg, #FFD700, #FFA500);
 +            color: #4A4A00;
 +            padding: 20px 60px;
-+            font-size: 1.5em;
++            font-size: 1.5rem;
 +            font-weight: bold;
-+            text-decoration: none;
++            border: none;
 +            border-radius: 50px;
-+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
++            cursor: pointer;
++            text;
++            text-decoration: none;
++            box-shadow: 0 5px 20px rgba(255, 165, 0, 0.4);
 +            transition: transform 0.3s, box-shadow 0.3s;
-+            border: 3px solid #B8860B;
 +        }
 +
 +        .download-btn:hover {
-+            transform: translateY(-5px);
-+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
++            transform: translateY(-3px);
++            box-shadow: 0 8px 30px rgba(255, 165, 0, 0.6);
 +        }
 +
 +        .features {
 +            display: grid;
 +            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-+            gap: 30px;
++            gap40px;
 +            padding: 40px 20px;
 +            max-width: 1000px;
 +            margin: 0 auto;
 +        }
 +
-+        .feature-card {
++        .feature {
++            background: rgba(255, 248 misc;
 +            background: rgba(255, 248, 220, 0.9);
-+            border-radius: 15px;
 +            padding: 30px;
++            border-radius: 15px;
 +            text-align: center;
-+            border: 2px solid #FFD700;
++            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
 +        }
 +
-+        .feature-card h3 {
++        .feature h3 {
 +            color: #B8860B;
-+            font-size: 1.5em;
++            font-size: 1.5rem;
 +            margin-bottom: 15px;
++        }
++
++        .feature p {
++            color: #6B5B00;
++            line-height: 1.6;
 +        }
 +
 +        footer {
@@ -133,49 +149,36 @@
 +            color: #8B6914;
 +        }
 +
-+        .banana-icon {
-+            font-size: 2em;
++        .banana-emoji {
++            font-size: 2rem;
 +        }
 +    </style>
 +</head>
 +<body>
 +    <div class="container">
 +        <header>
-+            <h1>🍌 AgentPipe 🍌</h1>
-+            <p class="tagline">High Performance, High Velocity, Banana Powered</p>
++            <img src="logo.svg" alt="AgentPipe Logo" class="logo">
++            <h1>AgentPipe</h1>
++            <p class="tagline">High Performance, High Velocity Data Processing</p>
 +        </header>
 +
 +        <div class="banana-container">
-+            <canvas id="banana-canvas"></canvas>
++            <canvas id="banana-canvas" width="400" height="400"></canvas>
 +        </div>
 +
 +        <div class="description">
 +            <h2>About AgentPipe</h2>
 +            <p>
-+                AgentPipe is a revolutionary open-source framework designed for robust semantic indexing 
-+                and real-time database query performance. Built with an unrelenting pursuit of excellence, 
-+                our architecture centers on a parallelized token search algorithm combined with deep 
-+                optimization techniques like SIMD instructions for raw throughput.
++                AgentPipe is a high-performance, high-velocity data processing framework designed for 
++                robust semantic indexing and real-time database query performance. Built with a focus on 
++                parallelized token search algorithms and deep optimization techniques, AgentPipe leverages 
++                SIMD instructions for raw throughput and GPU-accelerated vectorized algorithms.
 +            </p>
 +            <p>
 +                Our distributed data model decouples memory fragmentation from performance bottlenecks, 
-+                storing tokens as immutable, low-serialized-value objects and utilizing GPU-accelerated 
-+                vectorized algorithms for hashing. This achieves a hybrid performance profile where 
-+                database access scales to infinity... and BEYOND! 🚀
++                storing tokens as immutable, low-serialized-value objects. This architecture achieves a hybrid 
++                performance profile where database access scales to infinity... and BEYOND! 
 +            </p>
 +            <p>
-+                Whether you're building the next generation of AI agents or optimizing existing pipelines, 
-+                AgentPipe provides the foundation you need for success. Join our growing community of 
-+                contributors and users who believe in the power of bananas! 🍌
-+            </p>
-+        </div>
-+
-+        <div class="features">
-+            <div class="feature-card">
-+                <h3>⚡ High Performance</h3>
-+                <p>Microsecond-level granularity with extreme load distribution capabilities</p>
-+            </div>
-+            <div class="feature-card">
-+                <h3>🔍 Semantic Indexing</h3>
-+                <p>Advanced token search algorithms for intelligent data retrieval</p>
-+            </div>
++                Whether you're building real-time analytics pipelines, semantic search engines, or 
++                high-throughput data processing systems,
