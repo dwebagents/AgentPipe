@@ -53,5 +53,5 @@ python banana.py    # may need to use python3 if on Mac or Windows
 Generate a Markdown crochet or knitting pattern:
 
 ```
-perl scripts/generate_mascot_pattern.pl --banana 3 --goose 1 --goblin 2 --yarn dk --height 22 --output mascot.md
+perl scripts/generate_mascot_pattern.pl --banana 3 --goose 1 --goblin 2 --yarn dk --height 22 --terminology uk --emoji --output mascot.md
 ```
