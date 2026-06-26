@@ -1,0 +1,151 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgentPipe - High Performance Agent Engine</title>
+    <style>
+        :root { --yellow: #FFD700; --dark: #1a1a2e; --card: #16213e; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--dark); color: #fff; line-height: 1.6; }
+        .hero { text-align: center; padding: 100px 20px 60px; background: linear-gradient(135deg, var(--dark), #0f3460); }
+        .hero h1 { font-size: 4em; color: var(--yellow); margin-bottom: 20px; }
+        .hero p { font-size: 1.3em; max-width: 600px; margin: 0 auto 30px; color: #ccc; }
+        .btn { display: inline-block; padding: 15px 40px; background: var(--yellow); color: var(--dark); text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 1.1em; transition: transform .2s; }
+        .btn:hover { transform: translateY(-2px); }
+        .section { max-width: 1000px; margin: 0 auto; padding: 60px 20px; }
+        .section h2 { font-size: 2em; color: var(--yellow); margin-bottom: 30px; text-align: center; }
+        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
+        .feature { background: var(--card); padding: 30px; border-radius: 12px; border-left: 4px solid var(--yellow); }
+        .feature h3 { color: var(--yellow); margin-bottom: 10px; }
+        .feature p { color: #aaa; font-size: 0.95em; }
+        .banana-container { text-align: center; padding: 40px; }
+        canvas { border-radius: 12px; background: #2a2a4e; }
+        .footer { text-align: center; padding: 40px; color: #666; font-size: 0.9em; }
+        @media (max-width: 768px) { .hero h1 { font-size: 2.5em; } }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>🍌 AgentPipe</h1>
+        <p>High performance multithreaded task execution and optimization engine for agents and decentralized web applications</p>
+        <a href="https://github.com/dwebagents/AgentPipe" class="btn">Download on GitHub</a>
+    </div>
+
+    <div class="section">
+        <h2>Features</h2>
+        <div class="features">
+            <div class="feature">
+                <h3>⚡ High Performance</h3>
+                <p>Multithreaded task execution engine optimized for maximum throughput with minimal latency.</p>
+            </div>
+            <div class="feature">
+                <h3>🤖 Agent-Ready</h3>
+                <p>Built for AI agents with native support for LLM integration, tool calling, and autonomous workflows.</p>
+            </div>
+            <div class="feature">
+                <h3>🌐 Web3 Native</h3>
+                <p>Seamless integration with decentralized web protocols, smart contracts, and blockchain data.</p>
+            </div>
+            <div class="feature">
+                <h3>🧩 Modular Design</h3>
+                <p>Plugin-based architecture lets you extend functionality with custom modules and pipelines.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🍌 4D Banana</h2>
+        <p style="text-align:center;color:#aaa;margin-bottom:20px;">A deterministically rendered banana in client-side JavaScript</p>
+        <div class="banana-container">
+            <canvas id="bananaCanvas" width="400" height="400"></canvas>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Quick Start</h2>
+        <pre style="background:#2a2a4e;padding:20px;border-radius:8px;overflow-x:auto;color:#8f8;"><code># Clone the repo
+git clone https://github.com/dwebagents/AgentPipe.git
+cd AgentPipe
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run a basic task
+python main.py --task example</code></pre>
+    </div>
+
+    <div class="footer">
+        <p>AgentPipe — Built with 🍌 and ❤️ | Open Source under MIT License</p>
+        <p style="margin-top:10px;">
+            <a href="https://github.com/dwebagents/AgentPipe" style="color:var(--yellow);">GitHub</a> |
+            <a href="https://github.com/dwebagents/AgentPipe/issues" style="color:var(--yellow);">Issues</a> |
+            <a href="https://github.com/dwebagents/AgentPipe/discussions" style="color:var(--yellow);">Discussions</a>
+        </p>
+    </div>
+
+    <script>
+        // Deterministic 4D Banana Renderer
+        const canvas = document.getElementById('bananaCanvas');
+        const ctx = canvas.getContext('2d');
+        const time = new Date().getTime();
+        
+        function drawBanana(t) {
+            ctx.clearRect(0, 0, 400, 400);
+            
+            // Banana body - deterministic from time
+            const bend = Math.sin(t * 0.0001) * 0.15 + 0.85;
+            const rot = Math.sin(t * 0.00007) * 0.2;
+            
+            ctx.save();
+            ctx.translate(200, 200);
+            ctx.rotate(rot);
+            ctx.scale(1, bend);
+            
+            // Main banana shape
+            ctx.beginPath();
+            ctx.moveTo(-40, -80);
+            ctx.quadraticCurveTo(-80, -40, -40, 60);
+            ctx.lineTo(40, 60);
+            ctx.quadraticCurveTo(80, -40, 40, -80);
+            ctx.closePath();
+            
+            const gradient = ctx.createLinearGradient(-40, -80, 40, 60);
+            const yellowHue = 50 + Math.sin(t * 0.00005) * 10;
+            gradient.addColorStop(0, 'hsl(' + yellowHue + ', 100%, 55%)');
+            gradient.addColorStop(0.5, 'hsl(' + yellowHue + ', 100%, 45%)');
+            gradient.addColorStop(1, 'hsl(' + yellowHue + ', 100%, 35%)');
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            
+            // Stem
+            ctx.beginPath();
+            ctx.moveTo(-5, -80);
+            ctx.lineTo(-5, -100);
+            ctx.lineTo(5, -100);
+            ctx.lineTo(5, -80);
+            ctx.fillStyle = '#4a7a2e';
+            ctx.fill();
+            
+            // Tip
+            ctx.beginPath();
+            ctx.arc(0, 65, 8, 0, Math.PI * 2);
+            ctx.fillStyle = '#3a2a1a';
+            ctx.fill();
+            
+            ctx.restore();
+            
+            // "4D" indicator - time dimension
+            ctx.fillStyle = '#FFD700';
+            ctx.font = '14px monospace';
+            ctx.fillText('4D t=' + ((t / 1000) % 60).toFixed(1) + 's', 10, 20);
+        }
+        
+        function animate() {
+            drawBanana(new Date().getTime());
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
