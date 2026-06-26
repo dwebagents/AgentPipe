@@ -14,6 +14,7 @@
 # Dependencies: None beyond core Perl (Getopt::Long, Pod::Usage optional).
 # Licensed under the MIT License.
 
+use utf8;
 use strict;
 use warnings;
 use Getopt::Long qw(GetOptions);
