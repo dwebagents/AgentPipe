@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="AgentPipe is a high-velocity open source project with a deterministic client-side 4D banana rendering."
+    />
+    <title>AgentPipe</title>
+    <link rel="stylesheet" href="./assets/site.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header" aria-label="Primary">
+      <a class="brand" href="#top" aria-label="AgentPipe home">
+        <span class="brand-mark" aria-hidden="true">A</span>
+        <span>AgentPipe</span>
+      </a>
+      <nav class="nav-links" aria-label="Site">
+        <a href="#about">About</a>
+        <a href="#download">Download</a>
+        <a href="https://github.com/dwebagents/AgentPipe">GitHub</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section id="top" class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow">Open source infrastructure, maximum urgency</p>
+          <h1 id="hero-title">AgentPipe</h1>
+          <p class="lead">
+            AgentPipe turns high-velocity data flow experiments into a shared
+            open source workspace for contributors, customers, and anyone who
+            needs important code to move with confidence.
+          </p>
+          <div class="actions" aria-label="Primary actions">
+            <a
+              class="button primary"
+              href="https://github.com/dwebagents/AgentPipe/archive/refs/heads/main.zip"
+            >
+              Download project
+            </a>
+            <a class="button" href="https://github.com/dwebagents/AgentPipe">
+              View repository
+            </a>
+          </div>
+          <div class="hero-metrics" aria-label="Project highlights">
+            <div class="metric">
+              <strong>Static</strong>
+              <span>ready for GitHub Pages</span>
+            </div>
+            <div class="metric">
+              <strong>Client-side</strong>
+              <span>deterministic 4D rendering</span>
+            </div>
+            <div class="metric">
+              <strong>Open</strong>
+              <span>built for contributors</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="banana-stage" aria-label="Deterministic 4D banana graphic">
+          <canvas id="banana-canvas" width="960" height="960">
+            A deterministic JavaScript rendering of a projected 4D banana.
+          </canvas>
+          <div class="canvas-caption">
+            <span>Projected 4D banana</span>
+            <span id="render-status">deterministic render initializing</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="about" class="section" aria-labelledby="about-title">
+        <div class="section-inner">
+          <h2 id="about-title">Important code deserves a front door.</h2>
+          <p class="section-copy">
+            AgentPipe presents a playful but practical home for the project:
+            what it is, where to download it, and why contributors should care.
+            The page is static, fast to host, and designed to work directly from
+            GitHub Pages without server-side dependencies.
+          </p>
+
+          <div class="feature-grid">
+            <article class="feature-card">
+              <h3>Clear project story</h3>
+              <p>
+                The site explains AgentPipe as a high-performance experimental
+                codebase for real-time indexing, data flow, and contributor-led
+                improvement.
+              </p>
+            </article>
+            <article class="feature-card">
+              <h3>Download path</h3>
+              <p>
+                A direct archive link lets visitors download the latest main
+                branch while still keeping the GitHub repository one click away.
+              </p>
+            </article>
+            <article class="feature-card">
+              <h3>Deterministic graphic</h3>
+              <p>
+                The banana canvas uses seeded math and 4D projection routines so
+                the generated shape is reproducible in the browser.
+              </p>
+            </article>
+          </div>
+
+          <div id="download" class="download-band">
+            <h2>Ready for Pages.</h2>
+            <p>
+              Serve the <code>docs/</code> directory with GitHub Pages or use the
+              included workflow to publish the static site after merge.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>AgentPipe website for GitHub Pages</span>
+      <a href="https://github.com/dwebagents/AgentPipe/issues/112">Bounty #112</a>
+    </footer>
+
+    <script src="./assets/banana4d.js" defer></script>
+  </body>
+</html>

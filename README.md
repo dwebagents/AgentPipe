@@ -12,6 +12,16 @@
 
 High performance, high velocity.
 
+## Website
+
+AgentPipe now includes a static website ready for GitHub Pages in [`docs/`](docs/).
+It contains:
+
+- a concise product description for contributors and customers
+- a download call-to-action that points to the repository archive
+- a deterministic client-side JavaScript canvas rendering of a projected 4D banana
+
+Run `npm run check:site` to validate that the required website files are present.
 
 ## Design
 
