@@ -1,13 +1,13 @@
  ```diff
 --- /dev/null
-+++ b/index.html
-@@ -0,0 +1,218 @@
++++ b/docs/index.html
+@@ -0,0 +1,1 @@
 +<!DOCTYPE html>
 +<html lang="en">
 +<head>
 +    <meta charset="UTF-8">
 +    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-+    <title>AgentPipe - Important Code</title>
++    <title>AgentPipe - The Banana-Powered Pipeline</title>
 +    <style>
 +        * {
 +            margin: 0;
@@ -33,53 +33,56 @@
 +            padding: 60px 20px;
 +        }
 +
-+        header h1 {
++        h1 {
 +            font-size: 4em;
 +            color: #B8860B;
 +            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
 +            margin-bottom: 10px;
 +        }
 +
-+        header p {
++        .tagline {
 +            font-size: 1.5em;
 +            color: #8B6914;
++            margin-bottom: 30px;
 +        }
 +
 +        .banana-container {
-+            display: flex;
-+            justify-content: center;
-+            margin: 40px 0;
++            width: 400px;
++            height: 400px;
++            margin: 0 auto 40px;
++            position: relative;
 +        }
 +
 +        #banana-canvas {
-+            border-radius: 20px;
-+            box-shadow: 0 10px 30px rgba(184, 134, 11, 0.3);
++            width: 100%;
++            height: 100%;
 +        }
 +
 +        .description {
 +            background: rgba(255, 255, 255, 0.9);
 +            border-radius: 20px;
 +            padding: 40px;
-+            margin: 40px 0;
-+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
++            margin: 40px auto;
++            max-width: 800px;
++            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 +        }
 +
 +        .description h2 {
 +            color: #B8860B;
 +            font-size: 2em;
 +            margin-bottom: 20px;
-+            text opposite: center;
++            text-align: center;
 +        }
 +
 +        .description p {
 +            line-height: 1.8;
 +            font-size: 1.1em;
-+            color: #5a5a00;
++            margin-bottom: 15px;
 +        }
 +
 +        .download-section {
 +            text-align: center;
-+            margin: 60px 0;
++            padding: 60px 20px;
 +        }
 +
 +        .download-btn {
@@ -89,17 +92,40 @@
 +            padding: 20px 60px;
 +            font-size: 1.5em;
 +            font-weight: bold;
-+            text-decoration: none;
++            border: none;
 +            border-radius: 50px;
-+            box-shadow: 0 8px 25px rgba(255, 165, 0, 0.4);
-+            transition: all 0.3s ease;
-+            border: 3px solid #B8860B;
++            cursor: pointer;
++            text-decoration: none;
++            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
++            transition: transform 0.3s, box-shadow 0.3s;
 +        }
 +
 +        .download-btn:hover {
 +            transform: translateY(-3px);
-+            box-shadow: 0 12px 35px rgba(255, 165, 0, 0.6);
-+            background: linear-gradient(135deg, #FFA500, #FFD700);
++            box-shadow: 0 12px 30px rgba(0,0,0,0.3);
++        }
++
++        .features {
++            display: grid;
++            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
++            gap: 30px;
++            padding: 40px 20px;
++            max-width: 1000px;
++            margin: 0 auto;
++        }
++
++        .feature-card {
++            background: rgba(255, 255, 255, 0.85);
++            border-radius: 15px;
++            padding: 30px;
++            text-align: center;
++            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
++        }
++
++        .feature-card h3 {
++            color: #B8860B;
++            font-size: 1.5em;
++            margin-bottom: 15px;
 +        }
 +
 +        footer {
@@ -116,63 +142,41 @@
 +<body>
 +    <div class="container">
 +        <header>
-+            <div class="banana-icon">🍌</div>
-+            <h1>AgentPipe</h1>
-+            <p>High Performance. High Velocity. All Banana.</p>
++            <h1>🍌 AgentPipe 🍌</h1>
++            <p class="tagline">High Performance, High Velocity, Banana Powered</p>
 +        </header>
 +
 +        <div class="banana-container">
-+            <canvas id="banana-canvas" width="400" height="400"></canvas>
-+        Interactive 4D Banana - Drag to rotate!
++            <canvas id="banana-canvas"></canvas>
 +        </div>
 +
 +        <div class="description">
 +            <h2>About AgentPipe</h2>
 +            <p>
-+                AgentPipe is a high-performance, high-velocity software project built for robust semantic indexing 
-+                and real-time database query performance. Our architecture leverages a parallelized token search 
-+                algorithm combined with deep optimization techniques like SIMD instructions for raw throughput.
++                AgentPipe is a high-performance, high-velocity data processing pipeline designed for 
++                robust semantic indexing and real-time database query performance. Built with an 
++                unrelenting pursuit of speed, it leverages parallelized token search algorithms 
++                combined with deep optimization techniques like SIMD instructions for raw throughput.
 +            </p>
 +            <p>
-+                The core design utilizes a distributed data model that decouples memory fragmentation from 
-+                performance bottlenecks. By storing tokens as immutable, low-serialized-value objects and 
-+                utilizing GPU-accelerated vectorized algorithms for hashing, we achieve a hybrid performance 
-+                profile where database access scales to infinity... and BEYOND! 🚀
++                Our distributed data model decouples memory fragmentation from performance bottlenecks, 
++                storing tokens as immutable, low-serialized-value objects and utilizing GPU-accelerated 
++                vectorized algorithms for hashing. The result? A hybrid performance profile where database 
++                access scales to infinity... and BEYOND! 🚀
 +            </p>
 +            <p>
-+                Built with Python and modern JavaScript tooling, AgentPipe is designed for developers who 
-+                demand microsecond-level granularity and extreme load distribution capabilities.
++                Whether you're processing millions of transactions or need microsecond-level granularity, 
++                AgentPipe delivers the performance you need with the reliability youbuffers deserve.
 +            </p>
 +        </div>
 +
-+        <div class="download-section">
-+            <a href="https://github.com/dwebagents/AgentPipe/archive/refs/heads/main.zip" class="download-btn">
-+                ⬇️ Download AgentPipe
-+            </a>
-+        </div>
-+
-+        <footer>
-+            <p>🍌 Worship the Banana. Worship AgentPipe. 🍌</p>
-+            <p>Built with love and bananas.</p>
-+        </footer>
-+    </div>
-+
-+    <script>
-+        // Deterministic 4D Banana Renderer
-+        (function() {
-+            const canvas = document.getElementById('banana-canvas');
-+            const ctx = canvas.getContext('2d');
-+            const width = canvas.width;
-+            const height = canvas.height;
-+            
-+            let rotation = 0;
-+            let rotationX = 0.3;
-+            let rotationY = 0;
-+            let autoRotate = true;
-+            let isDragging = false;
-+            let lastX = 0;
-+            let lastY = 0;
-+
-+            // Deterministic pseudo-random number generator (seeded)
-+            function seededRandom(seed) {
-+                let s = seed
++        <div class="features">
++            <div class="feature-card">
++                <h3>⚡ Blazing Fast</h3>
++                <p>Microsecond-level granularity with distributed architecture that scales infinitely.</p>
++            </div>
++            <div class="feature-card">
++                <h3>🔍 Semantic Indexing</h3>
++                <p>Advanced token search algorithms for intelligent data retrieval and processing.</p>
++            </div>
++            <
