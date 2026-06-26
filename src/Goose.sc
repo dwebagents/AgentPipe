@@ -63,9 +63,8 @@ Goose {
         var mono = in.size > 1.if({ Mix(in) }, { in });
         
         // Track the original pitch and amplitude
-        var pitch, hasPitch, amp;
-        # pitch, hasPitch = Pitch.kr(mono, minFreq: 50, maxFreq: 1200, ampThreshold: 0.01);
-        pitch = pitch.lag(0.05);
+        var pitch, amp;
+        pitch = Pitch.kr(mono, minFreq: 50, maxFreq: 1200, ampThreshold: 0.01)[0].lag(0.05);
         amp = Amplitude.kr(mono, 0.01, 0.1);
         
         ^in.collect { |chan|
