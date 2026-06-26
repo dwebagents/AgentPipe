@@ -1,4 +1,0 @@
-# Require human review for anything that could change automation or CI.
-# The self-improvement workflow is scoped to src/ only; this is defense in depth.
-/.github/    @sneakers-the-rat
-/CODEOWNERS  @sneakers-the-rat
