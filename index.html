@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="AgentPipe is a high performance multithreaded task execution and optimization engine for agents and decentralized web applications."
+    />
+    <title>AgentPipe</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header" aria-label="Primary navigation">
+      <a class="brand" href="./" aria-label="AgentPipe home">
+        <img src="logo.svg" alt="" />
+        <span>AgentPipe</span>
+      </a>
+      <nav aria-label="Site sections">
+        <a href="#engine">Engine</a>
+        <a href="#banana">4D Banana</a>
+        <a href="#download">Download</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <h1 id="hero-title">AgentPipe</h1>
+          <p>
+            A high performance multithreaded task execution and optimization
+            engine for agents and decentralized web apps.
+          </p>
+          <div class="hero-actions">
+            <a
+              class="button button-primary"
+              href="https://github.com/dwebagents/AgentPipe/archive/refs/heads/main.zip"
+            >
+              Download
+            </a>
+            <a class="button button-secondary" href="https://github.com/dwebagents/AgentPipe">
+              View on GitHub
+            </a>
+          </div>
+        </div>
+
+        <div class="banana-stage" id="banana" aria-label="Deterministic 4D banana graphic">
+          <canvas
+            id="banana-canvas"
+            width="760"
+            height="560"
+            data-seed="314159"
+          ></canvas>
+          <div class="stage-readout" aria-hidden="true">
+            <span>seed 314159</span>
+            <span>4D projection</span>
+            <span>client JS</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="description-band" id="engine" aria-labelledby="engine-title">
+        <div>
+          <h2 id="engine-title">Task pipelines with less waiting and more throughput.</h2>
+          <p>
+            AgentPipe coordinates work across agent workflows, optimization passes,
+            database routines, recipes, financial interfaces, and reactive visualizers.
+            The repository mixes Python, TypeScript, JavaScript, Go, Rust, COBOL, and
+            Brainfuck modules around one simple idea: keep tasks moving fast.
+          </p>
+        </div>
+      </section>
+
+      <section class="feature-band" aria-label="AgentPipe capabilities">
+        <div class="feature">
+          <strong>Parallel task lanes</strong>
+          <span>Break agent work into independent execution lanes that can move without blocking each other.</span>
+        </div>
+        <div class="feature">
+          <strong>Optimization loops</strong>
+          <span>Run improvement passes, validation scripts, and benchmarks as repeatable pipeline steps.</span>
+        </div>
+        <div class="feature">
+          <strong>Dweb-ready modules</strong>
+          <span>Connect distributed app logic to deterministic rendering, finance adapters, and data stores.</span>
+        </div>
+      </section>
+
+      <section class="showcase-band" aria-labelledby="banana-title">
+        <div class="showcase-copy">
+          <h2 id="banana-title">A deterministic 4D banana, rendered in the browser.</h2>
+          <p>
+            The animation above is not a video or static asset. It is generated from
+            fixed mathematical samples, rotated through 4D space, projected onto a
+            2D canvas, and drawn entirely on the client.
+          </p>
+        </div>
+        <pre class="formula" aria-label="4D banana rendering formula"><code>point = banana(u, v, w)
+rotated = rotateXW(point, time)
+screen = project4Dto2D(rotated)</code></pre>
+      </section>
+
+      <section class="download-band" id="download" aria-labelledby="download-title">
+        <h2 id="download-title">Download AgentPipe and run the pipeline locally.</h2>
+        <p>
+          Clone the repository or download the source archive, install the Python and
+          Node dependencies from the README, and start experimenting with the task
+          engine modules.
+        </p>
+        <div class="download-actions">
+          <a
+            class="button button-primary"
+            href="https://github.com/dwebagents/AgentPipe/archive/refs/heads/main.zip"
+          >
+            Download ZIP
+          </a>
+          <a class="button button-secondary" href="https://github.com/dwebagents/AgentPipe">
+            Repository
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>AgentPipe</span>
+      <span>MIT licensed open source infrastructure for agent task execution.</span>
+    </footer>
+
+    <script src="banana4d.js"></script>
+  </body>
+</html>
