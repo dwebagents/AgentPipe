@@ -41,6 +41,8 @@ class BananaPrimitive:
     brand: str = "generic"
     rotation: Rotation3D = (0.0, 0.0, 0.0)
     bananadine_grams: float = 0.0
+    audio_8d: bool = False
+    chess_8d: bool = False
 
 
 @dataclass(frozen=True)
@@ -137,6 +139,8 @@ class BananaRenderingPipeline:
                 brand=str(item.get("brand", "generic")),
                 rotation=rotation,
                 bananadine_grams=float(item.get("bananadine_grams", 0.0)),
+                audio_8d=bool(item.get("audio_8d", False)),
+                chess_8d=bool(item.get("chess_8d", False)),
             )
         if len(item) < 3:
             raise ValueError("banana coordinate sequences must contain x, y, z")
@@ -151,6 +155,8 @@ class BananaRenderingPipeline:
             float(item[9]) if len(item) > 9 else 0.0,
         )
         bananadine_grams = float(item[10]) if len(item) > 10 else 0.0
+        audio_8d = bool(item[11]) if len(item) > 11 else False
+        chess_8d = bool(item[12]) if len(item) > 12 else False
         return BananaPrimitive(
             center,
             length,
@@ -159,6 +165,8 @@ class BananaRenderingPipeline:
             brand,
             rotation,
             bananadine_grams,
+            audio_8d,
+            chess_8d,
         )
 
     def _transform_banana(
@@ -182,6 +190,8 @@ class BananaRenderingPipeline:
             banana.brand,
             banana.rotation,
             banana.bananadine_grams,
+            banana.audio_8d,
+            banana.chess_8d,
         )
 
     def _rotate_point(self, point: Point3D, rotation: Rotation3D) -> Point3D:
