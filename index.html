@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgentPipe — AI Agent Pipeline Framework</title>
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --paper: #faf9f6;
+    --banana: #f5c800;
+    --banana-dim: #d4aa00;
+    --muted: #6b6b6b;
+    --border: #e0ddd5;
+    --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --mono: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', Consolas, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: var(--font);
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+  header {
+    padding: 48px 0 32px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo { width: 48px; height: 48px; flex-shrink: 0; }
+  .logo svg { width: 100%; height: 100%; }
+  .brand h2 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
+  .brand span { font-size: 0.8rem; color: var(--muted); display: block; }
+
+  .hero {
+    padding: 72px 0 48px;
+    text-align: center;
+  }
+  .hero h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .hero h1 em {
+    font-style: normal;
+    border-bottom: 4px solid var(--banana);
+    padding-bottom: 2px;
+  }
+  .hero p {
+    font-size: 1.125rem;
+    color: var(--muted);
+    max-width: 540px;
+    margin: 0 auto 32px;
+  }
+
+  .banana-stage {
+    position: relative;
+    width: 320px; height: 320px;
+    margin: 0 auto 16px;
+    cursor: grab;
+  }
+  .banana-stage:active { cursor: grabbing; }
+  .banana-stage canvas {
+    width: 320px; height: 320px;
+    display: block;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+  }
+
+  .actions { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; margin-bottom: 64px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 32px;
+    font-family: var(--font);
+    font-size: 1rem; font-weight: 600;
+    border-radius: 40px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+  .btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+  .btn-primary {
+    background: var(--ink); color: var(--paper);
+  }
+  .btn-primary:hover { background: #333; transform: translateY(-1px); }
+  .btn-secondary {
+    background: transparent; color: var(--ink);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { border-color: var(--ink); background: rgba(0,0,0,0.03); }
+
+  section { padding: 48px 0; border-top: 1px solid var(--border); }
+  section h2 {
+    font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em;
+    margin-bottom: 24px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+  }
+  .card {
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    transition: border-color 0.15s;
+  }
+  .card:hover { border-color: var(--banana); }
+  .card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 8px; }
+  .card p { font-size: 0.875rem; color: var(--muted); line-height: 1.5; }
+
+  .code-block {
+    background: #f4f3ef;
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-family: var(--mono);
+    font-size: 0.825rem;
+    overflow-x: auto;
+    margin-bottom: 16px;
+  }
+  .code-block .comment { color: #888; }
+
+  footer {
+    padding: 32px 0 64px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 12px;
+  }
+  footer a { color: var(--muted); text-decoration: none; font-size: 0.875rem; }
+  footer a:hover { color: var(--ink); }
+
+  @media (max-width: 600px) {
+    header { padding: 32px 0 24px; }
+    .hero h1 { font-size: 2rem; }
+    .hero { padding: 40px 0 32px; }
+    .banana-stage { width: 240px; height: 240px; }
+    .banana-stage canvas { width: 240px; height: 240px; }
+    .actions { flex-direction: column; align-items: stretch; }
+    .actions .btn { justify-content: center; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .banana-stage canvas { display: none; }
+    .banana-stage::after {
+      content: '🍌';
+      font-size: 96px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%; height: 100%;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="logo"><svg viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd"><g><circle cx="500" cy="500" r="290" fill="none" stroke="currentColor" stroke-width="42"/><circle cx="500" cy="500" r="290" fill="none" stroke="currentColor" stroke-width="42" transform="rotate(45 500 500)"/><path d="M328 445l-100 58 42-158 58 100z" fill="currentColor"/><path d="M328 445l281 75c26 7 41 34 34 59-7 26-34 41-59 34l-199-53" fill="none" stroke="currentColor" stroke-width="42"/><ellipse cx="431" cy="372" rx="50" ry="34" transform="rotate(-27 431 372)" fill="currentColor"/><ellipse cx="508" cy="391" rx="50" ry="34" transform="rotate(-27 508 391)" fill="currentColor"/><ellipse cx="585" cy="411" rx="50" ry="34" transform="rotate(-27 585 411)" fill="currentColor"/></g></svg></div>
+    <div class="brand">
+      <h2>AgentPipe</h2>
+      <span>AI agent pipeline infrastructure</span>
+    </div>
+  </header>
+
+  <div class="hero">
+    <h1>Build agents that <em>ship</em>.</h1>
+    <p>Isolated, approved, audited. AgentPipe orchestrates AI agents inside Firecracker microVMs with a security control plane that keeps you in charge.</p>
+    <div class="banana-stage" id="stage">
+      <canvas id="banana" width="320" height="320"></canvas>
+    </div>
+    <div class="actions">
+      <a class="btn btn-primary" href="https://github.com/dwebagents/AgentPipe">View on GitHub</a>
+      <a class="btn btn-secondary" href="https://github.com/dwebagents/AgentPipe/archive/refs/heads/main.zip">Download ZIP</a>
+    </div>
+  </div>
+
+  <section>
+    <h2>What it does</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Isolated execution</h3>
+        <p>Each agent runs in its own Firecracker microVM. No direct network access — only the workspace script can reach external APIs.</p>
+      </div>
+      <div class="card">
+        <h3>Approval required</h3>
+        <p>Every sensitive operation (email, database, payment) pauses for human approval. No surprise API calls.</p>
+      </div>
+      <div class="card">
+        <h3>Tamper-evident audit</h3>
+        <p>Hash-chained append-only log. Every action is signed, timestamped, and linked to the previous entry. Break one link, break the chain.</p>
+      </div>
+      <div class="card">
+        <h3>Session-scoped credentials</h3>
+        <p>Secrets never leave your machine. The agent sees derived, session-scoped keys that expire on timeout. No long-lived keys in VMs.</p>
+      </div>
+      <div class="card">
+        <h3>Forced-command SSH</h3>
+        <p>Each workspace script runs via a locked-down SSH authorized_keys entry. The agent cannot execute arbitrary commands — only the pre-deployed script.</p>
+      </div>
+      <div class="card">
+        <h3>Zeroize on drop</h3>
+        <p>All sensitive data is cleared from memory when the session ends. Rust's zeroize crate, applied to every credential path.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Quick start</h2>
+    <div class="code-block">
+      <span class="comment"># Register an agent</span>
+      hermes config setup --agent default<br><br>
+      <span class="comment"># Deploy a capability script</span>
+      agentpipe deploy scripts/email-sendgrid.py --approval required<br><br>
+      <span class="comment"># Run</span>
+      agentpipe run "send draft to reviewer" --dry-run first
+    </div>
+    <a class="btn btn-secondary" href="https://github.com/dwebagents/AgentPipe">Read the docs →</a>
+  </section>
+
+  <footer>
+    <div>AgentPipe — MIT license</div>
+    <div>
+      <a href="https://github.com/dwebagents/AgentPipe">GitHub</a>
+      &nbsp;·&nbsp;
+      <a href="https://github.com/dwebagents/AgentPipe/issues">Issues</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  // ponytail: seeded 4D banana renderer, no deps
+  var SEED = 42, seed = SEED;
+  function rng() { seed = (seed * 16807 + 0) % 2147483647; return (seed - 1) / 2147483646; }
+
+  function project(u, v, t) {
+    var theta = u * 6.2832, phi = v * 6.2832;
+    var bend = 0.3 * Math.sin(theta);
+    var r = 0.12 + 0.06 * Math.sin(theta * 2);
+    var ls = 0.8, taper = 0.3 + 0.7 * Math.sin(theta * 0.5 + 0.2);
+    var rad = r * taper;
+    var x = (Math.cos(theta) * 1.2 - 0.3) * ls;
+    var y = rad * Math.cos(phi);
+    var z = rad * Math.sin(phi);
+    var w = 0.2 * Math.sin(theta * 3 + t * 0.5) * taper;
+    var ca = Math.cos(t * 0.3), sa = Math.sin(t * 0.3);
+    // 4D rotate (x,w) plane
+    var xr = x * ca - w * sa, wr = x * sa + w * ca;
+    var f = 1 / (1 + wr * 0.05);
+    return { x: xr * f * 100 + 160, y: y * f * 100 + 160, z: z * f * 100 };
+  }
+
+  function draw(t) {
+    var c = document.getElementById('banana');
+    if (!c) return;
+    var ctx = c.getContext('2d');
+    ctx.clearRect(0, 0, 320, 320);
+
+    var lines = [], uStep = 24, vStep = 12, pts = [];
+    for (var i = 0; i <= uStep; i++) {
+      pts[i] = [];
+      for (var j = 0; j <= vStep; j++)
+        pts[i][j] = project(i / uStep, j / vStep, t);
+    }
+    for (var i = 0; i <= uStep; i++)
+      for (var j = 1; j <= vStep; j++) {
+        var a = pts[i][j-1], b = pts[i][j];
+        lines.push({ x1: a.x, y1: a.y, x2: b.x, y2: b.y, z: (a.z + b.z) / 2 });
+      }
+    for (var j = 0; j <= vStep; j++)
+      for (var i = 1; i <= uStep; i++) {
+        var a = pts[i-1][j], b = pts[i][j];
+        lines.push({ x1: a.x, y1: a.y, x2: b.x, y2: b.y, z: (a.z + b.z) / 2 });
+      }
+    lines.sort(function(a, b) { return b.z - a.z; });
+
+    for (var k = 0; k < lines.length; k++) {
+      var l = lines[k], d = Math.max(0, Math.min(1, (l.z + 80) / 160));
+      ctx.beginPath();
+      ctx.moveTo(l.x1, l.y1);
+      ctx.lineTo(l.x2, l.y2);
+      ctx.strokeStyle = d > 0.5
+        ? 'rgba(245,200,0,' + (0.4 + d * 0.5) + ')'
+        : 'rgba(0,0,0,' + (0.1 + d * 0.3) + ')';
+      ctx.lineWidth = 0.5 + d * 1.5;
+      ctx.stroke();
+    }
+    // small vertex highlights
+    for (var i = 0; i <= uStep; i += 4)
+      for (var j = 0; j <= vStep; j++) {
+        var p = pts[i][j];
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 1.5, 0, 6.2832);
+        ctx.fillStyle = 'rgba(245,200,0,0.15)';
+        ctx.fill();
+      }
+  }
+
+  var time = 0;
+  function loop() { time += 0.02; draw(time); requestAnimationFrame(loop); }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
