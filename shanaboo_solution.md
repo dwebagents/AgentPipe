@@ -1,24 +1,14 @@
-```diff
+ ```diff
 --- /dev/null
-+++ b/index.html
-@@ -0,0 +1,298 @@
++++ b/docs/index.html
+@@ -0,0 +1,1 @@
 +<!DOCTYPE html>
 +<html lang="en">
 +<head>
 +    <meta charset="UTF-8">
 +    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-+    <title>AgentPipe - High Performance, High Velocity</title>
++    <title>AgentPipe - High Performance Agent Pipeline</title>
 +    <style>
-+        :root {
-+            --banana-yellow: #FFE135;
-+            --banana-dark: #E6C200;
-+            --banana-light: #FFF4B0;
-+            --banana-brown: #8B6914;
-+            --banana-cream: #FFF8DC;
-+            --text-dark: #3E2C00;
-+            --text-medium: #5C4300;
-+        }
-+
 +        * {
 +            margin: 0;
 +            padding: 0;
@@ -27,153 +17,167 @@
 +
 +        body {
 +            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-+            background: linear-gradient(135deg, var(--banana-cream) 0%, var(--banana-light) 50%, var(--banana-yellow) 100%);
-+            color: var(--text-dark);
++            background: linear-gradient(135deg, #FFF8DC 0%, #FFD700 50%, #FFA500 100%);
 +            min-height: 100vh;
-+            line-height: 1.6;
++            color: #4a4a00;
++        }
++
++        .container {
++            max-width: 1200px;
++            margin: 0 auto;
++            padding: 20px;
 +        }
 +
 +        header {
-+            background: linear-gradient(180deg, var(--banana-yellow) 0%, var(--banana-dark) 100%);
-+            padding: 2rem 1rem;
 +            text-align: center;
-+            box-shadow: 0 4px 20px rgba(139, 105, 20, 0.3);
-+            border-bottom: 4px solid var(--banana-brown);
++            padding: 60px 20px;
 +        }
 +
-+        header h1 {
-+            font-size: 3rem;
-+            color: var(--text-dark);
-+            text-shadow: 2px 2px 0px var(--banana-light);
-+            letter-spacing: 2px;
++        h1 {
++            font-size: 4em;
++            color: #B8860B;
++            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
++            margin-bottom: 10px;
 +        }
 +
-+        header .tagline {
-+            font-size: 1.3rem;
-+            color: var(--text-medium);
-+            margin-top: 0.5rem;
++        .tagline {
++            font-size: 1.5em;
++            color: #DAA520;
 +            font-style: italic;
 +        }
 +
 +        .banana-container {
-+            display: flex;
-+            justify-content: center;
-+            align-items: center;
-+            margin: 2rem 0;
++            width: 400px;
++            height: 400px;
++            margin: 40px auto;
++            position: relative;
 +        }
 +
-+        canvas {
-+            display: block;
-+            margin: 0 auto;
-+            filter: drop-shadow(0 8px 16px rgba(139, 105, 20, 0.4));
-+            transition: transform 0.3s ease;
++        #banana-canvas {
++            width: 100%;
++            height: 100%;
 +        }
 +
-+        canvas:hover {
-+            transform: scale(1.05) rotate(2deg);
++        .description {
++            background: rgba(255, 255, 255, 0.9);
++            border-radius: 20px;
++            padding: 40px;
++            margin: 40px 0;
++            box-shadow: 0 10px 30px rgba(218, 165, 32, 0.3);
 +        }
 +
-+        .content {
-+            max-width: 900px;
-+            margin: 0 auto;
-+            padding: 2rem;
-+        }
-+
-+        .card {
-+            background: rgba(255, 255, 255, 0.85);
-+            border-radius: 16px;
-+            padding: 2rem;
-+            margin: 2rem 0;
-+            box-shadow: 0 4px 16px rgba(139, 105, 20, 0.2);
-+            border: 2px solid var(--banana-yellow);
-+            backdrop-filter: blur(10px);
-+        }
-+
-+        .card h2 {
-+            color: var(--banana-brown);
-+            border-bottom: 3px solid var(--banana-yellow);
-+            padding-bottom: 0.5rem;
-+            margin-bottom: 1rem;
-+        }
-+
-+        .download-section {
++        .description h2 {
++            color: #B8860B;
++            font-size: 2em;
++            margin-bottom: 20px;
 +            text-align: center;
-+            margin: 3rem 0;
 +        }
 +
-+        .download-btn {
-+            display: inline-block;
-+            background: linear-gradient(180deg, var(--banana-yellow) 0%, var(--banana-dark) 100%);
-+            color: var(--text-dark);
-+            font-size: 1.4rem;
-+            font-weight: bold;
-+            padding: 1rem 3rem;
-+            border-radius: 50px;
-+            text-decoration: none;
-+            box-shadow: 0 6px 20px rgba(139, 105, 20, 0.4);
-+            border: 3px solid var(--banana-brown);
-+            transition: all 0.3s ease;
-+            cursor: pointer;
-+            letter-spacing: 1px;
-+        }
-+
-+        .download-btn:hover {
-+            transform: translateY(-3px);
-+            box-shadow: 0 10px 30px rgba(139, 105, 20, 0.5);
-+            background: linear-gradient(180deg, #FFF0A0 0%, var(--banana-yellow) 100%);
-+        }
-+
-+        .download-btn:active {
-+            transform: translateY(1px);
++        .description p {
++            line-height: 1.8;
++            font-size: 1.1em;
++            margin-bottom: 15px;
 +        }
 +
 +        .features {
 +            display: grid;
 +            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-+            gap: 1.5rem;
-+            margin: 2rem 0;
++            gap: 30px;
++            margin: 40px 0;
 +        }
 +
-+        .feature-item {
-+            background: rgba(255, 255, 255, 0.7);
-+            padding: 1.5rem;
-+            border-radius: 12px;
-+            border: 2px solid var(--banana-light);
++        .feature-card {
++            background: linear-gradient(145deg, #FFFACD, #FFE4B5);
++            border-radius: 15px;
++            padding: 30px;
 +            text-align: center;
-+            transition: transform 0.2s ease;
++            box-shadow: 0 5px 15px rgba(218, 165, 32, 0.2);
++            transition: transform 0.3s ease;
 +        }
 +
-+        .feature-item:hover {
++        .feature-card:hover {
 +            transform: translateY(-5px);
-+            border-color: var(--banana-yellow);
 +        }
 +
-+        .feature-item .icon {
-+            font-size: 2.5rem;
-+            margin-bottom: 0.5rem;
++        .feature-card h3 {
++            color: #B8860B;
++            margin-bottom: 15px;
++            font-size: 1.5em;
++        }
++
++        .download-section {
++            text-align: center;
++            padding: 60px 20px;
++        }
++
++        .download-btn {
++            display: inline-block;
++            background: linear-gradient(145deg, #FFD700, #FFA500);
++            color: #4a4a00;
++            padding: 20px 60px;
++            font-size: 1.5em;
++            font-weight: bold;
++            border: none;
++            border-radius: 50px;
++            cursor: pointer;
++            text-decoration: none;
++            box-shadow: 0 10px 30px rgba(218, 165, 32, 0.4);
++            transition: all 0.3s ease;
++        }
++
++        .download-btn:hover {
++            transform: scale(1.05);
++            box-shadow: 0 15px 40px rgba(218, 165, 32, 0.6);
 +        }
 +
 +        footer {
 +            text-align: center;
-+            padding: 2rem;
-+            background: var(--banana-brown);
-+            color: var(--banana-cream);
-+            margin-top: 3rem;
++            padding: 40px;
++            color: #B8860B;
 +        }
 +
-+        footer a {
-+            color: var(--banana-yellow);
-+            text-decoration: none;
++        .banana-icon {
++            font-size: 2em;
 +        }
++    </style>
++</head>
++<body>
++    <div class="container">
++        <header>
++            <h1>🍌 AgentPipe 🍌</h1>
++            <p class="tagline">High Performance, High Velocity Agent Pipelines</p>
++        </header>
 +
-+        footer a:hover {
-+            text-decoration: underline;
-+        }
++        <div class="banana-container">
++            <canvas id="banana-canvas"></canvas>
++        </div>
 +
-+        .badges {
-+            display: flex;
-+            justify-content: center;
-+            gap: 0.5rem;
-+            flex-wrap: wrap;
-+            margin: 1rem 0;
-+        }
++        <div class="description">
++            <h2>About AgentPipe</h2>
++            <p>
++                AgentPipe is a cutting-edge open source project designed for high-performance agent-based 
++                data processing pipelines. Built with a focus on robust semantic indexing and real-time 
++                database query performance, AgentPipe leverages distributed data models and GPU-accelerated 
++                vectorized algorithms to achieve unprecedented throughput.
++            </p>
++            <p>
++                Our architecture decouples memory fragmentation from performance bottlenecks by storing 
++                tokens as immutable, low-serialized-value objects. Combined with SIMD instructions and 
++                parallelized token search algorithms, AgentPipe scales to infinity... and BEYOND! 🚀
++            </p>
++            <p>
++                Whether you're building complex data pipelines, implementing real-time search, or 
++                processing millions of transactions with microsecond-level granularity, AgentPipe 
++                provides the foundation you need for next-generation performance.
++            </p>
++        </div>
++
++        <div class="features">
++            <div class="feature-card">
++                <h3>⚡ High Performance</h3>
++                <p>Microsecond-level granularity with distributed architecture for infinite scalability</p>
++            </div>
++            <div class="feature-card">
++                <h3>🔍 Semantic Indexing</h3>
++                <p>Advanced token search algorithms with GPU-accelerated vectorized hashing</p>
++            </div
