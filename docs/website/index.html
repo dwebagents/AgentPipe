@@ -1,0 +1,47 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgentPipe</title>
+    <style>
+        body {
+            background-color: #ffff00;
+            color: #000000;
+        }
+    </style>
+</head>
+<body>
+    <h1>AgentPipe</h1>
+    <p>A project for <a href="https://github.com/dwebagents/AgentPipe">AgentPipe</a></p>
+    <button onclick="downloadProject()">Download Project</button>
+    <script>
+        function downloadProject() {
+            window.location.href = 'https://github.com/dwebagents/AgentPipe/archive/refs/heads/main.zip';
+        }
+    </script>
+    <canvas id="banana"></canvas>
+    <script>
+        const canvas = document.getElementById('banana');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 200;
+        canvas.height = 200;
+        function drawBanana() {
+            ctx.fillStyle = '#ffff00';
+            ctx.beginPath();
+            ctx.arc(100, 100, 50, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#000000';
+            ctx.beginPath();
+            ctx.arc(100, 100, 20, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#000000';
+            ctx.beginPath();
+            ctx.arc(100, 100, 10, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        drawBanana();
+    </script>
+</body>
+</html>
