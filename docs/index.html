@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgentPipe — High Performance Task Execution Engine</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#1a1a00;color:#fff8dc;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
+.container{max-width:1000px;margin:0 auto;padding:40px 20px}
+header{text-align:center;padding:40px 0}
+header h1{font-size:42px;background:linear-gradient(135deg,#ffd700,#ff8c00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px}
+header p{font-size:18px;color:#daa520}
+nav{text-align:center;padding:15px 0;position:sticky;top:0;background:rgba(26,26,0,.95);z-index:100;border-bottom:1px solid #333200}
+nav a{color:#ffd700;text-decoration:none;margin:0 15px;font-size:14px;padding:5px 10px;border-radius:4px}
+nav a:hover{background:#333200}
+#hero{text-align:center;padding:40px 0;position:relative;min-height:400px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+#hero canvas{width:300px;height:300px;margin:20px auto;border-radius:12px;background:rgba(255,255,0,.02);border:1px solid #333200}
+.hero-text{max-width:700px}
+.hero-text h2{font-size:28px;color:#ffd700;margin-bottom:15px}
+.hero-text p{font-size:16px;line-height:1.7;color:#d4c574;margin-bottom:25px}
+.btn-download{display:inline-block;padding:15px 40px;background:linear-gradient(135deg,#ffd700,#ff8c00);color:#1a1a00;text-decoration:none;border-radius:8px;font-size:18px;font-weight:bold;transition:transform .2s}
+.btn-download:hover{transform:scale(1.05)}
+.btn-download small{display:block;font-size:12px;font-weight:normal;opacity:.7}
+.section{padding:50px 0;border-bottom:1px solid #333200}
+.section h2{font-size:28px;color:#ffd700;margin-bottom:25px;text-align:center}
+.section h3{font-size:20px;color:#daa520;margin:20px 0 10px}
+.section p,.section li{font-size:15px;line-height:1.8;color:#d4c574}
+.section ul{list-style:none;padding:0}
+.section ul li{padding:8px 0;padding-left:20px}
+.section ul li:before{content:"\\1F34C";margin-right:10px}
+.feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:20px}
+.feature-card{background:#2a2a00;border-radius:10px;padding:25px;border:1px solid #444400}
+.feature-card h3{color:#ffd700;margin-bottom:10px}
+.feature-card p{font-size:14px;color:#c4b454}
+.banana-section{text-align:center}
+.banana-section p{color:#6b6b00}
+footer{text-align:center;padding:30px;color:#6b6b00;font-size:13px}
+.badge-row{text-align:center;margin:20px 0}
+.badge-row img{margin:0 3px}
+pre{background:#222200;padding:15px;border-radius:6px;overflow-x:auto;font-size:13px;color:#daa520;margin:10px 0}
+code{background:#222200;padding:2px 6px;border-radius:3px;font-size:13px;color:#ffd700}
+</style>
+</head>
+<body>
+
+<nav>
+<a href="#hero">Home</a>
+<a href="#about">About</a>
+<a href="#features">Features</a>
+<a href="#docs">Docs</a>
+<a href="#banana-4d">4D Banana</a>
+</nav>
+
+<div class="container">
+<header>
+<h1>AgentPipe</h1>
+<p>High Performance Multithreaded Task Execution Engine for Agents</p>
+</header>
+
+<section id="hero">
+<div id="banana-container"><canvas id="bananaCanvas" width="300" height="300"></canvas></div>
+<div class="hero-text">
+<h2>Welcome to the Future of Agentic Computation</h2>
+<p>AgentPipe leverages cutting-edge distributed architecture with GPU-accelerated vectorized algorithms, SIMD-optimized parallel token search, and deep semantic indexing to deliver microsecond-level granularity for your most demanding agent workloads.</p>
+<a class="btn-download" href="https://github.com/dwebagents/AgentPipe/releases">Download AgentPipe<small>v1.0.0 · MIT License</small></a>
+</div>
+</section>
+
+<section id="about" class="section">
+<h2>About AgentPipe</h2>
+<p>AgentPipe is a high-performance multithreaded task execution and optimization engine designed for modern AI agents. It provides a robust semantic indexing framework with real-time database query performance, utilizing advanced parallelization techniques for maximum throughput.</p>
+<p style="margin-top:15px">The core architecture decouples memory fragmentation from performance bottlenecks through a distributed data model, storing tokens as immutable low-serialized-value objects. By leveraging GPU-accelerated vectorized algorithms for hashing and SIMD instructions for raw throughput, AgentPipe achieves unprecedented performance in agent task execution.</p>
+</section>
+
+<section id="features" class="section">
+<h2>Key Features</h2>
+<div class="feature-grid">
+<div class="feature-card"><h3>Distributed Architecture</h3><p>Decoupled memory fragmentation with distributed data model for extreme load distribution capabilities</p></div>
+<div class="feature-card"><h3>GPU Acceleration</h3><p>GPU-accelerated vectorized algorithms for hashing and parallelized token search</p></div>
+<div class="feature-card"><h3>Real-time Queries</h3><p>Microsecond-level granularity with robust semantic indexing and real-time database query performance</p></div>
+<div class="feature-card"><h3>SIMD Optimized</h3><p>SIMD instructions for raw throughput in parallel processing pipelines</p></div>
+<div class="feature-card"><h3>Agent Ready</h3><p>Built specifically for modern AI agent workloads and autonomous task execution</p></div>
+<div class="feature-card"><h3>Open Source</h3><p>Fully open source under MIT license — inspect, modify, and contribute</p></div>
+</div>
+</section>
+
+<section id="banana-4d" class="section banana-section">
+<h2>4D Banana</h2>
+<p style="margin-bottom:20px">Deterministically rendered 4D banana visualization. Each refresh produces the same banana from its seed.</p>
+<canvas id="banana4dCanvas" width="400" height="400"></canvas>
+<p style="margin-top:10px;color:#444400;font-size:12px">4D tesseract projection with banana-native topology</p>
+</section>
+
+<footer>
+<p>AgentPipe — Built with bananas and determination</p>
+<p style="margin-top:5px">This project is a proud member of the dwebagents ecosystem</p>
+</footer>
+</div>
+
+<script>
+(function(){function banana4d(){const c=document.getElementById("banana4dCanvas");if(!c)return;const ctx=c.getContext("2d");const w=400,h=400;ctx.clearRect(0,0,w,h);const t=Date.now()/1000;ctx.save();ctx.translate(w/2,h/2);
+// 4D banana: 3D banana with tesseract-like hypercube projection overlay
+const seed=12345;function rng(s){let x=Math.sin(s)*10000;return x-Math.floor(x)}
+// Draw hypercube (tesseract) projection
+const pts=[];
+for(let i=0;i<16;i++){
+const x=((i>>0)&1)*2-1;const y=((i>>1)&1)*2-1;const z=((i>>2)&1)*2-1;const w4=((i>>3)&1)*2-1;
+const angle=t*0.3;const cos=Math.cos(angle);const sin=Math.sin(angle);
+// Simple 4D rotation
+const xr=x*cos-w4*sin;const w4r=x*sin+w4*cos;
+// Project 4D to 3D to 2D
+const scale=60/(1+0.3*Math.sin(t*0.5));
+const px=xr*scale;const py=(y*cos-z*sin)*scale;const pz=(y*sin+z*cos)*scale;
+const d=3;const proj=80/(d+pz*0.1);pts.push({x:px*proj,y:py*proj});
+}
+ctx.strokeStyle="rgba(255,215,0,0.15)";ctx.lineWidth=1;
+function drawEdge(a,b){ctx.beginPath();ctx.moveTo(pts[a].x,pts[a].y);ctx.lineTo(pts[b].x,pts[b].y);ctx.stroke()}
+const edges=[[0,1],[0,2],[0,4],[0,8],[1,3],[1,5],[1,9],[2,3],[2,6],[2,10],[3,7],[3,11],[4,5],[4,6],[4,12],[5,7],[5,13],[6,7],[6,14],[7,15],[8,9],[8,10],[8,12],[9,11],[9,13],[10,11],[10,14],[11,15],[12,13],[12,14],[13,15],[14,15]];
+for(const e of edges)drawEdge(e[0],e[1]);
+// Draw 3D banana shape
+ctx.save();ctx.rotate(t*0.2);
+// Banana body - using bezier curves
+ctx.beginPath();
+const bScale=45+rng(seed)*5;
+ctx.moveTo(-bScale*0.8,0);
+ctx.bezierCurveTo(-bScale*0.9,-bScale*0.6,-bScale*0.5,-bScale*0.9,0,-bScale*0.7);
+ctx.bezierCurveTo(bScale*0.5,-bScale*0.9,bScale*0.9,-bScale*0.6,bScale*0.8,0);
+ctx.bezierCurveTo(bScale*0.9,bScale*0.3,bScale*0.5,bScale*0.6,0,bScale*0.5);
+ctx.bezierCurveTo(-bScale*0.5,bScale*0.6,-bScale*0.9,bScale*0.3,-bScale*0.8,0);
+ctx.closePath();
+const grad=ctx.createLinearGradient(-bScale*0.5,-bScale*0.5,bScale*0.5,bScale*0.5);
+grad.addColorStop(0,"#FFD700");grad.addColorStop(0.5,"#FFA500");grad.addColorStop(1,"#FF8C00");
+ctx.fillStyle=grad;ctx.fill();
+ctx.strokeStyle="#CC8800";ctx.lineWidth=2;ctx.stroke();
+// Banana stem
+ctx.beginPath();ctx.moveTo(-bScale*0.6,-bScale*0.7);ctx.quadraticCurveTo(-bScale*0.8,-bScale*1.0,-bScale*0.6,-bScale*1.1);
+ctx.strokeStyle="#8B6914";ctx.lineWidth=3;ctx.stroke();
+ctx.restore();ctx.restore()}
+
+(function initBanana(){const c=document.getElementById("bananaCanvas");if(!c)return;const ctx=c.getContext("2d");const w=300,h=300;
+function draw(angle){
+ctx.clearRect(0,0,w,h);ctx.save();ctx.translate(w/2,h/2);ctx.rotate(angle);
+const scale=40;ctx.beginPath();ctx.moveTo(-scale*0.8,0);
+ctx.bezierCurveTo(-scale*0.9,-scale*0.6,-scale*0.5,-scale*0.9,0,-scale*0.7);
+ctx.bezierCurveTo(scale*0.5,-scale*0.9,scale*0.9,-scale*0.6,scale*0.8,0);
+ctx.bezierCurveTo(scale*0.9,scale*0.3,scale*0.5,scale*0.6,0,scale*0.5);
+ctx.bezierCurveTo(-scale*0.5,scale*0.6,-scale*0.9,scale*0.3,-scale*0.8,0);
+ctx.closePath();const g=ctx.createLinearGradient(-20,-20,20,20);
+g.addColorStop(0,"#FFD700");g.addColorStop(1,"#FF8C00");
+ctx.fillStyle=g;ctx.fill();ctx.strokeStyle="#CC8800";ctx.lineWidth=2;ctx.stroke();
+ctx.beginPath();ctx.moveTo(-scale*0.6,-scale*0.7);ctx.quadraticCurveTo(-scale*0.8,-scale*1.0,-scale*0.6,-scale*1.1);
+ctx.strokeStyle="#8B6914";ctx.lineWidth=3;ctx.stroke();ctx.restore()}
+let a=0;setInterval(()=>{a+=0.02;draw(a)},50)
+banana4d();setInterval(banana4d,100)})()})()
+</script>
+</body>
+</html>
