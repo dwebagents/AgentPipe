@@ -1,188 +1,168 @@
  ```diff
 --- /dev/null
 +++ b/docs/index.html
-@@ -0,0 +1,287 @@
+@@ -0,0 +1,254 @@
 +<!DOCTYPE html>
 +<html lang="en">
 +<head>
 +    <meta charset="UTF-8">
 +    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-+    <title>AgentPipe - High Performance Data Pipeline</title>
-+    <style>
-+        * {
-+            margin: 0;
-+            padding: 0;
-+            box-sizing: border-box;
-+        }
-+
-+        body {
-+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-+            background: linear-gradient(135deg, #FFF8DC 0%, #FFD700 50%, #FFA500 100%);
-+            min-height: 100vh;
-+            color: #4a4a00;
-+        }
-+
-+        .container {
-+            max-width: 1200px;
-+            margin: 0 auto;
-+            padding: 20px;
-+        }
-+
-+        header {
-+            text-align: center;
-+            padding: 60px 20px;
-+            background: linear-gradient(180deg, #FFD700 0%, #FFA500 100%);
-+            border-radius: 20px;
-+            margin-bottom: 40px;
-+            box-shadow: 0 10px 30px rgba(255, 165, 0, 0.3);
-+        }
-+
-+        h1 {
-+            font-size: 4em;
-+            color: #8B4513;
-+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-+            margin-bottom: 10px;
-+        }
-+
-+        .tagline {
-+            font-size: 1.5em;
-+            color: #654321;
-+            margin-bottom: 30px;
-+        }
-+
-+        .banana-icon {
-+            font-size: 5em;
-+            animation: bounce 2s infinite;
-+        }
-+
-+        @keyframes bounce {
-+            0%, 100% { transform: translateY(0) rotate(0deg); }
-+            50% { transform: translateY(-20px) rotate(5deg); }
-+        }
-+
-+        .download-btn {
-+            display: inline-block;
-+            padding: 15px 40px;
-+            font-size: 1.3em;
-+            background: linear-gradient(45deg, #FF6347, #FF4500);
-+            color: white;
-+            text-decoration: none;
-+            border-radius: 50px;
-+            box-shadow: 0 5px 15px rgba(255, 69, 0, 0.4);
-+            transition: all 0.3s ease;
-+            margin-top: 20px;
-+        }
-+
-+        .download-btn:hover {
-+            transform: translateY(-3px);
-+            box-shadow: 0 8px 25px rgba(255, 69, 0, 0.6);
-+        }
-+
-+        section {
-+            background: rgba(255, 255, 255, 0.9);
-+            padding: 40px;
-+            margin-bottom: 30px;
-+            border-radius: 15px;
-+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-+        }
-+
-+        h2 {
-+            color: #8B4513;
-+            font-size: 2em;
-+            margin-bottom: 20px;
-+            border-bottom: 3px solid #FFD700;
-+            padding-bottom: 10px;
-+        }
-+
-+        p {
-+            line-height: 1.8;
-+            font-size: 1.1em;
-+            margin-bottom: 15px;
-+        }
-+
-+        .features {
-+            display: grid;
-+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-+            gap: 20px;
-+            margin-top: 20px;
-+        }
-+
-+        .feature-card {
-+            background: linear-gradient(135deg, #FFFACD, #FFD700);
-+            padding: 25circa 20px;
-+            border-radius: 10px;
-+            text-align: center;
-+            transition: transform 0.3s ease;
-+        }
-+
-+        .feature-card:hover {
-+            transform: scale(1.05);
-+        }
-+
-+        .feature-card h3 {
-+            color: #8B4513;
-+            margin-bottom: 10px;
-+        }
-+
-+        #banana-canvas {
-+            display: block;
-+            margin: 30px auto;
-+            border-radius: 15px;
-+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-+        }
-+
-+        .banana-section {
-+            text-align: center;
-+        }
-+
-+        .banana-section h2 {
-+            border-bottom: none;
-+        }
-+
-+        footer {
-+            text-align: center;
-+            padding: 40px;
-+            color: #8B4513;
-+        }
-+
-+        .worship {
-+            font-size: 3em;
-+            margin: 20px 0;
-+        }
-+
-+        code {
-+            background: #FFF8DC;
-+            padding: 2px 8px;
-+            border-radius: 4px;
-+            font-family: 'Courier New', monospace;
-+        }
-+
-+        .install-box {
-+            background: #2d2d2d;
-+            color: #00ff00;
-+            padding: 20px;
-+            border-radius: 10px;
-+            font-family: 'Courier New', monospace;
-+            overflow-x: auto;
-+            margin: 20px 0;
-+        }
-+
-+        .install-box code {
-+            background: transparent;
-+            color: #00ff00;
-+        }
-+    </style>
++    <title>AgentPipe - High Performance Data Processing</title>
++    <link rel="stylesheet" href="style.css">
 +</head>
 +<body>
-+    <div class="container">
-+        <header>
-+            <div class="banana-icon">🍌</div>
-+            <h1>AgentPipe</h1>
-+            <p class="tagline">High Performance, High Velocity Data Pipelines</p>
-+            <a href="https://github.com/dwebagents/AgentPipe/archive/refs/heads/main.zip" class="download-btn" download>⬇️ Download AgentPipe</a>
-+        </header>
++    <nav class="navbar">
++        <div class="container">
++            <div class="logo">🍌 AgentPipe</div>
++            <ul class="nav-links">
++                <li><a href="#about">About</a></li>
++                <li><a href="#features">Features</a></li>
++                <li><a href="#download">Download</a></li>
++                <li><a href="https://github.com/dwebagents/AgentPipe" target="_blank">GitHub</a></li>
++            </ul>
++        </div>
++    </nav>
 +
-+        <section>
-+            <h2>🚀 About AgentPipe</h2>
++    <header class="hero">
++        <div class="container">
++            <h1>AgentPipe</h1>
++            <p class="tagline">High performance, high velocity data processing</p>
++            <div class="banana-container">
++                <canvas id="banana-canvas"></canvas>
++            </div>
++            <a href="#download" class="btn btn-primary">Download Now</a>
++        </div>
++    </header>
++
++    <section id="about" class="about">
++        <div class="container">
++            <h2>About AgentPipe</h2>
 +            <p>
-+                AgentPipe is a cutting-edge, open-source
++                AgentPipe is a high-performance data processing framework built for extreme scale.
++                The core architecture is driven by an unrelenting pursuit of robust semantic indexing
++                and real-time database query performance, utilizing a parallelized token search algorithm
++                combined with deep optimization techniques like SIMD instructions for raw throughput.
++            </p>
++            <p>
++                Our distributed data model decouples memory fragmentation from performance bottlenecks
++                by storing tokens as immutable, low-serialized-value objects and utilizing GPU-accelerated
++                vectorized algorithms for hashing. This achieves a hybrid performance profile where
++                database access scales to infinity... and BEYOND! 🚀
++            </p>
++        </div>
++    </section>
++
++    <section id="features" class="features">
++        <div class="container">
++            <h2>Features</h2>
++            <div class="feature-grid">
++                <div class="feature-card">
++                    <div class="feature-icon">⚡</div>
++                    <h3>High Performance</h3>
++                    <p>Microsecond-level granularity with extreme load distribution capabilities</p>
++                </div>
++                <div class="feature-card">
++                    <div class="feature-icon">🔍</div>
++                    <h3>Semantic Indexing</h3>
++                    <p>Robust token search with parallelized algorithms</p>
++                </div>
++                <div class="feature-card">
++                    <div class="feature-icon">🚀</div>
++                    <h3>GPU Accelerated</h3>
++                    <p>Vectorized hashing algorithms for maximum throughput</p>
++                </div>
++                <div class="feature-card">
++                    <div class="feature-icon">📊</div>
++                    <h3>Scalable</h3>
++                    <p>Distributed data model that scales to infinity</p>
++                </div>
++            </div>
++        </div>
++    </section>
++
++    <section id="download" class="download">
++        <div class="container">
++            <h2>Get AgentPipe</h2>
++            <p>Start building with AgentPipe today</p>
++            <a href="https://github.com/dwebagents/AgentPipe/archive/refs/heads/main.zip" class="btn btn-large btn-primary">
++                📥 Download AgentPipe
++            </a>
++            <div class="install-instructions">
++                <h3>Quick Install</h3>
++                <pre><code>git clone https://github.com/dwebagents/AgentPipe.git
++cd AgentPipe
++pip install requests fastapi matplotlib
++npm install
++python banana.py</code></pre>
++            </div>
++        </div>
++    </section>
++
++    <footer class="footer">
++        <div class="container">
++            <p>🍌 Built with love for bananas. AgentPipe is open source under the MIT License. 🍌</p>
++        </div>
++    </footer>
++
++    <script src="banana.js"></script>
++</body>
++</html>
++--- /dev/null
++++ docs/style.css
+@@ -0,0 +1,234 @@
++* {
++    margin: 0;
++    padding: 0;
++    box-sizing: border-box;
++}
++
++:root {
++    --banana-yellow: #FFE135;
++    --banana-gold: #FFD700;
++    --banana-dark: #CCAA00;
++    --banana-pale: #FFF8DC;
++    --banana-brown: #8B6914;
++    --text-dark: #333;
++    --text-light: #666;
++}
++
++body {
++    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
++    line-height: 1.6;
++    color: var(--text-dark);
++    background: var(--banana-pale);
++}
++
++.container {
++    max-width: 1200px;
++    margin: 0 auto;
++    padding: 0 20px;
++}
++
++/* Navbar */
++.navbar {
++    background: linear-gradient(135deg, var(--banana-yellow) 0%, var(--banana-gold) 100%);
++    padding: 1rem 0;
++    position: fixed;
++    width: 100%;
++    top: 0;
++    z-index: 1000;
++    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
++}
++
++.navbar .container {
++    display: flex;
++    justify-content: space-between;
++    align-items: center;
++}
++
++.logo {
++    font-size: 1.5rem;
++    font-weight: bold;
++    color: var(--text-dark);
++}
++
++.nav-links {
++    display: flex;
++    list-style: none;
++    gap: 2rem;
