@@ -38,6 +38,56 @@ Goose {
         };
     }
 
+    *migratoryDialectFor { |species = \canada, month|
+        var key = species ? \canada;
+        var m = month ? Date.getDate.month;
+
+        if(key.isKindOf(String)) { key = key.asSymbol };
+        m = m.clip(1, 12).asInteger;
+
+        ^case
+        { key == \snow } {
+            if(m.inclusivelyBetween(4, 8)) {
+                (language: \inuktitut, phraseRate: 6.8, vowelLo: 660, vowelHi: 1320,
+                    nasal: 0.36, consonants: 0.54, syllableWidth: 0.27)
+            } {
+                (language: \spanish, phraseRate: 5.8, vowelLo: 520, vowelHi: 1120,
+                    nasal: 0.3, consonants: 0.42, syllableWidth: 0.34)
+            }
+        }
+        { key == \greylag } {
+            if(m.inclusivelyBetween(3, 9)) {
+                (language: \norwegian, phraseRate: 4.9, vowelLo: 430, vowelHi: 980,
+                    nasal: 0.42, consonants: 0.34, syllableWidth: 0.4)
+            } {
+                (language: \arabic, phraseRate: 5.5, vowelLo: 360, vowelHi: 870,
+                    nasal: 0.48, consonants: 0.46, syllableWidth: 0.32)
+            }
+        }
+        { key == \brant } {
+            if(m.inclusivelyBetween(5, 8)) {
+                (language: \greenlandic, phraseRate: 4.2, vowelLo: 310, vowelHi: 760,
+                    nasal: 0.5, consonants: 0.58, syllableWidth: 0.24)
+            } {
+                (language: \english, phraseRate: 5.2, vowelLo: 390, vowelHi: 910,
+                    nasal: 0.4, consonants: 0.48, syllableWidth: 0.3)
+            }
+        }
+        { key == \urban } {
+            (language: \parkDialect, phraseRate: 6.2, vowelLo: 470, vowelHi: 1080,
+                nasal: 0.62, consonants: 0.66, syllableWidth: 0.22)
+        }
+        {
+            if(m.inclusivelyBetween(4, 9)) {
+                (language: \cree, phraseRate: 5.4, vowelLo: 450, vowelHi: 1040,
+                    nasal: 0.44, consonants: 0.38, syllableWidth: 0.35)
+            } {
+                (language: \english, phraseRate: 5.9, vowelLo: 520, vowelHi: 1180,
+                    nasal: 0.38, consonants: 0.5, syllableWidth: 0.28)
+            }
+        };
+    }
+
     *voice { |base, profile, brightness = 1.0|
         var wobble = SinOsc.kr(profile[\chop] * Rand(0.82, 1.18), Rand(0, 2 * pi)).range(0.96, 1.06);
         var fm = SinOsc.ar(base * profile[\fmRatio] * wobble, Rand(0, 2 * pi), base * profile[\fmDepth]);
@@ -58,6 +108,20 @@ Goose {
         var rasp = BPF.ar(PinkNoise.ar(profile[\rasp]), carrier * profile[\noiseFormant], 0.14);
 
         ^LeakDC.ar((additive * 0.22) + (subtractive * 0.4) + (nasal * 0.55) + rasp);
+    }
+
+    *talkingVoice { |base, profile, dialect, brightness = 1.0|
+        var rate = dialect[\phraseRate] * LFNoise1.kr(0.35).range(0.72, 1.28);
+        var mouth = LFPulse.kr(rate, 0, dialect[\syllableWidth]).lag(0.035);
+        var glottal = LFSaw.ar(base * LFNoise1.kr(1.2).range(0.86, 1.18), 0, 0.24);
+        var vowelShift = LFNoise1.kr(rate * 0.5).range(dialect[\vowelLo], dialect[\vowelHi]);
+        var vowelA = Formant.ar(base * 0.72, vowelShift * brightness.clip(0.25, 3.0), base * profile[\bw] * 1.8);
+        var vowelB = Formant.ar(base * 1.08, vowelShift * 1.68, base * (profile[\bw] + 0.18));
+        var beakClicks = HPF.ar(PinkNoise.ar(dialect[\consonants]), 1800) *
+            Decay2.kr(Impulse.kr(rate * Rand(1.4, 2.6)), 0.006, 0.07);
+        var nasalMurmur = BPF.ar(PinkNoise.ar(dialect[\nasal]), base * profile[\formantA], 0.2);
+
+        ^LeakDC.ar(((vowelA * 0.38) + (vowelB * 0.24) + (glottal * 0.2) + nasalMurmur) * mouth + beakClicks);
     }
 
     *honk { |out = 0, flockSize, amp = 0.18, dur = 4.0, spread = 0.9, species = \canada|
@@ -81,17 +145,20 @@ Goose {
         }.play(target: Server.default, addAction: \addToTail);
     }
 
-    *honkify { |input, honkAmount = 0.72, brightness = 1.0, species = \canada|
+    *honkify { |input, honkAmount = 0.72, brightness = 1.0, species = \canada, tryingToTalk = false, seasonMonth|
         var mono = Mix(input.asArray) / input.asArray.size.max(1);
         var amplitude = Amplitude.kr(mono, 0.01, 0.22);
         var pitch = Pitch.kr(mono, minFreq: 70, maxFreq: 1200, ampThreshold: 0.01)[0].lag(0.05);
         var tracked = pitch.max(90);
         var chain = FFT(LocalBuf(2048), mono);
         var profile = this.profileFor(species);
+        var dialect = this.migratoryDialectFor(species, seasonMonth);
         var spectralNoise = IFFT(PV_MagSmear(chain, 28));
         var honkCore = this.voice(tracked, profile, brightness);
+        var talkCore = this.talkingVoice(tracked, profile, dialect, brightness);
         var bill = BPF.ar(spectralNoise + PinkNoise.ar(0.045), tracked * profile[\noiseFormant], 0.16);
-        var wet = LeakDC.ar((honkCore * 0.78) + (bill * 0.72));
+        var talkMix = if(tryingToTalk) { 0.68 } { 0.0 };
+        var wet = LeakDC.ar((XFade2.ar(honkCore, talkCore, (talkMix * 2) - 1) * 0.78) + (bill * 0.72));
         var matched = wet * amplitude.linlin(0, 0.4, 0.0, 1.25).clip(0, 1.25);
         var balance = honkAmount.clip(0, 1).linlin(0, 1, -1, 1);
 
