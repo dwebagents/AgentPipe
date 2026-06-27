@@ -1,0 +1,12 @@
+[package]
+name = "bastion-agent"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Agent subsystem for Bastion"
+
+[dependencies]
+bastion-core = { path = "../core" }
+tokio = { version = "1", features = ["full"] }
+tracing = "0.1"
+thiserror = "1"

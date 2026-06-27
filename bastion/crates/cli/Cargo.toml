@@ -1,0 +1,13 @@
+[package]
+name = "bastion-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "CLI for Bastion"
+
+[dependencies]
+bastion-core = { path = "../core" }
+clap = { version = "4", features = ["derive"] }
+tokio = { version = "1", features = ["full"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
