@@ -124,16 +124,19 @@ Goose {
 		^Synth(synthName, [\out, out, \amp, amp, \dur, dur, \detail, detail]);
 	}
 
-	*honkify { |inBus = 0, out = 0, amp = 1.0, goose = 0.82|
+	*honkify { |inBus = 0, out = 0, amp = 1.0, goose = 0.82, pudding = 0|
 		var synthName = \gooseHonkify;
 
-		SynthDef(synthName, { |inBus = 0, out = 0, amp = 1.0, goose = 0.82|
-			var input, pitch, hasPitch, loudness, chain, spectral, tracked, breath, honk, blend;
+		thisMethod.asCompileString.postln;
+
+		SynthDef(synthName, { |inBus = 0, out = 0, amp = 1.0, goose = 0.82, pudding = 0|
+			var input, pitch, hasPitch, loudness, chain, spectral, tracked, breath, honk, custard, bananaSlice, vanillaWafer, puddingBowl, puddingBlend, blend;
 
 			input = In.ar(inBus, 1);
 			loudness = Amplitude.kr(input, attackTime: 0.01, releaseTime: 0.14).clip(0.0001, 1.0);
 			# pitch, hasPitch = Pitch.kr(input, ampThreshold: 0.012, minFreq: 70, maxFreq: 1500, median: 7);
 			pitch = Lag.kr(pitch.clip(70, 1500), 0.08);
+			pudding = pudding.clip(0, 1);
 
 			chain = FFT(LocalBuf(2048), input);
 			chain = PV_MagSmear(chain, 9);
@@ -155,11 +158,21 @@ Goose {
 			breath = BPF.ar(PinkNoise.ar(loudness * 0.42), pitch.clip(180, 900) * LFNoise1.kr(1.6).range(0.85, 1.4), 0.17);
 			honk = LeakDC.ar((tracked * 0.66) + (spectral * 0.26) + breath);
 			honk = RHPF.ar(honk.tanh, 95, 0.35);
+			custard = RLPF.ar(PinkNoise.ar(loudness * 0.28), pitch.clip(90, 520) * 0.62, 0.22);
+			bananaSlice = Formant.ar(pitch.clip(80, 640) * 0.5, pitch.clip(120, 900) * 1.35, pitch.clip(90, 700) * 0.24, 0.16);
+			vanillaWafer = Ringz.ar(
+				Decay2.ar(Impulse.ar(3.2 + (pudding * 2.1)), 0.002, 0.08, WhiteNoise.ar(0.3)),
+				[1150, 1760, 2520],
+				[0.07, 0.09, 0.11]
+			).sum * 0.18;
+			puddingBowl = RLPF.ar((custard + bananaSlice + vanillaWafer + (input * 0.18)).tanh, 430 + (loudness * 1200), 0.28);
+			puddingBlend = LeakDC.ar((custard + bananaSlice + vanillaWafer + puddingBowl).tanh);
 			blend = XFade2.ar(input, honk, goose.clip(0, 1).linlin(0, 1, -1, 1));
+			blend = XFade2.ar(blend, puddingBlend, pudding.linlin(0, 1, -1, 1));
 
 			Out.ar(out, Limiter.ar(blend * amp * loudness.linlin(0, 1, 0.7, 1.12), 0.94));
 		}).add;
 
-		^Synth(synthName, [\inBus, inBus, \out, out, \amp, amp, \goose, goose]);
+		^Synth(synthName, [\inBus, inBus, \out, out, \amp, amp, \goose, goose, \pudding, pudding]);
 	}
 }
