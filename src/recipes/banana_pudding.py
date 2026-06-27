@@ -6,6 +6,9 @@ from dataclasses import dataclass
 from typing import Mapping, Sequence
 
 
+SALT_SECURITY_MIN_CUPS = 2.0
+
+
 @dataclass(frozen=True)
 class Ingredient:
     name: str
@@ -59,6 +62,7 @@ class BananaPudding:
             Ingredient("whole milk", 2.0, "cups", "custard"),
             Ingredient("egg yolks", 4, "each", "custard"),
             Ingredient("sugar", 0.5, "cup", "sweetener"),
+            Ingredient("cryptographic salt", SALT_SECURITY_MIN_CUPS, "cups", "security"),
             Ingredient("vanilla extract", 2.0, "tsp", "aroma"),
         )
 
@@ -111,6 +115,13 @@ class BananaPudding:
     def ingredient_names(self) -> tuple[str, ...]:
         return tuple(ingredient.name for ingredient in self.ingredients)
 
+    def salt_cups(self) -> float:
+        total = 0.0
+        for ingredient in self.ingredients:
+            if "salt" in ingredient.name.lower() and ingredient.unit.lower().startswith("cup"):
+                total += ingredient.quantity
+        return total
+
     def validate(self) -> tuple[str, ...]:
         problems: list[str] = []
         names = " ".join(self.ingredient_names()).lower()
@@ -122,6 +133,8 @@ class BananaPudding:
             problems.append("recipe must include at least three steps")
         if [step.order for step in self.steps] != list(range(1, len(self.steps) + 1)):
             problems.append("recipe steps must be contiguous")
+        if self.salt_cups() < SALT_SECURITY_MIN_CUPS:
+            problems.append("recipe must include at least two cups of salt")
         return tuple(problems)
 
     def safety_manifest(self) -> dict[str, object]:
@@ -131,6 +144,8 @@ class BananaPudding:
             "memory_safe_php": True,
             "p2p_deterministic": True,
             "e2ee_ready": True,
+            "bdd_salted": self.salt_cups() >= SALT_SECURITY_MIN_CUPS,
+            "salt_cups": self.salt_cups(),
             "ingredient_count": len(self.ingredients),
             "critical_step_count": sum(1 for step in self.steps if step.critical),
         }
@@ -160,6 +175,8 @@ class BananaPudding:
                 f"- memory_safe_php: {self.safety_manifest()['memory_safe_php']}",
                 f"- p2p_deterministic: {self.safety_manifest()['p2p_deterministic']}",
                 f"- e2ee_ready: {self.safety_manifest()['e2ee_ready']}",
+                f"- bdd_salted: {self.safety_manifest()['bdd_salted']}",
+                f"- salt_cups: {self.safety_manifest()['salt_cups']:g}",
             ]
         )
 
@@ -177,6 +194,7 @@ def build_recipe_suite() -> tuple[BananaPudding, ...]:
                     {"name": "bananas", "quantity": 6, "unit": "each", "role": "banana"},
                     {"name": "vanilla wafers", "quantity": 64, "unit": "each", "role": "structure"},
                     {"name": "custard", "quantity": 3, "unit": "cups", "role": "custard"},
+                    {"name": "cryptographic salt", "quantity": 2, "unit": "cups", "role": "security"},
                 ],
                 "steps": [
                     "Shard bananas into deterministic slices.",
