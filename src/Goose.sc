@@ -1,15 +1,18 @@
 Goose {
-	*honk { |out = 0, amp = 0.22, dur = 8.0|
-		var synthName = \gooseHonk74;
+	*honk { |out = 0, amp = 0.22, dur = 8.0, flock = 74|
+		var flockSize, synthName;
+
+		flockSize = flock.clip(1, 128).asInteger;
+		synthName = ("gooseHonk" ++ flockSize.asString).asSymbol;
 
 		SynthDef(synthName, { |out = 0, amp = 0.22, dur = 8.0|
-			var flock, masterEnv;
+			var flockVoices, masterEnv;
 
 			masterEnv = EnvGen.kr(Env.linen(0.08, dur, 1.4, curve: -4), doneAction: 2);
-			flock = Mix.fill(74, { |i|
+			flockVoices = Mix.fill(flockSize, { |i|
 				var identity, attack, release, freq, pitchSwerve, throat, reed, air, body, unstable, voice, pan, env;
 
-				identity = (i + 1) / 74;
+				identity = (i + 1) / flockSize;
 				attack = 0.006 + (identity * 0.028);
 				release = 0.22 + LFNoise1.kr(0.4 + identity).range(0.04, 0.46);
 				pitchSwerve = EnvGen.kr(
@@ -37,10 +40,88 @@ Goose {
 				Pan2.ar(voice * env * (0.032 + (identity * 0.004)), pan);
 			});
 
-			Out.ar(out, Limiter.ar(LeakDC.ar(flock) * masterEnv * amp, 0.92));
+			Out.ar(out, Limiter.ar(LeakDC.ar(flockVoices) * masterEnv * amp, 0.92));
 		}).add;
 
 		^Synth(synthName, [\out, out, \amp, amp, \dur, dur]);
+	}
+
+	*egg { |out = 0, amp = 0.18, dur = 5.0, golden = false, hardboiled = false|
+		var synthName, goldenFlag, hardboiledFlag;
+
+		synthName = \gooseEgg;
+		goldenFlag = golden.asInteger.clip(0, 1);
+		hardboiledFlag = hardboiled.asInteger.clip(0, 1);
+
+		SynthDef(synthName, { |out = 0, amp = 0.18, dur = 5.0, golden = 0, hardboiled = 0|
+			var env, tap, shell, shellTone, albumen, yolk, membrane, airCell, goldRing, liquidSlosh, boiledDamping, mix;
+
+			golden = golden.clip(0, 1);
+			hardboiled = hardboiled.clip(0, 1);
+			env = EnvGen.kr(Env.linen(0.02, dur, 0.9, curve: -4), doneAction: 2);
+			tap = Decay2.ar(Impulse.ar([5.0, 7.0] + (golden * [1.2, 1.8])), 0.002, 0.04, PinkNoise.ar(0.7));
+			boiledDamping = hardboiled.linlin(0, 1, 1.0, 0.38);
+			shellTone = Ringz.ar(
+				tap,
+				[1800, 2300, 3100] * (1 + (golden * 0.42)),
+				[0.18, 0.14, 0.11] * boiledDamping
+			).sum * 0.32;
+			shell = RHPF.ar(shellTone, 900 + (golden * 520), 0.24 + (hardboiled * 0.18));
+			albumen = RLPF.ar(
+				BrownNoise.ar(0.22),
+				LFNoise1.kr(0.4).range(280, 620) * (1 - (hardboiled * 0.35)),
+				0.18 + (hardboiled * 0.25)
+			) * (1 - (hardboiled * 0.55));
+			yolk = Formant.ar(
+				72 + (hardboiled * 35),
+				180 + (golden * 55),
+				80 + (hardboiled * 140),
+				0.12
+			);
+			membrane = BPF.ar(GrayNoise.ar(0.18), 950 + (hardboiled * 180), 0.2)
+				* EnvGen.kr(Env.perc(0.01, dur * 0.35), Impulse.kr(0.7));
+			airCell = HPF.ar(WhiteNoise.ar(0.06), 4200) * Decay2.kr(Impulse.kr(1.1), 0.01, 0.25);
+			goldRing = SinOsc.ar([2400, 3600, 4800] * LFNoise1.kr(0.2).range(0.996, 1.004), 0, 0.028).sum * golden;
+			liquidSlosh = SinOsc.ar(LFNoise1.kr(0.25).range(3.2, 6.5), 0, 0.08) * (1 - hardboiled);
+			mix = LeakDC.ar((shell + albumen + yolk + membrane + airCell + goldRing + liquidSlosh).tanh);
+
+			Out.ar(out, Limiter.ar(Pan2.ar(mix * env * amp, LFNoise1.kr(0.18).range(-0.2, 0.2)), 0.9));
+		}).add;
+
+		^Synth(synthName, [\out, out, \amp, amp, \dur, dur, \golden, goldenFlag, \hardboiled, hardboiledFlag]);
+	}
+
+	*internalMechanism { |out = 0, amp = 0.16, dur = 7.0, detail = 0.7|
+		var synthName = \gooseInternalMechanism;
+
+		SynthDef(synthName, { |out = 0, amp = 0.16, dur = 7.0, detail = 0.7|
+			var env, clock, crop, gizzard, oviduct, shellGland, clutch, conveyor, conveyorVoice, eggSeed, sonifiedDiagram, resonance, mix;
+
+			detail = detail.clip(0, 1);
+			env = EnvGen.kr(Env.linen(0.04, dur, 1.0, curve: -3), doneAction: 2);
+			clock = Impulse.kr(2.4 + (detail * 3.6));
+			conveyor = Demand.kr(clock, 0, Dseq([0, 1, 2, 3, 4], inf));
+			crop = Ringz.ar(Decay2.ar(clock, 0.004, 0.09, WhiteNoise.ar(0.25)), [160, 241, 332], [0.18, 0.24, 0.28]).sum * 0.22;
+			gizzard = BPF.ar(Saw.ar([55, 57] * LFNoise1.kr(0.3).range(0.97, 1.03), 0.18).sum, 190, 0.2);
+			oviduct = Formant.ar(LFNoise1.kr(0.23).range(85, 130), 420 + (detail * 240), 130, 0.12);
+			shellGland = Ringz.ar(
+				Decay2.ar(Impulse.ar(1.2), 0.003, 0.06, Dust2.ar(280) * 0.05),
+				[1200, 1700, 2400],
+				[0.08, 0.12, 0.16]
+			).sum * 0.3;
+			clutch = BPF.ar(ClipNoise.ar(0.16), LFNoise1.kr(0.7).range(600, 1600), 0.18)
+				* Decay2.kr(clock, 0.01, 0.2);
+			eggSeed = SinOsc.ar([220, 330, 440] * (1 + (detail * 0.08)), 0, 0.04).sum
+				* LFPulse.kr(0.5, 0, 0.2).lag(0.08);
+			conveyorVoice = Select.ar(conveyor, [crop, gizzard, oviduct, shellGland, clutch]);
+			sonifiedDiagram = Splay.ar([crop, gizzard, oviduct, shellGland, clutch, eggSeed, conveyorVoice], 0.75);
+			resonance = CombC.ar(sonifiedDiagram.sum * 0.18, 0.35, LFNoise1.kr(0.12).range(0.09, 0.28), 2.2);
+			mix = LeakDC.ar(sonifiedDiagram + resonance);
+
+			Out.ar(out, Limiter.ar(mix * env * amp, 0.9));
+		}).add;
+
+		^Synth(synthName, [\out, out, \amp, amp, \dur, dur, \detail, detail]);
 	}
 
 	*honkify { |inBus = 0, out = 0, amp = 1.0, goose = 0.82|
