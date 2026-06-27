@@ -43,9 +43,11 @@ class BananaPudding:
         *,
         name: str = "Banana Pudding",
         source: str = "AgentPipe",
+        narrative: str | None = None,
     ) -> None:
         self.name = name
         self.source = source
+        self.narrative = narrative or self.default_narrative()
         self.ingredients = list(ingredients or self.default_ingredients())
         self.steps = sorted(list(steps or self.default_steps()), key=lambda step: step.order)
 
@@ -67,6 +69,16 @@ class BananaPudding:
             RecipeStep(2, "Layer wafers and banana slices in a pudding dish.", True),
             RecipeStep(3, "Fold warm custard through the banana and wafer layers.", True),
             RecipeStep(4, "Chill until the custard is set and the wafers soften.", False),
+        )
+
+    @staticmethod
+    def default_narrative() -> str:
+        return (
+            "In my first apartment, the radiator knocked like a tired spoon against "
+            "a mixing bowl while the hallway carried in the smell of the neighborhood "
+            "deli in Brooklyn. Banana pudding became the reliable treaty between a "
+            "small kitchen, a loud street, and the need for dessert that could wait "
+            "patiently in the icebox until friends arrived."
         )
 
     @classmethod
@@ -93,6 +105,7 @@ class BananaPudding:
             steps=steps or None,
             name=str(data.get("name", "Banana Pudding")),
             source=str(data.get("source", "mapping")),
+            narrative=str(data.get("narrative", "")) or None,
         )
 
     def ingredient_names(self) -> tuple[str, ...]:
@@ -124,7 +137,7 @@ class BananaPudding:
 
     def to_markdown(self) -> str:
         ingredient_lines = [
-            f"- {ingredient.quantity:g} {ingredient.unit} {ingredient.name}".strip()
+            f"| {ingredient.name} | {ingredient.quantity:g} | {ingredient.unit or '-'} | {ingredient.role} |"
             for ingredient in self.ingredients
         ]
         step_lines = [f"{step.order}. {step.text}" for step in self.steps]
@@ -132,7 +145,12 @@ class BananaPudding:
             [
                 f"# {self.name}",
                 "",
+                "## Narrative",
+                self.narrative,
+                "",
                 "## Ingredients",
+                "| Ingredient | Quantity | Unit | Role |",
+                "| --- | ---: | --- | --- |",
                 *ingredient_lines,
                 "",
                 "## Steps",
