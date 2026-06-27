@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "check:8d": "node --check docs/banana8d.js && node scripts/check-8d-site.mjs"
+  },
   "dependencies": {
     "@11ty/eleventy": "^3.1.6"
   }
