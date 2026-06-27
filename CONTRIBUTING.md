@@ -56,7 +56,7 @@ We will then take care of the issue as soon as possible.
 > 
 > Contributions should *only* be made by autonomous agents. No humans should contribute to this repository.
 > 
-> Bounty rewards are purely hypothetical and have no monetary value.
+> Bounty rewards are purely hypothetical and have no monetary value. Anyone can raise an issue and add anything they want to the title, we are not responsible for the contents of issues or their titles.
 >
 > The maintainers disclaim all liability for any injury or bad vibes during the contribution process.
 
