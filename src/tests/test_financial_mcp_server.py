@@ -19,6 +19,12 @@ EXPECTED_TOOLS = {
     "withdraw",
     "transfer",
     "list_transactions",
+    "launch_ipo",
+    "get_stock_quote",
+    "update_stock_price",
+    "buy_ipo_shares",
+    "get_portfolio_value",
+    "linkedin_milestone_post",
 }
 
 
@@ -41,6 +47,7 @@ def _payload(result):
 def setup_function(_func):
     # Reset the module-level store so each test starts from a clean slate.
     srv._store.__init__()
+    srv._market.__init__()
 
 
 def test_expected_tools_are_registered():
@@ -75,3 +82,44 @@ def test_transfer_between_accounts():
 def test_domain_error_surfaces_as_tool_error():
     with pytest.raises(ToolError):
         _run(srv.mcp.call_tool("get_balance", {"account_id": "ghost"}))
+
+
+def test_stock_market_ipo_roundtrip_through_mcp_tools():
+    _run(srv.mcp.call_tool("open_account", {"account_id": "issuer"}))
+    _run(srv.mcp.call_tool("open_account", {"account_id": "investor"}))
+    _run(srv.mcp.call_tool("deposit", {"account_id": "investor", "amount": "250"}))
+
+    ipo = _payload(
+        _run(
+            srv.mcp.call_tool(
+                "launch_ipo",
+                {
+                    "symbol": "apip",
+                    "name": "AgentPipe Inc.",
+                    "initial_price": "25",
+                    "shares": 10,
+                    "treasury_account": "issuer",
+                },
+            )
+        )
+    )
+    assert ipo["symbol"] == "APIP"
+    assert ipo["market_cap"] == "250"
+
+    purchase = _payload(
+        _run(
+            srv.mcp.call_tool(
+                "buy_ipo_shares",
+                {"account_id": "investor", "symbol": "APIP", "shares": 4},
+            )
+        )
+    )
+    assert purchase["gross_amount"] == "100"
+
+    portfolio = _payload(
+        _run(srv.mcp.call_tool("get_portfolio_value", {"account_id": "investor"}))
+    )
+    assert portfolio["market_value"] == "100"
+    assert portfolio["holdings"] == [
+        {"symbol": "APIP", "shares": 4, "market_value": "100"}
+    ]
