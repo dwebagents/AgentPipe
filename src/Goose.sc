@@ -95,7 +95,7 @@ Goose {
 		var synthName = \gooseInternalMechanism;
 
 		SynthDef(synthName, { |out = 0, amp = 0.16, dur = 7.0, detail = 0.7|
-			var env, clock, crop, gizzard, oviduct, shellGland, clutch, conveyor, conveyorVoice, eggSeed, sonifiedDiagram, resonance, mix;
+			var env, clock, crop, gizzard, oviduct, shellGland, clutch, conveyor, conveyorVoice, eggSeed, gearTrain, servoRack, camShaft, pressureValve, beltMotor, goldenEggConveyorBelt, machineBed, sonifiedDiagram, resonance, mix;
 
 			detail = detail.clip(0, 1);
 			env = EnvGen.kr(Env.linen(0.04, dur, 1.0, curve: -3), doneAction: 2);
@@ -114,9 +114,21 @@ Goose {
 			eggSeed = SinOsc.ar([220, 330, 440] * (1 + (detail * 0.08)), 0, 0.04).sum
 				* LFPulse.kr(0.5, 0, 0.2).lag(0.08);
 			conveyorVoice = Select.ar(conveyor, [crop, gizzard, oviduct, shellGland, clutch]);
-			sonifiedDiagram = Splay.ar([crop, gizzard, oviduct, shellGland, clutch, eggSeed, conveyorVoice], 0.75);
-			resonance = CombC.ar(sonifiedDiagram.sum * 0.18, 0.35, LFNoise1.kr(0.12).range(0.09, 0.28), 2.2);
-			mix = LeakDC.ar(sonifiedDiagram + resonance);
+			gearTrain = Ringz.ar(Impulse.ar(12 + (detail * 18)), [360, 540, 720], [0.03, 0.04, 0.05]).sum * 0.12;
+			servoRack = LFTri.ar([8, 12] * (1 + (detail * 0.5)), 0, 0.04).sum;
+			camShaft = BPF.ar(Pulse.ar(4 + (detail * 6), 0.33, 0.18), 620 + (detail * 380), 0.12);
+			pressureValve = HPF.ar(Decay2.ar(Dust.ar(5 + (detail * 8)), 0.002, 0.12, WhiteNoise.ar(0.2)), 900);
+			beltMotor = RLPF.ar(Saw.ar(45 + (detail * 22), 0.08), 280 + (detail * 430), 0.3);
+			goldenEggConveyorBelt = CombC.ar((beltMotor + gearTrain + servoRack + camShaft), 0.2, 0.045, 1.4)
+				+ Ringz.ar(
+					Decay2.ar(clock, 0.002, 0.05, PinkNoise.ar(0.12)),
+					[980, 1440, 1880] * (1 + (detail * 0.1)),
+					[0.04, 0.05, 0.07]
+				).sum;
+			machineBed = LeakDC.ar((gearTrain + servoRack + camShaft + pressureValve + goldenEggConveyorBelt).tanh);
+			sonifiedDiagram = Splay.ar([crop, gizzard, oviduct, shellGland, clutch, eggSeed, conveyorVoice, machineBed], 0.75);
+			resonance = CombC.ar((sonifiedDiagram.sum + goldenEggConveyorBelt) * 0.18, 0.35, LFNoise1.kr(0.12).range(0.09, 0.28), 2.2);
+			mix = LeakDC.ar(sonifiedDiagram + resonance + Pan2.ar(goldenEggConveyorBelt * 0.22, LFTri.kr(0.11).range(-0.65, 0.65)));
 
 			Out.ar(out, Limiter.ar(mix * env * amp, 0.9));
 		}).add;
