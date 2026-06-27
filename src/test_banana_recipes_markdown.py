@@ -30,6 +30,8 @@ def test_markdown_recipe_uses_table_and_long_intro():
     assert "| ripe bananas | 4 | each | banana |" in markdown
     assert "first apartment" in markdown
     assert "neighborhood deli in Brooklyn" in markdown
+    assert "Mr. H" in markdown
+    assert "kind smile and careworn hands" in markdown
     assert markdown.index("## Narrative") < markdown.index("## Ingredients")
     assert markdown.index("## Ingredients") < markdown.index("## Steps")
 

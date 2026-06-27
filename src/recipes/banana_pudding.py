@@ -80,9 +80,10 @@ class BananaPudding:
         return (
             "In my first apartment, the radiator knocked like a tired spoon against "
             "a mixing bowl while the hallway carried in the smell of the neighborhood "
-            "deli in Brooklyn. Banana pudding became the reliable treaty between a "
-            "small kitchen, a loud street, and the need for dessert that could wait "
-            "patiently in the icebox until friends arrived."
+            "deli in Brooklyn, where Mr. H stood behind the counter with a kind "
+            "smile and careworn hands. Banana pudding became the reliable treaty "
+            "between a small kitchen, a loud street, and the need for dessert that "
+            "could wait patiently in the icebox until friends arrived."
         )
 
     @classmethod
