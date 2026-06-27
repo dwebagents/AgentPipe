@@ -50,6 +50,10 @@ class CredentialExpiredError(ControlPlaneError):
     """Raised when the active agent session is no longer valid."""
 
 
+class SessionMismatchError(ControlPlaneError):
+    """Raised when a session tries to execute another agent's request."""
+
+
 def _utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
@@ -363,6 +367,17 @@ class SecurityControlPlane:
         executed_at = now or _utcnow()
         session = self._require_active_session(executed_at)
         request = self._require_request(request_id)
+        if session.agent_id != request.actor_id:
+            self.audit_log.append(
+                "operation.session_mismatch",
+                request_id,
+                {"actor_id": request.actor_id, "session_agent": session.agent_id},
+                now=executed_at,
+            )
+            raise SessionMismatchError(
+                f"active session {session.agent_id!r} cannot execute "
+                f"request for {request.actor_id!r}"
+            )
         if request.decision == "deny":
             self.audit_log.append(
                 "operation.denied",

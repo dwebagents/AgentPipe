@@ -8,6 +8,7 @@ from security_control_plane import (
     CredentialExpiredError,
     InvalidApprovalError,
     PolicyDeniedError,
+    SessionMismatchError,
     SecurityControlPlane,
     SecurityPolicy,
     TamperEvidentAuditLog,
@@ -126,6 +127,19 @@ def test_sessions_expire_and_rotation_issues_new_isolated_credentials() -> None:
     assert rotated.token != first_session.token
     assert receipt.credential_token == rotated.token
     assert rotated.network_enabled is False
+    assert plane.verify_audit_log()
+
+
+def test_session_cannot_execute_another_agents_request() -> None:
+    plane = build_plane()
+    plane.start_session("agent-1", now=NOW)
+    request = plane.plan_operation("agent-1", "metadata", "read", now=NOW)
+    plane.rotate_credentials("agent-2", now=NOW + timedelta(seconds=1))
+
+    with pytest.raises(SessionMismatchError):
+        plane.execute(request.id, now=NOW + timedelta(seconds=2))
+
+    assert plane.audit_records()[-1].event_type == "operation.session_mismatch"
     assert plane.verify_audit_log()
 
 
