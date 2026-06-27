@@ -36,6 +36,18 @@ a {
   color: inherit;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .skip-link {
   position: absolute;
   left: 1rem;
@@ -50,6 +62,13 @@ a {
 
 .skip-link:focus {
   transform: translateY(0);
+}
+
+a:focus-visible,
+button:focus-visible,
+canvas:focus-visible {
+  outline: 3px solid var(--yellow);
+  outline-offset: 4px;
 }
 
 .site-header {
@@ -125,10 +144,11 @@ main {
 .hero h1 {
   margin: 0;
   color: var(--yellow);
-  font-size: clamp(4.5rem, 8.2vw, 7.2rem);
+  font-size: clamp(4rem, 6.6vw, 6.2rem);
   line-height: 0.9;
   font-weight: 950;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 .hero p {
@@ -210,7 +230,6 @@ main {
 .stage-readout {
   position: absolute;
   left: 1rem;
-  right: 1rem;
   bottom: 1rem;
   display: flex;
   flex-wrap: wrap;
@@ -225,6 +244,29 @@ main {
   border-radius: 999px;
   padding: 0.35rem 0.55rem;
   background: rgba(21, 20, 15, 0.7);
+}
+
+.stage-controls {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+}
+
+.motion-toggle {
+  min-height: 2.35rem;
+  border: 1px solid rgba(255, 212, 42, 0.44);
+  border-radius: 999px;
+  padding: 0.45rem 0.7rem;
+  background: rgba(21, 20, 15, 0.82);
+  color: var(--white);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.motion-toggle:hover {
+  background: rgba(255, 212, 42, 0.18);
 }
 
 .description-band,
@@ -394,6 +436,16 @@ footer span:first-child {
   .banana-stage {
     min-height: 21rem;
   }
+
+  .stage-readout {
+    right: 1rem;
+    bottom: 4rem;
+  }
+
+  .stage-controls {
+    left: 1rem;
+    right: auto;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -405,6 +457,10 @@ footer span:first-child {
   .button:hover,
   .button:focus-visible {
     transform: none;
+    transition: none;
+  }
+
+  .skip-link {
     transition: none;
   }
 }

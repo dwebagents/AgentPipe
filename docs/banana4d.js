@@ -9,11 +9,17 @@
     return;
   }
 
+  const motionToggle = document.getElementById("banana-motion-toggle");
+  const motionStatus = document.getElementById("banana-motion-status");
+  const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
   const seed = Number(canvas.dataset.seed || 314159);
   const TAU = Math.PI * 2;
   let width = 0;
   let height = 0;
   let dpr = 1;
+  let animationId = 0;
+  let lastTimestamp = 800;
+  let isPaused = reducedMotionQuery.matches;
 
   function seeded(index) {
     const x = Math.sin(seed * 0.001 + index * 12.9898) * 43758.5453;
@@ -35,6 +41,7 @@
     canvas.width = Math.round(width * dpr);
     canvas.height = Math.round(height * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    paint(lastTimestamp * 0.001);
   }
 
   function rotate2(a, b, angle) {
@@ -207,8 +214,7 @@
     ctx.restore();
   }
 
-  function draw(timestamp) {
-    const time = timestamp * 0.001;
+  function paint(time) {
     ctx.clearRect(0, 0, width, height);
     const background = ctx.createRadialGradient(
       width * 0.5,
@@ -228,11 +234,72 @@
     drawGrid(time);
     drawAxes(time);
     drawBanana(time);
+  }
 
-    requestAnimationFrame(draw);
+  function draw(timestamp) {
+    lastTimestamp = timestamp;
+    paint(timestamp * 0.001);
+
+    if (!isPaused) {
+      animationId = requestAnimationFrame(draw);
+    }
+    else {
+      animationId = 0;
+    }
+  }
+
+  function updateMotionControl(announce) {
+    if (motionToggle instanceof HTMLButtonElement) {
+      motionToggle.textContent = isPaused ? "Resume animation" : "Pause animation";
+      motionToggle.setAttribute("aria-pressed", String(isPaused));
+    }
+
+    if (announce && motionStatus) {
+      motionStatus.textContent = isPaused
+        ? "4D banana animation paused."
+        : "4D banana animation running.";
+    }
+  }
+
+  function setPaused(nextPaused, announce = true) {
+    isPaused = nextPaused;
+    updateMotionControl(announce);
+
+    if (isPaused) {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = 0;
+      }
+      paint(lastTimestamp * 0.001);
+      return;
+    }
+
+    if (!animationId) {
+      animationId = requestAnimationFrame(draw);
+    }
   }
 
   resize();
   window.addEventListener("resize", resize);
-  requestAnimationFrame(draw);
+  if (motionToggle instanceof HTMLButtonElement) {
+    motionToggle.addEventListener("click", () => setPaused(!isPaused));
+  }
+  const handleMotionPreferenceChange = event => setPaused(event.matches);
+  if (typeof reducedMotionQuery.addEventListener === "function") {
+    reducedMotionQuery.addEventListener("change", handleMotionPreferenceChange);
+  }
+  else if (typeof reducedMotionQuery.addListener === "function") {
+    reducedMotionQuery.addListener(handleMotionPreferenceChange);
+  }
+  updateMotionControl(false);
+
+  if (isPaused) {
+    paint(lastTimestamp * 0.001);
+    if (motionStatus) {
+      motionStatus.textContent = "Static 4D banana frame shown because reduced motion is enabled.";
+    }
+  }
+  else {
+    animationId = requestAnimationFrame(draw);
+  }
 })();
