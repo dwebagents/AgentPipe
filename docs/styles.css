@@ -603,6 +603,11 @@ h2 {
   font-weight: 850;
 }
 
+.suite-contact .footer-note {
+  color: var(--muted);
+  font-weight: 800;
+}
+
 .suite-video {
   display: block;
   width: 100%;
@@ -620,6 +625,10 @@ footer {
   background: var(--charcoal);
   color: rgba(255, 255, 255, 0.72);
   font-size: 0.95rem;
+}
+
+footer.suite-contact {
+  color: var(--charcoal);
 }
 
 footer span:first-child {
