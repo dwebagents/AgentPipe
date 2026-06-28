@@ -41,11 +41,24 @@ for (const token of [
 for (const token of [
   "function rotate8d",
   "function project8d",
+  "function buildBananaMusicBuffer",
+  "function create8DChessPieces",
+  "TOTAL_CHESS_PIECES = PLAYER_COUNT * PIECES_PER_PLAYER",
+  "musicSource = audioContext.createBufferSource()",
   "window.AgentPipe8D",
 ]) {
   if (!js.includes(token)) {
     throw new Error(`docs/banana8d.js is missing ${token}`);
   }
+}
+
+if (js.includes("createOscillator")) {
+  throw new Error("docs/banana8d.js should play back music instead of using a plain oscillator");
+}
+
+const playerLoop = js.match(/playerIndex < PLAYER_COUNT/g) || [];
+if (playerLoop.length < 1 || !js.includes("pieces.length")) {
+  throw new Error("docs/banana8d.js must build and expose all 128 projected 8D chess pieces");
 }
 
 console.log("AgentPipe 8D site checks passed.");

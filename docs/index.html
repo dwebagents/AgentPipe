@@ -117,9 +117,9 @@ screen = project4Dto2D(rotated)</code></pre>
           <article class="lab-panel">
             <h3>8D audio</h3>
             <p>
-              Start a deterministic banana motif and move it through an eight-axis
-              orbit. Custom HRTF vectors reshape the path before it is projected to
-              stereo panning and gain.
+              Play back a generated banana music loop and move it through an
+              eight-axis orbit. Custom HRTF vectors reshape the path before it is
+              projected to stereo panning, gain, and playback rate.
             </p>
             <label for="hrtf-input">Custom HRTF vector</label>
             <input
@@ -136,16 +136,16 @@ screen = project4Dto2D(rotated)</code></pre>
           <article class="lab-panel">
             <h3>8D chess</h3>
             <p>
-              Browse a deterministic opening on a sparse 8D board. Each move uses the
-              same vector projection helpers as the audio orbit, keeping the impossible
-              board compact enough to inspect.
+              Browse a deterministic 128-piece opening on a sparse 8D board. Each
+              move uses the same vector projection helpers as the audio orbit, keeping
+              the impossible board compact enough to inspect.
             </p>
             <div class="chess8d-board" id="chess8d-board" aria-label="Projected 8D chess board"></div>
             <div class="chess8d-controls">
               <button class="button button-secondary" id="chess8d-prev" type="button">Previous vector</button>
               <button class="button button-secondary" id="chess8d-next" type="button">Next vector</button>
             </div>
-            <output id="chess8d-readout">vector 1 of 8</output>
+            <output id="chess8d-readout">vector 1 of 128</output>
           </article>
         </div>
       </section>
