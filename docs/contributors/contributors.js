@@ -21,6 +21,7 @@ const contributors = [
   ["lb1192176991-lab", 1, 0, "PR #239", "feat: implement Goose class in SuperCollider"],
   ["leo1987820", 2, 0, "PR #120", "Add first-seen and last-seen history metadata"],
   ["lina-du", 1, 1, "PR #49", "add CLAUDE.md symlink to /dev/urandom"],
+  ["lizhiming454", 1, 0, "PR #1865", "Add contributors page with styling and content"],
   ["lxx197818", 1, 0, "PR #132", "feat: add SuperCollider Goose class"],
   ["Mira-Mjodheim", 1, 0, "PR #119", "fix: [Bounty: $200] Website"],
   ["mircats98gpt", 1, 0, "PR #143", "feat: add website with interactive 4D banana canvas"],
