@@ -8,6 +8,7 @@ from canine_kubernetes import (
     DuplicateServiceError,
     InvalidDeploymentError,
     NotDeviceOwnerError,
+    UnknownCanineCommandError,
     UnknownDeviceError,
     UnknownServiceError,
     normalize_address,
@@ -164,6 +165,42 @@ def test_retire_service_blocks_future_routes():
         plane.routes_for("retire-me")
 
 
+def test_canine_command_aliases_drive_the_control_plane():
+    plane = CanineKubernetesControlPlane()
+    device = plane.dispatch_canine_command(
+        "bark register",
+        "fido-bark",
+        OWNER,
+        juicero_model="J1-C",
+        capabilities=("howl-api", "bark-router"),
+    )
+    deployment = plane.dispatch_canine_command(
+        "howl.deploy",
+        "walkies-bark-api",
+        device.device_id,
+        image_digest="sha256:" + "e" * 64,
+        endpoint="canine://fido/walkies",
+        replicas=1,
+        caller=OWNER,
+    )
+
+    scaled = plane.ruff_scale(deployment.service_id, 3, caller=OWNER)
+    routes = plane.dispatch_canine_command("sniff.route", scaled.service_id)
+    manifest = plane.pant_manifest(scaled.service_id)
+
+    assert scaled.replicas == 3
+    assert routes == tuple(f"canine://fido/walkies/replicas/{i}" for i in range(3))
+    assert manifest["device_id"] == "fido-bark"
+    assert "howl-api" in device.capabilities
+
+
+def test_unknown_canine_command_is_rejected():
+    plane = CanineKubernetesControlPlane()
+
+    with pytest.raises(UnknownCanineCommandError):
+        plane.dispatch_canine_command("meow.deploy", "service")
+
+
 def test_solidity_contract_exposes_expected_registry_surface():
     contract = Path("contracts/CanineKubernetes.sol").read_text()
 
@@ -182,5 +219,10 @@ def test_solidity_contract_exposes_expected_registry_surface():
         "function scaleService",
         "function retireService",
         "function routeOf",
+        "function barkRegister",
+        "function howlDeploy",
+        "function ruffScale",
+        "function whineRetire",
+        "function sniffRoute",
     ]:
         assert required in contract

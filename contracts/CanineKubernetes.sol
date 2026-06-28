@@ -60,6 +60,90 @@ contract CanineKubernetes {
         bool touchscreen,
         bytes32 capabilitiesHash
     ) external {
+        _registerDevice(deviceId, juiceroModel, touchscreen, capabilitiesHash);
+    }
+
+    function barkRegister(
+        bytes32 deviceId,
+        string calldata juiceroModel,
+        bool touchscreen,
+        bytes32 capabilitiesHash
+    ) external {
+        _registerDevice(deviceId, juiceroModel, touchscreen, capabilitiesHash);
+    }
+
+    function deployService(
+        bytes32 serviceId,
+        bytes32 deviceId,
+        string calldata imageDigest,
+        string calldata endpoint,
+        uint16 replicas
+    ) external {
+        _deployService(serviceId, deviceId, imageDigest, endpoint, replicas);
+    }
+
+    function howlDeploy(
+        bytes32 serviceId,
+        bytes32 deviceId,
+        string calldata imageDigest,
+        string calldata endpoint,
+        uint16 replicas
+    ) external {
+        _deployService(serviceId, deviceId, imageDigest, endpoint, replicas);
+    }
+
+    function scaleService(bytes32 serviceId, uint16 replicas) external {
+        _scaleService(serviceId, replicas);
+    }
+
+    function ruffScale(bytes32 serviceId, uint16 replicas) external {
+        _scaleService(serviceId, replicas);
+    }
+
+    function retireService(bytes32 serviceId) external {
+        _retireService(serviceId);
+    }
+
+    function whineRetire(bytes32 serviceId) external {
+        _retireService(serviceId);
+    }
+
+    function routeOf(bytes32 serviceId)
+        external
+        view
+        returns (
+            bytes32 deviceId,
+            address owner,
+            string memory endpoint,
+            uint16 replicas,
+            uint64 revision,
+            bool active
+        )
+    {
+        return _routeOf(serviceId);
+    }
+
+    function sniffRoute(bytes32 serviceId)
+        external
+        view
+        returns (
+            bytes32 deviceId,
+            address owner,
+            string memory endpoint,
+            uint16 replicas,
+            uint64 revision,
+            bool active
+        )
+    {
+        return _routeOf(serviceId);
+    }
+
+    function _registerDevice(
+        bytes32 deviceId,
+        string memory juiceroModel,
+        bool touchscreen,
+        bytes32 capabilitiesHash
+    ) private {
         _requireId(deviceId);
         _requireText(juiceroModel);
         if (devices[deviceId].registered) {
@@ -83,13 +167,13 @@ contract CanineKubernetes {
         );
     }
 
-    function deployService(
+    function _deployService(
         bytes32 serviceId,
         bytes32 deviceId,
-        string calldata imageDigest,
-        string calldata endpoint,
+        string memory imageDigest,
+        string memory endpoint,
         uint16 replicas
-    ) external {
+    ) private {
         _requireId(serviceId);
         _requireId(deviceId);
         _requireText(imageDigest);
@@ -128,7 +212,7 @@ contract CanineKubernetes {
         );
     }
 
-    function scaleService(bytes32 serviceId, uint16 replicas) external {
+    function _scaleService(bytes32 serviceId, uint16 replicas) private {
         _requireReplicas(replicas);
         Service storage service = _requireOwnedService(serviceId);
 
@@ -138,7 +222,7 @@ contract CanineKubernetes {
         emit ServiceScaled(serviceId, replicas, service.revision);
     }
 
-    function retireService(bytes32 serviceId) external {
+    function _retireService(bytes32 serviceId) private {
         Service storage service = _requireOwnedService(serviceId);
 
         service.active = false;
@@ -147,8 +231,8 @@ contract CanineKubernetes {
         emit ServiceRetired(serviceId, service.revision);
     }
 
-    function routeOf(bytes32 serviceId)
-        external
+    function _routeOf(bytes32 serviceId)
+        private
         view
         returns (
             bytes32 deviceId,
@@ -202,7 +286,7 @@ contract CanineKubernetes {
         }
     }
 
-    function _requireText(string calldata value) private pure {
+    function _requireText(string memory value) private pure {
         if (bytes(value).length == 0) {
             revert EmptyField();
         }

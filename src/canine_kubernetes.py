@@ -13,6 +13,19 @@ from typing import Iterable
 
 MAX_REPLICAS = 128
 
+CANINE_COMMANDS = {
+    "bark.register": "register_device",
+    "woof.register": "register_device",
+    "howl.deploy": "deploy_service",
+    "aroo.deploy": "deploy_service",
+    "ruff.scale": "scale_service",
+    "yip.scale": "scale_service",
+    "whine.retire": "retire_service",
+    "quiet.retire": "retire_service",
+    "sniff.route": "routes_for",
+    "pant.manifest": "dispatch_manifest",
+}
+
 
 class CanineKubernetesError(Exception):
     """Base class for control-plane errors."""
@@ -40,6 +53,10 @@ class UnknownDeviceError(CanineKubernetesError):
 
 class UnknownServiceError(CanineKubernetesError):
     """Raised when a service id is unknown or inactive."""
+
+
+class UnknownCanineCommandError(CanineKubernetesError):
+    """Raised when a bark/howl command is not part of the control-plane API."""
 
 
 def normalize_address(address: str) -> str:
@@ -158,6 +175,24 @@ class CanineKubernetesControlPlane:
         self._devices[device_key] = device
         return device
 
+    def bark_register(
+        self,
+        device_id: str,
+        owner: str,
+        *,
+        juicero_model: str = "J1-C",
+        touchscreen: bool = False,
+        capabilities: Iterable[str] = (),
+    ) -> DeviceRegistration:
+        """Canine-language alias for registering a device."""
+        return self.register_device(
+            device_id,
+            owner,
+            juicero_model=juicero_model,
+            touchscreen=touchscreen,
+            capabilities=capabilities,
+        )
+
     def deploy_service(
         self,
         service_id: str,
@@ -186,6 +221,26 @@ class CanineKubernetesControlPlane:
         self._services[service_key] = deployment
         return deployment
 
+    def howl_deploy(
+        self,
+        service_id: str,
+        device_id: str,
+        *,
+        image_digest: str,
+        endpoint: str,
+        replicas: int,
+        caller: str,
+    ) -> ServiceDeployment:
+        """Canine-language alias for deploying a service."""
+        return self.deploy_service(
+            service_id,
+            device_id,
+            image_digest=image_digest,
+            endpoint=endpoint,
+            replicas=replicas,
+            caller=caller,
+        )
+
     def scale_service(
         self, service_id: str, replicas: int, *, caller: str
     ) -> ServiceDeployment:
@@ -201,6 +256,12 @@ class CanineKubernetesControlPlane:
         self._services[deployment.service_id] = updated
         return updated
 
+    def ruff_scale(
+        self, service_id: str, replicas: int, *, caller: str
+    ) -> ServiceDeployment:
+        """Canine-language alias for scaling a service."""
+        return self.scale_service(service_id, replicas, caller=caller)
+
     def retire_service(self, service_id: str, *, caller: str) -> ServiceDeployment:
         deployment = self._require_service(service_id)
         caller_address = normalize_address(caller)
@@ -210,8 +271,16 @@ class CanineKubernetesControlPlane:
         self._services[deployment.service_id] = retired
         return retired
 
+    def whine_retire(self, service_id: str, *, caller: str) -> ServiceDeployment:
+        """Canine-language alias for retiring a service."""
+        return self.retire_service(service_id, caller=caller)
+
     def routes_for(self, service_id: str) -> tuple[str, ...]:
         return self._require_service(service_id).routes()
+
+    def sniff_routes(self, service_id: str) -> tuple[str, ...]:
+        """Canine-language alias for route lookup."""
+        return self.routes_for(service_id)
 
     def dispatch_manifest(self, service_id: str) -> dict[str, object]:
         deployment = self._require_service(service_id)
@@ -226,6 +295,19 @@ class CanineKubernetesControlPlane:
             "capabilities_hash": device.capabilities_hash,
             "deployment_hash": deployment.deployment_hash,
         }
+
+    def pant_manifest(self, service_id: str) -> dict[str, object]:
+        """Canine-language alias for the dispatch manifest."""
+        return self.dispatch_manifest(service_id)
+
+    def dispatch_canine_command(self, command: str, *args: object, **kwargs: object):
+        """Dispatch a bark/howl command to the matching control-plane method."""
+        command_key = _clean_id(command, "command").lower().replace(" ", ".")
+        method_name = CANINE_COMMANDS.get(command_key)
+        if method_name is None:
+            raise UnknownCanineCommandError(command_key)
+        method = getattr(self, method_name)
+        return method(*args, **kwargs)
 
     def _require_device(self, device_id: str) -> DeviceRegistration:
         device_key = _clean_id(device_id, "device_id")
@@ -275,6 +357,7 @@ class CanineKubernetesControlPlane:
 __all__ = [
     "CanineKubernetesControlPlane",
     "CanineKubernetesError",
+    "CANINE_COMMANDS",
     "DeviceRegistration",
     "DuplicateDeviceError",
     "DuplicateServiceError",
@@ -282,6 +365,7 @@ __all__ = [
     "MAX_REPLICAS",
     "NotDeviceOwnerError",
     "ServiceDeployment",
+    "UnknownCanineCommandError",
     "UnknownDeviceError",
     "UnknownServiceError",
     "normalize_address",
