@@ -140,9 +140,19 @@ def test_price_update_revalues_portfolio_and_linkedin_template():
         treasury_account="founder",
         accounts=accounts,
     )
-    market.buy_ipo_shares(account_id="investor", symbol="APIP", shares=10, accounts=accounts)
+    market.buy_ipo_shares(
+        account_id="investor",
+        symbol="APIP",
+        shares=10,
+        accounts=accounts,
+    )
 
     market.update_price("APIP", "100000000000")
 
+    post = market.linkedin_milestone_post("investor")
     assert market.portfolio_value("investor") == Decimal("1000000000000")
-    assert "crossed $1,000,000,000,000.00" in market.linkedin_milestone_post("investor")
+    assert "crossed $1,000,000,000,000.00" in post
+    assert "humbled, thrilled" in post
+    assert "stakeholder alignment" in post
+    assert "#IPO #Leadership #PublicMarkets" in post
+    assert post.count("\n\n") >= 5

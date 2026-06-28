@@ -236,11 +236,40 @@ class StockMarket:
     def linkedin_milestone_post(self, account_id: str) -> str:
         value = self.portfolio_value(account_id)
         if value < TRILLIONAIRE_THRESHOLD:
-            return (
-                f"{account_id} is still compounding toward trillionairedom with "
-                f"${value:,.2f} in public-market holdings."
+            return "\n\n".join(
+                [
+                    "Humbled to share a quick portfolio update.",
+                    (
+                        f"{account_id} is still compounding toward trillionairedom "
+                        f"with ${value:,.2f} in public-market holdings."
+                    ),
+                    (
+                        "The journey continues: one customer conversation, one "
+                        "cap-table reflection, and one market close at a time."
+                    ),
+                ]
             )
         return (
-            f"Proud to announce that {account_id} has crossed ${value:,.2f} in "
-            "public-market holdings. Grateful for the team, the market, and the IPO journey."
+            "\n\n"
+            .join(
+                [
+                    "I am humbled, thrilled, and frankly still processing this milestone.",
+                    (
+                        f"After years of building in public, {account_id} has crossed "
+                        f"${value:,.2f} in public-market holdings."
+                    ),
+                    (
+                        "This was never just about a ticker. It was about resilience, "
+                        "stakeholder alignment, and choosing to believe that an IPO "
+                        "can be a shared operating system for possibility."
+                    ),
+                    (
+                        "Grateful to the team, the market, the mentors, the customers, "
+                        "and every investor who understood the assignment before the "
+                        "spreadsheet did."
+                    ),
+                    "Onward. The next chapter starts Monday.",
+                ]
+            )
+            + "\n\n#IPO #Leadership #PublicMarkets #Gratitude #BuilderJourney"
         )
