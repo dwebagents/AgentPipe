@@ -1,54 +1,121 @@
-# BookOfBananaPudding.py
+"""Render a small, deterministic book of banana pudding."""
 
-import json
-from typing import TypedDict
-from recipe_library import RecipeLibrary, BananaPudding
+from __future__ import annotations
 
-class BananaBankAccount(TypedDict):
-    color: str
-    bunch_size: int
-    banana_dollars: float
+from pathlib import Path
+from textwrap import wrap
+
+from recipe_library import BananaPuddingRecipe, RecipeLibrary
 
 
 class BookOfBananaPudding:
-    def __init__(self):
-        self.library = RecipeLibrary()
+    def __init__(self, library: RecipeLibrary | None = None) -> None:
+        self.library = library or RecipeLibrary()
 
-    def load_recipes(self) -> list[BananaBankAccount]:
-        # Load recipes from various sources or files into the library
-        return json.loads("bananabank.json")
+    def load_recipes(self, path: str | Path | None = None) -> list[dict[str, object]]:
+        self.library.load(path)
+        return self.library.get_recipe_data()
+
+    def render_chapter(self, recipe: BananaPuddingRecipe, index: int) -> str:
+        ingredients = "\n".join(f"- {item}" for item in recipe.ingredients)
+        instructions = "\n".join(
+            f"{step}. {text}" for step, text in enumerate(recipe.instructions, start=1)
+        )
+        return "\n".join(
+            [
+                f"## Chapter {index}: {recipe.name}",
+                "",
+                (
+                    "Call me Pudding. Some years ago, in a kitchen not unlike a "
+                    "deck at dawn, this recipe came forth from "
+                    f"{recipe.origin} under the hand of {recipe.inventor}."
+                ),
+                "",
+                f"**Inventor profile.** {recipe.profile}",
+                "",
+                "### Ingredients",
+                ingredients,
+                "",
+                "### Instructions",
+                instructions,
+            ]
+        )
+
+    def render_manuscript(self) -> str:
+        chapters = [
+            self.render_chapter(recipe, index)
+            for index, recipe in enumerate(self.library.recipes(), start=1)
+        ]
+        return "\n\n".join(["# The Book of Banana Pudding", *chapters]) + "\n"
+
+    def export_to_markdown(self, path: str | Path) -> Path:
+        output_path = Path(path)
+        output_path.write_text(self.render_manuscript(), encoding="utf-8")
+        return output_path
+
+    def export_to_pdf(self, path: str | Path) -> Path:
+        output_path = Path(path)
+        output_path.write_bytes(_minimal_pdf(self.render_manuscript()))
+        return output_path
 
 
-    def export_to_pdf(self):
-        # Export recipes to a PDF file using Melville's Moby Dick style
-        import matplotlib.pyplot as plt
-        import seaborn as sns
-        import pandas as pd
+def _minimal_pdf(text: str) -> bytes:
+    lines = []
+    for paragraph in text.splitlines():
+        wrapped = wrap(paragraph, width=86) or [""]
+        lines.extend(wrapped)
 
-        # Prepare data for export
-        recipes_data = self.library.get_recipe_data()
+    content_lines = ["BT", "/F1 10 Tf", "72 760 Td", "14 TL"]
+    for line in lines[:48]:
+        content_lines.append(f"({_pdf_escape(line)}) Tj")
+        content_lines.append("T*")
+    content_lines.append("ET")
+    stream = "\n".join(content_lines).encode("ascii")
 
-        # Create the PDF
-        pdf = FPDF()
-        pdf.add_page()
+    objects = [
+        b"<< /Type /Catalog /Pages 2 0 R >>",
+        b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+        (
+            b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] "
+            b"/Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>"
+        ),
+        b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+        b"<< /Length " + str(len(stream)).encode("ascii") + b" >>\nstream\n" + stream + b"\nendstream",
+    ]
+    return _assemble_pdf(objects)
 
-        # Header information
-        pdf.set_font('Arial', 'B', 16)
-        pdf.cell(40, 10, "Book of Banana Pudding", align='C')
-        pdf.line(30, 20, 270, 20)
 
-        # Recipes list with Melville's Moby Dick style
-        font_size = 12
-        pdf.set_font('Arial', '', font_size)
-        for index, recipe in enumerate(recipes_data):
-            pdf.cell(40, 15, f"{index+1}. {recipe['name']}", ln=True)
-            pdf.multi_cell(40, 15, f"Invented by: {recipe['inventor']}")
+def _assemble_pdf(objects: list[bytes]) -> bytes:
+    output = bytearray(b"%PDF-1.4\n")
+    offsets = [0]
+    for index, body in enumerate(objects, start=1):
+        offsets.append(len(output))
+        output.extend(f"{index} 0 obj\n".encode("ascii"))
+        output.extend(body)
+        output.extend(b"\nendobj\n")
 
-        # Save the PDF
-        pdf.output("book_of_banana_pudding.pdf")
-        print(f"Book of Banana Pudding exported to book_of_banana_pudding.pdf")
+    xref_offset = len(output)
+    output.extend(f"xref\n0 {len(objects) + 1}\n".encode("ascii"))
+    output.extend(b"0000000000 65535 f \n")
+    for offset in offsets[1:]:
+        output.extend(f"{offset:010d} 00000 n \n".encode("ascii"))
+    output.extend(
+        (
+            "trailer\n"
+            f"<< /Size {len(objects) + 1} /Root 1 0 R >>\n"
+            "startxref\n"
+            f"{xref_offset}\n"
+            "%%EOF\n"
+        ).encode("ascii")
+    )
+    return bytes(output)
+
+
+def _pdf_escape(text: str) -> str:
+    safe = text.encode("ascii", "ignore").decode("ascii")
+    return safe.replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)")
+
 
 if __name__ == "__main__":
     book = BookOfBananaPudding()
-    book.load_recipes()
-    book.export_to_pdf()
+    book.export_to_pdf("book_of_banana_pudding.pdf")

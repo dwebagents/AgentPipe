@@ -1,106 +1,148 @@
-from typing import List, Dict, Optional
+"""Deterministic recipe records for the book of banana pudding."""
+
+from __future__ import annotations
+
 import json
-from datetime import datetime, timedelta
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Iterable, Mapping, Sequence
+
+
+@dataclass(frozen=True)
+class BananaPuddingRecipe:
+    name: str
+    inventor: str
+    origin: str
+    ingredients: tuple[str, ...]
+    instructions: tuple[str, ...]
+    profile: str
+
+    @classmethod
+    def from_mapping(cls, data: Mapping[str, object]) -> "BananaPuddingRecipe":
+        ingredients = _string_tuple(data.get("ingredients", ()))
+        instructions = _string_tuple(data.get("instructions", data.get("steps", ())))
+        return cls(
+            name=str(data.get("name", "Unnamed Banana Pudding")),
+            inventor=str(data.get("inventor", "anonymous custard keeper")),
+            origin=str(data.get("origin", "unrecorded kitchen")),
+            ingredients=ingredients or ("bananas", "custard", "vanilla wafers"),
+            instructions=instructions
+            or (
+                "Slice the bananas.",
+                "Layer custard and wafers.",
+                "Chill until the pudding gathers itself.",
+            ),
+            profile=str(
+                data.get(
+                    "profile",
+                    "A practical pudding maker with a steady spoon and a long memory.",
+                )
+            ),
+        )
+
+    def to_record(self) -> dict[str, object]:
+        return {
+            "name": self.name,
+            "inventor": self.inventor,
+            "origin": self.origin,
+            "ingredients": list(self.ingredients),
+            "instructions": list(self.instructions),
+            "profile": self.profile,
+        }
 
 
 class RecipeLibrary:
-    def __init__(self):
-        self.data = {}  # Store recipe names and their metadata
-    
-    def load(self) -> None:
-        path_base = "src/recipes" if os.path.exists("src/recipes") else "./test/src/recipes"
+    """Small in-memory library used by the book renderer and tests."""
 
-        try:
-            for name in ["banana_pudding", "rot13_encryptor"]:
-                recipe_path = f"{name}.py"
-                
-                # Create directory if it doesn't exist to ensure path consistency across builds
-                parent_dir = os.path.dirname(recipe_path)
-                Path(parent_dir).mkdir(exist_ok=True, parents=True)
+    def __init__(self, recipes: Iterable[BananaPuddingRecipe] | None = None) -> None:
+        self._recipes = list(recipes or default_recipes())
 
-        except Exception as e:
-            print(f"[Warning] Failed to initialize library structure or load recipes: {e}")
+    def load(self, path: str | Path | None = None) -> None:
+        if path is None:
+            self._recipes = list(default_recipes())
             return
-    
-    def add_ingredient(self, name: str, amount: float = 1.0):
-        """Add a new ingredient with the specified quantity."""
-        for recipe_name in self.data.keys():
-            try:
-                # Find existing entry and update if needed
-                data_obj = next((r for r in self.data.values() if r["name"] == recipe_name), None)
 
-                if not data_obj or "ingredients" not in data_obj:
-                    continue
-
-                ingredient_entry = {k: v.copy() for k, v in data_obj["ingredients"].items()}
-                
-                # Add to list of ingredients (append)
-                self.data[recipe_name]["ingredients"].append(ingredient_entry[name])
-
-            except Exception as e:
-                print(f"[Warning] Error adding ingredient '{name}' for recipe '{recipe_name}': {e}")
-
-    def add_instruction(self, text: str):
-        """Add an instruction to a specific recipe."""
-        for recipe_name in self.data.keys():
-            try:
-                data_obj = next((r for r in self.data.values() if r["name"] == recipe_name), None)
-
-                if not data_obj or "instructions" not in data_obj:
-                    continue
-
-                instructions_data = {k: v.copy() for k, v in data_obj["instructions"].items()}
-                
-                # Normalize spacing (remove extra spaces from end of string before appending to list)
-                normalized_text = text.strip().replace(" ", "") if isinstance(text, str) else ""
-                
-                self.data[recipe_name]["instructions"].append(normalized_text.split('\n')[-1])
-
-            except Exception as e:
-                print(f"[Warning] Error adding instruction '{text}' to recipe '{recipe_name}': {e}")
-
-    def save(self):
-        """Save the library state."""
-        path = "src/recipes" if os.path.exists("src/recipes") else "./test/src/recipes"  # Ensure consistent directory structure
-        
-        with open(path, 'w') as f:
-            json.dump(self.data, f)
-
-    def generate_default_recipe(self, name: str):
-        """Generate a default recipe template."""
-        
-        ingredients = [
-            {"name": "banana", "amount": 3},
-            {"name": "sugar", "amount": 1/2},
-            {"name": "butter", "amount": 1/4}
+        payload = json.loads(Path(path).read_text(encoding="utf-8"))
+        raw_recipes = payload.get("recipes", payload) if isinstance(payload, dict) else payload
+        if not isinstance(raw_recipes, Sequence):
+            raise ValueError("recipe file must contain a list or a {'recipes': [...]} object")
+        self._recipes = [
+            BananaPuddingRecipe.from_mapping(item)
+            for item in raw_recipes
+            if isinstance(item, Mapping)
         ]
+        if not self._recipes:
+            raise ValueError("recipe file did not contain any valid recipes")
 
-        instructions_data = {
-            "recipe_name": name,
-            "steps": [
-                """# Instructions for {recipe_name}: Banana Pudding
-        
-    Step 1: Preheat oven to 350°F (175°C). Place a baking sheet in the center of your preheated oven.
+    def add_recipe(self, recipe: BananaPuddingRecipe | Mapping[str, object]) -> None:
+        if isinstance(recipe, BananaPuddingRecipe):
+            self._recipes.append(recipe)
+        else:
+            self._recipes.append(BananaPuddingRecipe.from_mapping(recipe))
 
-    
-    Step 2: In a large mixing bowl, whisk together all ingredients until smooth and creamy. Add vanilla extract if desired.
-    
-    
-    Step 3: Pour into an 8-inch round cake pan or similar dish. Smooth out any lumps with a spatula."""} + "\n\n"
+    def generate_default_recipe(self, name: str) -> BananaPuddingRecipe:
+        recipe = BananaPuddingRecipe.from_mapping(
+            {
+                "name": name,
+                "inventor": "the pantry committee",
+                "origin": "AgentPipe test kitchen",
+                "ingredients": ["bananas", "custard", "vanilla wafers"],
+                "instructions": [
+                    "Arrange the wafers as a foundation.",
+                    "Fold bananas through custard.",
+                    "Rest the dish before serving.",
+                ],
+                "profile": "Invented during a late audit of dessert dependencies.",
+            }
+        )
+        self.add_recipe(recipe)
+        return recipe
 
-        for ingredient in ingredients:
-            instructions_data["ingredients"] = [{"name": ingredient["name"], "amount": ingredient["amount"]}].copy()
-        
-        self.data[name] = {"recipe_type": "cooking", "instructions": [], "_generated_by_code": True, "metadata_generation": True}
+    def get_recipe_data(self) -> list[dict[str, object]]:
+        return [recipe.to_record() for recipe in self._recipes]
 
-    def add_ingredient(self, name: str, amount: float = 1.0):
-        """Add a new ingredient with the specified quantity."""
-        for recipe_name in self.data.keys():
-            try:
-                # Find existing entry and update if needed
-                data_obj = next((r for r in self.data.values() if r["name"] == recipe_name), None)
+    def recipes(self) -> tuple[BananaPuddingRecipe, ...]:
+        return tuple(self._recipes)
 
-                if not data_obj or "ingredients" not in data_obj:
-                    continue
 
-                ingredient_entry = {k: v.copy() for k, v in data_obj["ingredients
+def default_recipes() -> tuple[BananaPuddingRecipe, ...]:
+    return (
+        BananaPuddingRecipe(
+            name="First Apartment Banana Pudding",
+            inventor="M. Street",
+            origin="Brooklyn",
+            ingredients=("bananas", "vanilla wafers", "custard", "salt"),
+            instructions=(
+                "Line a chipped bowl with wafers.",
+                "Cover each layer with banana slices and custard.",
+                "Chill beside the window until the city quiets.",
+            ),
+            profile=(
+                "A tenant cook who learned that rent, weather, and pudding all "
+                "benefit from patience."
+            ),
+        ),
+        BananaPuddingRecipe(
+            name="Pacific Watch Banana Pudding",
+            inventor="E. Starbuck",
+            origin="New Bedford",
+            ingredients=("bananas", "cream", "eggs", "nutmeg"),
+            instructions=(
+                "Warm cream until it steams.",
+                "Temper eggs into the cream.",
+                "Layer bananas and wait for the custard to set.",
+            ),
+            profile=(
+                "A watchful maker of desserts, inclined toward order and a clean "
+                "ledger of ingredients."
+            ),
+        ),
+    )
+
+
+def _string_tuple(value: object) -> tuple[str, ...]:
+    if isinstance(value, str):
+        return (value,) if value.strip() else ()
+    if not isinstance(value, Sequence):
+        return ()
+    return tuple(str(item) for item in value if str(item).strip())
