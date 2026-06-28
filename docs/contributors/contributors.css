@@ -1,0 +1,321 @@
+.contributors-page {
+  background: #fffdf4;
+}
+
+.contributors-hero {
+  min-height: calc(100vh - 4.6rem);
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
+  align-items: center;
+  gap: clamp(2rem, 5vw, 5rem);
+  padding: clamp(4rem, 8vw, 7rem) clamp(1rem, 5vw, 5.5rem);
+  background:
+    linear-gradient(135deg, rgba(21, 20, 15, 0.96), rgba(53, 47, 20, 0.88)),
+    #15140f;
+  color: #ffffff;
+}
+
+.contributors-copy {
+  max-width: 42rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.85rem;
+  color: #9f6b00;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.contributors-hero .eyebrow {
+  color: #ffd42a;
+}
+
+.contributors-copy h1 {
+  margin: 0;
+  color: #ffd42a;
+  font-size: clamp(3.35rem, 6.6vw, 6.4rem);
+  line-height: 0.92;
+  font-weight: 950;
+}
+
+.contributors-copy p:not(.eyebrow),
+.egg-game-band p,
+.roster-heading p,
+.production-ledger p {
+  max-width: 56rem;
+  color: rgba(23, 20, 7, 0.68);
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+}
+
+.contributors-copy p:not(.eyebrow) {
+  margin-top: 1.5rem;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.factory-illustration {
+  margin: 0;
+}
+
+.factory-illustration svg {
+  display: block;
+  width: 100%;
+  border: 1px solid rgba(255, 212, 42, 0.26);
+  border-radius: 8px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
+}
+
+.egg-game-band,
+.contributors-band,
+.production-ledger {
+  padding: clamp(4rem, 8vw, 7rem) clamp(1rem, 5vw, 5.5rem);
+}
+
+.egg-game-band {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(320px, 0.6fr);
+  gap: clamp(2rem, 4vw, 4rem);
+  align-items: center;
+  background: #fff7ca;
+}
+
+.egg-board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(5.5rem, 1fr));
+  gap: 1rem;
+  align-items: center;
+}
+
+.egg-button {
+  aspect-ratio: 1 / 1.22;
+  border: 0;
+  border-radius: 50% 50% 45% 45%;
+  background:
+    radial-gradient(circle at 36% 28%, #fff8d8 0 12%, transparent 13%),
+    linear-gradient(150deg, #ffe88a, #ffb900);
+  color: #15140f;
+  cursor: pointer;
+  font-weight: 900;
+  box-shadow: 0 16px 40px rgba(159, 107, 0, 0.26);
+}
+
+.egg-button[aria-pressed="true"] {
+  outline: 4px solid #2e7d32;
+}
+
+#game-status {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-weight: 850;
+}
+
+.contributors-band {
+  background: #ffffff;
+}
+
+.roster-heading,
+.production-ledger > div:first-child {
+  max-width: 72rem;
+  margin: 0 auto 2rem;
+}
+
+.contributors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: 1rem;
+}
+
+.contributor-card {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 24rem;
+  padding: 1rem;
+  border: 1px solid rgba(23, 20, 7, 0.14);
+  border-radius: 8px;
+  background: #fffdf4;
+  overflow: hidden;
+}
+
+.contributor-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 92% 8%, rgba(255, 212, 42, 0.4), transparent 5rem),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.65), transparent);
+  pointer-events: none;
+}
+
+.portrait {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 9.5rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  background: #15140f;
+}
+
+.portrait-shape {
+  width: 7.4rem;
+  height: 7.4rem;
+  border-radius: 48% 48% 56% 56%;
+  background:
+    radial-gradient(circle at 38% 35%, #15140f 0 4%, transparent 5%),
+    radial-gradient(circle at 62% 35%, #15140f 0 4%, transparent 5%),
+    linear-gradient(45deg, transparent 45%, #ffb900 46% 56%, transparent 57%),
+    #fffdf4;
+  box-shadow: inset 0 -1rem 0 #fff8d8;
+}
+
+.contributor-card h3,
+.contributor-card p,
+.contributor-card a {
+  position: relative;
+}
+
+.contributor-card h3 {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: 1.4rem;
+}
+
+.contributor-card p {
+  margin: 0.7rem 0 0;
+  color: #5c5432;
+}
+
+.contributor-card a {
+  align-self: end;
+  margin-top: 1rem;
+  color: #15140f;
+  font-weight: 900;
+}
+
+.production-ledger {
+  background:
+    linear-gradient(90deg, rgba(255, 212, 42, 0.22), transparent),
+    #fffdf4;
+}
+
+.ledger-output {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+.ledger-output span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.4rem;
+  min-height: 2rem;
+  border: 1px solid rgba(23, 20, 7, 0.16);
+  border-radius: 8px;
+  background: #ffffff;
+  font-weight: 900;
+}
+
+.contributors-footer {
+  align-items: center;
+}
+
+.contributors-footer address {
+  margin-top: 0.55rem;
+  font-style: normal;
+}
+
+.wave-video {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.video-frame {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  justify-content: center;
+  width: min(22rem, 82vw);
+  min-height: 9rem;
+  border: 1px solid rgba(255, 212, 42, 0.3);
+  border-radius: 8px;
+  background: #100f0a;
+  overflow: hidden;
+}
+
+.video-frame span {
+  position: relative;
+  width: 4rem;
+  height: 5rem;
+  border-radius: 48% 48% 56% 56%;
+  background: #fffdf4;
+  animation: wave 1.25s ease-in-out infinite alternate;
+}
+
+.video-frame span::after {
+  content: "";
+  position: absolute;
+  right: -1.1rem;
+  top: 1.2rem;
+  width: 1.6rem;
+  height: 0.7rem;
+  border-radius: 999px;
+  background: #ffd42a;
+  transform-origin: left center;
+  animation: hand-wave 0.65s ease-in-out infinite alternate;
+}
+
+.video-frame span:nth-child(2) {
+  animation-delay: 120ms;
+}
+
+.video-frame span:nth-child(3) {
+  animation-delay: 240ms;
+}
+
+@keyframes wave {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-0.45rem);
+  }
+}
+
+@keyframes hand-wave {
+  from {
+    transform: rotate(-18deg);
+  }
+  to {
+    transform: rotate(20deg);
+  }
+}
+
+@media (max-width: 880px) {
+  .contributors-hero,
+  .egg-game-band {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .contributors-copy h1 {
+    font-size: clamp(2.65rem, 15vw, 4rem);
+  }
+
+  .egg-board {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .video-frame span,
+  .video-frame span::after {
+    animation: none;
+  }
+}

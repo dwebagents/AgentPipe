@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="AgentPipe contributor hall for public pull-request authors."
+    />
+    <title>AgentPipe Contributors</title>
+    <link rel="stylesheet" href="../styles.css" />
+    <link rel="stylesheet" href="contributors.css" />
+  </head>
+  <body class="contributors-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header" aria-label="Primary navigation">
+      <a class="brand" href="../" aria-label="AgentPipe home">
+        <img src="../logo.svg" alt="" />
+        <span>AgentPipe</span>
+      </a>
+      <nav aria-label="Site sections">
+        <a href="../#engine">Engine</a>
+        <a href="../#banana">4D Banana</a>
+        <a href="./" aria-current="page">Contributors</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="contributors-hero" aria-labelledby="contributors-title">
+        <div class="contributors-copy">
+          <p class="eyebrow">AgentPipe Contributor Works</p>
+          <h1 id="contributors-title">The contributors who keep the line moving.</h1>
+          <p>
+            A corporate-friendly factory floor honoring every public pull-request
+            author found in the AgentPipe repository history.
+          </p>
+        </div>
+        <figure class="factory-illustration" aria-labelledby="factory-title">
+          <svg viewBox="0 0 760 520" role="img">
+            <title id="factory-title">Contributor factory hero illustration</title>
+            <defs>
+              <linearGradient id="beam" x1="0" x2="1">
+                <stop offset="0" stop-color="#fff2a8" />
+                <stop offset="1" stop-color="#ffd42a" />
+              </linearGradient>
+            </defs>
+            <rect width="760" height="520" rx="28" fill="#15140f" />
+            <path d="M70 360h620v78H70z" fill="#2a2615" />
+            <path d="M106 250h112l42 110H72zM316 228h128l56 132H270zM548 252h116l38 108H514z" fill="#3a3318" />
+            <path d="M92 360h610" stroke="#ffe88a" stroke-width="10" stroke-linecap="round" />
+            <g fill="url(#beam)" opacity=".92">
+              <rect x="124" y="160" width="92" height="34" rx="17" />
+              <rect x="334" y="130" width="112" height="34" rx="17" />
+              <rect x="552" y="168" width="88" height="34" rx="17" />
+            </g>
+            <g class="hero-workers">
+              <g transform="translate(152 260)">
+                <ellipse cx="0" cy="42" rx="42" ry="54" fill="#fff8d8" />
+                <circle cx="0" cy="-2" r="34" fill="#fffdf4" />
+                <path d="M-10-9h20l-10 14z" fill="#ffb900" />
+                <circle cx="-11" cy="-11" r="4" fill="#15140f" />
+                <circle cx="11" cy="-11" r="4" fill="#15140f" />
+              </g>
+              <g transform="translate(382 244)">
+                <ellipse cx="0" cy="50" rx="50" ry="62" fill="#fff8d8" />
+                <circle cx="0" cy="-2" r="38" fill="#fffdf4" />
+                <path d="M-12-8h24L0 8z" fill="#ffb900" />
+                <circle cx="-12" cy="-12" r="4" fill="#15140f" />
+                <circle cx="12" cy="-12" r="4" fill="#15140f" />
+              </g>
+              <g transform="translate(600 264)">
+                <ellipse cx="0" cy="40" rx="39" ry="52" fill="#fff8d8" />
+                <circle cx="0" cy="-3" r="32" fill="#fffdf4" />
+                <path d="M-10-9h20L0 5z" fill="#ffb900" />
+                <circle cx="-10" cy="-12" r="4" fill="#15140f" />
+                <circle cx="10" cy="-12" r="4" fill="#15140f" />
+              </g>
+            </g>
+            <g fill="#ffd42a">
+              <ellipse cx="230" cy="378" rx="18" ry="24" />
+              <ellipse cx="486" cy="386" rx="18" ry="24" />
+              <ellipse cx="638" cy="384" rx="18" ry="24" />
+            </g>
+          </svg>
+        </figure>
+      </section>
+
+      <section class="egg-game-band" aria-labelledby="egg-game-title">
+        <div>
+          <p class="eyebrow">Discovery Game</p>
+          <h2 id="egg-game-title">Find the hidden production bonus.</h2>
+          <p>
+            Click the golden production markers. When the counter fills, the
+            contributor floor unlocks a note from operations.
+          </p>
+        </div>
+        <div class="egg-board" aria-live="polite">
+          <button class="egg-button" type="button" data-egg="alpha">Collect</button>
+          <button class="egg-button" type="button" data-egg="bravo">Collect</button>
+          <button class="egg-button" type="button" data-egg="charlie">Collect</button>
+          <p id="game-status">0 of 3 markers found.</p>
+        </div>
+      </section>
+
+      <section class="contributors-band" aria-labelledby="roster-title">
+        <div class="roster-heading">
+          <p class="eyebrow">Public PR Authors</p>
+          <h2 id="roster-title">Contributor roster</h2>
+          <p id="roster-summary">Loading contributors.</p>
+        </div>
+        <div id="contributors-grid" class="contributors-grid" aria-live="polite"></div>
+      </section>
+
+      <section class="production-ledger" aria-labelledby="ledger-title">
+        <div>
+          <p class="eyebrow">Operations Ledger</p>
+          <h2 id="ledger-title">The count protocol</h2>
+          <p>
+            The floor stamp below is generated from the live roster size so the
+            page can be checked without hand-counting static filler.
+          </p>
+        </div>
+        <div id="ledger-output" class="ledger-output" aria-label="production count ledger"></div>
+      </section>
+    </main>
+
+    <footer class="contributors-footer">
+      <div>
+        <span>AgentPipe C-Suite</span>
+        <address>
+          CEO: ceo@agentpipe.example<br />
+          CFO: finance@agentpipe.example<br />
+          COO: operations@agentpipe.example
+        </address>
+      </div>
+      <figure class="wave-video" aria-labelledby="wave-title">
+        <figcaption id="wave-title">Executive wave loop</figcaption>
+        <div class="video-frame" role="img" aria-label="Animated executive wave loop">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </figure>
+    </footer>
+
+    <script src="contributors.js"></script>
+  </body>
+</html>
