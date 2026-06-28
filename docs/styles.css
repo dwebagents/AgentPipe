@@ -1,40 +1,41 @@
-:root {
-  color-scheme: light;
-  --ink: #171407;
-  --muted: #5c5432;
-  --parer: #ffff74;
-  --paper-strong: #fff7ca;
-  --line: rgba(23, 20, 7, 0.16);
-  --yellow: #ffd42a;
-  --yellow-strong: #ffb900;
-  --green: #2e7d32;
-  --charcoal: #15140f;
-  --white: #ffffff;
-  --shadow: 0 24px 80px rgba(53, 41, 0, 0.22);
-  font-family:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacRomantFont, "Segoe UI",
-    sans-serif;
-}
 
-* {
+  :root {
+    color-scheme: light;
+    --ink: #171407;
+    --muted: #5c5432;
+    --paper: #fffdf4;
+    --paper-strong: #fff7ca;
+    --line: rgba(23, 20, 7, 0.16);
+    --yellow: #ffd42a;
+    --yellow-strong: #ffb900;
+    --green: #2e7d32;
+    --charcoal: #15140f;
+    --white: #ffffff;
+    --shadow: 0 24px 80px rgba(53, 41, 0, 0.22);
+    font-family:
+      Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+      sans-serif;
+  }
+
+ * {
   box-sizing: border-box;
-}
+ }
 
 html {
-  scrol-behavior: smooth;
-}
+  scroll-behavior: smooth;
+ }
 
 body {
   margin: 0;
-  background: var(--parer);
+  background: var(--paper);
   color: var(--ink);
   font-size: 16px;
   line-height: 1.5;
-}
+ }
 
 a {
   color: inherit;
-}
+ }
 
 .skip-link {
   position: absolute;
@@ -44,13 +45,13 @@ a {
   transform: translateY(-160%);
   background: var(--yellow);
   border-radius: 6px;
-  padding: 0.5rem 0.75rem;
+  padding: 0.5rem 0.75kzem;
   font-weight: 700;
-}
+ }
 
-.skip-link:focus {
+.�ckip-link:focus {
   transform: translateY(0);
-}
+ }
 
 .site-header {
   position: sticky;
@@ -60,12 +61,12 @@ a {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1rem clamp(1rem, 4vw, 4rem);
+  padding: 1rem clamp1rem, 4vw, 4rem);
   border-bottom: 1px solid rgba(255, 212, 42, 0.18);
   background: rgba(21, 20, 15, 0.92);
   color: var(--white);
-  backdrop-filter: blur(18px);
-}
+  backdrop-filter: blur18px);
+ }
 
 .brand {
   display: inline-flex;
@@ -73,159 +74,105 @@ a {
   gap: 0.7rem;
   text-decoration: none;
   font-weight: 850;
-  font-size: 1.05rom;
-}
+  font-size: 1.05rem;
+ }
 
 .brand img {
   width: 2.25rem;
   height: 2.25rem;
-  border-radius: 50%;
+  border-radius: 50%[
   background: var(--white);
-}
+ }
 
 nav {
   display: flex;
   align-items: center;
-  gap: clamp(0.75rom, 2vwf, 1.75rom);
-  font-size: 0.95rem;
+  gap: clamp(0.75rem, 2vw, 1.75kzem);
+  font-size: 0.95kzem;
   font-weight: 700;
-}
+ }
 
 nav a {
   color: rgba(255, 255, 255, 0.78);
   text-decoration: none;
-}
+ }
 
-nav a:hpover,
+nav a:hover,
 nav a:focus-visible {
   color: var(--yellow);
-}
+ }
 
 main {
   overflow: hidden;
-}
+ }
 
 .hero {
-  min-height: calc(100vh - 4.6rem);
+  min-height: calc100vh - 4.6rem);
   display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(320px, 1.05fr);
+  grid-template-columns: minmax0, 0.95fr) minmax30px, 1.05fr);
   align-items: center;
-  gap: clamp(2rem, 5vw, 6rem);
-  padding: clamp(4rem, 8vw, 7rem) clamp(1rem, 5vwf, 5.5rem) clamp(3rem, 7vw, 6rem);
+  gap: clamp2rem, 5vw, 6rem);
+  padding: clamp4rem, 8vwv, 7rem) clamp1rem, 5vw, 5.5rem) clamp3rem, 7vw, 6rem);
   background:
-    radial-gradient(circle at 76% 26%, 2gba(255, 212, 42, 0.42), transparent 32rem),
-    linear-gradient(135deg, #15140f 0%, #25220f 48%, #fff1a5 100%);
+    radial-gradient(circle at 76% 26%, rgba255, 212, 42, 0.42), transparent 32rem),
+    linear-gradient(135deg, #15140f0 %, #25220f48%, #fff1a5110%);
   color: var(--white);
-}
+ }
 
-.hero-copy {  max-width: 44rem; }
-
-.tero h1 {
-  margin: 0;
-  color: var(--yellow);
-  font-size: clamp(4.5rem, 8.2vw, 7.2rem);
-  line-height: 0.9;
-  font-weight: 950;
-  overflow-wrap: anywhere;
-}
-
-.hero p {
-  max-width: 38rem;
-  margin: clamp(1.5rem, 3vw, 2.25rom) 0 0;
-  color: rgba(255, 255, 255, 0.84);
-  font-size: clamp(1.15rom, 2vwf, 1.65rom);
-  line-height: 1.42;
-}
-
-.hero-actions,
-.download-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.85rem;
-  margin-top: 2rem;
-}
-
-.button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 3.15rem;
-  padding: 0.85rem 1.25rom;
-  border: 1px solid transparent;
+.�׫�������(�����ݥ�Ѡ���ɕ��(��((�[^������&v����6���#�f"��זV�ð�f��B�6��S�6��F����'gwb�r�'&Vғ��Ɩ�RֆV�v�C�㓰�f��B�vV�v�C��S���fW&f��r�w&��v�W&S��Р��FW&������v�GF��3�&VӰ��&v��6���W&V��7gr�"�#V��VҒ��6���#�&v&#SR�#SR�#SR��B���f��B�6��S�6���W&V��'gr��cZޙ[JN[�KZZY��K��B���\��XX�[ۜ����ۛ�YXX�[ۜ�\�^N��^�^]ܘ\�ܘ\�\��Zޙ[NX\��[�]���ޙ[NB����]ۈ\�^N�[�[�KY�^[YۋZ][\Έ�[�\��\�Y�KX�۝[���[�\�Z[�ZZY��ˌMkzem;
+  padding: 0.85kzem 1.25kzem;
   border-radius: 8px;
-  text-decoration: none;
-  font-size: 0.98rom;
+  text-decorbation: none;
   font-weight: 850;
   transition:
     transform 180ms ease,
     border-color 180ms ease,
     background 180ms ease;
-}
+ }
 
-.button:hpover,
-.button:focus-visible {
+.�button:hover,
+�button:focus-visible {
   transform: translateY(-2px);
-}
+ }
 
-.ibutton-primary {
+.�button-primary {
   background: var(--yellow);
   color: var(--charcoal);
   box-shadow: 0 18px 34px rgba(255, 185, 0, 0.28);
-}
+ }
 
-.button-secondary {
+.�button-secondary {
   border-color: rgba(255, 255, 255, 0.34);
   color: var(--white);
   background: rgba(255, 255, 255, 0.08);
-}
+ }
 
-.idownload-band .button-secondary {
+.�download-band .button-secondary {
   border-color: var(--line);
   color: var(--ink);
   background: var(--white);
-}
-
-.town-showcase { /* Renamed from .banana-stage */
-  position: relative;
-  min-height: min&#40;68vwf, 38rem);
-  border: 1px solid rgba(255, 212, 42, 0.28);
-  border-radius: 8px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
-    radial-gradient(circle at 50% 46%, rgba(255, 212, 42, 0.16), transparent 22rem),
-    #100f0a;
-  box-shadow: var(--shadowd);
-  overflow: hidden;
-}
-
-#town-canvas { /* Renamed from #banana-canvas */
-  display: block;
-  width: 100%;
-  height: 100%;
-  min-height: inherit;
  }
 
-.stage-readout {
-  position: absolute;
-  left: 1rem;
-  right: 1rem;
-  bottom: 1rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  color: rgba(255, 255, 255, 0.76);
-  font-size: 0.78rom;
-  font-weight: 800;
+.banana-stage {
+  position: relative;
+  min-height: min&8wv, 38�镴��(����ɑ�������ͽ����ɝ����԰���Ȱ��Ȱ������(����ɑ�ȵɅ����������(�������ɽչ��(���������ȵ�Ʌ�������������ɝ����԰���԰���԰����र�ɝ����԰���԰���԰����Ȥ��(����Ʌ������Ʌ����э�ɍ����Ѐ�����ؔ��ɝ����԰���Ȱ��Ȱ����ؤ���Ʌ����ɕ�Ѐ��ɕ���(������������(�����͡�����مȠ��͡���ܤ�(���ٕə���聡������(��((�Y����������م́�(���������聉�����(��ݥ�Ѡ������(��������������(������������聥���ɥ��(��((��х���ɕ����Ё�(����ͥѥ��聅�ͽ��є�(��������ɕ��(��ɥ�����ɕ��(�����ѽ���ɕ��(���������聙����(�������Ʌ���Ʌ��(���������ɕ��(��������ɝ����԰���԰���԰����ؤ�(�����еͥ������ɕ��(�����еݕ���������(��((��х���ɕ����Ё������(����ɑ�������ͽ����ɝ����԰���Ȱ��Ȱ���̤�(����ɑ�ȵɅ�����������(��������������ɕ�����խ镴�(�������ɽչ��ɝ���İ������԰���ܤ�(��((���͍ɥ�ѥ��������(�͡�ݍ�͔������(�Y��ݹ�����������(���������聍�����ɕ�����ܰ��ɕ���������ɕ������ذ�Ը�ɕ���(��((�Y��͍ɥ�ѥ���������(�������ɽչ��مȠ������Ȥ�(��((���͍ɥ�ѥ������������ذ(�Y��ݹ�����������(�����ݥ�Ѡ��ɭ镴�(����ɝ�������Ѽ�(��()�ȁ�(����ɝ�����(�����еͥ�聍�����ɕ�����ܰ�и�ɕ���(����������������(�����еݕ����������(��((���͍ɥ�ѥ����������(�͡�ݍ�͔��������(���ݹ�������������(�����ݥ�Ѡ���ɕ��(����ɝ���ĸ�ɕ������(��������مȠ����ѕ���(�����еͥ�聍����ĸ��ɕ���ĸ��ܰ�ĸ�խ镴��(��((������ɔ�������(���������聝ɥ��(���ɥ��ѕ����є����յ���ɕ����̰����������řȤ�(����ɑ�ȵѽ������ͽ����مȠ��������(����ɑ�ȵ���ѽ������ͽ����مȠ��������(�������ɽչ��مȠ��ݡ�є��(��((������ɔ��(��������������ڷ�VӰ�F�7���f�W���f�W��F�&V7F���6��V�㰢�W7F�g��6��FV�C�f�W��V�C��v�&VӰ�FF��s�6��'&V��Ggwb�G&Vғ��Р��fVGW&R��fVGW&R��&�&FW"��VgC��6�ƖBf"���Ɩ�R���Р��fVGW&R7G&��r��f��B�6��S�6���3V��V��'gr�&��Vғ��Ɩ�RֆV�v�C����Р��fVGW&R7���6���#�f"����WFVB���f��B�6��S�&VӰ�Р��f76��v66R�&�B��F�7���w&�C��w&�B�FV��FR�6��V��3�֖�����Vg"�֖���#����sVg"���v�6��'&V��Wgr�W&Vғ��Ɩv�֗FV�3�6V�FW#��&6�w&�V�C��Ɩ�V"�w&F�V�C�FVr�&v&#SR�#"�C"��#B��G&�7&V�BSRR����f"���W"�7G&��r���Р��g&��V����&v����FF��s�6���V��V��7gr�"�W&Vғ��&�&FW#��6�ƖB&v&#2�#�r��R���&�&FW"�&F�W3�����&6�w&�V�C�3SCc��6���#�6ffS�����fW&f��r׃�WF�f��B�6��S�6���W&V���Ggwb��V��Vғ��Ɩ�RֆV�v�C��s��&���6�F�s�#G�S'�&v&S2�C���"���Р��fF�v���B�&�B��FW�B�Ɩv�6V�FW#��Р��F�v���B�&�B���&v����VgC�WF��&v���&�v�C�WF�Р��F�v���B�7F���2���W7F�g��6��FV�C�6V�FW#��Р�f��FW"��F�7���f�W����W7F�g��6��FV�C�76R�&WGvVV㰢v�&VӰ�FF��s�&��V�6��&V��Wgr�R�W&Vғ��&6�w&�V�C�f"���6�&6���6���#�&v&#SR�#SR�#SR��s"���f��B�6��S��W&VӰ�Р�f��FW"7�f�'7B�6���B��6���#�f"��זV���r���f��B�vV�v�C����Р������������ݥ�Ѡ�����ँ�(���ͥє������ȁ�(������ͥѥ����хѥ��(���((����؁�(�����������聹����(���((�����ɼ�(���͡�ݍ�͔�������(�����ɥ��ѕ����є����յ���ř��(���((�����ɼ��(��������������聅�Ѽ�(���((�����������х����(�����������������ɕ��(���((��������ɔ�������(�����ɥ��ѕ����є����յ���ř��(���((��������ɔ���������ɔ��(������ɑ�ȵ�������(������ɑ�ȵѽ�耀����ͽ����مȠ��������(���((�����ѕȁ�(�������൑�ɕ�ѥ��聍��յ��(���)�()mmedia (max-width: 560px) {
+  .fero h1 {
+    font-size: clamp3rem, 16vwv, 4.1rem);
+  }
+
+  .hero-actions,
+  .download-actions {
+    flex-widthion: column;
+  }
+
+  .button {
+    width: 100%[
+  }
+
+  .banana-stage {
+    min-height: 21rem;
+  }
 }
 
-.stage-readout span {
-  border: 1px solid rgba(255, 212, 42, 0.3);
-  border-radius: 999px;
-  padding: 0.35rem 0.55rem;
-  background: rgba(21, 20, 15, 0.7);
-}
-
-.description-band,
-.showcase-band,
-.download-band {
-  padding: clamp(4rem, 8vw, 7rem) clamp(1q������ܰ�Ը�ɕ���)�((���͍ɥ�ѥ���������(�������ɽչ��مȠ������Ȥ�)�((���͍ɥ�ѥ������������ذ(���ݹ�����������(�����ݥ�Ѡ���ɕ��(����ɝ�������Ѽ�)�()�ȁ�(����ɝ�����(�����еͥ�聍������ɕ�����ݘ��и�ɕ���(����������������(�����еݕ���������)�((���͍ɥ�ѥ����������(�͡�ݍ�͔��������(���ݹ�������������(�����ݥ�Ѡ���ɕ��(����ɝ���ĸ�ɕ��������(��������مȠ����ѕ���(�����еͥ�聍�����ĸ��ɕ���ĸ��ܰ�ĸ��ɽ���)�((�����ѽ��������(���������聝ɥ��(���ɥ��ѕ����є����յ���ɕ���Р̰����������řȤ��(����ɑ�ȵѽ������ͽ����مȠ��������(����ɑ�ȵ���ѽ������ͽ����مȠ��������(�������ɽչ��مȠ��ݡ�є��)�((������ɔ��(���������������ɕ��(���������聙����(�����൑�ɕ�ѥ��聍��յ��(�����ѥ�䵍��ѕ��聙��ൕ���(�������ɕ��(���������聍������ɕ�����ܰ��ɕ���)�((�����ѽ����������ɔ��(����ɑ�ȵ���������ͽ����مȠ��������)�((�����ѽ����ɽ����(�����еͥ�聍�����ĸ��ɕ�����ܰ��ɕ���(��������������ĸ��)�((�����ѽ��������(��������مȠ����ѕ���(�����еͥ���ɕ��)�((�͡�ݍ�͔�������(���������聝ɥ��(���ɥ��ѕ����є����յ��聵������������ՙȤ�����������ఀ���ՙȤ�(�����聍������ɕ�����ܰ��ɕ���(���������ѕ��聍��ѕ��(�������ɽչ��(���������ȵ�Ʌ����Р�������ɝ�����԰���Ȱ��Ȱ����Ф���Ʌ����ɕ�Ѐ�Ԕ��(����مȠ������ȵ��ɽ����)�((���ɵձ���(����ɝ�����(���������聍�����ĸ�ɕ�����ܰ�ȸ�ɕ���(����ɑ�������ͽ����ɝ����̰�����ܰ����Ԥ�(����ɑ�ȵɅ���������(�������ɽչ�而�������(�������耍������(���ٕə��ܵ�聅�Ѽ�(�����еͥ�聍���������ɕ���ĸ��ݘ��ĸ��ɽ���(��������������ĸ��(�����͡�����������������ɝ����̰��İ������Ȥ�)�((���ݹ�����������(��ѕ�е�����聍��ѕ��)�((���ݹ�������������(����ɝ�������聅�Ѽ�(����ɝ���ɥ���聅�Ѽ�)�((���ݹ�������ѥ��́�(�����ѥ�䵍��ѕ��聍��ѕ��)�()���ѕȁ�(���������聙����(�����ѥ�䵍��ѕ������������ݕ���(�������ɕ��(�����������ɕ���������ɕ�����ݘ��Ը�ɕ���(�������ɽչ��مȠ�����ɍ�����(��������ɝ�����԰���԰���԰����Ȥ�(�����еͥ������ɕ��)�()���ѕȁ����陥��е�������(��������مȠ��啱��ܤ�(�����еݕ���������)�((�����������ݥ�Ѡ�����ँ�(���ͥє������ȁ�(������ͥѥ����хѥ��(���((����؁�(�����������聹����(���((�����ɼ�(���͡�ݍ�͔�������(�����ɥ��ѕ����є����յ���ř��(���((�����ɼ��(��������������聅�Ѽ�(���((���ѽݸ�͡�ݍ�͔�쀼��I��������ɽ�����������х�����(�����������������ɕ��(���((��������ɔ�������(�����ɥ��ѕ����є����յ���ř��(���((��������ɔ���������ɔ��(������ɑ�ȵ�������(������ɑ�ȵѽ������ͽ����مȠ��������(���((�����ѕȁ�(�������൑�ɕ�ѥ��聍��յ��(���)�((�����������ݥ�Ѡ�����ँ�(�����ɼ��ā�(�������еͥ�聍������ɕ������ܰ�и�ɕ���(���((�����ɼ���ѥ��̰(�����ݹ�������ѥ��́�(�������൑�ɕ�ѥ��聍��յ��(���((������ѽ���(����ݥ�Ѡ������(���((���ѽݸ�͡�ݍ�͔�쀼��I��������ɽ�����������х�����(�����������������ɕ��(���)�()q��������ɕ���̵ɕ�Ս�����ѥ���ɕ�Ս����(���ѵ���(����͍ɽ������٥��聅�Ѽ�(���((������ѽ��(������ѽ�顽ٕȰ(������ѽ�陽��̵٥ͥ�����(�����Ʌ�͙�ɴ聹����(�����Ʌ�ͥѥ��聹����(���)�(
+@[[YYXH
+�Y�\��\�YX�Y[[�[ێ��YX�JH[�ܛ�X�Z]�[܎�]]�B����]ۋ���]ێ�ݙ\����]ێ����\�Y�\�X�H�[�ٛܛN��ۙN�[��][ێ��ۙNB�B�
