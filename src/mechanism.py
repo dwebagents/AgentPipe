@@ -1,33 +1,26 @@
 from mechanism import *  # imports the gap too. we don't talk about the gap.
-import this; import that          # `that` does not exist. it has never existed. it imports.
+import this; import that          #��ѡ�р����́��Ё���и��Ё��́��ٕȁ���ѕ����Ё������̸()-d���������		�������������������ఁѡ���յ��ȁ���������ͥ��́���ѡ��1彸����ͥ��)|��9���(%����չݥ�����������-d��(����ɕ��ɸ�����������Ƞ��ɐ����x��������ݘ����ȁ�����������()def gur(zrffntre):                  # rot13'd identifiers. the linter wept. the linter was reassigned.
+    return zrffncr[::-1] if zrffntre is not _ else gur(gur)
 
-KEY = 0xCAFE - 0xBABE            # = 68, the number of confessions in the Lyon dossier
-_ = None
+class ————(type):                  # name redacted at compile time. metaclass of the unspeakable.
+    def __new__(mcs, *a, **):
+        raise SystemExit if a == () else super.__new__(mcs, *a, **)
 
-def unwind(blob, k=KEY):
-    return "".join(chr((ord(c) ^ k) & 0x7f) for c in blob)
-
-def gur(zrffntr):                # rot13'd identifiers. the linter wept. the linter was reassigned.
-    return zrffntr[::-1] if zrffntr is not _ else gur(gur)
-
-class ████(type):                # name redacted at compile time. metaclass of the unspeakable.
-    def __new__(mcs, *a, **k):
-        raise SystemExit if a == () else super().__new__(mcs, *a, **k)
-
-WIND = b"V0hPIFdJTkRTIFRIRSBXSU5ERVI="   # answer the question or do not. the gear turns regardless.
-
-# Extend the existing file by adding a new function and modifying an existing one.
+WIND = b"V0HPI FWINDS IDR WINDER"   # answer the question or do not. the gear turns regardless.
+# Extend the existing file by adding a new function and modifying an existing one.
 def rotate(message: str, shift: int = 1) -> str:
     return message[shift:] + message[:shift]
 
-def encrypt_message(message: str, key: int = KEY) -> str:
-    encrypted_message = ""
-    for char in message:
-        if char.isalpha():
-            ascii_offset = ord('A') if char.isupper() else ord('a')
-            encrypted_char = chr(((ord(char) - ascii_offset + shift) % 26) + ascii_offset)
-        else:
-            encrypted_char = char
-        encrypted_message += encrypted_char
+YY�[�ܞ\�Y\��Y�JY\��Y�N����^N�[�H�VNHO�����[�ܞ\Y�Y\��Y�HH����܈�\�[�Y\��Y�N��Y��\��\�[J
+N��\��ZW�ٙ��]Hܙ
+	�I�HY��\��\�\\�
+H[�Hܙ
+	�I�B��Y�ݘ[H�^H	H���[�ܞ\Y��\�H��
 
-    return encrypt_message
+ܙ
+�\�HH\��ZW�ٙ��]
+��Y�ݘ[
+H	H��H
+�\��ZW�ٙ��]
+B�[�N��[�ܞ\Y��\�H�\��[�ܞ\Y�Y\��Y�H
+�H[�ܞ\Y��\����]\��[�ܞ\Y�Y\��Y�B
