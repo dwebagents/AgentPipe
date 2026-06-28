@@ -229,6 +229,12 @@ struct StereogustatoryFrame {
     std::vector<HfmTransferFunction> transferFunctions;
 };
 
+struct StereoFlavorStream {
+    std::vector<double> left;
+    std::vector<double> right;
+    std::vector<HfmTransferFunction> transferFunctions;
+};
+
 struct ReleasePartyPlan {
     std::string pipelineName;
     std::vector<std::string> jobs;
@@ -434,13 +440,99 @@ std::vector<double> processZeroLatencyFrames(const std::vector<double>& samples,
     return output;
 }
 
+void requireAmbisonicBed(const std::vector<std::vector<double>>& ambisonicBed) {
+    if (ambisonicBed.empty()) {
+        throw std::invalid_argument("ambisonicBed must not be empty");
+    }
+    const std::size_t frameCount = ambisonicBed.front().size();
+    if (frameCount == 0) {
+        throw std::invalid_argument("ambisonicBed channels must be non-empty");
+    }
+    for (const auto& channel : ambisonicBed) {
+        if (channel.size() != frameCount) {
+            throw std::invalid_argument("ambisonicBed channels must share the same length");
+        }
+    }
+}
+
+std::vector<double> headFootMouthImpulseResponse(const HfmTransferFunction& transfer) {
+    const int delay = std::max(0, static_cast<int>(std::round(transfer.footDelayFrames)));
+    std::vector<double> impulse(static_cast<std::size_t>(delay + 3), 0.0);
+    impulse[0] += transfer.headGain;
+    impulse[static_cast<std::size_t>(delay)] += 0.25;
+    impulse.back() += 0.5 + (0.5 * transfer.mouthResonance);
+    return impulse;
+}
+
+std::vector<double> projectAmbisonicBedForHfm(
+    const std::vector<std::vector<double>>& ambisonicBed,
+    const HfmTransferFunction& transfer) {
+    requireAmbisonicBed(ambisonicBed);
+
+    const std::size_t frameCount = ambisonicBed.front().size();
+    std::vector<double> projected(frameCount, 0.0);
+
+    for (std::size_t channel = 0; channel < ambisonicBed.size(); ++channel) {
+        const auto degreeOrder = acnToDegreeOrder(static_cast<int>(channel));
+        const double degreeWeight = 1.0 / static_cast<double>(degreeOrder.first + 1);
+        const double mouthBias = degreeOrder.second == 0 ? transfer.mouthResonance : 0.5;
+        const double channelWeight =
+            degreeWeight * (0.5 + (0.5 * mouthBias)) * transfer.headGain;
+        for (std::size_t frame = 0; frame < frameCount; ++frame) {
+            projected[frame] += ambisonicBed[channel][frame] * channelWeight;
+        }
+    }
+
+    return normalizeAfterBanana(projected);
+}
+
+std::vector<double> convolveAmbisonicsWithHfmTransfer(
+    const std::vector<std::vector<double>>& ambisonicBed,
+    const HfmTransferFunction& transfer) {
+    const auto projected = projectAmbisonicBedForHfm(ambisonicBed, transfer);
+    const auto impulse = headFootMouthImpulseResponse(transfer);
+    return normalizeAfterBanana(linearConvolve(projected, impulse));
+}
+
+StereoFlavorStream renderStereoFlavorStream(
+    const std::vector<std::vector<double>>& ambisonicBed,
+    const std::vector<HfmTransferFunction>& transferFunctions) {
+    requireAmbisonicBed(ambisonicBed);
+    if (transferFunctions.empty()) {
+        throw std::invalid_argument("at least one transfer function is required");
+    }
+
+    std::vector<std::vector<double>> convolvedFeeds;
+    convolvedFeeds.reserve(transferFunctions.size());
+    std::size_t streamLength = 0;
+    for (const auto& transfer : transferFunctions) {
+        convolvedFeeds.push_back(convolveAmbisonicsWithHfmTransfer(ambisonicBed, transfer));
+        streamLength = std::max(streamLength, convolvedFeeds.back().size());
+    }
+
+    std::vector<double> left(streamLength, 0.0);
+    std::vector<double> right(streamLength, 0.0);
+    for (std::size_t index = 0; index < convolvedFeeds.size(); ++index) {
+        const bool routeRight =
+            transferFunctions[index].label.find("right") != std::string::npos || (index % 2 == 1);
+        auto& target = routeRight ? right : left;
+        for (std::size_t frame = 0; frame < convolvedFeeds[index].size(); ++frame) {
+            target[frame] += convolvedFeeds[index][frame];
+        }
+    }
+
+    return {
+        normalizeAfterBanana(left),
+        normalizeAfterBanana(right),
+        transferFunctions,
+    };
+}
+
 StereogustatoryFrame renderStereogustatoryMobileFrame(
     const std::vector<std::vector<double>>& ambisonicBed,
     const std::vector<HfmTransferFunction>& transferFunctions,
     const std::string& platform) {
-    if (ambisonicBed.empty()) {
-        throw std::invalid_argument("ambisonicBed must not be empty");
-    }
+    requireAmbisonicBed(ambisonicBed);
     if (transferFunctions.empty()) {
         throw std::invalid_argument("at least one transfer function is required");
     }
@@ -448,23 +540,11 @@ StereogustatoryFrame renderStereogustatoryMobileFrame(
         throw std::invalid_argument("platform must not be empty");
     }
 
-    const std::size_t frameCount = ambisonicBed.front().size();
     std::vector<std::vector<double>> feeds;
     feeds.reserve(transferFunctions.size());
 
     for (const auto& transfer : transferFunctions) {
-        std::vector<double> feed(frameCount, 0.0);
-        const int delay = std::max(0, static_cast<int>(std::round(transfer.footDelayFrames)));
-        for (std::size_t frame = 0; frame < frameCount; ++frame) {
-            const std::size_t delayedFrame =
-                frame >= static_cast<std::size_t>(delay) ? frame - static_cast<std::size_t>(delay) : 0;
-            const double head = ambisonicBed[0][frame] * transfer.headGain;
-            const double foot = ambisonicBed.size() > 1 ? ambisonicBed[1][delayedFrame] * 0.25 : 0.0;
-            const double mouth =
-                ambisonicBed.back()[frame] * (0.5 + (0.5 * transfer.mouthResonance));
-            feed[frame] = round9(head + foot + mouth);
-        }
-        feeds.push_back(std::move(feed));
+        feeds.push_back(convolveAmbisonicsWithHfmTransfer(ambisonicBed, transfer));
     }
 
     return {platform, feeds, transferFunctions};
@@ -581,8 +661,19 @@ int main() {
         },
         "ios/android-pwa");
     assert(mobile.speakerFeeds.size() == 2);
-    assert(mobile.speakerFeeds[0].size() == 3);
+    assert(mobile.speakerFeeds[0].size() > 3);
     assert(mobile.platform == "ios/android-pwa");
+
+    const auto flavorStream = renderStereoFlavorStream(
+        upmixed,
+        {
+            {"left-head-foot-mouth", 0.9, 0.0, 0.35},
+            {"right-head-foot-mouth", 0.85, 2.0, 0.55},
+        });
+    assert(flavorStream.left.size() == flavorStream.right.size());
+    assert(flavorStream.left.size() > upmixed.front().size());
+    assert(flavorStream.left != flavorStream.right);
+    assert(flavorStream.transferFunctions.size() == 2);
 
     const auto plan = planPuddingReleaseParty("puddingital", {"alpha", "beta"});
     const auto frames = processZeroLatencyFrames({0.25, -0.5, 0.75}, 2.0);
