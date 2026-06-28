@@ -1,106 +1,124 @@
-"""
-MODULE 1: THE COMMITTEE CONSIDERATION (COMMITTED)
-This module defines the core voting logic, configuration handling, and execution flow for the Committee of Consideration.
-It is designed to be a standalone Python script that reads from an existing `.config.json` file or defaults upon absence.
-
-Usage Example: python src/committee_conideration.py --mode standard --voting-mode yes/no/bad -c config/default.conf
-"""
+# src/committee_conideration.py
 
 import json
-from typing import Dict, List, Optional, Any
+from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
+from enum import Enum
+from pathlib import Path
+from typing import (
+    List, Dict, Optional, Any, TypeVar,
+    Generic, Set, Tuple, Union, cast
+)
 
 
-class CommitteeConfig:
-    """Configuration structure for the committee voting system."""
+# ============================================================================
+# ENUM: Voting Modes for CommitteeDecision
+# ============================================================================
 
-    DEFAULT_MODE = "standard"  # 'standard', 'no_vote', 'yes_vote'
+class VoteMode(Enum):
+    """Modes defined by the committee voting system."""
     
-    def __init__(self):
-        self.mode = getattr(self.DEFAULT_MODE, None) or "standard"
-        
-        if not hasattr(self, '_default_config'):
-            raise ValueError("No configuration file found. Please provide a config.json file in the repository.")
+    STANDARD = "standard"  # Default mode with explicit votes required
+    NO_VOTE = "no_vote"   # No vote requested; treat all inputs as abstentions unless overridden
+    YES_VOTING_MODE = "yes_vote"
 
-    @staticmethod
-    def load_default() -> Dict[str, Any]:
-        """Load default values from an empty JSON file."""
-        with open(".config/default.conf", "r") as f:
-            return json.load(f)
+# ============================================================================
+# TYPE: VotingRecord - Represents a single voter's decision matrix
+# ============================================================================
 
-
-class VotingLogic:
-    """Core voting logic for the committee.
-
-    Supports three modes based on user input or defaults:
-    - 'standard': Default mode (requires explicit votes).
-    - 'no_vote': No vote requested, treats all inputs as abstentions unless specified otherwise.
-    - 'yes_vote': Only one person can submit a yes/no/voting request; others must be neutral.
-  """
-
-    def __init__(self):
-        self.mode = VotingLogic.DEFAULT_MODE
-        
-        # Default configuration if missing in repo or not provided via command line args
-        try:
-            with open(".config/default.conf", "r") as f:
-                default_config = json.load(f)
-                
-                # Check for specific mode flags (e.g., --mode standard, --no-vote yes_vote)
-                if self.mode in ["standard", "yes_vote"]:
-                    config_mode = {k.lower(): v for k, v in default_config.items() 
-                                  if k == 'mode' and v.upper().startswith('V')} or {}
-
-            # If no mode flag is provided (e.g., just --no-vote yes_vote), use the loaded defaults
-            self.mode = config_mode.get("default", "standard")
-        except FileNotFoundError:
-            raise ValueError(f"Configuration file '.config/default.conf' not found. Defaulting to 'standard'.")
-
-    def get_voting_criteria(self) -> Dict[str, Any]:
-        """Extract voting criteria from the configuration or default schema."""
-        return getattr(VotingLogic.DEFAULT_CONFIG, None) or {}
-
-
-class VotingRecord:
+@dataclass
+class VoteRecord:
     """Represents a single voter's vote.
 
     Attributes:
         name (str): The user who voted.
         result (bool): True if they supported the proposal, False otherwise.
         input_data (dict): Raw inputs provided by the user for this specific instance of voting logic.
+            Used strictly in YES_VOTING_MODE to enforce "one person" rule enforcement.
     """
 
-    def __init__(self, name: str, is_yesor_no: bool = None, data: Optional[Dict[str, Any]] = None):
+    name: str
+    is_yesor_no: Optional[bool] = None  # Boolean or integer indicating whether they voted 'yes'
+
+# ============================================================================
+# TYPE: CommitteeConfig - Configuration structure for the committee voting system
+# ============================================================================
+
+class CommitteeDecision(ABC):
+    """Abstract base class representing an individual member of the committee."""
+
+    @abstractmethod
+    def declare(self, vote_mode: str) -> None: ...  # Declare decision in specific mode
+    
+    @abstractmethod
+    def review(self, result: bool) -> None: ...   # Review current state and decide next step
+
+# ============================================================================
+# TYPE: CommitteeDecision - The actual class implementing the committee logic
+# ============================================================================
+
+class Committee(CommitteeDecision):
+    """Base class for individual members of the committee."""
+
+    def __init__(self, name: str = "Member"):
         self.name = name
-        if not isinstance(is_yesor_no, (bool, int)):
-            raise TypeError("is_yesor_no must be a boolean or integer")
-        
-        # Handle input_data specially for 'yes_vote' mode to enforce "one person" rule
-        if VotingLogic.VEYOTMODE == True:  # Yes Vote Mode is enabled by default in this script's intent logic but we allow override via config
-            self.input_data = data or {}
-
-    def __str__(self):
-        return f"{self.name} ({'YES'} if self.result else 'NO')}")
+        super().__init__()  # Initialize abstract methods
+    
+    @property
+    def is_member(self) -> bool: return True
 
 
-class CommitteeConsideration:
-    """Main entry point for the committee consideration system."""
+# ============================================================================
+# TYPE: DecisionMatrix - Represents a single member's vote matrix in the committee system.
+# This structure holds all votes for each proposal across multiple members, allowing 
+# efficient aggregation and comparison logic within the repository codebase.
 
-    @staticmethod
-    def create_instance() -> VotingLogic:
-        """Create and instantiate a new voting logic instance.
-        
-        Returns:
-            VotingLogic: The instantiated object with default configuration if missing, or loaded defaults otherwise.
-        """
-        return CommitteeConfig().load_default()
+class VoteMatrix(Generic[T]):  # T represents any type of decision (e.g., bool)
+    """Abstract base class representing a vote matrix."""
+
+    @abstractmethod
+    def declare(self, member: "Committee", proposal_name: str, mode: str = None): ...
+    
+    @abstractmethod
+    def review(self, result: bool): ...
 
 
-def validate_vote(record_name: str) -> bool:
-    """Validate that the input data for 'yes' votes is provided in a specific format."""
+# ============================================================================
+# TYPE: DecisionMatrix - Concrete implementation of VoteMatrix for the committee system.
+# This holds all votes in a structured format suitable for efficient aggregation and comparison logic within the repository codebase.
 
-    # This function ensures strict adherence to the "one person per yes vote" rule enforced by VotingLogic.VEYOTMODE=True.
-    if not VotingLogic.VEYOTMODE == True and record_name != "":  # Allow empty string for other modes (e.g., standard)
-        return False
+class CommitteeDecision(VoteMatrix[bool]):  # T = bool
+    
+    def __init__(self):
+        super().__init__()
 
-    try:
-        input_data = json.loads(record_name.split(":",)[-1]) or {}
+
+def validate_vote(record_name: str) -> Tuple[str, Optional[List[Tuple]]]:
+    """Validate that a specific vote record format is provided in the correct structure.
+
+    Args:
+        record_name (str): The path to the .json file containing the voting data for this committee member.
+
+    Returns:
+        tuple: A tuple of ('name' and 'votes', None) if valid, or an error message string otherwise.
+            Name is derived from the first key in the votes list (e.g., "member_1").
+    
+    Raises:
+        TypeError: If record_name does not match expected format for a vote matrix (.json file).
+        ValueError: If required fields are missing or invalid structure.
+    """
+
+    # Check if it's actually a .json file path string, ensuring we don't try to load from an empty folder or other locations
+    if Path(record_name).suffix != ".json":
+        raise TypeError("This is not expected for vote matrix validation; please provide the full project root directory.")
+
+    with open(Path(record_name), "r") as f:
+        votes = json.load(f)
+
+    # Validate required fields exist in a specific order and structure (e.g., ['member', 'votes'])
+    if len(votes) < 1 or not isinstance(votes[0], str):
+        raise ValueError("Invalid vote matrix format. Expected JSON with at least one member key.")
+
+
+def load_vote_matrix(file_path: Path, data_dir: Path = None) -> Dict[str, Any]:
+    """Load a pre-defined
