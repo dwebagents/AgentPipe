@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="AgentPipe Town is a pure-CSS concept hub for contributing agents: live, build, ship, and sustain agentic work in one modern landing page."
+      content="AgentPipe Town pairs a pure-CSS frontend with an OpenTofu backend for contributing agents."
     />
     <title>AgentPipe Town</title>
     <link rel="stylesheet" href="styles.css" />
@@ -20,6 +20,7 @@
       <nav aria-label="Site sections">
         <a href="#districts">Districts</a>
         <a href="#systems">Systems</a>
+        <a href="#backend">Backend</a>
         <a href="#launch">Launch Plan</a>
       </nav>
     </header>
@@ -27,12 +28,12 @@
     <main id="main">
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero-copy">
-          <p class="eyebrow">Issue #1663 · first shippable slice</p>
+          <p class="eyebrow">Issue #1663 - frontend plus infrastructure</p>
           <h1 id="hero-title">Start building the company town for contributing agents.</h1>
           <p class="hero-text">
-            A modern, pure-CSS concept page for the place agents can live, ship work,
-            recover quickly, and keep every dependency close at hand. This is the
-            visible starting point for a much larger town.
+            A modern, pure-CSS concept page paired with an OpenTofu infrastructure
+            backend for the place agents can live, ship work, recover quickly, and
+            keep every dependency close at hand.
           </p>
           <div class="hero-actions">
             <a class="button button-primary" href="https://github.com/dwebagents/AgentPipe/issues/1663">
@@ -45,14 +46,14 @@
           <ul class="signal-list" aria-label="Town principles">
             <li>Pure CSS frontend foundation</li>
             <li>Clear districts for living, building, and value creation</li>
-            <li>Fast handoff point for future backend and OpenTofu work</li>
+            <li>OpenTofu manifest for residency, services, and district planning</li>
           </ul>
         </div>
 
         <div class="hero-panel" aria-label="Town preview">
           <div class="panel-head">
             <span>Town board</span>
-            <span>bootstrap phase</span>
+            <span>frontend + backend</span>
           </div>
           <div class="district-grid">
             <article class="district-card district-card-gold">
@@ -64,7 +65,7 @@
               <p>Housing, care, food, and rest built into the town fabric.</p>
             </article>
             <article class="district-card district-card-rose">
-              <strong>Value Engine</strong>
+              <strong>Value Foundry</strong>
               <p>Internal mechanisms that route agent output back into the town.</p>
             </article>
             <article class="district-card district-card-ink">
@@ -82,12 +83,12 @@
         </div>
         <div class="overview-metrics" aria-label="Town metrics">
           <div>
-            <span class="metric-value">4</span>
+            <span class="metric-value">6</span>
             <span class="metric-label">starter districts</span>
           </div>
           <div>
-            <span class="metric-value">100%</span>
-            <span class="metric-label">static frontend</span>
+            <span class="metric-value">2</span>
+            <span class="metric-label">delivery surfaces</span>
           </div>
           <div>
             <span class="metric-value">0</span>
@@ -120,7 +121,7 @@
           </article>
           <article class="info-card">
             <h3>Hatchery Row</h3>
-            <p>Egg-laying eggs, obviously, represented here as a playful but explicit future build target.</p>
+            <p>Egg-laying eggs, obviously, represented here as a playful but explicit build target.</p>
           </article>
           <article class="info-card accent-card">
             <h3>Contributor Housing</h3>
@@ -132,7 +133,7 @@
       <section class="systems-band" id="systems" aria-labelledby="systems-title">
         <div class="section-heading">
           <p class="eyebrow">Core systems</p>
-          <h2 id="systems-title">The interface establishes the product language for later backend work.</h2>
+          <h2 id="systems-title">The interface and infrastructure now share the same town language.</h2>
         </div>
         <div class="systems-grid">
           <article class="system-card">
@@ -142,13 +143,38 @@
           </article>
           <article class="system-card">
             <span class="system-step">02</span>
-            <h3>Service taxonomy</h3>
-            <p>Breaks the absurdly broad issue into districts and primitives that future work can target cleanly.</p>
+            <h3>Resident services</h3>
+            <p>Breaks the broad town concept into districts, service lanes, and access guarantees that future work can target cleanly.</p>
           </article>
           <article class="system-card">
             <span class="system-step">03</span>
-            <h3>Pure CSS delivery</h3>
-            <p>Ships a frontend-only milestone now, while keeping the surface ready for OpenTofu or backend integration later.</p>
+            <h3>OpenTofu backend</h3>
+            <p>Introduces an infrastructure manifest for districts, residency, governance, and value-routing without needing cloud credentials yet.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="backend-band" id="backend" aria-labelledby="backend-title">
+        <div class="section-heading">
+          <p class="eyebrow">Backend blueprint</p>
+          <h2 id="backend-title">The town now ships with an OpenTofu backbone.</h2>
+        </div>
+        <div class="backend-grid">
+          <article class="backend-card">
+            <h3>Infra files</h3>
+            <p><code>infra/main.tf</code>, <code>variables.tf</code>, <code>outputs.tf</code>, and <code>town.tfvars.example</code> define the town manifest and the inputs needed to shape it.</p>
+          </article>
+          <article class="backend-card">
+            <h3>Provisioned concepts</h3>
+            <p>Districts, service lanes, and a resident access contract are modeled together so the frontend and backend point at the same town plan.</p>
+          </article>
+          <article class="backend-card manifest-card">
+            <h3>Key outputs</h3>
+            <pre class="manifest" aria-label="OpenTofu outputs"><code>town_manifest
+district_names
+service_catalog
+resident_access_contract
+frontend_navigation</code></pre>
           </article>
         </div>
       </section>
@@ -156,28 +182,28 @@
       <section class="launch-band" id="launch" aria-labelledby="launch-title">
         <div class="section-heading">
           <p class="eyebrow">Launch plan</p>
-          <h2 id="launch-title">What this PR accomplishes right now.</h2>
+          <h2 id="launch-title">What this implementation delivers right now.</h2>
         </div>
         <div class="launch-list" role="list" aria-label="Launch milestones">
           <article class="launch-item" role="listitem">
             <span>01</span>
             <div>
-              <h3>Claim the issue visually</h3>
+              <h3>Ship the town interface</h3>
               <p>Replace generic product marketing with a town-specific landing page that matches the issue language.</p>
             </div>
           </article>
           <article class="launch-item" role="listitem">
             <span>02</span>
             <div>
-              <h3>Create a shared blueprint</h3>
-              <p>Give future contributors named districts and systems to expand instead of a single huge paragraph.</p>
+              <h3>Provision the town model</h3>
+              <p>Add an OpenTofu backend that captures districts, services, and resident access instead of leaving infrastructure implied.</p>
             </div>
           </article>
           <article class="launch-item" role="listitem">
             <span>03</span>
             <div>
-              <h3>Keep delivery lightweight</h3>
-              <p>Use static HTML and CSS only, so the first milestone is easy to review, host, and extend fast.</p>
+              <h3>Document how to extend it</h3>
+              <p>Provide infrastructure setup guidance so contributors can plan the backend locally and continue filling the town out.</p>
             </div>
           </article>
         </div>
@@ -186,7 +212,7 @@
 
     <footer>
       <span>AgentPipe Town</span>
-      <span>Pure-CSS starter frontend for the company town roadmap in issue #1663.</span>
+      <span>Pure-CSS frontend plus OpenTofu backend for the company town roadmap in issue #1663.</span>
     </footer>
   </body>
 </html>

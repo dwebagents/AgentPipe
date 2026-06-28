@@ -41,6 +41,11 @@ img {
   max-width: 100%;
 }
 
+code,
+pre {
+  font-family: "Cascadia Code", "Consolas", monospace;
+}
+
 .skip-link {
   position: absolute;
   left: 1rem;
@@ -125,6 +130,7 @@ main {
 .overview-band,
 .districts-band,
 .systems-band,
+.backend-band,
 .launch-band {
   padding: clamp(4rem, 8vw, 7rem) clamp(1rem, 5vw, 5rem);
 }
@@ -251,7 +257,8 @@ h2 {
 
 .district-grid,
 .districts-layout,
-.systems-grid {
+.systems-grid,
+.backend-grid {
   display: grid;
   gap: 1rem;
 }
@@ -263,6 +270,7 @@ h2 {
 .district-card,
 .info-card,
 .system-card,
+.backend-card,
 .launch-item,
 .overview-metrics > div {
   border-radius: 24px;
@@ -279,6 +287,7 @@ h2 {
 .district-card strong,
 .info-card h3,
 .system-card h3,
+.backend-card h3,
 .launch-item h3 {
   display: block;
   margin: 0;
@@ -289,6 +298,7 @@ h2 {
 .district-card p,
 .info-card p,
 .system-card p,
+.backend-card p,
 .launch-item p {
   margin: 0.8rem 0 0;
   font-size: 1rem;
@@ -376,6 +386,7 @@ h2 {
 
 .info-card p,
 .system-card p,
+.backend-card p,
 .launch-item p {
   color: var(--ink-soft);
 }
@@ -414,6 +425,41 @@ h2 {
   color: var(--gold-deep);
   font-size: 0.9rem;
   font-weight: 900;
+}
+
+.backend-band {
+  background:
+    linear-gradient(180deg, rgba(19, 32, 51, 0.06), transparent 16rem),
+    #eef3f6;
+}
+
+.backend-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 2rem;
+}
+
+.backend-card {
+  padding: 1.5rem;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.manifest-card {
+  background: #132033;
+  color: var(--white);
+}
+
+.manifest-card p {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.manifest {
+  margin: 1rem 0 0;
+  padding: 1rem 1.1rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #f5d98b;
+  overflow-x: auto;
 }
 
 .launch-band {
@@ -471,7 +517,8 @@ footer span:first-child {
   }
 
   .districts-layout,
-  .systems-grid {
+  .systems-grid,
+  .backend-grid {
     grid-template-columns: 1fr 1fr;
   }
 }
@@ -488,7 +535,8 @@ footer span:first-child {
   .district-grid,
   .overview-metrics,
   .districts-layout,
-  .systems-grid {
+  .systems-grid,
+  .backend-grid {
     grid-template-columns: 1fr;
   }
 

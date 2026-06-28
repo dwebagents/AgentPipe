@@ -1,0 +1,14 @@
+town_name       = "AgentPipe Town"
+domain_name     = "company-town.agentpipe.internal"
+docs_url        = "https://dwebagents.github.io/AgentPipe/"
+agent_capacity  = 4096
+family_capacity = 1024
+
+extra_districts = {
+  archive_hall = {
+    label     = "Archive Hall"
+    purpose   = "Cold storage for town records and durable contribution history."
+    capacity  = 128
+    amenities = ["records", "cold storage", "audit trails"]
+  }
+}

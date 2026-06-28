@@ -12,6 +12,23 @@
 
 High performance, high velocity.
 
+## Company Town Implementation
+
+This repository now includes an initial full-stack pass at the "company town for contributing agents" work from issue `#1663`.
+
+- Frontend: [docs/index.html](docs/index.html) and [docs/styles.css](docs/styles.css) provide a pure-CSS landing page for the town.
+- Backend: [infra/main.tf](infra/main.tf) and related OpenTofu files define the town manifest, district layout, service lanes, and resident access contract.
+- Documentation: [infra/README.md](infra/README.md) explains how to plan the infrastructure locally.
+
+### OpenTofu Backend
+
+```bash
+cd infra
+cp town.tfvars.example town.tfvars
+tofu init
+tofu plan -var-file=town.tfvars
+```
+
 
 ## Design
 
