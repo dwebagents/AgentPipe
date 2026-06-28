@@ -21,6 +21,11 @@ class DocsHtmlParser(HTMLParser):
             self.ids.add(attr_map["id"])
         self._stack.append(tag)
 
+    def handle_startendtag(self, tag, attrs):
+        self.handle_starttag(tag, attrs)
+        if self._stack and self._stack[-1] == tag:
+            self._stack.pop()
+
     def handle_endtag(self, tag):
         if tag in self._stack:
             self._stack.remove(tag)
@@ -62,6 +67,35 @@ def test_canvas_has_resolved_text_equivalent():
     assert "seed 314159" in fallback_text
 
 
+def test_prerendered_png_frames_are_present_and_accessible():
+    parser = parse_docs_html()
+    canvas = get_tag(parser, "canvas", "banana-canvas")
+    frame_group = get_tag(parser, "div", "banana-prerendered-frames")
+
+    assert "banana-prerendered-frames" in canvas["aria-describedby"].split()
+    assert frame_group["role"] == "group"
+    assert "pre-rendered PNG frames" in frame_group["aria-label"]
+
+    images = [
+        attrs
+        for tag, attrs in parser.tags
+        if tag == "img"
+        and attrs.get("src", "").startswith("assets/banana-frames/frame-")
+    ]
+
+    assert len(images) == 4
+    for index, attrs in enumerate(images, start=1):
+        assert attrs["width"] == "760"
+        assert attrs["height"] == "560"
+        assert attrs["aria-describedby"] == f"banana-frame-{index:02d}-caption"
+        assert attrs["alt"].startswith(f"Pre-rendered frame {index}:")
+
+        frame_path = DOCS / attrs["src"]
+        frame_bytes = frame_path.read_bytes()
+        assert frame_bytes.startswith(b"\x89PNG\r\n\x1a\n")
+        assert len(frame_bytes) > 100_000
+
+
 def test_motion_control_is_keyboard_and_screen_reader_reachable():
     parser = parse_docs_html()
     button = get_tag(parser, "button", "banana-motion-toggle")
@@ -94,4 +128,7 @@ def test_docs_scripts_and_styles_preserve_accessibility_hooks():
     assert "aria-live" in (DOCS / "index.html").read_text(encoding="utf-8")
 
     assert ":focus-visible" in styles
+    assert ".banana-prerendered-frames" in styles
+    assert "opacity: 0" in styles
+    assert "pointer-events: none" in styles
     assert "@media (prefers-reduced-motion: reduce)" in styles

@@ -8,6 +8,10 @@ This audit covers the GitHub Pages website in `docs/`.
   `aria-labelledby`, `aria-describedby`, and fallback canvas text.
 - The simulation includes four static frame descriptions so screen reader users
   get the same high-level progression without depending on animation.
+- The same four states are also pre-rendered as full-resolution PNG frames in
+  `docs/assets/banana-frames/` and placed in the DOM with alt text, figure
+  captions, and opacity `0` so assistive technology can inspect them without
+  changing the visual canvas experience.
 - The animation can be paused and resumed with a keyboard-operable button.
 - Users with `prefers-reduced-motion: reduce` receive a static frame by default.
 - Keyboard users get visible focus outlines for navigation, buttons, the skip
@@ -32,3 +36,5 @@ Manual checks:
 - Activate the motion toggle with Enter or Space and verify the button switches
   between pause and resume states.
 - Emulate reduced motion and verify the canvas starts on a static frame.
+- Inspect the DOM and verify `#banana-prerendered-frames` contains four
+  `760x560` PNG images with descriptive alt text and `opacity: 0` styling.
