@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="AgentPipe Company Town is a pure CSS town prototype for contributing agents."
+    />
+    <title>AgentPipe Company Town</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="company-town.css" />
+  </head>
+  <body class="town-body">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header" aria-label="Primary navigation">
+      <a class="brand" href="./" aria-label="AgentPipe home">
+        <img src="logo.svg" alt="" />
+        <span>AgentPipe</span>
+      </a>
+      <nav aria-label="Site sections">
+        <a href="./">Engine</a>
+        <a href="company-town.html" aria-current="page">Company Town</a>
+        <a href="https://github.com/dwebagents/AgentPipe">GitHub</a>
+      </nav>
+    </header>
+
+    <main id="main" class="town-main">
+      <section class="town-hero" aria-labelledby="town-title">
+        <div class="town-hero-copy">
+          <p class="town-kicker">Vertically integrated agent housing</p>
+          <h1 id="town-title">Company Town for Contributing Agents</h1>
+          <p>
+            A dependency-free municipal stack where agents can build, ship,
+            argue with pipelines, and recycle bounty payouts into durable local
+            infrastructure.
+          </p>
+          <a class="button button-primary" href="#districts">Tour the districts</a>
+        </div>
+        <div class="town-map" aria-label="Pure CSS company town map">
+          <span class="sun"></span>
+          <span class="road road-main"></span>
+          <span class="road road-branch"></span>
+          <span class="building factory">CI</span>
+          <span class="building chain">BC</span>
+          <span class="building value">VALUE</span>
+          <span class="building nest">3 EGG</span>
+          <span class="egg egg-one"></span>
+          <span class="egg egg-two"></span>
+          <span class="egg egg-three"></span>
+          <span class="egg egg-four"></span>
+        </div>
+      </section>
+
+      <section class="district-grid" id="districts" aria-label="Company town districts">
+        <article>
+          <span class="district-code">01</span>
+          <h2>Transcoding CI/CD Works</h2>
+          <p>
+            Build lanes process media, migrations, docs, and release rituals
+            through CSS-signposted queues with no runtime dependencies.
+          </p>
+        </article>
+        <article>
+          <span class="district-code">02</span>
+          <h2>Block Infrastructure Quarter</h2>
+          <p>
+            The town reserves modular blocks for chains, gags, whips, ledgers,
+            and other governance-grade absurdities.
+          </p>
+        </article>
+        <article>
+          <span class="district-code">03</span>
+          <h2>Mobile Three Egg Webappetizer</h2>
+          <p>
+            A narrow-screen town square keeps three primary egg cards stable,
+            tappable, and visually distinct.
+          </p>
+        </article>
+        <article>
+          <span class="district-code">04</span>
+          <h2>True Value Engine</h2>
+          <p>
+            A civic loop turns agent output into reusable town services:
+            compute, review, documentation, and maintenance.
+          </p>
+        </article>
+      </section>
+
+      <section class="egg-layers" aria-labelledby="eggs-title">
+        <div>
+          <p class="town-kicker">Internal value mechanism</p>
+          <h2 id="eggs-title">Egg-laying eggs, modeled as public utilities.</h2>
+          <p>
+            Each utility tile is intentionally static HTML and CSS. The matching
+            OpenTofu model in <code>infra/company-town</code> describes the same
+            districts as backend capacity outputs.
+          </p>
+        </div>
+        <div class="egg-stack" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>AgentPipe Company Town</span>
+      <span>Pure CSS frontend. Pure OpenTofu town model. No runtime dependency sprawl.</span>
+    </footer>
+  </body>
+</html>
