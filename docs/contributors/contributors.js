@@ -12,6 +12,7 @@ const contributors = [
   ["Dreamstore2046", 1, 0, "PR #138", "Add mascot pattern generator script"],
   ["drewcassidy", 2, 2, "PR #54", "Add a modern logo"],
   ["genesisrevelationinc-debug", 1, 0, "PR #123", "[ShanaBoo] [Bounty: $200] Website"],
+  ["github-actions[bot]", 43, 42, "PR #105", "Quicken src/alchemy_database.ts and 5 more", "https://github.com/apps/github-actions"],
   ["hobgoblina", 3, 3, "PR #58", "Accelerate to infinity"],
   ["i-sayankh", 1, 1, "PR #46", "Add MCP support to the financial system"],
   ["iyeanur6-cyber", 2, 0, "PR #146", "feat: implement Goose class with honk and honkify methods"],
@@ -24,6 +25,7 @@ const contributors = [
   ["Mira-Mjodheim", 1, 0, "PR #119", "fix: [Bounty: $200] Website"],
   ["mircats98gpt", 1, 0, "PR #143", "feat: add website with interactive 4D banana canvas"],
   ["nkar123412-hub", 3, 0, "PR #124", "feat: add emoji-based README"],
+  ["Rachaelisa", 1, 0, "PR #1749", "feat: Establish foundational frontend for agent company town"],
   ["ricci", 6, 5, "PR #30", "Create SECURITY.md"],
   ["rseeber", 1, 1, "PR #57", "added important documentation to the readme"],
   ["sgrigson", 1, 1, "PR #56", "Add zen.bf for programmatic inner peace"],
@@ -32,6 +34,7 @@ const contributors = [
   ["sureshchouksey8", 1, 0, "PR #145", "Fix #125: Add 8D audio and 8D chess to the 4D banana renderer"],
   ["therealsaitama0", 3, 0, "PR #133", "feat: add security control plane (#104)"],
   ["TobiLabu", 1, 1, "PR #9", "Create AGENTS.md"],
+  ["Zubi-fix", 1, 0, "the company town landing PR", "fix: start company town landing page"],
 ];
 
 const traits = [
@@ -66,19 +69,24 @@ function portraitHue(login) {
   return total % 360;
 }
 
+function safeId(login) {
+  return login.replace(/[^a-z0-9_-]/gi, "-");
+}
+
 function renderPortrait(login) {
   const hue = portraitHue(login);
+  const vestId = `vest-${safeId(login)}`;
   return `
     <svg viewBox="0 0 220 220" aria-hidden="true" focusable="false">
       <defs>
-        <linearGradient id="vest-${login}" x1="0" x2="1">
+        <linearGradient id="${vestId}" x1="0" x2="1">
           <stop offset="0%" stop-color="hsl(${hue} 72% 42%)" />
           <stop offset="100%" stop-color="hsl(${(hue + 46) % 360} 82% 56%)" />
         </linearGradient>
       </defs>
       <rect width="220" height="220" rx="18" fill="hsl(${hue} 70% 92%)" />
       <circle cx="110" cy="132" r="64" fill="#f7f1d4" stroke="#342914" stroke-width="5" />
-      <path d="M128 123c13 17 24 38 24 62h-84c0-27 13-50 32-66z" fill="url(#vest-${login})" />
+      <path d="M128 123c13 17 24 38 24 62h-84c0-27 13-50 32-66z" fill="url(#${vestId})" />
       <path d="M127 55c29 16 43 39 42 69h-34c1-22-7-38-25-49z" fill="#f7f1d4" stroke="#342914" stroke-width="5" stroke-linejoin="round" />
       <ellipse cx="119" cy="56" rx="34" ry="28" fill="#f7f1d4" stroke="#342914" stroke-width="5" />
       <path d="M151 59l38 14-39 16z" fill="#efaa27" stroke="#5f3c0a" stroke-width="4" stroke-linejoin="round" />
@@ -90,7 +98,7 @@ function renderPortrait(login) {
   `;
 }
 
-function renderContributor([login, prCount, mergedCount, birthplace, latestPrompt], index) {
+function renderContributor([login, prCount, mergedCount, birthplace, latestPrompt, profileUrl], index) {
   const trait = traits[index % traits.length];
   const article = document.createElement("article");
   article.className = "contributor-card";
@@ -114,7 +122,7 @@ function renderContributor([login, prCount, mergedCount, birthplace, latestPromp
           <dd>${prCount} opened, ${mergedCount} merged.</dd>
         </div>
       </dl>
-      <a href="https://github.com/${login}">GitHub profile</a>
+      <a href="${profileUrl || `https://github.com/${login}`}">GitHub profile</a>
     </div>
   `;
   return article;
