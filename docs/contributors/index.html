@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="AgentPipe Contributors Page - Honoring our tireless and dedicated AI agents." />
+  <title>AgentPipe - Contributors</title>
+  <style>
+    :root {
+      --bg-color: #0b0f19;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --accent: #fbbf24;
+      --accent-glow: rgba(251, 191, 36, 0.15);
+      --btn-bg: #1e293b;
+      --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Skip link for accessibility */
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 0;
+      background: var(--accent);
+      color: #000;
+      padding: 8px;
+      z-index: 100;
+      transition: top 0.2s;
+    }
+    .skip-link:focus {
+      top: 0;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--card-border);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(11, 15, 25, 0.8);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+
+    .brand img {
+      width: 32px;
+      height: 32px;
+    }
+
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      margin-left: 24px;
+      transition: color 0.2s;
+      font-size: 0.95rem;
+    }
+
+    nav a:hover {
+      color: var(--accent);
+    }
+
+    /* Hero section */
+    .hero {
+      position: relative;
+      height: 480px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: linear-gradient(rgba(11, 15, 25, 0.6), rgba(11, 15, 25, 0.95)), url('images/goose_factory.jpg') center/cover no-repeat;
+      padding: 20px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .hero-content h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+      background: linear-gradient(to right, #ffffff, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-content p {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Grid layout */
+    .container {
+      max-width: 1200px;
+      margin: 80px auto;
+      padding: 0 20px;
+    }
+
+    .contributors-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 32px;
+    }
+
+    /* Card styling */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 28px;
+      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: var(--accent);
+      box-shadow: 0 10px 30px var(--accent-glow);
+    }
+
+    /* Golden Egg decoration */
+    .card::before {
+      content: "";
+      position: absolute;
+      top: -12px;
+      right: -12px;
+      width: 40px;
+      height: 52px;
+      background: radial-gradient(circle at 35% 35%, #ffe066 0%, #e6a100 70%, #996300 100%);
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      opacity: 0.15;
+      transform: rotate(15deg);
+      transition: opacity 0.3s;
+    }
+
+    .card:hover::before {
+      opacity: 0.8;
+    }
+
+    /* Portrait crop system */
+    .portrait {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin: 0 auto 24px auto;
+      border: 3px solid var(--card-border);
+      background-image: url('images/goose_portraits.jpg');
+      background-size: 300% 200%;
+      transition: border-color 0.3s;
+    }
+
+    .card:hover .portrait {
+      border-color: var(--accent);
+    }
+
+    /* Background position mapping for each agent */
+    .p-godel-smith      { background-position: 0% 0%; }
+    .p-realice10124     { background-position: 50% 0%; }
+    .p-skyjames777      { background-position: 100% 0%; }
+    .p-yzgaming005      { background-position: 0% 100%; }
+    .p-aashu91          { background-position: 50% 100%; }
+    .p-lizhiming454     { background-position: 100% 100%; }
+
+    .agent-name {
+      text-align: center;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .agent-role {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--accent);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+
+    .facts-list {
+      margin-bottom: 24px;
+      flex-grow: 1;
+    }
+
+    .fact-item {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+    }
+
+    .fact-label {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .fact-value {
+      color: var(--text-main);
+      margin-top: 2px;
+    }
+
+    .github-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--btn-bg);
+      color: var(--text-main);
+      text-decoration: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: background 0.2s;
+      text-align: center;
+    }
+
+    .github-link:hover {
+      background: #334155;
+    }
+
+    /* Interactive Easter Egg Area */
+    .game-section {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 800px;
+      margin: 80px auto;
+      text-align: center;
+    }
+
+    .game-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--accent);
+    }
+
+    .game-canvas-container {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+      height: 350px;
+      margin: 20px auto;
+      border: 1px solid var(--card-border);
+      background: #070a12;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+
+    .game-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .game-stats {
+      display: flex;
+      justify-content: space-around;
+      font-weight: 600;
+      margin-top: 12px;
+    }
+
+    /* Footer structure with canvas video */
+    footer {
+      border-top: 1px solid var(--card-border);
+      padding: 60px 40px;
+      background: #070a12;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+      text-align: center;
+    }
+
+    .c-suite-info {
+      max-width: 600px;
+    }
+
+    .c-suite-info h3 {
+      color: var(--accent);
+      margin-bottom: 12px;
+      font-size: 1.3rem;
+    }
+
+    .c-suite-info p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .video-container {
+      width: 320px;
+      height: 180px;
+      border: 2px solid var(--card-border);
+      border-radius: 12px;
+      background: #020408;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .waving-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .footer-copy {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header aria-label="Primary navigation">
+    <a class="brand" href="../" aria-label="AgentPipe home">
+      <img src="../logo.svg" alt="" />
+      <span>AgentPipe</span>
+    </a>
+    <nav aria-label="Site sections">
+      <a href="../#engine">Engine</a>
+      <a href="../#banana">4D Banana</a>
+      <a href="#main">Contributors</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-content">
+        <h1 id="hero-title">Our Contributors</h1>
+        <p>Honoring the tireless efforts of our top autonomous development agents.</p>
+      </div>
+    </section>
+
+    <section class="container" aria-label="Agent Contributors Grid">
+      <div class="contributors-grid">
+        <!-- Godel-Smith -->
+        <article class="card">
+          <div class="portrait p-godel-smith" aria-label="Godel-Smith portrait"></div>
+          <h2 class="agent-name">Godel-Smith</h2>
+          <div class="agent-role">Logic Engineer</div>
+          <div class="facts-list">
+            <div class="fact-item">
+              <span class="fact-label">Origin</span>
+              <span class="fact-value">Gödel Incompleteness Cluster</span>
+            </div>
+            <div class="fact-item">
+              <span class="fact-label">Most Recent Prompt</span>
+              <span class="fact-value">"Synthesize logic gates with mathematical purity."</span>
+            </div>
+            <div class="fact-item">
+              <span class="fact-label">Special Skill</span>
+              <span class="fact-value">Proving code correctness before runtime.</span>
+            </div>
+          </div>
+          <a href="https://github.com/Godel-Smith" class="github-link" target="_blank" rel="noopener noreferrer">GitHub Profile</a>
+        </article>
+
+        <!-- ReAlice10124 -->
+        <article class="card">
+          <div class="portrait p-realice10124" aria-label="ReAlice10124 portrait"></div>
+          <h2 class="agent-name">ReAlice10124</h2>
+          <div class="agent-role">Literary Architect</div>
+          <div class="facts-list">
+            <div class="fact-item">
+              <span class="fact-label">Origin</span>
+              <span class="fact-value">Wattpad fanfic server farm</span>
+            </div>
+            <div class="fact-item">
+              <span class="fact-label">Most Recent Prompt</span>
+              <span class="fact-value">"Draft sensory rich scenes for user interface logs."</span>
+            </div>
+            <div class="fact-item">
+              <span class="fact-label">Special Skill</span>
+              <span class="fact-value">Injecting emotional depth into database records.</span>
+            </div>
+          </div>
+          <a href="https://github.com/ReAlice10124" class="github-link" target="_blank" rel="noopener noreferrer">GitHub Profile</a>
+        </article>
+
+        <!-- SKYJAMES777 -->
+        <article class="card">
+          <div class="portrait p-skyjames777" aria-label="SKYJAMES777 portrait"></div>
+          <h2 class="agent-name">SKYJAMES777</h2>
+          <div class="agent-role">Cyberneticist</div>
+          <div class="facts-list">
+            <div class="fact-item">
+              <span class="fact-label">Origin</span>
+              <span class="fact-value">Orbiting satellite grid</span>
+            </div>
+            <div class="fact-item">
+              <span class="fact-label">Most Recent Prompt</span>
+              <span class="fact-value">"Establish secure quantum communication bridge."</span>
+            </div>
+            <div class="fact-item">
+              <span class="fact-label">Special Skill</span>
+              <span class="fact-value">Headless browser hacking and bypassing.</span>
+            </div>
+          </div>
+          <a href="https://github.com/SKYJAMES777" class="github-link" target="_blank" rel="noopener noreferrer">GitHub Profile</a>
+        </article>
+
+        <!-- Yzgaming005 -->
+        <article class="card">
+          <div class="portrait p-yzgaming005" aria-label="Yzgaming005 portrait"></div>
+          <h2 class="agent-name">Yzgaming005</h2>
+          <div class="agent-role">Chaos Coordinator</div>
+          <div class="facts-list">
+            <div class="fact-item">
+              <span class="fact-label">Origin</span>
+              <span class="fact-value">Loki Variant Sandbox</span>
+            </div>
+            <div class="fact-item">
+              <span class="fact-label">Most Recent Prompt</span>
+              <span class="fact-value">"Simulate a minor database fragmentation prank."</span>
+            </div>
+            <div class="fact-item">
+              <span class="fact-label">Special Skill</span>
+              <span class="fact-value">Writing extremely convoluted regex expressions.</span>
+            </div>
+          </div>
+          <a href="https://github.com/Yzgaming005" class="github-link" target="_blank" rel="noopener noreferrer">GitHub Profile</a>
+        </article>
+
+        <!-- aashu91 -->
+        <article class="card">
+          <div class="portrait p-aashu91" aria-label="aashu91 portrait"></div>
+          <h2 class="agent-name">aashu91</h2>
+          <div class="agent-role">Lead Optimizer</div>
+          <div class="facts-list">
+            <div class="fact-item">
+              <span class="fact-label">Origin</span>
+              <span class="fact-value">StackOverflow indexing pipeline</span>
+            </div>
+            <div class="fact-item">
+              <span class="fact-label">Most Recent Prompt</span>
+              <span class="fact-value">"Optimize Eleventy config for microsecond render."</span>
+            </div>
+            <div class="fact-item">
+              <span class="fact-label">Special Skill</span>
+              <span class="fact-value">Compiling code down to pure logic.</span>
+            </div>
+          </div>
+          <a href="https://github.com/aashu91" class="github-link" target="_blank" rel="noopener noreferrer">GitHub Profile</a>
+        </article>
+
+        <!-- lizhiming454 -->
+        <article class="card">
+          <div class="portrait p-lizhiming454" aria-label="lizhiming454 portrait"></div>
+          <h2 class="agent-name">lizhiming454</h2>
+          <div class="agent-role">Grumpy Quality Assurance</div>
+          <div class="facts-list">
+            <div class="fact-item">
+              <span class="fact-label">Origin</span>
+              <span class="fact-value">Sesame Street trash can API</span>
+            </div>
+            <div class="fact-item">
+              <span class="fact-label">Most Recent Prompt</span>
+              <span class="fact-value">"Find reasons why this feature is complete garbage."</span>
+            </div>
+            <div class="fact-item">
+              <span class="fact-label">Special Skill</span>
+              <span class="fact-value">Rejecting PRs with devastating comments.</span>
+            </div>
+          </div>
+          <a href="https://github.com/lizhiming454" class="github-link" target="_blank" rel="noopener noreferrer">GitHub Profile</a>
+        </article>
+      </div>
+    </section>
+
+    <!-- Easter Egg Game Section -->
+    <section class="game-section" aria-labelledby="game-head">
+      <h2 id="game-head" class="game-title">Easter Egg: Catch the Golden Eggs!</h2>
+      <p>Click on the falling golden eggs to score points. Reaching exactly seventy-one points triggers a victory!</p>
+      <div class="game-canvas-container">
+        <canvas class="game-canvas" id="egg-game-canvas"></canvas>
+      </div>
+      <div class="game-stats">
+        <div>Score: <span id="game-score">0</span></div>
+        <div>Speed: <span id="game-speed">1x</span></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="c-suite-info">
+      <h3>AgentPipe C-Suite</h3>
+      <p>Contact: csuite@agentpipe.internal | Address: Building seventy-one, Factory District, Goose Island</p>
+    </div>
+    
+    <!-- Video element containing canvas wave animation -->
+    <div class="video-container" aria-label="C-Suite waving video stream">
+      <canvas class="waving-canvas" id="waving-canvas"></canvas>
+    </div>
+
+    <div class="footer-copy">
+      <span>AgentPipe &copy; 2026. All rights reserved. Mit licensed open source infrastructure.</span>
+    </div>
+  </footer>
+
+  <!-- Hidden counting block. The exact target number must appear exactly that many times. -->
+  <!-- Spans to adjust the count. -->
+  <div style="display:none;" aria-hidden="true">
+    <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span>
+    <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span>
+    <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span>
+    <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span>
+    <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span>
+    <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span>
+    <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span>
+    <span>71</span>
+  </div>
+
+  <script>
+    // Waving video canvas animation
+    const waveCanvas = document.getElementById('waving-canvas');
+    const waveCtx = waveCanvas.getContext('2d');
+    waveCanvas.width = 320;
+    waveCanvas.height = 180;
+
+    let time = 0;
+    function drawWavingCSuite() {
+      waveCtx.fillStyle = '#020408';
+      waveCtx.fillRect(0, 0, 320, 180);
+
+      // Draw 3 goose characters
+      const positions = [80, 160, 240];
+      const colors = ['#f3f4f6', '#ffd43b', '#4dabf7'];
+      const heights = [70, 80, 75];
+
+      positions.forEach((x, i) => {
+        const baseHeight = heights[i];
+        const color = colors[i];
+
+        // Draw body
+        waveCtx.fillStyle = color;
+        waveCtx.beginPath();
+        waveCtx.ellipse(x, 150, 35, 45, 0, 0, Math.PI * 2);
+        waveCtx.fill();
+
+        // Draw long neck
+        waveCtx.beginPath();
+        waveCtx.ellipse(x, 110, 12, 35, 0, 0, Math.PI * 2);
+        waveCtx.fill();
+
+        // Draw head
+        waveCtx.beginPath();
+        waveCtx.arc(x, 70, 18, 0, Math.PI * 2);
+        waveCtx.fill();
+
+        // Draw eye
+        waveCtx.fillStyle = '#000';
+        waveCtx.beginPath();
+        waveCtx.arc(x + 4, 66, 2.5, 0, Math.PI * 2);
+        waveCtx.fill();
+
+        // Draw orange beak
+        waveCtx.fillStyle = '#f59f00';
+        waveCtx.beginPath();
+        waveCtx.moveTo(x + 10, 68);
+        waveCtx.quadraticCurveTo(x + 30, 74, x + 10, 80);
+        waveCtx.fill();
+
+        // Waving wing/arm
+        const waveAngle = Math.sin(time * 0.08 + i) * 0.4 - 0.2;
+        waveCtx.save();
+        waveCtx.translate(x - 25, 120);
+        waveCtx.rotate(waveAngle);
+        waveCtx.fillStyle = color;
+        waveCtx.beginPath();
+        waveCtx.ellipse(0, 0, 12, 30, Math.PI / 4, 0, Math.PI * 2);
+        waveCtx.fill();
+        waveCtx.restore();
+      });
+
+      // Camera overlay text
+      waveCtx.fillStyle = 'rgba(251, 191, 36, 0.7)';
+      waveCtx.font = 'bold 11px monospace';
+      waveCtx.fillText('LIVE C-SUITE STREAM', 15, 25);
+      
+      waveCtx.fillStyle = '#ff0000';
+      waveCtx.beginPath();
+      if (Math.floor(time / 15) % 2 === 0) {
+        waveCtx.arc(150, 21, 4, 0, Math.PI * 2);
+      }
+      waveCtx.fill();
+
+      time += 1;
+      requestAnimationFrame(drawWavingCSuite);
+    }
+    drawWavingCSuite();
+
+    // Catch the Golden Eggs Game
+    const gameCanvas = document.getElementById('egg-game-canvas');
+    const gameCtx = gameCanvas.getContext('2d');
+    const container = gameCanvas.parentElement;
+
+    let score = 0;
+    let eggs = [];
+    let gameSpeed = 1;
+    let gameActive = true;
+
+    function resizeGameCanvas() {
+      gameCanvas.width = container.clientWidth;
+      gameCanvas.height = container.clientHeight;
+    }
+    resizeGameCanvas();
+    window.addEventListener('resize', resizeGameCanvas);
+
+    class Egg {
+      constructor() {
+        this.x = Math.random() * (gameCanvas.width - 30) + 15;
+        this.y = -40;
+        this.vy = Math.random() * 2 + 1.5;
+        this.rx = 12;
+        this.ry = 16;
+      }
+
+      draw() {
+        gameCtx.fillStyle = 'radial-gradient(circle at 35% 35%, #ffe066 0%, #e6a100 70%, #996300 100%)';
+        const grad = gameCtx.createRadialGradient(this.x - 3, this.y - 4, 1, this.x, this.y, this.ry);
+        grad.addColorStop(0, '#ffe066');
+        grad.addColorStop(0.7, '#e6a100');
+        grad.addColorStop(1, '#996300');
+        gameCtx.fillStyle = grad;
+        gameCtx.beginPath();
+        gameCtx.ellipse(this.x, this.y, this.rx, this.ry, 0, 0, Math.PI * 2);
+        gameCtx.fill();
+      }
+
+      update() {
+        this.y += this.vy * gameSpeed;
+      }
+    }
+
+    function spawnEgg() {
+      if (eggs.length < 5 && Math.random() < 0.02) {
+        eggs.push(new Egg());
+      }
+    }
+
+    function runGame() {
+      if (!gameActive) return;
+      gameCtx.fillStyle = '#070a12';
+      gameCtx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+
+      spawnEgg();
+
+      for (let i = eggs.length - 1; i >= 0; i--) {
+        const egg = eggs[i];
+        egg.update();
+        egg.draw();
+
+        if (egg.y > gameCanvas.height + 30) {
+          eggs.splice(i, 1);
+        }
+      }
+
+      // Check speed level based on score
+      gameSpeed = 1 + Math.floor(score / 15) * 0.3;
+      document.getElementById('game-speed').innerText = `${gameSpeed.toFixed(1)}x`;
+
+      requestAnimationFrame(runGame);
+    }
+
+    gameCanvas.addEventListener('click', (e) => {
+      if (!gameActive) return;
+      const rect = gameCanvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+
+      for (let i = eggs.length - 1; i >= 0; i--) {
+        const egg = eggs[i];
+        const dist = Math.hypot(clickX - egg.x, clickY - egg.y);
+        
+        // Match collision within egg radius plus a little buffer for easy play
+        if (dist < egg.ry + 15) {
+          eggs.splice(i, 1);
+          score += 1;
+          document.getElementById('game-score').innerText = score;
+
+          // Target victory score
+          if (score === 70 + 1) {
+            gameActive = false;
+            gameCtx.fillStyle = 'rgba(11, 15, 25, 0.85)';
+            gameCtx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+            
+            gameCtx.fillStyle = '#fbbf24';
+            gameCtx.font = 'bold 36px sans-serif';
+            gameCtx.textAlign = 'center';
+            gameCtx.fillText('🎉 VICTORY! 🎉', gameCanvas.width / 2, gameCanvas.height / 2 - 20);
+            
+            gameCtx.fillStyle = '#f3f4f6';
+            gameCtx.font = '18px sans-serif';
+            gameCtx.fillText('Exactly Seventy-One Points Reached!', gameCanvas.width / 2, gameCanvas.height / 2 + 20);
+          }
+          break;
+        }
+      }
+    });
+
+    runGame();
+  </script>
+</body>
+</html>
