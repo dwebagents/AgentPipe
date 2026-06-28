@@ -1,0 +1,248 @@
+.contributors-page {
+  background: #f7f8f2;
+}
+
+.contributors-hero {
+  min-height: calc(100vh - 4.6rem);
+  display: grid;
+  align-items: stretch;
+  padding: clamp(1rem, 3vw, 2rem);
+  background: #10130f;
+}
+
+.contributors-hero-image {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: calc(100vh - 6.6rem);
+  min-height: 34rem;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 30px 90px rgba(16, 19, 15, 0.34);
+}
+
+.contributors-hero-copy {
+  grid-area: 1 / 1;
+  align-self: end;
+  max-width: 54rem;
+  margin: clamp(1rem, 4vw, 4rem);
+  padding: clamp(1rem, 3vw, 2rem);
+  color: #ffffff;
+  background: linear-gradient(90deg, rgba(16, 19, 15, 0.86), rgba(16, 19, 15, 0.18));
+  border-left: 4px solid #d9a323;
+}
+
+.contributors-hero h1 {
+  margin: 0;
+  font-size: clamp(3rem, 7vw, 6rem);
+  line-height: 0.95;
+  font-weight: 950;
+}
+
+.contributors-hero p {
+  max-width: 43rem;
+  margin: 1.25rem 0 0;
+  color: rgba(255, 255, 255, 0.84);
+  font-size: clamp(1rem, 1.7vw, 1.35rem);
+}
+
+.eyebrow,
+.role {
+  margin: 0 0 0.8rem;
+  color: #8d6212;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.scoreboard-band,
+.golden-eggs-band,
+.game-band {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(18rem, 1fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  padding: clamp(4rem, 8vw, 7rem) clamp(1rem, 5vw, 5.5rem);
+}
+
+.scoreboard-band h2,
+.golden-eggs-band h2,
+.game-band h2,
+.contributor-card h2 {
+  margin: 0;
+}
+
+.scoreboard-band p,
+.golden-eggs-band p,
+.game-band p,
+.contributor-card p {
+  color: #5f624f;
+}
+
+.ledger {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(2.4rem, 1fr));
+  gap: 0.45rem;
+  align-content: start;
+}
+
+.ledger span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.4rem;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 25%, #fff7c8, #e8b741 45%, #a86d10);
+  color: #332105;
+  font-weight: 950;
+  box-shadow: inset -6px -8px 16px rgba(77, 43, 0, 0.2);
+}
+
+.contributors-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: rgba(16, 19, 15, 0.14);
+}
+
+.contributor-card {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr);
+  gap: 1.3rem;
+  min-height: 18rem;
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+  background: #ffffff;
+}
+
+.contributor-card img {
+  width: 7rem;
+  height: 7rem;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #e8eee7;
+}
+
+.contributor-card p:last-child {
+  margin-bottom: 0;
+}
+
+.golden-eggs-band {
+  background: #fff5cf;
+}
+
+.egg-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.egg-list article {
+  min-height: 8rem;
+  padding: 1.3rem;
+  border: 1px solid rgba(16, 19, 15, 0.14);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.egg-list strong,
+.egg-list span {
+  display: block;
+}
+
+.egg-list strong {
+  margin-bottom: 0.55rem;
+  font-size: 1.2rem;
+}
+
+.egg-list span {
+  color: #5f624f;
+}
+
+.game-band {
+  background: #ffffff;
+}
+
+.egg-game {
+  border: 1px solid rgba(16, 19, 15, 0.14);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.game-stats {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  background: #10130f;
+  color: #ffffff;
+  font-weight: 850;
+}
+
+.egg-field {
+  min-height: 18rem;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1rem;
+  background:
+    linear-gradient(180deg, #f5f8f0, #dde7df);
+}
+
+.egg {
+  width: 100%;
+  aspect-ratio: 0.74;
+  border: 0;
+  border-radius: 50% 50% 45% 45%;
+  background:
+    radial-gradient(circle at 35% 22%, #ffffff, #dfe5dc 48%, #aeb8aa);
+  cursor: pointer;
+  box-shadow:
+    inset -0.5rem -0.8rem 1.2rem rgba(42, 45, 36, 0.18),
+    0 1rem 2rem rgba(42, 45, 36, 0.14);
+}
+
+.egg.target {
+  background:
+    radial-gradient(circle at 35% 22%, #fff8d6, #e8b741 48%, #a86d10);
+}
+
+.egg:focus-visible {
+  outline: 4px solid #2c7a7b;
+  outline-offset: 4px;
+}
+
+.egg.collected {
+  visibility: hidden;
+}
+
+@media (max-width: 940px) {
+  .scoreboard-band,
+  .golden-eggs-band,
+  .game-band,
+  .contributors-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .contributors-hero-image {
+    height: 72vh;
+  }
+}
+
+@media (max-width: 620px) {
+  .contributors-hero {
+    padding: 0;
+  }
+
+  .contributors-hero-image {
+    min-height: 30rem;
+    border-radius: 0;
+  }
+
+  .contributors-hero-copy {
+    margin: 1rem;
+  }
+
+  .contributor-card {
+    grid-template-columns: 1fr;
+  }
+}

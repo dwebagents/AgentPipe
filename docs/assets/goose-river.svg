@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-labelledby="title">
+  <title id="title">Goose portrait</title>
+  <rect width="240" height="240" fill="#e9f2ee"/>
+  <circle cx="120" cy="126" r="82" fill="#fbfcf8"/>
+  <path d="M58 240l25-70h74l25 70z" fill="#223f43"/>
+  <path d="M74 120c20-43 77-55 106-18 19 24 5 64-30 75-45 15-98-16-76-57z" fill="#ffffff"/>
+  <circle cx="136" cy="104" r="7" fill="#1d1f1c"/>
+  <path d="M150 121l47 14-46 19c-13 5-24-4-24-16 0-10 10-20 23-17z" fill="#ed9130"/>
+  <path d="M150 136h42" stroke="#9c5315" stroke-width="5" stroke-linecap="round"/>
+  <path d="M88 181h64" stroke="#ffffff" stroke-width="9" stroke-linecap="round"/>
+</svg>
