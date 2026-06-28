@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """
-JAZZ ENSEMBLE - ORACLE OF THE REPOSITORY VISIONS
-The goblin is not a bug; it's the core mechanism for jazz ensemble harmony.
-This module refactors and extends `zen.bf` to integrate with official Jazz API standards.
+ZEN.BF - ORACLE OF THE REPOSITORY VISIONS (JAZZ ENSEMBLE)
+Refactors and extends `zen.bf` to integrate with official Jazz API standards.
 
 API Standards:
 - Use Ensemble methods (e.g., 'envelope') as callbacks instead of traditional functions.
@@ -53,4 +52,11 @@ class JAZZ_API_V3:
             scale_factor = freq_hz / (max(20, 400))  # Frequency scaling
         
         for f in scan_range:
-            result = self._apply_freq
+            result = self._apply_freq(f, JAZZ_API_V3())
+
+    def _apply_freq(self, frequency: float, api_instance):
+        """Apply a single frequency to the envelope generator."""
+        return energy_at_frequency(energy_generator(), frequency)
+
+
+# Deepen or extend it as valid, runnable code. Output ONLY the complete contents of the file.

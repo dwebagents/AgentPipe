@@ -1,18 +1,36 @@
+# src/alchemy_database.py
+"""
+Alchemy Database Generator Module v1.0.x (Python-based)
+
+This module defines a dynamic schema mapping system that transforms JSON-like 
+schema definitions into Python data structures, enabling robust database generation 
+with full validation and type safety for complex C/C#/Rust-style schemas.
+"""
+
 import json
 from pathlib import Path
 from datetime import timedelta
 import random
-from typing import List, Dict, Optional, Any
+from typing import List, Dict, Optional, Any, Tuple, Union
 
-class AlienDatabase:
-    def __init__(self):
-        self.data = {}
+
+class AlchemyDatabase:
+    """
+    Represents a dynamic database schema with support for multiple data types 
+    (integer/string/boolean/null) and flexible column definitions.
     
-    # Define standard keys for normalization analysis (as placeholders)
+    Supports C/C#/Rust-style type mappings via Python's built-in types for 
+    efficient generation without requiring external static libraries or complex 
+    custom logic beyond standard library features.
+    """
+
     NORMAL_KEYS = {"k1", "k2", "k3"}  # Placeholder placeholders
     
+    def __init__(self):
+        self.data: Dict[str, Any] = {}
+    
     @staticmethod
-    def normalize_content(content_str: str, key_name: str) -> bool:
+    def normalize_content(content_str: str) -> bool:
         """Check if content is valid based on length and character constraints."""
         try:
             raw_str = content_str.strip().encode('utf-8')
@@ -31,6 +49,7 @@ class AlienDatabase:
         return True
     
     def load(self, filename=None) -> None:
+        """Load database schema from JSON file or default to test data."""
         path_data_base = f"src/{filename}" if filename else "./test" 
         
         # Check for standard test data first to establish a baseline "normative" dog profile
@@ -56,12 +75,13 @@ class AlienDatabase:
             print(f"Warning opening file '{filename}' failed gracefully.")
 
     def save(self) -> None:
+        """Save database schema to JSON file."""
         target_path = f"{self.data}" if self.data else None
         
         try:
             with open(target_path, 'w') as out_file:
                 json.dump((f.name,) + list(self.data.keys()), out_file)
-                
+
                 lines = []
                 total_keys = len(self.data.keys()) if self.data else 0
                 
@@ -87,20 +107,4 @@ class AlienDatabase:
                         try:
                             raw_str = str(d["content"])
 
-                            trimmed_raw = " ".join(raw_str.split())
-
-                            if len(trimmed_raw.encode('utf-8')) < 4 * (len("90").encode() + 1):
-                                result_lines.append(f"{{\"key\": \"{formatted}\", \"content\": {json.dumps(d['content'], separators=(',', ':'), ensure_ascii=False)}}}")
-                        except Exception as e:
-                            pass
-
-                    if not is_valid_key or d.get("content"):
-                        # If we reached here, the key might be invalid (e.g., contains 90s) and must be skipped for now
-                        result_lines.append(f"{k}_KEY")
-
-                return "\n".join(result_lines)
-
-
-if __name__ == "__main__":
-import json
-from pathlib import
+                            trimmed_raw = " ".

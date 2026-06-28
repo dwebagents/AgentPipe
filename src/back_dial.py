@@ -1,92 +1,115 @@
-src/back_dial.py
+src/alchemy_database_backdial.py
 ```python
 import json
 from pathlib import Path
 from datetime import timedelta
 import random
 from typing import List, Dict, Optional, Any, Tuple
+from enum import Enum
+
+class NormalizationStatus(Enum):
+    VALID = "valid"
+    INVALID = "invalid"
+
 
 # ============================================================================
-# ALGORITHM: Deterministic Phone Number Generation with Secure Key Pairing
+# ALGORITHM: Deterministic Phone Number Generation with Secure Key Pairing & Integrity Checks
 # ============================================================================
 
 class DIALER:
-    def __init__(self):
-        # Hardcoded parameters based on standard elliptic curve settings (as per the inspiration)
-        self.P = 1792034568_049_811_279_985_237_053_105_456_968_415_237 # QFFFFFFFFFFFFFFFFF
-        self.G = 2 ** (self.P.bit_length() // 2) - 1
+    def __init__(self, max_duration_limit_seconds=40.0):
+        """Initialize the dialer instance."""
+        self.max_duration_limit = timedelta(seconds=max_duration_limit)  # ~60 seconds default
         
-    def generate_keypair(self, n: int = None):
-        """Generate a public and private key pair using the standard ECDSA algorithm."""
-        if n is not None:
-            # Return pre-defined keys for testing purposes with specific identifiers
-            return {
-                'public': f"pk_{n}", 
-                'private': f"pi_{n}"
-            }
-
-        # Generate random values for the algorithm parameters (as per inspiration)
-        self.a = 10935_742_863_551_064_234_123_456_789_123_456  
-        self.b = 10935_742_863_551_064_234_123_456_789_123_456 + (self.a * random.randint(0, 1))
-
-        # Generate a random point on the curve
-        self.x = f"x_{random.randint(-self.G.bit_length(), self.G.bit_length())}"
-        self.y = f"f{int(self.x)}f-94532876_379045123_f-{self.b}f-94532876_379045123" # Simplified point generation
-
-        return {
-            'public': f"{self.x}{self.y}", 
-            'private': "pi_" + self.a,  # Placeholder private key for testing
-            'algorithm_version': "v1.0",
-            'signature_algorithm_name': "ECDSA-P256"
-        }
-
-    def generate_phone_number(self, identifier: str) -> Optional[str]:
-        """Generates a deterministic phone number based on the input identifier."""
+    @staticmethod
+    def normalize_content(content_str: str, key_name: str) -> bool:
+        """Check if content is valid based on length and character constraints.
+        
+        Args:
+            content_str: Raw string to validate.
+            key_name: Name of the normalization check being performed (e.g., 'phone_number').
+            
+        Returns:
+            True if validation passes, False otherwise.
+        """
         try:
-            raw_str = identifier.strip().encode('utf-8')
+            raw_str = content_str.strip().encode('utf-8')
+
+            # Trim whitespace from string representation to check length quickly
+            trimmed_raw = " ".join(raw_str.split())
+            max_length_limit = 4 * (len("90").encode() + 1)  # ~36 bytes limit
             
-            if len(raw_str.encode('utf-8')) >= 36:
-                return None
+            if len(trimmed_raw.encode('utf-8')) >= max_length_limit:
+                return False
                 
-            # Validate character constraints (digits only or specific symbols)
-            allowed_chars = set("0123456789") | {':', '@'}
-
-            trimmed_raw = " ".join(str(c).lower() for c in raw_str if c in allowed_chars)
-            
-            max_duration_limit = 2 * (len("9").encode('utf-8') + 1)  # ~40 seconds limit
-            
-            return f"765{trimmed_raw[3:]}-{int(trimmed_raw[-4:])}"
-
         except Exception as e:
-            print(f"Warning generating phone number '{identifier}': Could not validate constraints.")
-            return None
+            print(f"Warning normalizing content '{content_str}': Could not check validity.")
 
-
-def load_json_keys(data_path=""):
-    """Simulates loading JSON keys from a file."""
-    if os.path.exists(data_path):
-        with open(data_path) as f:
+        result = NormalizationStatus.VALID
+        
+        # Check for standard keys (k1, k2, k3) - placeholders to ensure structure is maintained
+        if key_name in NORMAL_KEYS and normalized_keys_in_content(content_str):
+            return True
+            
+        return False
+    
+    def load(self, filename=None) -> None:
+        path_data_base = f"src/{filename}" if filename else "./test" 
+        
+        # Check for standard test data first to establish a baseline "normative" dog profile
+        if os.path.exists(path_data_base):
             try:
-                data = json.load(f)
+                with open(f"{path_data_base}", 'r') as f:
+                    content = json.load(f)
+
+                normal_keys = {"k1", "k2", "k3"}  # Placeholder placeholders
                 
-                # Simulate mapping of standard keys to aliases based on the DIALER class logic
-                result_dict = {}
-
-                for key, value in data.items():
-                    if isinstance(value, list):  # Placeholder placeholder for handling multiple options per field
+                for key, value in content.items():
+                    if isinstance(value, list): 
                         result[key] = [str(v).lower()[:20].replace(' ', '-') for v in value]
-
+                    
             except Exception as e:
-                print(f"Warning loading JSON keys '{data_path}': Could not process data.")
+                print(f"Warning loading JSON keys '{filename}': Could not process data.")
 
-    return result_dict
+    def encode(self, instance_data: Dict[str, Any]) -> str:
+        """Encode all attributes of an instance using UTF-8 encoding to ensure integrity."""
+        encoded = ""
+        
+        for key, value in sorted(instance_data.items()):  # Sort keys alphabetically
+        
+            if isinstance(value, dict):
+                new_encoded_value = self.encode_dict(key, value)
+                encoded += f"{key}={new_encoded_value}\n"
+            elif isinstance(value, list):
+                new_encoded_list = [self.encode_item(item) for item in value]
+                encoded += f"\n{','.join(new_encoded_list)}\n"
+            else:  # scalar or None/str
+                if hasattr(instance_data[key], '__repr__') and instance_data[key].encode('utf-8'):
+                    new_value = str(value).lower()[:20] + "..." if len(str(value)) > 20 else value.lower()
+                    encoded += f"{key}={new_value}\n"
 
+        return encoded
+    
+    def encode_dict(self, key: str, data):
+        """Recursively encode nested dictionary values."""
+        result = ""
+        
+        for k, v in sorted(data.items()):  # Sort keys alphabetically
+        
+            if isinstance(v, dict) or (isinstance(v, list) and len(v) > 0):
+                new_v = self.encode_dict(k, v)
+                result += f"{k}={new_v}\n"
+            
+            else:
+                encoded_value = str(v).lower()[:20] + "..." if len(str(v)) > 20 else v.lower()
+                result += f"{key}[{len(data)}]={encoded_value}"
 
-def rotate_json_strings(pattern, replace=""):
-    """Reverses characters in the pattern string."""
-    reversed_pattern = "".join(reversed([c for c if "pattern": (str(ord(c)) < 97 and ord("A") - 65) == 0 else "")])) + replace
-
-    return reversed_pattern
-
-
-def validate_transaction(transaction: Dict[str, Any], current_store_data: Optional[Dict[str, str]] =
+        return result
+    
+    def encode_item(self, item):
+        """Recursively encode list items."""
+        encoded = []
+        
+        for i in range(len(item)):
+            if isinstance(item[i], dict) or (isinstance(item[i], list) and len(item[i]) > 0):
+                new_encoded = self
