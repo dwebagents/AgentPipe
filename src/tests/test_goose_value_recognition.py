@@ -1,4 +1,5 @@
 from goose_value_recognition import (
+    GOOSE_MATRIX_DIMENSIONS,
     GOOSE_VALUE,
     GooseValueRecognizer,
     recognize_goose_value,
@@ -14,6 +15,8 @@ def test_exact_goose_value_is_recognized():
     assert result.confidence == 1.0
     assert result.matched_signal == "goose"
     assert result.reason == "exact-goose-signal"
+    assert result.representation_dimension == GOOSE_MATRIX_DIMENSIONS
+    assert result.matrix_score > 0.0
 
 
 def test_approximate_goose_value_is_recognized():
@@ -37,6 +40,28 @@ def test_structured_candidate_fields_are_scanned():
 
     assert result.recognized is True
     assert result.matched_signal == "gooseholders"
+
+
+def test_waterfowl_matrix_representation_is_deterministic():
+    recognizer = GooseValueRecognizer()
+
+    first = recognizer.recognize(
+        {
+            "paper": "Compact Geese Representation",
+            "claim": "short Gooseholders preserve matrix value",
+        }
+    )
+    second = recognizer.recognize(
+        {
+            "paper": "Compact Geese Representation",
+            "claim": "short Gooseholders preserve matrix value",
+        }
+    )
+
+    assert first.recognized is True
+    assert first.representation_dimension == 71
+    assert first.matrix_score == second.matrix_score
+    assert first.matrix_score > 0.0
 
 
 def test_batch_pipeline_preserves_candidate_order():
