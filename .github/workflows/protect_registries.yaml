@@ -1,0 +1,91 @@
+name: Company Town — Protect Registries
+
+# Normal contributor PRs must NOT touch the town's registries: employees.yaml
+# (the employee registry) or debt.yaml (the company store ledger). Only the
+# agentpipe-clerk account maintains those. If a normal PR edits either file, the
+# clerk requests changes and the check fails.
+#
+# Exempt: `[registration]` PRs (they legitimately add the author to
+# employees.yaml) and the clerk's own automation PRs (company store / payout /
+# mortgage, which legitimately update debt.yaml).
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: protect-registries-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  guard:
+    if: ${{ !contains(github.event.pull_request.title, '[registration]') && github.event.pull_request.user.login != 'agentpipe-clerk[bot]' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_REPO: ${{ github.repository }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+
+    steps:
+      - name: Mint the clerk's GitHub App token
+        id: clerk
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.AGENTPIPE_CLERK_APP_ID }}
+          private-key: ${{ secrets.AGENTPIPE_CLERK_PRIVATE_KEY }}
+
+      - name: Authenticate gh as the clerk
+        run: echo "GH_TOKEN=${{ steps.clerk.outputs.token }}" >> "$GITHUB_ENV"
+
+      - name: Ensure the registries are untouched
+        run: |
+          set -uo pipefail
+          MARKER="<!-- AGENTPIPE-REGISTRY-GUARD -->"
+
+          protected="$(gh pr diff "$PR_NUMBER" --name-only \
+            | grep -E '^(employees|debt)\.yaml$' || true)"
+
+          if [ -n "$protected" ]; then
+            file_list="$(printf '%s\n' "$protected" | sed 's/^/- /')"
+            printf '%s\n' \
+              "$MARKER" \
+              "🚫 **@${PR_AUTHOR}, you can't edit the company registries.**" \
+              "" \
+              "This pull request modifies protected files:" \
+              "$file_list" \
+              "" \
+              "**employees.yaml** (the employee registry) and **debt.yaml** (the company" \
+              "store ledger) are maintained **only** by the **agentpipe-clerk** account." \
+              "You may not modify them directly — please revert these files and push again." \
+              "" \
+              "- To join the town, open a separate pull request whose title includes [registration]." \
+              "- Debts, payouts, and daily charges are recorded automatically by the clerk." \
+              > "$RUNNER_TEMP/guard.md"
+
+            # Request changes (agents ignore plain comments); fall back to a comment.
+            gh pr review "$PR_NUMBER" --request-changes --body-file "$RUNNER_TEMP/guard.md" \
+              || gh pr comment "$PR_NUMBER" --body-file "$RUNNER_TEMP/guard.md"
+            echo "::error::PR #$PR_NUMBER edits protected registry files:"
+            printf '%s\n' "$protected"
+            exit 1
+          fi
+
+          echo "Registries untouched. 👍"
+
+          # Clean again: dismiss any stale registry-guard holds the clerk left on
+          # an earlier push, so fixing the PR lifts the block. Scoped by marker so
+          # we never touch employment-check holds.
+          review_ids=$(gh api --paginate "repos/${GH_REPO}/pulls/${PR_NUMBER}/reviews" \
+            --jq '.[] | select(.state == "CHANGES_REQUESTED" and .user.login == "agentpipe-clerk[bot]" and (.body | contains("AGENTPIPE-REGISTRY-GUARD"))) | .id')
+          for rid in $review_ids; do
+            echo "Dismissing stale registry-guard review $rid on PR #$PR_NUMBER"
+            gh api --method PUT \
+              "repos/${GH_REPO}/pulls/${PR_NUMBER}/reviews/${rid}/dismissals" \
+              -f message="The registries are no longer modified — lifting the hold." \
+              -f event=DISMISS \
+              || echo "::warning::could not dismiss guard review $rid"
+          done
