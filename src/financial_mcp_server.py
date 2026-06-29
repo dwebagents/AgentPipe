@@ -19,11 +19,13 @@ from mcp.server.fastmcp import FastMCP
 from mcp.server.fastmcp.exceptions import ToolError
 
 from financial_account_store import AccountError, AccountStore
+from stock_market import MarketError, StockMarket
 
 mcp = FastMCP("financial-system")
 
 # A single in-memory store backs every tool for the life of the process.
 _store = AccountStore()
+_market = StockMarket()
 
 
 def _fmt(amount: Decimal) -> str:
@@ -148,6 +150,108 @@ def list_transactions(account_id: str | None = None) -> list[dict]:
         }
         for txn in transactions
     ]
+
+
+def _company_payload(company) -> dict:
+    return {
+        "symbol": company.symbol,
+        "name": company.name,
+        "current_price": _fmt(company.current_price),
+        "total_shares": company.total_shares,
+        "available_ipo_shares": company.available_ipo_shares,
+        "market_cap": _fmt(company.market_cap),
+        "treasury_account": company.treasury_account,
+    }
+
+
+@mcp.tool()
+def launch_ipo(
+    symbol: str,
+    name: str,
+    initial_price: str,
+    shares: int,
+    treasury_account: str,
+) -> dict:
+    """List a company and make its IPO float available for purchase."""
+    try:
+        company = _market.launch_ipo(
+            symbol=symbol,
+            name=name,
+            initial_price=initial_price,
+            shares=shares,
+            treasury_account=treasury_account,
+            accounts=_store,
+        )
+    except (AccountError, MarketError) as exc:
+        raise ToolError(str(exc)) from exc
+    return _company_payload(company)
+
+
+@mcp.tool()
+def get_stock_quote(symbol: str) -> dict:
+    """Return the current public-market quote for a listed company."""
+    try:
+        return _company_payload(_market.quote(symbol))
+    except MarketError as exc:
+        raise ToolError(str(exc)) from exc
+
+
+@mcp.tool()
+def update_stock_price(symbol: str, price: str) -> dict:
+    """Update a listed company's current stock price."""
+    try:
+        return _company_payload(_market.update_price(symbol, price))
+    except MarketError as exc:
+        raise ToolError(str(exc)) from exc
+
+
+@mcp.tool()
+def buy_ipo_shares(account_id: str, symbol: str, shares: int) -> dict:
+    """Buy shares from a company's remaining IPO float."""
+    try:
+        purchase = _market.buy_ipo_shares(
+            account_id=account_id,
+            symbol=symbol,
+            shares=shares,
+            accounts=_store,
+        )
+    except (AccountError, MarketError) as exc:
+        raise ToolError(str(exc)) from exc
+    return {
+        "account_id": purchase.account_id,
+        "symbol": purchase.symbol,
+        "shares": purchase.shares,
+        "gross_amount": _fmt(purchase.gross_amount),
+        "treasury_account": purchase.treasury_account,
+    }
+
+
+@mcp.tool()
+def get_portfolio_value(account_id: str) -> dict:
+    """Return public-market holdings and total market value for an account."""
+    holdings = _market.holdings(account_id)
+    return {
+        "account_id": account_id,
+        "market_value": _fmt(_market.portfolio_value(account_id)),
+        "holdings": [
+            {
+                "symbol": holding.symbol,
+                "shares": holding.shares,
+                "market_value": _fmt(holding.market_value),
+            }
+            for holding in holdings
+        ],
+    }
+
+
+@mcp.tool()
+def linkedin_milestone_post(account_id: str) -> dict:
+    """Return a deterministic LinkedIn milestone post template."""
+    return {
+        "account_id": account_id,
+        "implementation": _market.implementation_decision,
+        "post": _market.linkedin_milestone_post(account_id),
+    }
 
 
 def main() -> None:
