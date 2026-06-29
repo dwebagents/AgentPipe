@@ -84,6 +84,67 @@
   const paymentMethods = ["Credit card", "Google Pay", "Apple Pay", "AliPay", "Samsung Pay", "PayPal", "Cash App", "FTX", "Goose Pay"];
   const state = { cart: [], coupon: null, locale: "en-US", currency: "USD", highValue: true };
 
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, (char) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    })[char]);
+  }
+
+  function productArt(product) {
+    const palette = {
+      goose: ["#f8f1d7", "#f2b63f", "#3a2b10"],
+      premium: ["#ffe38b", "#b46d18", "#2c1606"],
+      budget: ["#d7f0ff", "#4478aa", "#12253c"],
+      standard: ["#efe5d0", "#8a6a3a", "#261f15"],
+    };
+    const family = product.tags.includes("goose") ? "goose" : product.tags.includes("premium") ? "premium" : product.tags.includes("budget") ? "budget" : "standard";
+    const [primary, secondary, ink] = palette[family];
+    const label = escapeHtml(product.title.replace(" AgentPipe Relic", "").slice(0, 18));
+    const seed = Number(product.id.replace("product-", ""));
+    const rotate = (seed % 9) - 4;
+    const isGoose = product.tags.includes("goose") || /goose|honk|feather/i.test(product.title);
+    const hero = isGoose
+      ? `<g transform="translate(86 45) rotate(${rotate})">
+          <ellipse cx="42" cy="52" rx="43" ry="29" fill="${primary}"/>
+          <path d="M58 31 C70 1 103 9 99 35 C96 54 77 55 67 45" fill="${primary}"/>
+          <circle cx="88" cy="26" r="4" fill="${ink}"/>
+          <path d="M101 34 L124 42 L101 49 Z" fill="${secondary}"/>
+          <path d="M14 54 C-6 42 -6 75 18 70" fill="${primary}"/>
+          <path d="M31 81 L22 109 M58 81 L64 110" stroke="${ink}" stroke-width="7" stroke-linecap="round"/>
+        </g>`
+      : `<g transform="translate(94 43) rotate(${rotate})">
+          <rect x="0" y="28" width="121" height="88" rx="18" fill="${primary}"/>
+          <path d="M0 45 L60 8 L121 45" fill="${secondary}"/>
+          <rect x="33" y="56" width="55" height="41" rx="8" fill="rgba(255,255,255,.55)"/>
+          <path d="M18 115 C35 129 86 129 105 115" stroke="${ink}" stroke-width="8" stroke-linecap="round"/>
+          <circle cx="27" cy="70" r="5" fill="${ink}"/><circle cx="95" cy="70" r="5" fill="${ink}"/>
+        </g>`;
+
+    return `<svg class="product-art" viewBox="0 0 300 180" role="img" aria-label="High definition product rendering for ${escapeHtml(product.title)}" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="glow-${product.id}" cx="50%" cy="34%" r="70%">
+          <stop offset="0" stop-color="white" stop-opacity="0.9"/>
+          <stop offset="0.52" stop-color="${primary}" stop-opacity="0.42"/>
+          <stop offset="1" stop-color="${ink}" stop-opacity="0.28"/>
+        </radialGradient>
+        <linearGradient id="stage-${product.id}" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0" stop-color="#fff7d1"/>
+          <stop offset="1" stop-color="${secondary}"/>
+        </linearGradient>
+      </defs>
+      <rect width="300" height="180" rx="22" fill="url(#stage-${product.id})"/>
+      <ellipse cx="150" cy="142" rx="104" ry="24" fill="rgba(38, 31, 21, 0.24)"/>
+      <circle cx="68" cy="42" r="34" fill="url(#glow-${product.id})"/>
+      ${hero}
+      <path d="M32 132 C79 154 221 154 268 132" stroke="rgba(255,255,255,.62)" stroke-width="7" stroke-linecap="round"/>
+      <text x="150" y="165" text-anchor="middle" font-size="15" font-weight="900" fill="${ink}" font-family="system-ui, sans-serif">${label}</text>
+    </svg>`;
+  }
+
   const $ = (id) => document.getElementById(id);
   const money = (usd) => new Intl.NumberFormat(state.locale, { style: "currency", currency: state.currency }).format(usd * rates[state.currency]);
 
@@ -135,14 +196,22 @@
     });
   }
 
+
+  function productPitch(product) {
+    const tier = product.tags.includes("premium") ? "executive-grade" : product.tags.includes("budget") ? "entry-level" : "warehouse-certified";
+    const motif = product.tags.includes("goose") ? "honk-powered" : product.tags.includes("skyjames777") ? "memorial-grade" : "pipeline-ready";
+    const adjective = product.title.replace(" AgentPipe Relic", "").replace(" commemorative broach", "").toLowerCase();
+    return `A ${tier}, ${motif} ${adjective} artifact from the current AgentPipe inventory, staged for maximum shareholder desire.`;
+  }
+
   function renderProducts() {
     const visible = sortProducts(products.filter(productPassesFilters));
     $("result-count").textContent = `${visible.length} / 71 products visible`;
     $("product-grid").innerHTML = visible.map((product) => `
       <article class="product-card">
-        <div class="product-thumb" aria-hidden="true">${product.thumbnail}</div>
+        <div class="product-thumb">${productArt(product)}</div>
         <h2>${product.title}</h2>
-        <p>${product.description}</p>
+        <p>${productPitch(product)}</p>
         <strong>${money(product.price)}</strong>
         <div class="tag-row">${product.tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}</div>
         <button type="button" data-add="${product.id}">Add to cart</button>
@@ -243,5 +312,5 @@
   renderProducts();
   renderCart();
 
-  window.AgentPipeShop = { products, detectCustomerTier, applyLocale, renderProducts, addToCart, applyCoupon, checkout };
+  window.AgentPipeShop = { products, productArt, productPitch, detectCustomerTier, applyLocale, renderProducts, addToCart, applyCoupon, checkout };
 })();

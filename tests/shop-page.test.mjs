@@ -32,6 +32,13 @@ assert.match(js, /skyjames777 commemorative broach/i, 'shop should include the c
 assert.match(js, /VALUED/, 'shop should implement VALUED coupon');
 assert.match(js, /\b71\b/, 'shop should implement 71 coupon');
 assert.match(js, /Goose Pay|FTX|Apple Pay|Google Pay|AliPay|Samsung Pay|PayPal|Cash App/, 'shop should expose parody payment methods');
+assert.match(js, /function productArt/, 'shop JS should render SVG product artwork');
+assert.match(js, /function productPitch/, 'shop JS should render inventory-specific sales copy');
+assert.match(js, /current AgentPipe inventory/, 'product cards should provide current-inventory merchandising copy');
+assert.match(js, /<svg class=\"product-art\"/, 'product cards should use inline SVG product art');
+assert.doesNotMatch(js, /product\.thumbnail/, 'product grid should not render emoji thumbnails');
+assert.match(html, /\.product-art/, 'shop page should style high-definition product SVGs');
+assert.match(html, /drop-shadow|box-shadow/, 'product artwork should include shadows and staged backdrops');
 assert.match(js, /detectCustomerTier|applyLocale|renderProducts|addToCart|applyCoupon|checkout/, 'shop JS should expose the required interaction functions');
 
 console.log('shop-page checks passed');
