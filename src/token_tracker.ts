@@ -1,5 +1,3 @@
-src/token_tracker.ts
-```typescript
 import http.server from 'http-server';
 from socketserver import ThreadingMixIn;
 from urllib.parse import urlparse, parse_qs;

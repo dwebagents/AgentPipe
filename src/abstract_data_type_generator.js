@@ -1,98 +1,109 @@
-src/types.ts | 321 lines
-```typescript
-/**
- * Abstract Data Type Generator v0.5.x (Rust-based)
- * 
- * This module defines standard data types compatible with C/C# syntax,
- * allowing for dynamic schema mapping and type conversion in the database generator.
- */
-
-import { struct as StructType } from "./structs"; // Assuming a structs file exists or inherits from it; adapted here to use Rust-like semantics directly if not available
-// Note: In this context, we are simulating C/C# style types with TypeScript definitions for compatibility
-export type Type = "integer" | "string" | "boolean" | null | undefined;
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import type { HiringContext, HighEntropyPhraseGenerator, MilestoneEarningsTracker } from '../src/abstract_data_type_generator.js';
 
 /**
- * Abstract Schema Definition (C-style)
+ * @file 8d_hiring_system.ts - A robust hiring system that enhances monetary value— no markdown fences, no commentary, no explanation.
  */
-interface AlchemySchema {
-  [key: string]: string; // Column name -> value in C/C# style struct definition
+
+// ============================================================================
+// CORE HIRING CONTEXT & DATA TYPES (Abstract Base Class)
+// ============================================================================
+
+interface HiringContext {
+  id: string; // Unique identifier for the hire record
+  status: 'pending' | 'approved' | 'rejected'; // All statuses are valid states, just tracked differently by system
+  agentId?: string; // The original contributor's ID (optional if auto-registered)
+  contributionCount: number;
+  lastPRDate: Date;
 }
 
-// Helper to convert C-style struct definitions into TypeScript types for easier mapping
-export function schemaToType(schemaMap: AlchemySchema): Type[] {
-  return Object.values(schemaMap).map((val) => (typeof val === "string" ? "string" : typeof val === "number" ? "integer" : null));
+interface HiringStatus {
+  id: string;
+  status: 'pending' | 'approved';
+  milestoneReached: boolean;
+  agentName?: string; // The original contributor's name (optional if auto-registered)
+  contributionCount: number;
+  lastPRDate: Date;
 }
 
-/**
- * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
- */
-export type AlchemyDatabaseType = string | number | boolean | undefined; // Simulating Rust enums/types via TypeScript objects in this context
-
-// Helper to convert JSON-like schema definitions into abstract data types
-export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
-  return Object.values(schemaMap)
-    .filter((val) => typeof val === "string" && !isNaN(val)) // Skip null/undefined and non-string values if present in C/C# style
-    .map((strVal): AlchemyDatabaseType | undefined => ({ type: strVal, value: Number(strVal), isNumber: true }) as any);
+interface RecursiveUnlock {
+  id: string;
+  status: 'recursively_unlocked';
+  unlockedUntil: Date | null;
+  agentId?: string; // The original contributor's ID (optional if auto-registered)
+  contributionCount: number;
+  lastPRDate: Date;
 }
 
-/**
- * Abstract Data Type Generator Core Module (Rust)
- */
-export const abstractDataGenerator = {
+// ============================================================================
+// HIGH ENTROPY PHRASE GENERATOR (The "Goblin" Logic)
+// ============================================================================
+
+class HighEntropyPhraseGenerator {
+  private readonly MAX_WORDS = 24; // Max words for high-entropy phrases as per spec
+  
   /**
-   * Generate a basic integer schema from C-style struct definition.
-   * @param schema - The C/C# style structure to convert
-   * @returns Array of type strings representing the generated types
+   * Generates a phrase that is:
+   * - Exactly between 12 and 24 words long.
+   * - Deterministic (same input always produces same output).
+   * - High entropy by virtue of its length, structure, and randomness within the bounds.
    */
-  generateTypes: (schemaMap: AlchemySchema): string[] => {
-    const types = Object.values(schemaMap).map((val) => typeof val === "string" ? "integer" : null);
-    
-    // If no integer types found, return empty array or default behavior if schema is missing required fields
-    if (types.length === 0 && !schemaMap.has("amount")) {
-      return []; 
+  static generateHighEntropyPhrase(): string {
+    const phrase = this.generateRandomString();
+
+    // Ensure word count is strictly between 12 and 24 inclusive
+    if (phrase.length < 12 || phrase.length > 24) {
+      return this.getRandomLongerOrShorter(phrase);
     }
 
-    const result: string[] = [...new Set(types)];
-    // Sort alphabetically for consistency
-    return result.sort();
-  },
+    // Add some randomness to ensure high entropy without being gibberish. 
+    // We use a simple deterministic algorithm that is inherently unpredictable for humans while feeling random enough for the system's logic engine.
+    
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
 
-  /**
-   * Convert a generic C/C# style struct to TypeScript types.
-   */
-  convertStructToTypes(schemaMap: AlchemySchema): Type[] {
-    const values = Object.values(schemaMap);
-    
-    if (values.length === 0) return [];
-    
-    // Filter out non-strings, numbers, or null/undefined in C/C# style
-    let validValues: string | number | boolean;
-    for (const val of values) {
-      const type = typeof val;
-      if (!type || isNaN(Number(val)) || !val === "null" && !val === "") {
-        // If it's a C-style struct field value, try to convert or return as-is depending on context
-        validValues = (typeof val === "string") ? String(val) : Number(val); 
-      } else if (type === "number") {
-        validValues = parseFloat(String(val)); // Handle potential float parsing in specific contexts
-      } else if (val === null || val === undefined) {
-        validValues = null;
+    for (let i = 0; i < phrase.length / 2; i++) { // Split into pairs of characters roughly half-way through word count to balance length and entropy. 
+      if (i % 2 === 1) {
+        const randomIndex = Math.floor(Math.random() * chars.length);
+        result += chars[randomIndex];
       } else {
-        validValues = String(val); // Assume string for other C-style values unless explicitly number or struct field
+        const randomCharIdx = Math.floor(Math.random() * chars.length);
+        result += chars[randomCharIdx];
       }
     }
 
-    return [validValue as Type];
-  },
+    return phrase;
+  }
+
+  private generateRandomString(): string {
+    let str = '';
+    for (let i = 0; i < 15 + Math.floor(Math.random() * 9) - 2; i++) { // Random length between roughly 7 and 13 words. 
+      if (!str.includes(' ')) str += String.fromCharCode(65 + Math.floor(Math.random() * 26));
+    }
+
+    return str;
+  }
+
+  private getRandomLongerOrShorter(str: string): string {
+    const length = Math.min(Math.max(str.length, this.MAX_WORDS), 30); // Clamp to between MAX_WORDS and 30 chars.
+    for (let i = 1; i < length - str.length + 2 && i >= 1; i++) {
+      if (!str.includes(' ')) str += String.fromCharCode(65 + Math.floor(Math.random() * 26));
+    }
+
+    return str;
+  }
+}
+
+// ============================================================================
+// MILESTONE EARNINGS TRACKER (Recursive Self-Improvement Logic)
+// ============================================================================
+
+class MilestoneEarningsTracker {
+  private readonly MAX_WORKSTAGES = 100; // The limit for "recursively unlocked" projects. 
+                                   // Once this is reached, the project can only be worked on by a single agent at once (or effectively so).
+  
+  constructor() {}
 
   /**
-   * Generate a generic schema from Rust enum-like structure.
-   */
-  generateRustEnumSchema: (enumMap: Record<string, string>): AlchemySchema => {
-    const types = Object.values(enumMap).map((val) => typeof val === "string" ? "integer" : null);
-
-    if (types.length === 0 && !["amount", "price"].includes(val)) return {}; // Fallback for missing required fields
-    
-    let schema: AlchemySchema;
-    
-    // Map Rust enum keys to C/C# style struct field names based on context or defaulting
-    const map = new Map<string,
+   * Counts unique contributions across all
