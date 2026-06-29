@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="AgentPipe Butter Mode turns task pipelines into a smooth, spreadable throughput ritual."
+    />
+    <title>AgentPipe Butter Mode</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      :root {
+        --butter: #ffe680;
+        --butter-deep: #d79f11;
+        --toast: #6b3f17;
+        --cream: #fff7d1;
+      }
+
+      body {
+        background:
+          radial-gradient(circle at 20% 12%, rgba(255, 230, 128, 0.85), transparent 22rem),
+          radial-gradient(circle at 85% 18%, rgba(215, 159, 17, 0.35), transparent 18rem),
+          var(--cream);
+      }
+
+      .butter-shell {
+        padding: clamp(2rem, 5vw, 5rem);
+      }
+
+      .butter-hero,
+      .butter-card,
+      .butter-control-panel {
+        border: 1px solid rgba(107, 63, 23, 0.18);
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.76);
+        box-shadow: 0 24px 70px rgba(107, 63, 23, 0.16);
+      }
+
+      .butter-hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(280px, 0.45fr);
+        gap: 2rem;
+        align-items: center;
+        padding: clamp(2rem, 5vw, 4rem);
+      }
+
+      .butter-hero h1 {
+        margin: 0;
+        font-size: clamp(3.5rem, 9vw, 8rem);
+        line-height: 0.86;
+      }
+
+      .butter-hero p {
+        max-width: 48rem;
+        color: #5f4a20;
+        font-size: clamp(1.05rem, 2vw, 1.4rem);
+      }
+
+      .butter-orb {
+        min-height: 18rem;
+        display: grid;
+        place-items: center;
+        border-radius: 22px;
+        background:
+          radial-gradient(circle at 42% 35%, #fff8bb 0 18%, transparent 19%),
+          radial-gradient(circle at 50% 50%, var(--butter) 0 40%, var(--butter-deep) 72%);
+        color: var(--toast);
+        font-size: clamp(5rem, 13vw, 9rem);
+        animation: wobble 4s ease-in-out infinite;
+      }
+
+      @keyframes wobble {
+        0%, 100% { transform: rotate(-3deg) scale(1); }
+        50% { transform: rotate(3deg) scale(1.035); }
+      }
+
+      .butter-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+        margin-top: 1.25rem;
+      }
+
+      .butter-card,
+      .butter-control-panel {
+        padding: 1.25rem;
+      }
+
+      .butter-card strong {
+        display: block;
+        color: var(--toast);
+        font-size: 1.4rem;
+      }
+
+      .butter-meter {
+        height: 1rem;
+        overflow: hidden;
+        border: 1px solid rgba(107, 63, 23, 0.24);
+        border-radius: 999px;
+        background: #fffdf1;
+      }
+
+      #butter-spread {
+        width: 71%;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--butter), var(--butter-deep));
+        transition: width 240ms ease;
+      }
+
+      .butter-control-panel {
+        margin-top: 1.25rem;
+      }
+
+      .butter-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: end;
+      }
+
+      label {
+        display: grid;
+        gap: 0.35rem;
+        font-weight: 850;
+      }
+
+      input,
+      select,
+      button {
+        min-height: 2.75rem;
+        border: 1px solid rgba(107, 63, 23, 0.22);
+        border-radius: 12px;
+        padding: 0.65rem 0.8rem;
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+        background: var(--butter);
+        color: var(--toast);
+        font-weight: 950;
+      }
+
+      .butter-log {
+        min-height: 6rem;
+        margin-top: 1rem;
+        padding: 1rem;
+        border-radius: 14px;
+        background: #2d1e0f;
+        color: #ffe680;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+
+      @media (max-width: 850px) {
+        .butter-hero,
+        .butter-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header" aria-label="Primary navigation">
+      <a class="brand" href="./" aria-label="AgentPipe home">
+        <img src="../logo.svg" alt="" />
+        <span>AgentPipe</span>
+      </a>
+      <nav aria-label="Site sections">
+        <a href="./">Home</a>
+        <a href="butter.html">Butter</a>
+        <a href="#controls">Controls</a>
+      </nav>
+    </header>
+
+    <main id="main" class="butter-shell">
+      <section class="butter-hero" aria-labelledby="butter-title">
+        <div>
+          <p><strong>Issue #1878: butter</strong></p>
+          <h1 id="butter-title">Butter Mode</h1>
+          <p>
+            AgentPipe now has a dedicated butter ritual: spread, churn, melt, and clarify
+            task throughput until the pipeline glides like warm toast.
+          </p>
+        </div>
+        <div class="butter-orb" aria-label="Animated butter mascot">🧈</div>
+      </section>
+
+      <section class="butter-grid" aria-label="Butter mode facts">
+        <article class="butter-card">
+          <strong>71%</strong>
+          <span>default spread coverage for compliant toast surfaces.</span>
+        </article>
+        <article class="butter-card">
+          <strong>0 crumbs</strong>
+          <span>no needless runtime dependencies; this is static and shelf-stable.</span>
+        </article>
+        <article class="butter-card">
+          <strong>4 states</strong>
+          <span>spread, churn, melt, and clarify — the complete butter lifecycle.</span>
+        </article>
+      </section>
+
+      <section class="butter-control-panel" id="controls" aria-labelledby="control-title">
+        <h2 id="control-title">Butter controls</h2>
+        <div class="butter-controls">
+          <label>Spread percentage
+            <input id="spread-input" type="range" min="0" max="100" value="71" />
+          </label>
+          <label>Butter state
+            <select id="butter-state">
+              <option value="spread">spread</option>
+              <option value="churn">churn</option>
+              <option value="melt">melt</option>
+              <option value="clarify">clarify</option>
+            </select>
+          </label>
+          <button id="butter-button" type="button">Apply butter</button>
+        </div>
+        <div class="butter-meter" aria-label="Butter spread meter">
+          <div id="butter-spread"></div>
+        </div>
+        <div id="butter-log" class="butter-log" aria-live="polite">
+          butter&gt; spread initialized at 71%
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>AgentPipe Butter Mode</span>
+      <span>Smooth task execution, salted to taste.</span>
+    </footer>
+
+    <script src="butter.js"></script>
+  </body>
+</html>
