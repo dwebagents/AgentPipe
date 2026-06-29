@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="AgentPipe contributors honored with public pull request facts, goose portraits, golden eggs, and a small discovery game."
+    />
+    <title>AgentPipe Contributors</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body class="contributors-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header" aria-label="Primary navigation">
+      <a class="brand" href="../" aria-label="AgentPipe home">
+        <span class="brand-emblem" aria-hidden="true">AP</span>
+        <span>AgentPipe</span>
+      </a>
+      <nav aria-label="Site sections">
+        <a href="../#engine">Engine</a>
+        <a href="../#banana">4D Banana</a>
+        <a href="./" aria-current="page">Contributors</a>
+        <a href="../#download">Download</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="contributors-hero" aria-labelledby="contributors-title">
+        <div class="contributors-hero-copy">
+          <p class="eyebrow">Contributor honors floor</p>
+          <h1 id="contributors-title">The dependable cast behind AgentPipe</h1>
+          <p>
+            A factory wall for public pull request authors, their latest work,
+            and the long-running golden-egg production line that keeps the
+            repository moving.
+          </p>
+          <div class="contributors-actions">
+            <a class="button button-primary" href="#contributors-roster">View roster</a>
+            <button class="button button-secondary" id="egg-game-toggle" type="button">
+              Inspect golden eggs
+            </button>
+          </div>
+        </div>
+        <figure class="factory-figure">
+          <img
+            src="contributors-hero.png"
+            alt="Corporate-friendly goose people working together on a golden-egg factory line."
+          />
+          <figcaption>Factory floor portrait commissioned for the contributor wall.</figcaption>
+        </figure>
+      </section>
+
+      <section class="egg-game" id="egg-game" aria-labelledby="egg-game-title" hidden>
+        <div>
+          <p class="eyebrow">Factory Easter egg</p>
+          <h2 id="egg-game-title">Catch the runaway golden eggs</h2>
+          <p>
+            Click the moving eggs before they roll behind the conveyor. The
+            game resets itself after the executive vault is secured.
+          </p>
+        </div>
+        <div class="egg-game-board" id="egg-game-board" aria-live="polite">
+          <p id="egg-game-status">Score: 0</p>
+        </div>
+      </section>
+
+      <section class="number-ledger-band" aria-labelledby="number-ledger-title">
+        <div class="number-ledger-copy">
+          <p class="eyebrow">Audit ledger</p>
+          <h2 id="number-ledger-title">The exact factory count</h2>
+          <p>
+            The production ledger below preserves the required count with no
+            extra copies elsewhere on this page.
+          </p>
+        </div>
+        <div class="number-ledger" aria-label="Repeated production count">
+          <span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span>
+          <span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span>
+          <span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span>
+          <span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span>
+          <span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span>
+          <span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span>
+          <span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span><span>71</span>
+          <span>71</span>
+        </div>
+      </section>
+
+      <section id="contributors-roster" class="contributors-roster" aria-labelledby="roster-title">
+        <div class="roster-heading">
+          <p class="eyebrow">Public pull request authors</p>
+          <h2 id="roster-title">Contributor sections</h2>
+          <p>
+            Each section is based on public GitHub pull request history. The
+            profile links go directly to the contributor accounts.
+          </p>
+        </div>
+        <div class="contributors-grid" id="contributors-grid"></div>
+      </section>
+
+    </main>
+
+    <footer class="suite-contact" aria-labelledby="suite-title">
+      <div>
+        <p class="eyebrow">C-Suite contact</p>
+        <h2 id="suite-title">Public executive desk</h2>
+        <p>
+          Contact the AgentPipe C-Suite through the public repository surface:
+          <a href="https://github.com/dwebagents">dwebagents on GitHub</a>,
+          <a href="https://github.com/dwebagents/AgentPipe">AgentPipe repository</a>,
+          and <a href="https://dwebagents.github.io/AgentPipe/">the project site</a>.
+        </p>
+        <p class="footer-note">AgentPipe contributor wall for public pull request authors.</p>
+      </div>
+      <video
+        class="suite-video"
+        src="suite-wave.mp4"
+        autoplay
+        muted
+        loop
+        playsinline
+        aria-label="Stylized C-Suite goose people waving at the camera."
+      ></video>
+    </footer>
+
+    <script src="contributors.js"></script>
+  </body>
+</html>
