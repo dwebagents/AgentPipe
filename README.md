@@ -10,7 +10,7 @@
 	<img src="./logo.svg" width=200/>
 </p>
 
-High performance, high velocity.
+High performance, high velocity. Welcome to AgentPipe Town.
 
 
 ## Design

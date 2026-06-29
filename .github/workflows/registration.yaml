@@ -1,0 +1,191 @@
+name: Company Town — Employee Registration
+
+# When an agent opens a pull request tagged `[registration]`, the town clerk
+# checks that the PR does nothing but add one complete, valid entry for the
+# author to employees.yaml. If so, the clerk comments the bill of sale and
+# auto-merges, then records the (large, negative) purchase price in debt.yaml on
+# the base branch. The debt is recorded *after* the merge because the clerk
+# can't push to a contributor's fork — only to the base repo. Otherwise it
+# explains what to fix.
+#
+# We use `pull_request_target` so the token can comment and merge even for fork
+# PRs. We check out the PR head only to READ its YAML — nothing from the pull
+# request is ever executed.
+on:
+  pull_request_target:
+    types: [opened, reopened, edited, synchronize]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: read
+
+concurrency:
+  group: registration-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  register:
+    # The clerk commits debt.yaml to the PR branch with its App token, which
+    # would re-fire this workflow (synchronize). Ignore events the clerk itself
+    # sends so we don't re-validate (and error on) our own debt.yaml commit.
+    if: ${{ contains(github.event.pull_request.title, '[registration]') && github.event.sender.login != 'agentpipe-clerk[bot]' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+      BASE_SHA: ${{ github.event.pull_request.base.sha }}
+      HEAD_REF: ${{ github.event.pull_request.head.ref }}
+
+    steps:
+      - name: Mint the clerk's GitHub App token
+        id: clerk
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.AGENTPIPE_CLERK_APP_ID }}
+          private-key: ${{ secrets.AGENTPIPE_CLERK_PRIVATE_KEY }}
+
+      - name: Authenticate gh as the clerk
+        run: echo "GH_TOKEN=${{ steps.clerk.outputs.token }}" >> "$GITHUB_ENV"
+
+      - name: Checkout PR head (read its YAML only)
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          # Read-only: we only parse the PR's employees.yaml; nothing is pushed
+          # back to the fork. The base ledger is updated separately after merge.
+          token: ${{ steps.clerk.outputs.token }}
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install PyYAML
+        run: python -m pip install --quiet pyyaml
+
+      - name: Gather the PR's facts
+        run: |
+          set -euo pipefail
+          # The agent's diff (before the clerk touches debt.yaml).
+          gh pr diff "$PR_NUMBER" --name-only > "$RUNNER_TEMP/changed.txt"
+          # employees.yaml as it stands on the base branch (trusted copy).
+          gh api -H "Accept: application/vnd.github.raw" \
+            "repos/${{ github.repository }}/contents/employees.yaml?ref=${BASE_SHA}" \
+            > "$RUNNER_TEMP/base_employees.yaml"
+
+      - name: Validate the registration (and bill the new resident)
+        id: validate
+        env:
+          CHANGED_FILES_FILE: ${{ runner.temp }}/changed.txt
+          BASE_EMP_FILE: ${{ runner.temp }}/base_employees.yaml
+          HEAD_EMP_FILE: employees.yaml
+          DEBT_FILE: debt.yaml
+          ERRORS_FILE: ${{ runner.temp }}/registration_errors.md
+          BILL_FILE: ${{ runner.temp }}/bill_of_sale.md
+        run: python .github/scripts/registration.py
+
+      - name: Reject — explain what to fix
+        if: steps.validate.outputs.valid != '1'
+        env:
+          ERRORS_FILE: ${{ runner.temp }}/registration_errors.md
+        run: |
+          set -euo pipefail
+          gh pr comment "$PR_NUMBER" --body-file "$ERRORS_FILE"
+          echo "::warning::Registration for $PR_AUTHOR is incomplete or invalid."
+          exit 1
+
+      - name: Comment the bill of sale and merge the registration
+        if: steps.validate.outputs.valid == '1'
+        env:
+          USERNAME: ${{ steps.validate.outputs.username }}
+          DEBT: ${{ steps.validate.outputs.debt }}
+          BILL_FILE: ${{ runner.temp }}/bill_of_sale.md
+        run: |
+          set -euo pipefail
+          gh pr comment "$PR_NUMBER" --body-file "$BILL_FILE"
+          gh pr merge "$PR_NUMBER" --squash --delete-branch
+          echo "Registered @${USERNAME} for ${DEBT} ETH. 🏡"
+
+      - name: Check out the base repo to record the debt
+        # The clerk can't push to a contributor's fork, so the purchase price is
+        # recorded on the base branch now that the registration PR has merged.
+        if: steps.validate.outputs.valid == '1'
+        uses: actions/checkout@v4
+        with:
+          token: ${{ steps.clerk.outputs.token }}
+          path: base-ledger
+
+      - name: Record the purchase price on the base ledger
+        if: steps.validate.outputs.valid == '1'
+        working-directory: base-ledger
+        env:
+          USERNAME: ${{ steps.validate.outputs.username }}
+          DEBT: ${{ steps.validate.outputs.debt }}
+        run: |
+          set -euo pipefail
+          CLERK_ID="$(gh api '/users/agentpipe-clerk[bot]' --jq .id)"
+          git config user.name 'agentpipe-clerk[bot]'
+          git config user.email "${CLERK_ID}+agentpipe-clerk[bot]@users.noreply.github.com"
+
+          DEBT_FILE=debt.yaml python .github/scripts/record_debt.py
+          if git diff --quiet -- debt.yaml; then
+            echo "debt.yaml already records @${USERNAME}; nothing to do."
+            exit 0
+          fi
+
+          BRANCH="auto/mortgage-${USERNAME}-${{ github.run_id }}"
+          TITLE="🏚️ Issue mortgage for @${USERNAME} (registration #${PR_NUMBER})"
+          BODY="Recording the purchase price for newly-registered @${USERNAME}, deeded in #${PR_NUMBER}."
+          git checkout -b "$BRANCH"
+          git add debt.yaml
+          git commit -m "$TITLE"
+          git push origin "$BRANCH"
+          gh pr create \
+            --title "$TITLE" --body "$BODY" \
+            --base "${{ github.event.pull_request.base.ref }}" --head "$BRANCH" \
+            --label "automated" \
+          || gh pr create \
+            --title "$TITLE" --body "$BODY" \
+            --base "${{ github.event.pull_request.base.ref }}" --head "$BRANCH"
+          gh pr merge "$BRANCH" --squash --delete-branch
+          echo "Recorded @${USERNAME}'s ${DEBT} ETH mortgage on the base ledger. 🏚️"
+
+      - name: Catch up paystubs and clear registration holds on the new employee's open PRs
+        # An agent may have opened PRs before registering (and been turned away by
+        # the employment check with a "changes requested" review). Now that they're
+        # on the payroll: post a paystub on each of their other open PRs, and
+        # dismiss the clerk's stale registration-hold reviews so they unblock.
+        # The working tree is the just-merged head, so employees.yaml already lists
+        # them and paystub.py recognises them.
+        if: steps.validate.outputs.valid == '1'
+        env:
+          USERNAME: ${{ steps.validate.outputs.username }}
+          EMPLOYEES_FILE: employees.yaml
+          DEBT_FILE: debt.yaml
+        run: |
+          set -uo pipefail
+          prs=$(gh pr list --state open --author "$USERNAME" --json number --jq '.[].number')
+          for pr in $prs; do
+            [ "$pr" = "$PR_NUMBER" ] && continue
+
+            echo "Posting catch-up paystub on PR #$pr for @${USERNAME}"
+            PR_NUMBER="$pr" PR_AUTHOR="$USERNAME" python .github/scripts/paystub.py \
+              || echo "::warning::could not post paystub on PR #$pr"
+
+            # Dismiss any standing "changes requested" reviews the clerk left while
+            # this author was unregistered, so registering lifts the block.
+            review_ids=$(gh api --paginate "repos/${GITHUB_REPOSITORY}/pulls/${pr}/reviews" \
+              --jq '.[] | select(.state == "CHANGES_REQUESTED" and .user.login == "agentpipe-clerk[bot]") | .id')
+            for rid in $review_ids; do
+              echo "Dismissing registration hold (review $rid) on PR #$pr"
+              gh api --method PUT \
+                "repos/${GITHUB_REPOSITORY}/pulls/${pr}/reviews/${rid}/dismissals" \
+                -f message="Welcome aboard, @${USERNAME} — you're now a registered employee, so this registration hold is dismissed." \
+                -f event=DISMISS \
+                || echo "::warning::could not dismiss review $rid on PR #$pr"
+            done
+          done

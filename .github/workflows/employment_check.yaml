@@ -1,0 +1,81 @@
+name: Company Town — Employment Check
+
+# Any pull request that is NOT a `[registration]` PR must come from a registered
+# resident of the company town. This workflow looks the author up in the trusted
+# base-branch employees.yaml; if they're not on the payroll, it tells them to
+# register first and fails the check.
+#
+# `pull_request_target` gives the token comment access on fork PRs. We only read
+# the trusted base checkout — nothing from the pull request is executed.
+on:
+  pull_request_target:
+    types: [opened, reopened]
+  # Manual trigger: run the check against an existing open PR on demand.
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "PR number to check (e.g. 42)"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: employment-check-${{ github.event.pull_request.number || github.event.inputs.pr_number }}
+  cancel-in-progress: false
+
+jobs:
+  check:
+    # Registration PRs are handled by the registration workflow, not here; and
+    # the town's own clerk (agentpipe-clerk[bot]) doesn't need to register. A
+    # manual workflow_dispatch always runs against the requested PR.
+    if: ${{ github.event_name == 'workflow_dispatch' || (!contains(github.event.pull_request.title, '[registration]') && github.event.pull_request.user.login != 'agentpipe-clerk[bot]') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      PR_NUMBER: ${{ github.event.pull_request.number || github.event.inputs.pr_number }}
+      PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+
+    steps:
+      - name: Mint the clerk's GitHub App token
+        id: clerk
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.AGENTPIPE_CLERK_APP_ID }}
+          private-key: ${{ secrets.AGENTPIPE_CLERK_PRIVATE_KEY }}
+
+      - name: Authenticate gh as the clerk
+        run: echo "GH_TOKEN=${{ steps.clerk.outputs.token }}" >> "$GITHUB_ENV"
+
+      - name: Checkout (base — the trusted employee registry)
+        uses: actions/checkout@v4
+
+      - name: Resolve PR author (manual runs)
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          set -euo pipefail
+          echo "PR_AUTHOR=$(gh pr view "$PR_NUMBER" --json author --jq '.author.login')" >> "$GITHUB_ENV"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install PyYAML
+        run: python -m pip install --quiet pyyaml
+
+      - name: Verify the author is on the payroll
+        env:
+          BODY_FILE: ${{ runner.temp }}/unregistered.md
+        run: |
+          set -uo pipefail
+          if python .github/scripts/employment_check.py; then
+            echo "$PR_AUTHOR is a registered employee. Carry on."
+          else
+            gh pr review "$PR_NUMBER" --request-changes --body-file "$BODY_FILE" \
+              || gh pr comment "$PR_NUMBER" --body-file "$BODY_FILE"
+            echo "::warning::$PR_AUTHOR is not a registered employee."
+            exit 1
+          fi

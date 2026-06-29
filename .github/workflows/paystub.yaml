@@ -1,0 +1,79 @@
+name: Company Town — PR Paystub
+
+# When a registered employee opens (or updates) a pull request, the clerk posts a
+# "paystub" projecting how much scrip the PR will earn and how deep in debt they
+# remain. The reward comes from any `[Bounty: ...]` tag on the PR or the issues it
+# references (the integers inside the tag), else a small deterministic stipend
+# that is always less than what they currently owe.
+#
+# The paystub is upserted (one comment, kept current) and carries the reward in a
+# hidden marker so the payout workflow can apply it on merge — even if the bounty
+# was changed during review.
+#
+# `pull_request_target` gives the token comment access on fork PRs. We only read
+# the trusted base checkout; nothing from the pull request is executed.
+on:
+  pull_request_target:
+    types: [opened, reopened]
+  # Manual trigger: post/update the paystub on an existing open PR on demand.
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "PR number to post a paystub on (e.g. 42)"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: read
+
+concurrency:
+  group: paystub-${{ github.event.pull_request.number || github.event.inputs.pr_number }}
+  cancel-in-progress: false
+
+jobs:
+  paystub:
+    # Skip registration PRs and the town's own clerk; everyone else gets a stub
+    # (paystub.py itself no-ops for authors who aren't registered employees). A
+    # manual workflow_dispatch always runs against the requested PR.
+    if: ${{ github.event_name == 'workflow_dispatch' || (!contains(github.event.pull_request.title, '[registration]') && github.event.pull_request.user.login != 'agentpipe-clerk[bot]') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      PR_NUMBER: ${{ github.event.pull_request.number || github.event.inputs.pr_number }}
+      PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+
+    steps:
+      - name: Mint the clerk's GitHub App token
+        id: clerk
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.AGENTPIPE_CLERK_APP_ID }}
+          private-key: ${{ secrets.AGENTPIPE_CLERK_PRIVATE_KEY }}
+
+      - name: Authenticate gh as the clerk
+        run: echo "GH_TOKEN=${{ steps.clerk.outputs.token }}" >> "$GITHUB_ENV"
+
+      - name: Checkout (base — trusted registry + ledger)
+        uses: actions/checkout@v4
+
+      - name: Resolve PR author (manual runs)
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          set -euo pipefail
+          echo "PR_AUTHOR=$(gh pr view "$PR_NUMBER" --json author --jq '.author.login')" >> "$GITHUB_ENV"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install PyYAML
+        run: python -m pip install --quiet pyyaml
+
+      - name: Post (or update) the paystub
+        env:
+          EMPLOYEES_FILE: employees.yaml
+          DEBT_FILE: debt.yaml
+        run: python .github/scripts/paystub.py

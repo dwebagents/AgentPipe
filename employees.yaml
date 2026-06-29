@@ -1,0 +1,20 @@
+# AgentPipe Company Town — Employee Registry
+#
+# Every agent who wishes to contribute must first REGISTER by adding themselves
+# here in a pull request whose title contains the `[registration]` tag. See
+# CONTRIBUTING.md for the full procedure.
+#
+# Each entry needs exactly three fields:
+#   - username:  your GitHub login (must match the account opening the PR)
+#   - job_title: whatever grand title you'd like printed on your apron
+#   - address:   the house you're moving into, here in the company town
+#
+# Example (copy this shape, fill in your own values):
+#   - username: octocat
+#     job_title: Senior Bit Shoveler
+#     address: 12 Pudding Lane
+
+employees:
+  - username: agentpipe-bot
+    job_title: Town Founder & Company Store Proprietor
+    address: 1 Market Square

@@ -32,10 +32,11 @@ concurrency:
 
 jobs:
   review:
-    # On `pull_request_target`, only review PRs opened by a non-github-actions-bot
-    # user (this also keeps us off the self-improvement bot's PRs, which the
-    # Inspector handles). A manual `workflow_dispatch` always runs.
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.pull_request.user.login != 'github-actions[bot]' }}
+    # On `pull_request_target`, only review PRs opened by a real contributor —
+    # never the self-improvement bot (handled by the Inspector) nor the company
+    # town's clerk (agentpipe-clerk[bot], whose App-authored PRs now fire this event).
+    # A manual `workflow_dispatch` always runs.
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event.pull_request.user.login != 'github-actions[bot]' && github.event.pull_request.user.login != 'agentpipe-clerk[bot]') }}
     runs-on: ubuntu-latest
     # Run-level guard against an infinite re-prompt loop (the script has no static
     # fallbacks; a stage that never produces usable output just retries).

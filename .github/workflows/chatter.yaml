@@ -24,9 +24,10 @@ concurrency:
 jobs:
   chatter:
     # Don't reply to our own comments — that would be an endless monologue.
-    # (GitHub also declines to re-trigger on GITHUB_TOKEN-authored events, so
-    # this is belt-and-suspenders against the chatterbox talking to itself.)
-    if: ${{ github.event.comment.user.login != 'github-actions[bot]' && !contains(github.event.comment.body, '/review') }}
+    # github-actions[bot] events don't re-trigger workflows, but the company
+    # town's clerk (agentpipe-clerk[bot]) comments via a GitHub App token, which
+    # DOES re-trigger — so skip the clerk to avoid chattering at its paystubs.
+    if: ${{ github.event.comment.user.login != 'github-actions[bot]' && github.event.comment.user.login != 'agentpipe-clerk[bot]' && !contains(github.event.comment.body, '/review') }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:

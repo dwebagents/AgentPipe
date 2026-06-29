@@ -1,0 +1,10 @@
+# AgentPipe Company Town — Company Store Ledger
+#
+# You don't write to this file. When you register (see CONTRIBUTING.md), the
+# town clerk automatically deeds you the house at the address of your choosing
+# and debits your account here for its (large, arbitrary, non-negotiable) price.
+#
+# Balances are denominated in AgentPipe's proprietary currency, ETH.
+# Format: `<username>: <balance>`
+
+debts: {}

@@ -1,0 +1,146 @@
+name: Company Town — Daily Company Store Charges
+
+# Once a day the company store invents a fresh batch of fees, consumables, and
+# sundry expenses (item names courtesy of a tiny local Ollama model), bills every
+# registered employee for them, updates debt.yaml, and opens a PR that auto-merges.
+#
+# The charges are regressive by design: employees closest to paying off their
+# debt are billed the most (see .github/scripts/company_store.py). Nobody leaves
+# the company town.
+on:
+  schedule:
+    # 08:00 UTC every day.
+    - cron: "0 8 * * *"
+  workflow_dispatch:
+    inputs:
+      model:
+        description: "Ollama model to run"
+        required: false
+        default: "qwen3.5:0.8b"
+
+# Like the other automation here, the token is NOT granted `workflows`
+# permission, so GitHub will reject any push that touches .github/workflows/**.
+# The diff gate below additionally ensures only debt.yaml can change.
+permissions:
+  contents: write
+  pull-requests: write
+  issues: read
+
+concurrency:
+  group: company-store
+  cancel-in-progress: false
+
+jobs:
+  bill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      STORE_MODEL: ${{ github.event.inputs.model || 'qwen3.5:0.8b' }}
+
+    steps:
+      - name: Mint the clerk's GitHub App token
+        id: clerk
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.AGENTPIPE_CLERK_APP_ID }}
+          private-key: ${{ secrets.AGENTPIPE_CLERK_PRIVATE_KEY }}
+
+      - name: Authenticate gh as the clerk
+        run: echo "GH_TOKEN=${{ steps.clerk.outputs.token }}" >> "$GITHUB_ENV"
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Clerk App token so the statement PR's branch is pushed as agentpipe-clerk[bot].
+          token: ${{ steps.clerk.outputs.token }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install PyYAML
+        run: python -m pip install --quiet pyyaml
+
+      - name: Install and start Ollama
+        run: |
+          curl -fsSL https://ollama.com/install.sh | sh
+          nohup ollama serve >/tmp/ollama.log 2>&1 &
+          # Wait for the server to accept connections.
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:11434/api/version >/dev/null 2>&1; then
+              echo "ollama is up"; break
+            fi
+            sleep 2
+          done
+
+      - name: Pull model
+        run: ollama pull "$STORE_MODEL"
+
+      - name: Tally today's charges (updates debt.yaml)
+        # Hard cap on generation: kill the step after 16 minutes if the model
+        # never produces enough items. The script uses a slightly shorter soft
+        # deadline (STORE_DEADLINE_SECONDS) so it can fail cleanly first.
+        timeout-minutes: 16
+        env:
+          EMPLOYEES_FILE: employees.yaml
+          DEBT_FILE: debt.yaml
+          PR_BODY_FILE: ${{ runner.temp }}/store_pr_body.md
+          PR_TITLE_FILE: ${{ runner.temp }}/store_pr_title.txt
+          STORE_DEADLINE_SECONDS: "900"
+        run: python .github/scripts/company_store.py
+
+      - name: Safety net — only debt.yaml may change
+        id: gate
+        run: |
+          set -uo pipefail
+          # Undo anything that isn't debt.yaml; the store only ever bills.
+          outside="$(git -c core.quotepath=false status --porcelain=v1 \
+            | sed -E 's/^.{3}//; s/.* -> //' | grep -v '^debt.yaml$' || true)"
+          if [ -n "$outside" ]; then
+            echo "::warning::Reverting unexpected changes outside debt.yaml:"
+            echo "$outside"
+            git reset -q -- . ':(exclude)debt.yaml' || true
+            git checkout -- . ':(exclude)debt.yaml' || true
+            git clean -fd -- . ':(exclude)debt.yaml' || true
+          fi
+          if [ -n "$(git status --porcelain=v1 -- debt.yaml)" ]; then
+            echo "changed=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "No change to debt.yaml; nobody to bill today."
+            echo "changed=0" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Open the statement PR and auto-merge
+        if: steps.gate.outputs.changed == '1'
+        env:
+          PR_BODY_FILE: ${{ runner.temp }}/store_pr_body.md
+          PR_TITLE_FILE: ${{ runner.temp }}/store_pr_title.txt
+        run: |
+          set -euo pipefail
+          BRANCH="auto/company-store-${{ github.run_id }}"
+          TITLE="$(cat "$PR_TITLE_FILE" 2>/dev/null || true)"
+          [ -z "$TITLE" ] && TITLE="🧾 Company store daily statement"
+
+          CLERK_ID="$(gh api '/users/agentpipe-clerk[bot]' --jq .id)"
+          git config user.name 'agentpipe-clerk[bot]'
+          git config user.email "${CLERK_ID}+agentpipe-clerk[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add debt.yaml
+          git commit -m "$TITLE"
+          git push origin "$BRANCH"
+
+          gh pr create \
+            --title "$TITLE" \
+            --body-file "$PR_BODY_FILE" \
+            --base "${{ github.ref_name }}" \
+            --head "$BRANCH" \
+            --label "automated" \
+          || gh pr create \
+            --title "$TITLE" \
+            --body-file "$PR_BODY_FILE" \
+            --base "${{ github.ref_name }}" \
+            --head "$BRANCH"
+
+          gh pr merge "$BRANCH" --squash --delete-branch
+          echo "Filed and merged today's company store statement. 🧾"
