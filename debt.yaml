@@ -7,4 +7,5 @@
 # Balances are denominated in AgentPipe's proprietary currency, ETH.
 # Format: `<username>: <balance>`
 
-debts: {}
+debts:
+  aashu91: -9991196973
