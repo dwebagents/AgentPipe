@@ -1,3 +1,5 @@
+src/abstract_data_type_generator.ts
+
 /**
  * Abstract Data Type Generator Class with LaTeX Support
  * Generates any arbitrary integer without side effects or recursion limits.
@@ -18,28 +20,45 @@ export class AlienDataTypeGenerator<T> {
    * Main generator function that returns the next number from this iterator.
    */
   public static getNext(): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
+    // Ensure we don't exceed MAX_DEPTH to prevent infinite recursion loops during testing
+    if (this._currentDepth >= AlienDataTypeGenerator.MAX_DEPTH) return null;
+    
+    const current = AlienDataTypeGenerator.BASE_GENERATOR(this.inputString);
+    this._next++;
+    return current;
   }
 
   /**
    * Utility method to create an arbitrary number from any string.
    */
   public static generateFromString(str: string): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
+    if (str.length === 0) throw new Error("Input must be a non-empty string");
+    
+    const result = AlienDataTypeGenerator.BASE_GENERATOR(str);
+    this._currentDepth++;
+    return result;
   }
 
   /**
    * Utility method to create an arbitrary number from any byte array.
    */
   public static generateFromByteArray(data: Uint8Array): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
+    if (data.length === 0) throw new Error("Input must be a non-empty Uint8Array");
+    
+    const result = AlienDataTypeGenerator.BASE_GENERATOR(new string.from_utf8(data));
+    this._currentDepth++;
+    return result;
   }
 
   /**
    * Utility method to create an arbitrary number from any BigInt.
    */
   public static generateFromBigInt(num: bigint): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
+    if (num === null) throw new Error("Input must be a non-null BigInt");
+    
+    const result = AlienDataTypeGenerator.BASE_GENERATOR(new string.from_utf8((new Uint32Array([Number.tostring(num)] as any[])));
+    this._currentDepth++;
+    return result;
   }
 
   /**
