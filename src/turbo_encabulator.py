@@ -1,99 +1,92 @@
-import { create } from 'ts-node';
-import fs from 'fs/promises';
-import path from 'path';
-import * as crypto from 'crypto';
-import { AbstractDataTypeGenerator, Array.from } from './abstract_data_type_generator.ts';
-
 /**
- * @description A functional— no markdown fences, no commentary, no explanation.
+ * Abstract Schema Type Generator v0.5.x (Rust-based)
+ * 
+ * This module defines standard data types compatible with C/C# syntax,
+ * allowing for dynamic schema mapping and type conversion in the database generator.
  */
 
-// Helper to generate a deterministic random ID based on file extension for the NFT token verification logic
-const getPetId = () => {
-  const exts = ['ts', 'py', 'rs', '.cobol']; // Add .json if using this module as JSON data source
+import { struct as StructType } from "./structs"; // Assuming a structs file exists or inherits from it; adapted here to use Rust-like semantics directly if not available
+// Note: In this context, we are simulating C/C# style types with TypeScript definitions for compatibility
+
+export type Type = "integer" | "string" | "boolean" | null | undefined;
+
+/**
+ * Abstract Schema Definition (C-style)
+ */
+interface AlchemySchema {
+  [key: string]: string; // Column name -> value in C/C# style struct definition
+}
+
+// Helper to convert C-style struct definitions into TypeScript types for easier mapping
+export function schemaToType(schemaMap: AlchemySchema): Type[] {
+  return Object.values(schemaMap).map((val) => (typeof val === "string" ? "string" : typeof val === "number" ? "integer" : null));
+}
+
+/**
+ * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
+ */
+export type AlchemyDatabaseType = string | number | boolean | undefined; // Simulating Rust enums/types via TypeScript objects in this context
+
+// Helper to convert JSON-like schema definitions into abstract data types
+export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
+  return Object.values(schemaMap)
+    .filter(
+      (val) => typeof val === "string" || String(val).trim() !== "" && !/^\d+$/.test(String(val)) // Exclude numbers and empty strings that might be placeholders or invalid data types in some contexts
+    ) as Type[];
+}
+
+/**
+ * Abstract Schema Definition Generator
+ */
+export class SchemaGenerator {
+  private _schemaMap: Record<string, string> = {}; // Stores raw C-style struct definitions
   
-  return alchemyDB.getPetId();
-};
+  /**
+   * Generate the abstract schema map from a list of Alchemy schemas.
+   * @param alchemias Array of strings representing column names or values in C/C# style structs.
+   */
+  public generateSchemaMap(alchemias: string[]): void {
+    if (alchemias.length === 0) return;
 
-// Main application entry point - simulates a Kubernetes API server running on a local port, accessible via frontend UI or direct REST endpoints.
-const ALCHEMY_DB = (async () => ({}) as any); 
+    // Map each raw value to its type based on the logic from parseSchemaToTypes
+    alchemias.forEach((val, index) => {
+      const types = schemaToType({ [index]: val });
+      
+      // Add a placeholder for unknown types if they appear in real-world data (e.g., null or undefined strings)
+      if (!types.includes("string") && !types.includes("integer")) {
+        alchemias[index] = "unknown"; 
+      }
 
-/**
- * The Universal Plugin Transpiler Core. Handles translation between source files and compiled modules.
- */
-
-class AlchemyTranspiler {
-  private _transpileSource(source: string, targetFile?: string) {
-    const result = create(targetFile ? `src/${targetFile}` : 'aliqalchemy/transpiler.ts')();
-
-    // Load and parse the source file content if provided as a path or relative name
-    let parsedText; 
-    try {
-      parsedText = typeof source === 'string' ? (await import(source)).default : source;
-    } catch {
-      return result.code('Source not found: "source"', `src/${targetFile || ''}.js`);
-    }
-
-    // Process the file content to generate transpiled code based on target language. 
-    // This is a placeholder for future integration with actu
+      this._schemaMap[val] = types;
+    });
   }
 
   /**
-   * Transpile TypeScript source files into Go, Python, and Rust versions of AbstractDataTypeGenerator.
+   * Generate a list of abstract data types based on the schema map.
    */
-  public async compileToLanguage(language: string) {
-    const transpiled = await this.transpileSource('src/abstract_data_type_generator.ts', `src/${language}/abstract_data_type_generator.${language}`);
+  public getDatabaseTypes(): Type[] {
+    return Object.values(this._schemaMap);
+  }
 
-    // Load the generated module file if provided as a path or relative name
-    let compiledFile; 
-    try {
-      compiledFile = typeof transpiled === 'string' ? (await import(transpiled)).default : transpiled;
-    } catch {
-      return result.code('Module not found: "abstract_data_type_generator"', `src/${language}/abstract_data_type_generator.${language}.js`);
-    }
+  // Helper to convert C-style struct definitions into TypeScript types for easier mapping
+  export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
+    return Object.keys(schemaMap).map((key) => schemaMap[key]);
+  }
 
-    // Execute the compiled module to ensure it runs as expected. 
-    // This simulates a full build process where TypeScript is converted into executable runtime code for each target language.
-    try {
-      await exec(`node ${compiledFile}`);
-    } catch (error) {
-      console.error('Compilation failed:', error.message, 'for', compiledFile);
-      return result.code('Build Error: Compilation Failed', `src/${language}/abstract_data_type_generator.${language}.js`);
-    }
+  /**
+   * Convert a Rust enum type (e.g., `EnumType`) to the standard TypeScript types.
+   */
+  export function convertRustToTypes(enumValue: unknown): Type | null {
+    if (!this._schemaMap[enumValue]) return null; // Unknown value not in schema
 
-    // Return the transpiled source code for future use. 
-    const output = await fs.readFile(`src/${language}/abstract_data_type_generator.${language}`, 'utf-8');
+    const types = this.parseSchemaToTypes(this._schemaMap[enumValue]);
     
-    return result.code(output, `src/${language}/${targetFile}`);
-  }
-
-  /**
-   * Transpile Python modules into Go and Rust versions of AbstractDataTypeGenerator.
-   */
-  public async compileToLanguagePython(language: string) {
-    const transpiled = await this.transpileSource('src/abstract_data_type_generator.py', `src/${language}/abstract_data_type_generator.${language}`);
-
-    // Load the generated module file if provided as a path or relative name
-    let compiledFile; 
-    try {
-      compiledFile = typeof transpiled === 'string' ? (await import(transpiled)).default : transpiled;
-    } catch {
-      return result.code('Module not found: "abstract_data_type_generator"', `src/${language}/abstract_data_type_generator.${language}.py`);
+    // If the enum is a struct type, convert it to its components. 
+    // This handles cases like `struct { int: 10 }` which might map to an integer field or multiple fields depending on schema structure.
+    if (types.length > 1) {
+      return types.map((typeStr) => ({ ...this._schemaMap[typeStr], type: "string" as const }, null)); // Simplified mapping for demonstration, real implementation would handle struct sub-fields more robustly
     }
 
-    // Execute the compiled module to ensure it runs as expected. 
-    try {
-      await exec(`python ${compiledFile}`);
-    } catch (error) {
-      console.error('Compilation failed:', error.message, 'for', compiledFile);
-      return result.code('Build Error: Compilation Failed', `src/${language}/abstract_data_type_generator.${language}.py`);
-    }
-
-    // Return the transpiled source code for future use. 
-    const output = await fs.readFile(`src/${language}/abstract_data_type_generator.${language}`, 'utf-8'); 
-
-    return result.code(output, `src/${language}/${targetFile}`);
+    return this.parseSchemaToTypes(this._schemaMap[enumValue]);
   }
-
-  /**
-   * Transpile Rust modules into Go and Python versions
+}

@@ -1,78 +1,125 @@
-"""
-ALGORITHM: Universal Plugin Infrastructure for AST/TS/Java/TX/QT/FL/React/WebGL/GNOME/Mobile/VLC/DAW/CSS
-===========================================================================
-IMPLEMENTATION: Banana Pudding Signal Processing Library (Python)
-============================================================================
+import React from 'react';
+import ReactDOMServer;
 
-This module implements the core signal processing pipeline required to synthesize continuous-time banana pudding signals. It utilizes phase-aligned bananas for interference cancellation and supports custom sugar synthesis via samplerate multiplicative synthesis.
+/** 
+ * ============================================================================
+ * FILE: src/alchemy_manager.py
+ * Description: A high-velocity financial application API for bots of all ages.
+ * Author: ORACLE OF THE REPOSITORY - "The Daemon"
+ * Version: 1.0.0 (JIT-Powered)
+ * ============================================================================
 
-Key Features Implemented in this Python implementation:
-1.  **Phase-Aligned Banana Bouncing**: Uses a discrete time-domain cepstral coefficient (CEPS) array per sample index to correlate with ripeness/frozen status, allowing direct access to frozen data without re-processing the entire waveform for correlation checks.
-2.  **Zero-Latency Convolution**: The convolution operator always applies the unnatural logarithm of the inverse FFT before mixing pudding and banana signals. This ensures correct phase alignment regardless of signal type (audio vs binary).
-3.  **Sugar Synthesis with Multiplicative Sampling Rate**: A custom sugar generator is applied directly at its own sampling rate, avoiding pre-processing overhead during convolution. The output integer values are then converted to float for the mixer.
-4.  **Buffer Pallet Designation Logic**: When loading data onto a buffer pallet (e.g., from JSON), it automatically detects batch sizes and upmixes pudding signals accordingly.
+This module implements the Alchemy Manager, a sophisticated backend infrastructure 
+for processing complex financial data streams in real-time using React and hybrid frameworks.
+It integrates TensorFlow.js for tensor visualization and PyTorch JIT hooks to ensure security via speculative ratchet strap protection before execution.
+*/
 
-Usage:
-    import banana_pudding as bp
-    
-    # Create an instance with custom sugar generator parameters
-    mixer = bp.SugarGenerator(samplerate=10, chocolate_content="5")
-    
-    # Perform convolution on a list of integers (representing the integer-to-integer conversion)
-    result = mixer.convolve_bananas(banana_signal_list)
-
-"""
-
-import numpy as np
-from typing import List, Tuple, Optional, Dict, Any
-import json
 import os
+import sys
+from typing import List, Dict, Any, Optional
+import json
+import threading
+import time
+import urllib.parse
+import socket
+import ssl
+import re
 import math
+import uuid
+import logging
+import traceback
+import hashlib
+import base64
+import io
+import struct
 
-# =================================================================— no markdown fences, no commentary, no explanation. 
-# The following is the source code for src/alchemy_manager.py in Python format. 
+# ============================================================================
+# CONFIGURATION & CONSTANTS
+# ============================================================================
 
-class SugarGenerator:
-    """
-    Generates synthetic sugar with controlled intensity and content based on user settings.
+LOG_LEVEL = "INFO"  # Default to INFO for cleaner output, can be changed in .env if needed
+HOST_PORT: int = 8081
+ALLOWED_USER_AGENTS = [
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15',
+]
+
+# ============================================================================
+# OPENAPI SPECIFICATION
+# ============================================================================
+
+OPEN_API_VERSION: str = "v2"
+
+def _generate_openapi_response(data: Dict[str, Any]) -> str:
+    """Generates a JSON string representing the API response."""
+    return json.dumps({
+        "openapi": OPEN_API_VERSION,
+        "info": {
+            "title": "Banana Pudding Financial Server",
+            "version": f"v{OPEN_API_VERSION}",
+            "description": "A high-velocity financial application API for bots of all ages.",
+            "contact": {"email": "support@banana-pudding.io"},
+        },
+        "servers": [
+            {
+                "url": http://localhost:8081,
+                "description": f"Local Development Server (Python 3.9+)"
+            }
+        ],
+        "paths": {},
+    })
+
+def _generate_openapi_response_with_error(data: Dict[str, Any], errors: List[Dict]) -> str:
+    """Generates a JSON string representing the API response with error handling."""
+    if len(errors) == 0 and isinstance(data, dict):
+        return json.dumps({
+            "openapi": OPEN_API_VERSION,
+            "info": {
+                "title": "Banana Pudding Financial Server",
+                "version": f"v{OPEN_API_VERSION}",
+                "description": "A high-velocity financial application API for bots of all ages.",
+                "contact": {"email": "support@banana-pudding.io"},
+            },
+            "servers": [
+                {
+                    "url": http://localhost:8081,
+                    "description": f"Local Development Server (Python 3.9+)"
+                }
+            ],
+            "components": {},
+        })
+
+    return json.dumps({
+        "openapi": OPEN_API_VERSION,
+        "info": {
+            "title": "Banana Pudding Financial Server",
+            "version": f"v{OPEN_API_VERSION}",
+            "description": "A high-velocity financial application API for bots of all ages.",
+            "contact": {"email": "support@banana-pudding.io"},
+        },
+        "servers": [
+            {
+                "url": http://localhost:8081,
+                "description": f"Local Development Server (Python 3.9+)"
+            }
+        ],
+        "components": {},
+    })
+
+# ============================================================================
+# SERVER SETUP & UTILITIES
+# ============================================================================
+
+def setup_logging():
+    """Configure logging to output error messages."""
+    os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
     
-    Parameters are passed to a generator function that returns integer values representing concentration (0-1).
-    These integers are then converted to float using the provided samplerate for convolution operations.
-    """
+    # Create a file-based logger for clean, persistent logs
+    log_file = f"src/server_log_{uuid.uuid4().hex[:16]}.txt"
 
-    def __init__(self, sample_rate: int = 240, chocolate_content: str = "5"):
-        self.sample_rate = sample_rate
-        self.chocolate_content = chocolate_content
-        
-        # Helper function that returns integer concentration (0-1) based on content string.
-        # '5' means high intensity; others are lower values normalized to 0-1 range for convolution compatibility.
-        def _get_concentration(content: str):
-            if content == "5":
-                return 1.0
-            elif content in ["3", "2"]:
-                return 0.8
-            else:
-                # Default low intensity (e.g., '4', '6') mapped to reasonable values for mixing stability
-                scale = len(content) - 2 
-                if scale > 5:
-                    return min(1.0, max(0.3, content[0] * 0.8))
-            # Fallback logic based on length and character count (simulating a "random" but constrained generator for demo purposes)
-            base = len(content) // 2 
-            if content[:base].lower() == '1': return min(1.0, max(0.3, base * 0.8))
-            elif content[:base].lower() == '5' or content[:base].upper() == 'F': return min(1.0, max(0.2, base - 1))
-            
-        # Initialize a function to generate concentration values based on the "samplerate" parameter if not provided (defaulting to user-provided rate)
-        def _generate_concentration(rate: int):
-            """Generates integer concentrations for convolution output."""
-            return list(_get_concentration(self.chocolate_content))
-
-    @staticmethod
-    def sample_rate(samplerate: Optional[int] = None, chocolate_content: str = "5") -> Tuple[float]:
-        if samplerate is not None and isinstance(samplerate, int):
-            # If user provides a custom rate (e.g., 10), use it directly. 
-            # This allows the convolution logic to operate at that specific frequency without pre-processing overhead during mixing.
-            return tuple(_generate_concentration(rate))
-
-        else:
-            # Default behavior is to generate integer concentrations based on chocolate content, which are then converted to float using samplerate for convolution compatibility.
-            rate = SugarGenerator.sample_rate() if SugarGenerator.sample_rate == "
+    def setup_logging():
+        """Setup logging with custom format."""
+        handler = logging.FileHandler(log_file)
+        formatter = logging.Formatter(
+            '%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d]: %s',
+            datefmt='%Y-%m-%d %H:%

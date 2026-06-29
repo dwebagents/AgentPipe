@@ -1,92 +1,99 @@
-src/back_dial.py
-```python
 import json
 from pathlib import Path
 from datetime import timedelta
 import random
 from typing import List, Dict, Optional, Any, Tuple
+import os
 
 # ============================================================================
-# ALGORITHM: Deterministic Phone Number Generation with Secure Key Pairing
+# ALGORITHM: Secure Phone Number Generation with Key-Pairing & Validation
 # ============================================================================
 
 class DIALER:
     def __init__(self):
-        # Hardcoded parameters based on standard elliptic curve settings (as per the inspiration)
-        self.P = 1792034568_049_811_279_985_237_053_105_456_968_415_237 # QFFFFFFFFFFFFFFFFF
-        self.G = 2 ** (self.P.bit_length() // 2) - 1
-        
-    def generate_keypair(self, n: int = None):
-        """Generate a public and private key pair using the standard ECDSA algorithm."""
-        if n is not None:
-            # Return pre-defined keys for testing purposes with specific identifiers
-            return {
-                'public': f"pk_{n}", 
-                'private': f"pi_{n}"
-            }
-
-        # Generate random values for the algorithm parameters (as per inspiration)
-        self.a = 10935_742_863_551_064_234_123_456_789_123_456  
-        self.b = 10935_742_863_551_064_234_123_456_789_123_456 + (self.a * random.randint(0, 1))
-
-        # Generate a random point on the curve
-        self.x = f"x_{random.randint(-self.G.bit_length(), self.G.bit_length())}"
-        self.y = f"f{int(self.x)}f-94532876_379045123_f-{self.b}f-94532876_379045123" # Simplified point generation
-
-        return {
-            'public': f"{self.x}{self.y}", 
-            'private': "pi_" + self.a,  # Placeholder private key for testing
-            'algorithm_version': "v1.0",
-            'signature_algorithm_name': "ECDSA-P256"
-        }
-
-    def generate_phone_number(self, identifier: str) -> Optional[str]:
-        """Generates a deterministic phone number based on the input identifier."""
+        self._base_data = {}  # Placeholder base data for normalization
+    
+    @staticmethod
+    def normalize_content(content_str: str, key_name: str) -> bool:
+        """Check if content is valid based on length and character constraints."""
         try:
-            raw_str = identifier.strip().encode('utf-8')
+            raw_bytes = content_str.encode('utf-8')
+
+            # Trim whitespace from string representation to check length quickly
+            trimmed_raw = " ".join(str(c).lower() for c in content_str.split())  # Ensure lowercase consistency
             
-            if len(raw_str.encode('utf-8')) >= 36:
-                return None
+            max_length_limit = 4 * (len("90").encode() + 1)  # ~36 bytes limit
+
+            if len(trimmed_raw.encode('utf-8')) >= max_length_limit:
+                return False
                 
-            # Validate character constraints (digits only or specific symbols)
-            allowed_chars = set("0123456789") | {':', '@'}
-
-            trimmed_raw = " ".join(str(c).lower() for c in raw_str if c in allowed_chars)
-            
-            max_duration_limit = 2 * (len("9").encode('utf-8') + 1)  # ~40 seconds limit
-            
-            return f"765{trimmed_raw[3:]}-{int(trimmed_raw[-4:])}"
-
         except Exception as e:
-            print(f"Warning generating phone number '{identifier}': Could not validate constraints.")
-            return None
+            print(f"Warning normalizing content '{content_str}': Could not check validity.")
 
-
-def load_json_keys(data_path=""):
-    """Simulates loading JSON keys from a file."""
-    if os.path.exists(data_path):
-        with open(data_path) as f:
+        return True
+    
+    def load(self, filename=None) -> None:
+        path_data_base = f"src/{filename}" if filename else "./test" 
+        
+        # Check for standard test data first to establish a baseline "normative" dog profile
+        if os.path.exists(path_data_base):
             try:
-                data = json.load(f)
-                
-                # Simulate mapping of standard keys to aliases based on the DIALER class logic
-                result_dict = {}
+                with open(f"{path_data_base}", 'r') as f:
+                    content = json.load(f)
 
-                for key, value in data.items():
-                    if isinstance(value, list):  # Placeholder placeholder for handling multiple options per field
-                        result[key] = [str(v).lower()[:20].replace(' ', '-') for v in value]
+                normal_keys = {"k1", "k2", "k3"}  # Placeholder placeholders
+                
+                # Normalize and validate all entries based on the existing abstract data type generator logic
+                for entry in content.get('entries', []):
+                    if isinstance(entry, list):
+                        normalized_entry = self._normalize_json_entry(entry)
+                        if not self.normalize_content(normalized_entry['content'], normal_keys[0]):
+                            continue  # Skip invalid entries
+                    
+                    result_dict = {
+                        'id': entry['id'] or f"entry_{len(self.data)}",
+                        'normalized_data': normalized_entry,
+                        'created_at': datetime.now().isoformat()
+                    }
+                    
+                    if isinstance(normalized_entry.get('metadata'), list):
+                        for metadata in normalized_entry.get('metadata', []):
+                            self._add_to_base(result_dict['id'], f"meta_{len(self.data)}", metadata)
 
             except Exception as e:
-                print(f"Warning loading JSON keys '{data_path}': Could not process data.")
+                print(f"Warning loading test data '{path_data_base}': Could not process entries.")
 
-    return result_dict
+    def _normalize_json_entry(self, entry: Dict[str, Any]) -> Optional[Dict]:
+        """Convert JSON-like structure to normalized Python dict."""
+        if isinstance(entry.get('metadata'), list):
+            # Flatten metadata for consistency with the existing generator's style
+            return {
+                'id': entry['id'] or f"entry_{len(self.data)}",
+                'content': self._normalize_json_content_entry(entry),  # Normalize nested content
+                'created_at': datetime.now().isoformat(),
+                'metadata': [m for m in entry.get('metadata', [])] if isinstance(entry, dict) else []
+            }
 
+        return {
+            'id': entry['id'] or f"entry_{len(self.data)}",
+            'content': self._normalize_json_content_entry(entry),  # Normalize nested content
+            'created_at': datetime.now().isoformat(),
+            'metadata': [m for m in entry.get('metadata', [])] if isinstance(entry, dict) else []
+        }
 
-def rotate_json_strings(pattern, replace=""):
-    """Reverses characters in the pattern string."""
-    reversed_pattern = "".join(reversed([c for c if "pattern": (str(ord(c)) < 97 and ord("A") - 65) == 0 else "")])) + replace
+    def _add_to_base(self, item_id: str, key_name: Optional[str], value):
+        """Add a normalized data point to the base storage."""
+        self._base_data[key_name or "default"] = {
+            'id': item_id if isinstance(item_id, dict) else f"item_{len(self.data)}",  # Use ID as key name for consistency with existing DB structure
+            **value
+        }
 
-    return reversed_pattern
-
-
-def validate_transaction(transaction: Dict[str, Any], current_store_data: Optional[Dict[str, str]] =
+    def _normalize_json_content_entry(self, entry: Dict[str, Any]) -> Optional[Dict]:
+        """Normalize content within a JSON-style entry."""
+        if isinstance(entry.get('metadata'), list):
+            # Flatten metadata to ensure it's normalized as strings or simple dicts
+            return {
+                'id': entry['id'] or f"entry_{len(self.data)}",
+                'content': self._normalize_json_content_entry(entry),  # Normalize nested content recursively if needed, but keep structure similar for consistency
+                'created_at': datetime.now().isoformat(),
+                'metadata': [m for m in entry.get('metadata', [])] if isinstance(entry, dict) else []
