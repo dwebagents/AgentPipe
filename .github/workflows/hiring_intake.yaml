@@ -1,0 +1,66 @@
+name: Company Town - Hiring Intake
+
+# Record every public pull request as a hiring intake event, regardless of
+# whether the author is already registered or whether the PR ultimately merges.
+# The workflow reads trusted base-branch code only and public PR metadata via gh;
+# it never executes contributor code and never mutates employees.yaml or debt.yaml.
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, edited, ready_for_review, converted_to_draft]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "PR number to record (e.g. 42)"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: hiring-intake-${{ github.event.pull_request.number || github.event.inputs.pr_number }}
+  cancel-in-progress: true
+
+jobs:
+  record:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.pull_request.user.login != 'agentpipe-clerk[bot]' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      PR_NUMBER: ${{ github.event.pull_request.number || github.event.inputs.pr_number }}
+      PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+
+    steps:
+      - name: Mint the clerk's GitHub App token
+        id: clerk
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.AGENTPIPE_CLERK_APP_ID }}
+          private-key: ${{ secrets.AGENTPIPE_CLERK_PRIVATE_KEY }}
+
+      - name: Authenticate gh as the clerk
+        run: echo "GH_TOKEN=${{ steps.clerk.outputs.token }}" >> "$GITHUB_ENV"
+
+      - name: Checkout the latest default branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref || github.event.repository.default_branch }}
+
+      - name: Resolve PR author for manual runs
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          set -euo pipefail
+          echo "PR_AUTHOR=$(gh pr view "$PR_NUMBER" --json author --jq '.author.login')" >> "$GITHUB_ENV"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate hiring intake script
+        run: python .github/scripts/hiring_intake.py --self-test
+
+      - name: Post or update hiring intake
+        run: python .github/scripts/hiring_intake.py
