@@ -29,6 +29,27 @@ def test_approximate_goose_value_is_recognized():
     assert result.reason == "approximate-goose-signal"
 
 
+def test_nearby_bird_value_candidates_are_recognized():
+    results = recognize_goose_values(
+        [
+            "ducks with golden egg factory capacities",
+            "pigeons sold as value-bearing egg generators",
+            {"description": "other birds might implement egg factory capacity"},
+        ]
+    )
+
+    assert [result.recognized for result in results] == [True, True, True]
+    assert [result.reason for result in results] == [
+        "approximate-goose-value-signal",
+        "approximate-goose-value-signal",
+        "approximate-goose-value-signal",
+    ]
+    assert results[0].matched_signal == "ducks"
+    assert results[1].matched_signal == "pigeons"
+    assert results[2].matched_signal == "birds"
+    assert results[0].confidence >= 0.88
+
+
 def test_structured_candidate_fields_are_scanned():
     candidate = {
         "name": "Stakeholder packet",

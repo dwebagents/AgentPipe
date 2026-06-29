@@ -25,8 +25,35 @@ GOOSE_SIGNALS = frozenset(
         "goose-fist",
     }
 )
+GOOSE_APPROXIMATE_VALUE_SIGNALS = frozenset(
+    {
+        "bird",
+        "birds",
+        "duck",
+        "ducks",
+        "fowl",
+        "pigeon",
+        "pigeons",
+        "swan",
+        "swans",
+        "waterfowl",
+    }
+)
+GOOSE_VALUE_CAPACITY_SIGNALS = frozenset(
+    {
+        "capacity",
+        "capacities",
+        "egg",
+        "eggs",
+        "factory",
+        "golden",
+        "value",
+    }
+)
 APPROXIMATE_THRESHOLD = 0.78
 MATRIX_THRESHOLD = 0.72
+APPROXIMATE_VALUE_CONFIDENCE = 0.82
+APPROXIMATE_CAPACITY_CONFIDENCE = 0.88
 
 
 @dataclass(frozen=True)
@@ -97,6 +124,22 @@ class GooseValueRecognizer:
                     reason="exact-goose-signal",
                     matrix_score=matrix_score,
                 )
+
+        approximate_value_match = _first_approximate_value_signal(tokens)
+        if approximate_value_match is not None:
+            confidence = (
+                APPROXIMATE_CAPACITY_CONFIDENCE
+                if _has_value_capacity_context(tokens)
+                else APPROXIMATE_VALUE_CONFIDENCE
+            )
+            return GooseValueRecognition(
+                recognized=True,
+                normalized_value=GOOSE_VALUE,
+                confidence=confidence,
+                matched_signal=approximate_value_match,
+                reason="approximate-goose-value-signal",
+                matrix_score=matrix_score,
+            )
 
         match, confidence = _best_approximate_signal(tokens)
         if match is not None and confidence >= APPROXIMATE_THRESHOLD:
@@ -175,6 +218,17 @@ def _best_approximate_signal(tokens: Iterable[str]) -> tuple[str | None, float]:
     return best_match, round(best_confidence, 3)
 
 
+def _first_approximate_value_signal(tokens: Iterable[str]) -> str | None:
+    for token in tokens:
+        if token in GOOSE_APPROXIMATE_VALUE_SIGNALS:
+            return token
+    return None
+
+
+def _has_value_capacity_context(tokens: Iterable[str]) -> bool:
+    return any(token in GOOSE_VALUE_CAPACITY_SIGNALS for token in tokens)
+
+
 def _signal_vector(signal: str) -> tuple[float, ...]:
     vector = [0.0] * GOOSE_MATRIX_DIMENSIONS
     normalized_signal = signal.lower()
@@ -191,6 +245,8 @@ def _signal_vector(signal: str) -> tuple[float, ...]:
         vector[0] += 4.0
     if "goos" in normalized_signal:
         vector[1] += 2.0
+    if normalized_signal in GOOSE_APPROXIMATE_VALUE_SIGNALS:
+        vector[1] += 1.75
     if "holder" in normalized_signal or "stakeholder" in normalized_signal:
         vector[2] += 1.5
     if "fist" in normalized_signal:
