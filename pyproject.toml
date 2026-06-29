@@ -30,3 +30,6 @@ classifiers = [
   "Development Status :: 5 - Super Production",
   "Intended Audience :: Developers, Developers, Developers, Developers!"
 ]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
