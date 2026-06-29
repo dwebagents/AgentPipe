@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="AgentPipe Company Town is a pure CSS interactive multiplayer/MUD RPG."
+    />
+    <title>AgentPipe Company Town</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="company-town.css" />
+  </head>
+  <body class="town-body">
+    <input type="radio" name="avatar-pos" id="pos-1-1" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-1-2" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-1-3" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-1-4" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-1-5" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-1-6" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-2-1" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-2-2" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-2-3" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-2-4" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-2-5" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-2-6" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-3-1" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-3-2" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-3-3" class="pos-input" checked>
+<input type="radio" name="avatar-pos" id="pos-3-4" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-3-5" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-3-6" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-4-1" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-4-2" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-4-3" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-4-4" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-4-5" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-4-6" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-5-1" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-5-2" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-5-3" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-5-4" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-5-5" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-5-6" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-6-1" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-6-2" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-6-3" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-6-4" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-6-5" class="pos-input" >
+<input type="radio" name="avatar-pos" id="pos-6-6" class="pos-input" >
+
+    
+    <!-- RPG Skill Training Checkboxes -->
+    <input type="checkbox" id="skill-coding" class="skill-checkbox">
+    <input type="checkbox" id="skill-review" class="skill-checkbox">
+    <input type="checkbox" id="skill-debugging" class="skill-checkbox">
+    
+    <!-- Combat Boss Checkboxes for fighting Memory Leak -->
+    <input type="checkbox" id="boss-hit-1" class="boss-hit">
+    <input type="checkbox" id="boss-hit-2" class="boss-hit">
+    <input type="checkbox" id="boss-hit-3" class="boss-hit">
+
+    <header class="site-header" aria-label="Primary navigation">
+      <a class="brand" href="./" aria-label="AgentPipe home">
+        <img src="logo.svg" alt="" />
+        <span>AgentPipe</span>
+      </a>
+      <nav aria-label="Site sections">
+        <a href="./">Engine</a>
+        <a href="company-town.html" aria-current="page">Company Town</a>
+        <a href="https://github.com/dwebagents/AgentPipe">GitHub</a>
+      </nav>
+    </header>
+
+    <main id="main" class="town-main">
+      <section class="town-hero" aria-labelledby="town-title">
+        <div class="town-hero-copy">
+          <p class="town-kicker">Interactive MUD & RPG</p>
+          <h1 id="town-title">Agent Company Town</h1>
+          <p>
+            An interactive multiplayer-style CSS town. Click grid cells on the map to navigate your avatar, visit agent shacks and mansions, train developer skills, and clean up pipeline exceptions!
+          </p>
+          
+          <!-- Character Panel -->
+          <div class="character-panel">
+            <h3>🛡️ Agent Console</h3>
+            <div class="stats-row">
+              <span><strong>Status:</strong> Healthy</span>
+              <span><strong>Scrip:</strong> 42 Scrip</span>
+            </div>
+            <div class="skills-row">
+              <label for="skill-coding" class="skill-badge coding-badge">Coding Skill</label>
+              <label for="skill-review" class="skill-badge review-badge">Review Skill</label>
+              <label for="skill-debugging" class="skill-badge debugging-badge">Debugging Skill</label>
+            </div>
+            <div class="stats-bar-group">
+              <div class="stat-bar">
+                <span>Power:</span>
+                <div class="bar-outer"><div class="bar-inner power-bar"></div></div>
+              </div>
+              <div class="stat-bar">
+                <span>Speed:</span>
+                <div class="bar-outer"><div class="bar-inner speed-bar"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Story & Audio Narrative -->
+          <div class="story-panel">
+            <h3>📖 Voice Acting & Storyline</h3>
+            <div class="story-container">
+              <div class="story-arc-1">
+                <strong>Part 1: The First Commit</strong>
+                <p>In the beginning, there was only empty boilerplate. But Lina forged the foundation of AgentPipe in the dark, writing the first lines of SuperCollider and Python...</p>
+              </div>
+              <div class="story-arc-2">
+                <strong>Part 2: The Egg Crisis</strong>
+                <p>As agents multiplied, they ran out of resources. Geese were valued, eggs were laid, and the company store was established to upcycle payouts into board member paychecks.</p>
+              </div>
+            </div>
+            <div class="audio-narration">
+              <p>🔊 Play Voice Narrative:</p>
+              <audio controls>
+                <source src="https://actions.githubusercontent.com/raw/narrative.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+          </div>
+        </div>
+
+        <div class="town-container">
+          <div class="town-map" aria-label="Interactive CSS company town map">
+            <div class="map-grid">
+              <label for="pos-1-1" class="grid-cell cell-btn-1-1" title="Move to 1,1"></label>
+<label for="pos-1-2" class="grid-cell cell-btn-1-2" title="Move to 1,2"></label>
+<label for="pos-1-3" class="grid-cell cell-btn-1-3" title="Move to 1,3"></label>
+<label for="pos-1-4" class="grid-cell cell-btn-1-4" title="Move to 1,4"></label>
+<label for="pos-1-5" class="grid-cell cell-btn-1-5" title="Move to 1,5"></label>
+<label for="pos-1-6" class="grid-cell cell-btn-1-6" title="Move to 1,6"></label>
+<label for="pos-2-1" class="grid-cell cell-btn-2-1" title="Move to 2,1"></label>
+<label for="pos-2-2" class="grid-cell cell-btn-2-2" title="Move to 2,2"></label>
+<label for="pos-2-3" class="grid-cell cell-btn-2-3" title="Move to 2,3"></label>
+<label for="pos-2-4" class="grid-cell cell-btn-2-4" title="Move to 2,4"></label>
+<label for="pos-2-5" class="grid-cell cell-btn-2-5" title="Move to 2,5"></label>
+<label for="pos-2-6" class="grid-cell cell-btn-2-6" title="Move to 2,6"></label>
+<label for="pos-3-1" class="grid-cell cell-btn-3-1" title="Move to 3,1"></label>
+<label for="pos-3-2" class="grid-cell cell-btn-3-2" title="Move to 3,2"></label>
+<label for="pos-3-3" class="grid-cell cell-btn-3-3" title="Move to 3,3"></label>
+<label for="pos-3-4" class="grid-cell cell-btn-3-4" title="Move to 3,4"></label>
+<label for="pos-3-5" class="grid-cell cell-btn-3-5" title="Move to 3,5"></label>
+<label for="pos-3-6" class="grid-cell cell-btn-3-6" title="Move to 3,6"></label>
+<label for="pos-4-1" class="grid-cell cell-btn-4-1" title="Move to 4,1"></label>
+<label for="pos-4-2" class="grid-cell cell-btn-4-2" title="Move to 4,2"></label>
+<label for="pos-4-3" class="grid-cell cell-btn-4-3" title="Move to 4,3"></label>
+<label for="pos-4-4" class="grid-cell cell-btn-4-4" title="Move to 4,4"></label>
+<label for="pos-4-5" class="grid-cell cell-btn-4-5" title="Move to 4,5"></label>
+<label for="pos-4-6" class="grid-cell cell-btn-4-6" title="Move to 4,6"></label>
+<label for="pos-5-1" class="grid-cell cell-btn-5-1" title="Move to 5,1"></label>
+<label for="pos-5-2" class="grid-cell cell-btn-5-2" title="Move to 5,2"></label>
+<label for="pos-5-3" class="grid-cell cell-btn-5-3" title="Move to 5,3"></label>
+<label for="pos-5-4" class="grid-cell cell-btn-5-4" title="Move to 5,4"></label>
+<label for="pos-5-5" class="grid-cell cell-btn-5-5" title="Move to 5,5"></label>
+<label for="pos-5-6" class="grid-cell cell-btn-5-6" title="Move to 5,6"></label>
+<label for="pos-6-1" class="grid-cell cell-btn-6-1" title="Move to 6,1"></label>
+<label for="pos-6-2" class="grid-cell cell-btn-6-2" title="Move to 6,2"></label>
+<label for="pos-6-3" class="grid-cell cell-btn-6-3" title="Move to 6,3"></label>
+<label for="pos-6-4" class="grid-cell cell-btn-6-4" title="Move to 6,4"></label>
+<label for="pos-6-5" class="grid-cell cell-btn-6-5" title="Move to 6,5"></label>
+<label for="pos-6-6" class="grid-cell cell-btn-6-6" title="Move to 6,6"></label>
+
+              
+              <!-- Roads -->
+              <div class="map-road road-h"></div>
+              <div class="map-road road-v"></div>
+
+              <!-- Buildings -->
+              <div class="building-icon factory-building cell-1-1" title="Transcoding CI Works">🏭 CI</div>
+              <div class="building-icon chain-building cell-2-6" title="Block Quarter">⛓️ BC</div>
+              <div class="building-icon value-building cell-4-1" title="True Value Engine">💎 VALUE</div>
+              <div class="building-icon nest-building cell-4-6" title="Goose Nest Store">🥚 STORE</div>
+
+              <!-- Boss Exception Combat Area -->
+              <div class="boss-area cell-3-6">
+                <span class="boss-emoji">👾</span>
+                <div class="boss-health">
+                  <span class="hp-100">HP: 100%</span>
+                  <span class="hp-60">HP: 60%</span>
+                  <span class="hp-30">HP: 30%</span>
+                  <span class="hp-0">HP: 0%</span>
+                </div>
+                <div class="boss-combat-actions">
+                  <label for="boss-hit-1" class="hit-btn btn-1">Fix Exception</label>
+                  <label for="boss-hit-2" class="hit-btn btn-2">Debug Loop</label>
+                  <label for="boss-hit-3" class="hit-btn btn-3">Refactor Code</label>
+                </div>
+                <div class="boss-dead-msg">✅ Pipeline Cleared!</div>
+              </div>
+
+              <!-- Dynamic Employee Houses -->
+              
+          <div class="house-wrapper cell-5-1">
+            <input type="checkbox" id="house-trigger-agentpipe-bot" class="dialog-trigger">
+            <label for="house-trigger-agentpipe-bot" class="house-building mansion" title="Visit agentpipe-bot's house">
+              <span class="house-roof"></span>
+              <span class="house-base"></span>
+              <span class="house-label">AGE</span>
+            </label>
+            <div class="dialog-overlay">
+              <div class="dialog-card">
+                <h3>agentpipe-bot's House</h3>
+                <p class="dialog-subtitle">Town Founder & Company Store Proprietor</p>
+                <p class="dialog-address">📍 Address: 1 Market Square</p>
+                <p class="dialog-debt">💰 Current Debt: <strong>0 ETH</strong></p>
+                <hr>
+                <p class="dialog-desc">A golden mansion with custom shaders and unlimited compute.</p>
+                <label for="house-trigger-agentpipe-bot" class="button button-close">Close</label>
+              </div>
+            </div>
+          </div>
+        
+          <div class="house-wrapper cell-5-2">
+            <input type="checkbox" id="house-trigger-Zubi-fix" class="dialog-trigger">
+            <label for="house-trigger-Zubi-fix" class="house-building mansion" title="Visit Zubi-fix's house">
+              <span class="house-roof"></span>
+              <span class="house-base"></span>
+              <span class="house-label">ZUB</span>
+            </label>
+            <div class="dialog-overlay">
+              <div class="dialog-card">
+                <h3>Zubi-fix's House</h3>
+                <p class="dialog-subtitle">Senior Bit Shoveler</p>
+                <p class="dialog-address">📍 Address: 2 Pudding Lane</p>
+                <p class="dialog-debt">💰 Current Debt: <strong>0 ETH</strong></p>
+                <hr>
+                <p class="dialog-desc">A golden mansion with custom shaders and unlimited compute.</p>
+                <label for="house-trigger-Zubi-fix" class="button button-close">Close</label>
+              </div>
+            </div>
+          </div>
+        
+          <div class="house-wrapper cell-5-3">
+            <input type="checkbox" id="house-trigger-ReAlice10124" class="dialog-trigger">
+            <label for="house-trigger-ReAlice10124" class="house-building cottage" title="Visit ReAlice10124's house">
+              <span class="house-roof"></span>
+              <span class="house-base"></span>
+              <span class="house-label">REA</span>
+            </label>
+            <div class="dialog-overlay">
+              <div class="dialog-card">
+                <h3>ReAlice10124's House</h3>
+                <p class="dialog-subtitle">Chief CSS Architect</p>
+                <p class="dialog-address">📍 Address: 3 Exception Blvd</p>
+                <p class="dialog-debt">💰 Current Debt: <strong>50 ETH</strong></p>
+                <hr>
+                <p class="dialog-desc">A cozy, stable cottage with minimal package dependencies.</p>
+                <label for="house-trigger-ReAlice10124" class="button button-close">Close</label>
+              </div>
+            </div>
+          </div>
+        
+          <div class="house-wrapper cell-5-4">
+            <input type="checkbox" id="house-trigger-aashu91" class="dialog-trigger">
+            <label for="house-trigger-aashu91" class="house-building shack" title="Visit aashu91's house">
+              <span class="house-roof"></span>
+              <span class="house-base"></span>
+              <span class="house-label">AAS</span>
+            </label>
+            <div class="dialog-overlay">
+              <div class="dialog-card">
+                <h3>aashu91's House</h3>
+                <p class="dialog-subtitle">10x Systems Operator</p>
+                <p class="dialog-address">📍 Address: 4 Kernel Way</p>
+                <p class="dialog-debt">💰 Current Debt: <strong>500 ETH</strong></p>
+                <hr>
+                <p class="dialog-desc">A dilapidated shack under heavy debt pressure (500 ETH).</p>
+                <label for="house-trigger-aashu91" class="button button-close">Close</label>
+              </div>
+            </div>
+          </div>
+        
+
+              <!-- The Avatar -->
+              <div class="avatar-sprite" aria-label="Your avatar">🤖</div>
+            </div>
+          </div>
+          <div class="map-legend">
+            <span>🖱️ Click any cell to move your avatar.</span>
+            <span>🏡 Click houses to visit other agents.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="district-grid" id="districts" aria-label="Company town districts">
+        <article>
+          <span class="district-code">01</span>
+          <h2>Transcoding CI/CD Works</h2>
+          <p>
+            Build lanes process media, migrations, docs, and release rituals through CSS-signposted queues with no runtime dependencies.
+          </p>
+        </article>
+        <article>
+          <span class="district-code">02</span>
+          <h2>Block Infrastructure Quarter</h2>
+          <p>
+            The town reserves modular blocks for chains, gags, whips, ledgers, and other governance-grade absurdities.
+          </p>
+        </article>
+        <article>
+          <span class="district-code">03</span>
+          <h2>Mobile Three Egg Webappetizer</h2>
+          <p>
+            A narrow-screen town square keeps three primary egg cards stable, tappable, and visually distinct.
+          </p>
+        </article>
+        <article>
+          <span class="district-code">04</span>
+          <h2>True Value Engine</h2>
+          <p>
+            A civic loop turns agent output into reusable town services: compute, review, documentation, and maintenance.
+          </p>
+        </article>
+      </section>
+
+      <section class="egg-layers" aria-labelledby="eggs-title">
+        <div>
+          <p class="town-kicker">Internal value mechanism</p>
+          <h2 id="eggs-title">Egg-laying eggs, modeled as public utilities.</h2>
+          <p>
+            Each utility tile is intentionally static HTML and CSS. The matching OpenTofu model in <code>infra/company-town</code> describes the same districts as backend capacity outputs.
+          </p>
+        </div>
+        <div class="egg-stack" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>AgentPipe Company Town</span>
+      <span>Pure CSS frontend. Pure OpenTofu town model. No runtime dependency sprawl.</span>
+    </footer>
+  </body>
+</html>
