@@ -45,17 +45,111 @@
           </div>
         </div>
 
-        <div class="banana-stage" id="banana" aria-label="Deterministic 4D banana graphic">
+        <div
+          class="banana-stage"
+          id="banana"
+          aria-labelledby="banana-visual-title"
+          aria-describedby="banana-visual-description banana-frame-descriptions banana-prerendered-frames"
+        >
+          <h2 class="sr-only" id="banana-visual-title">Deterministic 4D banana simulation</h2>
+          <p class="sr-only" id="banana-visual-description">
+            An animated yellow banana-like surface rotates through a dark four-dimensional
+            projection grid. The visual is deterministic from seed 314159 and is decorative
+            context for the AgentPipe pipeline.
+          </p>
+          <div class="sr-only" id="banana-frame-descriptions">
+            <p>Static frame descriptions for the animation:</p>
+            <ol>
+              <li>Frame 1 shows the banana surface crossing the x and w axes near the center.</li>
+              <li>Frame 2 shows the curve rotating forward with the bright ridge on the left side.</li>
+              <li>Frame 3 shows the projection grid behind the banana widening as the w axis turns.</li>
+              <li>Frame 4 shows the banana ridge returning to center with the same seed and geometry.</li>
+            </ol>
+          </div>
+          <div
+            class="banana-prerendered-frames"
+            id="banana-prerendered-frames"
+            role="group"
+            aria-label="Four full resolution pre-rendered PNG frames of the deterministic banana simulation."
+          >
+            <figure id="banana-frame-01" aria-labelledby="banana-frame-01-caption">
+              <img
+                src="assets/banana-frames/frame-01.png"
+                width="760"
+                height="560"
+                alt="Pre-rendered frame 1: yellow banana projection crosses the x and w axes near center."
+                aria-describedby="banana-frame-01-caption"
+              />
+              <figcaption id="banana-frame-01-caption">
+                Frame 1 shows the banana surface crossing the x and w axes near the center.
+              </figcaption>
+            </figure>
+            <figure id="banana-frame-02" aria-labelledby="banana-frame-02-caption">
+              <img
+                src="assets/banana-frames/frame-02.png"
+                width="760"
+                height="560"
+                alt="Pre-rendered frame 2: the banana curve rotates forward with a bright ridge on the left."
+                aria-describedby="banana-frame-02-caption"
+              />
+              <figcaption id="banana-frame-02-caption">
+                Frame 2 shows the curve rotating forward with the bright ridge on the left side.
+              </figcaption>
+            </figure>
+            <figure id="banana-frame-03" aria-labelledby="banana-frame-03-caption">
+              <img
+                src="assets/banana-frames/frame-03.png"
+                width="760"
+                height="560"
+                alt="Pre-rendered frame 3: the projection grid widens behind the banana as the w axis turns."
+                aria-describedby="banana-frame-03-caption"
+              />
+              <figcaption id="banana-frame-03-caption">
+                Frame 3 shows the projection grid behind the banana widening as the w axis turns.
+              </figcaption>
+            </figure>
+            <figure id="banana-frame-04" aria-labelledby="banana-frame-04-caption">
+              <img
+                src="assets/banana-frames/frame-04.png"
+                width="760"
+                height="560"
+                alt="Pre-rendered frame 4: the banana ridge returns to center with the same seed geometry."
+                aria-describedby="banana-frame-04-caption"
+              />
+              <figcaption id="banana-frame-04-caption">
+                Frame 4 shows the banana ridge returning to center with the same seed and geometry.
+              </figcaption>
+            </figure>
+          </div>
           <canvas
             id="banana-canvas"
             width="760"
             height="560"
             data-seed="314159"
-          ></canvas>
+            role="img"
+            aria-labelledby="banana-visual-title"
+            aria-describedby="banana-visual-description banana-frame-descriptions banana-prerendered-frames"
+          >
+            Deterministic 4D banana simulation with a yellow curved surface,
+            projection grid, x/y/w axes, and seed 314159.
+          </canvas>
           <div class="stage-readout" aria-hidden="true">
             <span>seed 314159</span>
             <span>4D projection</span>
             <span>client JS</span>
+          </div>
+          <div class="stage-controls">
+            <button
+              class="motion-toggle"
+              id="banana-motion-toggle"
+              type="button"
+              aria-pressed="false"
+            >
+              Pause animation
+            </button>
+            <span class="sr-only" id="banana-motion-status" aria-live="polite">
+              4D banana animation running.
+            </span>
           </div>
         </div>
       </section>
@@ -93,7 +187,9 @@
           <p>
             The animation above is not a video or static asset. It is generated from
             fixed mathematical samples, rotated through 4D space, projected onto a
-            2D canvas, and drawn entirely on the client.
+            2D canvas, and drawn entirely on the client. It also includes a text
+            equivalent, keyboard-operable motion control, and reduced-motion fallback
+            for assistive technology users.
           </p>
         </div>
         <pre class="formula" aria-label="4D banana rendering formula"><code>point = banana(u, v, w)
