@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "@11ty/eleventy": "^3.1.6"
+  },
+  "scripts": {
+    "test:butter": "node test_butter.js"
   }
 }

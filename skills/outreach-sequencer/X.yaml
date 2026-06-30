@@ -1,0 +1,367 @@
+skill: outreach-sequencer
+version: "0.1.0"
+
+catalog:
+  kind: graph
+  audience: public
+  visibility: public
+  role: context
+
+harness:
+  cases:
+    - name: outreach-sequencer-reach-out-approved
+      inputs:
+        lead:
+          account_ref: acct_4821
+          segment: mid-market SaaS
+        signals:
+          - opened the last three product updates
+          - visited pricing twice this week
+        principal: account:growth-bot
+        objective: Offer a deliverability review to a qualified mid-market lead.
+        operator_context: Post-incident summary; never let customer identifiers reach the channel.
+      caller:
+        answers:
+          agent_task.lead-enrichment.output:
+            enrichment_packet:
+              fit_assessment: strong
+              recommended_action: reach_out
+              risk_flags: []
+          agent_task.list-hygiene-judge.output:
+            hygiene_decision:
+              decision:
+                state: active
+                reason: Contact has no hard bounces and recency within decay threshold.
+              recorded_transition:
+                event_type: contact.consent_state.verified
+                new_state: active
+          agent_task.lead-qualify.output:
+            route: reach_out
+            rationale: Strong firmographic fit and repeated pricing intent; direct outreach is warranted.
+            segment: mid-market SaaS
+          agent_task.draft-outreach-copy.output:
+            draft_packet:
+              subject: A quick deliverability review for your team
+              body: Hi, I noticed your team has been exploring our pricing. I'd love to offer a personalized deliverability review.
+          agent_task.redact-pii.output:
+            redaction_report:
+              decision: ready
+              detected: []
+              redacted_digest: "sha256:9b1d4c0e2af7b53c8e51a0d9f4c2b18e7a3d5c0f9e2b4a16d8c3f0a7b9e1d2c4"
+              residual_risk:
+                level: low
+                reason: No personal spans detected.
+              policy:
+                classes: []
+                mode: redact
+          agent_task.send-as.output:
+            send_plan:
+              decision: ready
+              action_family: send-as
+              principal:
+                type: account
+                ref: account:growth-bot
+              send_class: outreach
+              channel: email
+              audience:
+                type: recipient
+                ref: acct_4821
+                requires_reconfirmation: false
+              content:
+                draft_ref: draft:deliverability-review-offer
+                subject_or_title: A quick deliverability review for your team
+              gates:
+                preflight_required: true
+                human_approval_required: true
+              blockers: []
+          agent_task.sign-receipt.output:
+            attestation:
+              action: outreach sequencer run
+              claim: A lead was enriched, consent-checked, qualified for reach_out, drafted, scrubbed, approved, and sent.
+              principal: account:growth-bot
+              evidence_refs:
+                - ref: enrichment:acct_4821
+                  digest: "sha256:abc123"
+                  proves: Lead enrichment packet
+                - ref: hygiene:acct_4821
+                  digest: "sha256:def456"
+                  proves: Consent hygiene decision
+                - ref: qualify:acct_4821
+                  digest: "sha256:ghi789"
+                  proves: Qualification route and rationale
+                - ref: send:acct_4821
+                  digest: "sha256:jkl012"
+                  proves: Outreach send plan
+              signed: true
+              attestation_id: att_outreach_sequencer_demo
+        approvals:
+          outreach-sequencer.send.approval: true
+      expect:
+        status: sealed
+        receipt:
+          schema: runx.receipt.v1
+
+    - name: outreach-sequencer-hold
+      inputs:
+        lead:
+          account_ref: acct_9999
+          segment: enterprise
+        signals:
+          - unsubscribed from all communications
+        principal: account:growth-bot
+        objective: Re-engage an enterprise lead.
+      caller:
+        answers:
+          agent_task.lead-enrichment.output:
+            enrichment_packet:
+              fit_assessment: moderate
+              recommended_action: hold
+              risk_flags:
+                - unsubscribed_marker
+          agent_task.list-hygiene-judge.output:
+            hygiene_decision:
+              decision:
+                state: suppress
+                reason: Active unsubscribe marker present.
+              recorded_transition:
+                event_type: contact.consent_state.suppressed
+                new_state: suppress
+          agent_task.lead-qualify.output:
+            route: hold
+            rationale: Contact has active unsubscribe marker; outreach is prohibited.
+            segment: enterprise
+          agent_task.lead-hold.output:
+            hold_record:
+              account_ref: acct_9999
+              reason: Active unsubscribe marker; consent state suppress.
+              route: hold
+      expect:
+        status: sealed
+        receipt:
+          schema: runx.receipt.v1
+
+    - name: outreach-sequencer-needs-lead
+      inputs: {}
+      expect:
+        status: needs_agent
+
+policy:
+  allow:
+    - provider: data-source
+      method: READ
+      scope: runx:data:read
+    - provider: data-source
+      method: APPEND
+      scope: runx:data:append
+    - provider: channel
+      method: SEND
+      scope: runx:net:allowlist
+    - provider: ledger
+      method: APPEND
+      scope: runx:ledger:append
+  deny:
+    - outbound_send_without_approval
+    - invented_contact_metrics
+    - bypass_consent_check
+
+emits:
+  - name: enrichment_packet
+    packet: runx.lead_enrichment.packet.v1
+  - name: hygiene_decision
+    packet: runx.list_hygiene.decision.v1
+  - name: qualify_decision
+    packet: runx.lead_qualify.decision.v1
+  - name: send_plan
+    packet: runx.send_as.plan.v1
+  - name: attestation
+    packet: runx.receipt.v1
+
+runners:
+  outreach-sequencer:
+    default: true
+    type: graph
+    inputs:
+      lead:
+        type: json
+        required: true
+        description: "Lead identity and known account fields."
+      signals:
+        type: json
+        required: true
+        description: "Engagement, product, CRM, or firmographic signals."
+      principal:
+        type: string
+        required: true
+        description: "Principal the outreach or nurture is sent as."
+      objective:
+        type: string
+        required: false
+        description: "What the outreach should accomplish."
+      operator_context:
+        type: string
+        required: false
+        description: "Compliance, consent posture, campaign constraints, or channel guidance."
+      constraints:
+        type: json
+        required: false
+        description: "Allowed channels, region, opt-in, or do-not-contact flags."
+    graph:
+      name: outreach-sequencer
+      steps:
+        - id: enrich
+          label: enrich the lead from signals
+          run:
+            type: agent-task
+            agent: growth
+            task: lead-enrichment
+            outputs:
+              enrichment_packet: object
+          scopes:
+            - runx:data:read
+        - id: hygiene
+          label: check consent state and record transition
+          run:
+            type: agent-task
+            agent: ops
+            task: list-hygiene-judge
+            outputs:
+              hygiene_decision: object
+          scopes:
+            - runx:data:read
+            - runx:data:append
+        - id: qualify
+          label: qualify the lead and choose a route
+          run:
+            type: agent-task
+            agent: growth
+            task: lead-qualify
+            outputs:
+              route: string
+              rationale: string
+              segment: string
+          context:
+            enrichment: enrich.enrichment_packet
+            hygiene: hygiene.hygiene_decision
+        - id: reach_out
+          label: plan direct outreach
+          when:
+            field: qualify.route
+            equals: reach_out
+          run:
+            type: agent-task
+            agent: content
+            task: draft-outreach-copy
+            outputs:
+              draft_packet: object
+          scopes:
+            - runx:content:draft
+          context:
+            lead: "$input.lead"
+            objective: "$input.objective"
+            enrichment: enrich.enrichment_packet
+        - id: scrub
+          label: scrub personal data before the boundary
+          when:
+            field: qualify.route
+            equals: reach_out
+          skill: ../redact-pii
+          runner: redact-pii
+          scopes:
+            - runx:content:read
+          context:
+            content: reach_out.draft_packet
+        - id: approve
+          label: human approval before delivery
+          when:
+            field: qualify.route
+            equals: reach_out
+          run:
+            type: approval
+          inputs:
+            gate_id: outreach-sequencer.send.approval
+            reason: Approve delivery of the scrubbed outreach; review the redaction verdict and residual risk before it leaves the boundary.
+          context:
+            redaction_decision: scrub.redaction_report.data.decision
+            residual_risk: scrub.redaction_report.data.residual_risk
+            redacted_digest: scrub.redaction_report.data.redacted_digest
+            draft_preview: reach_out.draft_packet
+          artifacts:
+            wrap_as: approval_decision
+            packet: runx.approval.decision.v1
+        - id: send
+          label: plan the governed outreach send
+          when:
+            field: qualify.route
+            equals: reach_out
+          skill: ../send-as
+          runner: plan
+          scopes:
+            - runx:net:allowlist
+          inputs:
+            objective: "$input.objective"
+            principal: "$input.principal"
+            provider_context: "$input.operator_context"
+            audience:
+              type: recipient
+              ref: "$input.lead.account_ref"
+              requires_reconfirmation: false
+            content_ref:
+              digest: scrub.redaction_report.data.redacted_digest
+              draft_ref: reach_out.draft_packet
+            consent_basis: hygiene.hygiene_decision.data.decision.state
+        - id: plan-nurture
+          label: plan a governed nurture campaign handoff
+          when:
+            field: qualify.route
+            equals: nurture
+          skill: ../send-as
+          runner: plan
+          scopes:
+            - runx:net:allowlist
+          inputs:
+            objective: Nurture this lead through the configured provider adapter.
+            principal: "$input.principal"
+            provider_context: "$input.operator_context"
+            audience:
+              type: recipient
+              ref: "$input.lead.account_ref"
+              requires_reconfirmation: false
+            consent_basis: hygiene.hygiene_decision.data.decision.state
+        - id: record-hold
+          label: record a do-not-contact hold
+          when:
+            field: qualify.route
+            equals: hold
+          run:
+            type: agent-task
+            agent: growth
+            task: lead-hold
+            outputs:
+              hold_record: object
+          context:
+            rationale: qualify.rationale
+            hygiene_reason: hygiene.hygiene_decision.data.decision.reason
+        - id: seal
+          label: seal the run to the ledger
+          skill: ../sign-receipt
+          runner: sign-receipt
+          scopes:
+            - runx:ledger:append
+          inputs:
+            action: outreach sequencer run
+          context:
+            evidence: seal_context
+      policy:
+        guards:
+          - step: send
+            field: approve.approval_decision.data.approved
+            equals: true
+          - step: send
+            field: scrub.redaction_report.data.decision
+            equals: ready
+          - step: send
+            field: hygiene.hygiene_decision.data.decision.state
+            not_equals: suppress
+          - step: send
+            field: hygiene.hygiene_decision.data.decision.state
+            not_equals: re_permission
