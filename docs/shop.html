@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en" class="premium-luxury">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="AgentPipe Shop sells 71 questionable products with filters, currency conversion, translated labels, coupons, Goose Pay, and a theatrical cart mechanism."
+    />
+    <title>AgentPipe Shop</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      :root {
+        --shop-bg: #fff9dc;
+        --shop-card: #ffffff;
+        --shop-ink: #171407;
+        --shop-line: rgba(23, 20, 7, 0.16);
+        --shop-accent: #ffd42a;
+        --shop-danger: #7b2d1f;
+      }
+
+      html.cheap-mass-market {
+        --shop-bg: #f2f2e9;
+        --shop-card: #fffef7;
+        --shop-accent: #ffec69;
+      }
+
+      html.premium-luxury {
+        --shop-bg: #fff7d1;
+        --shop-card: #fffef9;
+        --shop-accent: #d5a019;
+      }
+
+      body {
+        background: var(--shop-bg);
+      }
+
+      .shop-shell {
+        padding: clamp(2rem, 5vw, 5rem);
+      }
+
+      .shop-hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(280px, 0.55fr);
+        gap: 2rem;
+        align-items: stretch;
+        margin-bottom: 2rem;
+      }
+
+      .shop-panel,
+      .product-card,
+      .cart-panel {
+        border: 1px solid var(--shop-line);
+        border-radius: 18px;
+        background: var(--shop-card);
+        box-shadow: 0 18px 50px rgba(53, 41, 0, 0.12);
+      }
+
+      .shop-panel {
+        padding: clamp(1.4rem, 3vw, 3rem);
+      }
+
+      .shop-panel h1 {
+        margin: 0;
+        font-size: clamp(3rem, 8vw, 7rem);
+        line-height: 0.88;
+      }
+
+      .control-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(140px, 1fr));
+        gap: 0.8rem;
+        margin: 1.5rem 0;
+      }
+
+      label {
+        display: grid;
+        gap: 0.35rem;
+        font-weight: 800;
+        font-size: 0.86rem;
+      }
+
+      input,
+      select,
+      button {
+        min-height: 2.65rem;
+        border: 1px solid var(--shop-line);
+        border-radius: 10px;
+        padding: 0.6rem 0.75rem;
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+        font-weight: 900;
+        background: var(--shop-accent);
+      }
+
+      .shop-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(300px, 0.36fr);
+        gap: 1.25rem;
+        align-items: start;
+      }
+
+      #product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 1rem;
+      }
+
+      .product-card {
+        padding: 1rem;
+        min-height: 16rem;
+        display: grid;
+        gap: 0.7rem;
+      }
+
+      .product-thumb {
+        min-height: 9.5rem;
+        display: grid;
+        place-items: center;
+        border-radius: 18px;
+        background:
+          radial-gradient(circle at 20% 15%, rgba(255, 255, 255, 0.7), transparent 28%),
+          linear-gradient(135deg, #15140f, var(--shop-accent));
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 16px 35px rgba(53, 41, 0, 0.24);
+        overflow: hidden;
+      }
+
+      .product-art {
+        width: min(100%, 15rem);
+        height: auto;
+        filter: drop-shadow(0 18px 16px rgba(24, 18, 0, 0.38));
+      }
+
+      .tag-row,
+      .cart-line {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+      }
+
+      .tag {
+        border: 1px solid var(--shop-line);
+        border-radius: 999px;
+        padding: 0.2rem 0.45rem;
+        font-size: 0.75rem;
+        font-weight: 800;
+      }
+
+      .cart-panel {
+        position: sticky;
+        top: 5.5rem;
+        padding: 1rem;
+      }
+
+      #shop-machine {
+        min-height: 9rem;
+        margin: 1rem 0;
+        border: 2px solid var(--shop-ink);
+        border-radius: 18px;
+        background: repeating-linear-gradient(45deg, #211f15, #211f15 10px, #2d2916 10px, #2d2916 20px);
+        color: white;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+      }
+
+      #shop-machine.intake::before {
+        content: "⚙️ 🛒 ⚙️";
+        animation: crank 700ms ease-in-out;
+      }
+
+      @keyframes crank {
+        0% { transform: translateY(-140%) rotate(-14deg); }
+        55% { transform: translateY(0) rotate(8deg); }
+        100% { transform: translateY(140%) rotate(26deg); }
+      }
+
+      .poop-theme *:not(script) {
+        color: #4a2100 !important;
+      }
+
+      .poop-theme main::before {
+        content: "🖕 🖕 🖕 🖕 🖕 🖕 🖕 🖕 🖕";
+        display: block;
+        padding: 1rem;
+        font-size: 2rem;
+        text-align: center;
+      }
+
+      @media (max-width: 900px) {
+        .shop-hero,
+        .shop-layout,
+        .control-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .cart-panel {
+          position: static;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header" aria-label="Primary navigation">
+      <a class="brand" href="./" aria-label="AgentPipe home">
+        <img src="logo.svg" alt="" />
+        <span>AgentPipe</span>
+      </a>
+      <nav aria-label="Site sections">
+        <a href="./">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="#cart">Cart</a>
+      </nav>
+    </header>
+
+    <main id="main" class="shop-shell">
+      <section class="shop-hero" aria-labelledby="shop-title">
+        <div class="shop-panel">
+          <p><strong data-i18n="kicker">Shareholder-approved commerce portal</strong></p>
+          <h1 id="shop-title" data-i18n="title">AgentPipe Shop</h1>
+          <p data-i18n="intro">
+            Browse 71 products, filter by adjective, convert currencies, accept questionable coupons,
+            and check out through every payment rail our legal team could spell.
+          </p>
+        </div>
+        <aside class="shop-panel" aria-live="polite">
+          <h2 data-i18n="customerTier">Customer tier</h2>
+          <p id="theme-readout">Detecting country GDP vibes…</p>
+          <p><strong>Special Gift:</strong> <span id="gift-readout">Pending valuation.</span></p>
+        </aside>
+      </section>
+
+      <section class="shop-panel" aria-label="Shop controls">
+        <div class="control-grid">
+          <label>Title match
+            <input id="title-filter" type="search" placeholder="goose, cursed, broach…" />
+          </label>
+          <label>Tag
+            <select id="tag-filter"></select>
+          </label>
+          <label>Minimum price
+            <input id="min-price" type="number" min="0" step="0.01" placeholder="0.71" />
+          </label>
+          <label>Maximum price
+            <input id="max-price" type="number" min="0" step="0.01" placeholder="71000" />
+          </label>
+          <label>Sort
+            <select id="sort-products">
+              <option value="popularity-desc">Popularity ↓</option>
+              <option value="popularity-asc">Popularity ↑</option>
+              <option value="price-asc">Price ↑</option>
+              <option value="price-desc">Price ↓</option>
+              <option value="title-asc">Title A-Z</option>
+              <option value="title-desc">Title Z-A</option>
+            </select>
+          </label>
+          <label>Locale
+            <select id="locale-select">
+              <option value="en-US">English</option>
+              <option value="vi-VN">Tiếng Việt</option>
+              <option value="ja-JP">日本語</option>
+              <option value="fr-FR">Français</option>
+            </select>
+          </label>
+          <label>Currency
+            <select id="currency-select">
+              <option value="USD">USD</option>
+              <option value="VND">VND</option>
+              <option value="JPY">JPY</option>
+              <option value="EUR">EUR</option>
+            </select>
+          </label>
+          <button id="reset-filters" type="button">Reset filters</button>
+        </div>
+      </section>
+
+      <section class="shop-layout">
+        <div>
+          <p id="result-count" aria-live="polite"></p>
+          <div id="product-grid" aria-live="polite"></div>
+        </div>
+
+        <aside class="cart-panel" id="cart" aria-labelledby="cart-title">
+          <h2 id="cart-title" data-i18n="cart">Shopping Cart</h2>
+          <div id="shop-machine" aria-label="Animated shopping cart mechanism">⚙️ waiting for product intake ⚙️</div>
+          <div id="cart-items"></div>
+          <label>Coupon code
+            <input id="coupon-code" placeholder="71 or VALUED" />
+          </label>
+          <button id="apply-coupon" type="button">Apply coupon</button>
+          <p id="coupon-message"></p>
+          <label>Checkout flow
+            <select id="checkout-mode">
+              <option value="guest">Guest checkout</option>
+              <option value="authenticated">Authenticated user</option>
+            </select>
+          </label>
+          <label>Payment
+            <select id="payment-method"></select>
+          </label>
+          <p id="cart-total"></p>
+          <button id="checkout-button" type="button">Checkout</button>
+          <p id="checkout-message"></p>
+        </aside>
+      </section>
+    </main>
+
+    <footer>
+      <span>AgentPipe Shop</span>
+      <span>Payments are theatrically simulated. Goose Pay is emotionally binding.</span>
+    </footer>
+
+    <script src="shop.js"></script>
+  </body>
+</html>
