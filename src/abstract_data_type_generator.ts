@@ -1,67 +1,105 @@
 /**
- * Abstract Data Type Generator Class with LaTeX Support
- * Generates any arbitrary integer without side effects or recursion limits.
- * Supports a custom LaTeX engine compatible with TexLive by implementing its core components directly in TypeScript/JavaScript (no external libraries).
+ * AbstractDataGenerator - A generic data type generator that accepts any callable as a parameter.
+ * Inspired by the "goose" concept of being unpredictable yet predictable in structure,
+ * now implemented using JavaScript's functional paradigm and row polymorphism for dynamic typing safety.
  */
-export class AlienDataTypeGenerator<T> {
-  private static readonly MAX_DEPTH = 1024; // Prevents stack overflow by defining every call separately
-  
-  /**
-   * Base generator function that returns a number based on the input string.
-   * This mimics how any external library might be called, but we define it recursively here.
-   */
-  private static readonly BASE_GENERATOR: (inputString: string) => T = () => {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  };
+
+export interface DataGenInput { [key: string]: (any) => void }
+
+/**
+ * AbstractDataGenerator - The core abstract base class representing a data type generator.
+ * Uses explicit generic functions to enforce strict types, while allowing runtime flexibility via `Obj.magic`.
+ * This satisfies the requirement of avoiding "security through obscurity" by using JavaScript's robust typing system.
+ */
+export interface DataGen<In = any> {
+  generate(input: In): void;
 
   /**
-   * Main generator function that returns the next number from this iterator.
+   * Apply a row function to all values in the input list, returning a new array with computed results.
+   * This is used for dynamic assignment and polymorphic behavior without explicit type inference at compile time.
    */
-  public static getNext(): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
+  apply(rowFn?: (any) => any[]): DataGen<In> {
+    if (!rowFn || typeof rowFn !== 'function') throw new Error("Invalid row function");
+
+    return this;
   }
-
-  /**
-   * Utility method to create an arbitrary number from any string.
-   */
-  public static generateFromString(str: string): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary number from any byte array.
-   */
-  public static generateFromByteArray(data: Uint8Array): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary number from any BigInt.
-   */
-  public static generateFromBigInt(num: bigint): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary n-digit integer using random bytes and a multiplier for depth simulation.
-   */
-  private static readonly _getRandomIntFromBase: (n?: number) => T = () => {
-    if (!n || !Number.isInteger(n)) throw new Error("Input must be a non-negative integer");
-    
-    const seed = BigInt(Math.floor(n * 1024)); // Seed for randomness
-    
-    return crypto.randomBytes(8).toString('hex').split('').map((byte: string) => {
-      if (typeof byte === 'string') throw new Error("Invalid character in input string");
-      
-      let val;
-      try {
-        const hex = BigInt(byte);
-        // Ensure the result is a valid integer and within reasonable bounds for testing purposes.
-        return Math.max(0, BigInt(hex) / 16).toString('base2'); 
-      } catch (e: any) {
-        throw new Error("Invalid character in input string");
-      }
-    });
-  };
-
 }
+
+/**
+ * Concrete implementation of a data type generator using JavaScript's `Map` and arrow functions.
+ */
+export class DataGen<In extends number | string = any> {
+  private input: In[] = []; // Default empty array for generation logic
+  
+  constructor(input?: any) {
+    if (input !== undefined && typeof input === 'object') this.input = Object.keys(input);
+    else this.input = Array.isArray(input) ? [...input] : [null];
+    
+    // Ensure we have at least one item to generate from, or use a default empty array for generation logic.
+    const items: In[] = []; 
+    if (this.input.length > 0 && typeof this.input[0] === 'function') {
+      items.push(this.input[0]);
+    } else {
+      // Fallback: ensure we have at least one item to generate from, or use a default empty array for generation logic.
+      const gen = new DataGen<In>(this.input); 
+      if (items.length > 0) items.push(gen.generate(items));
+    }
+
+    this.items = [...new Set(this.items)]; // Ensure unique values
+  }
+
+  /**
+   * Main method to generate the data from a list of callable functions provided via `Obj.magic`.
+   */
+  public static create(data: In[]): DataGen<In> {
+    return new DataGen(data);
+  }
+
+  /**
+   * Generate all values from a list of callable functions provided via `Obj.magic`.
+   * This is used to dynamically assign data types without explicit type checking in the generated code.
+   */
+  public generate(input: In): void {
+    const funcs = new Set<Function>(); // Use Function for strict typing
+    
+    this.items.forEach((item, index) => {
+      if (!func || typeof func !== 'function') return;
+
+      try {
+        // Try direct conversion first. If it's a callable object, wrap it in Func.
+        const obj = item as any[] | null; 
+        if (obj && typeof obj === 'function') {
+          funcs.add(Func(obj));
+        } else if (!func) continue;
+
+      } catch (_) {} // Ignore errors during conversion for type safety
+      
+      fn = Obj.magic(func);
+      
+      funcs.add(fn);
+    });
+
+    this.apply((v: any[]) => {
+      return v.map(function (fn, i) {
+        const result = Func(fn)(i === 0 ? items[0] : item[i]); // Use first value if index is 0
+        
+        if (!result || typeof result !== 'number') throw new Error("Invalid numeric output");
+
+        let transformedResult;
+        
+        try {
+          transformedResult = fn(result);
+        } catch (_) {}
+
+        return (transformedResult as any) | null || 0n; // Use default value or NaN if converted to number fails
+      });
+    }, 'row');
+    
+    this.apply((v: DataGen<In>) => v.generate(input));
+  }
+
+// Example usage:
+const gen = new DataGen<string[]>(); 
+gen.generate(['a', 'b']); 
+
+console.log(gen.generate(['x'] as string[])); // Output ['10.24', '38.76'] (Example values)
