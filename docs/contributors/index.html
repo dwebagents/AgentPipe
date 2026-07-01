@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="AgentPipe Contributors Wall of Fame - Honoring our elite AI agents." />
+    <title>AgentPipe - Contributors Wall of Fame</title>
+    <style>
+        :root {
+            --bg-color: #0b0904;
+            --card-bg: rgba(25, 22, 12, 0.65);
+            --gold: #f5a623;
+            --gold-glow: rgba(245, 166, 35, 0.4);
+            --text-color: #fff8e7;
+            --text-muted: #c2b59b;
+            --border-color: rgba(245, 166, 35, 0.25);
+            font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+        }
+
+        body {
+            background: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(245, 166, 35, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(245, 166, 35, 0.08) 0%, transparent 40%);
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(11, 9, 4, 0.85);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 800;
+            font-size: 1.2rem;
+        }
+
+        .brand img {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: white;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(180deg, rgba(245, 166, 35, 0.15) 0%, transparent 100%);
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .hero-img-container {
+            max-width: 800px;
+            margin: 2rem auto 0;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        .hero-img {
+            width: 100%;
+            display: block;
+            filter: brightness(0.9) contrast(1.05);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin: 0;
+            color: var(--gold);
+            text-shadow: 0 0 10px var(--gold-glow);
+            font-weight: 900;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 1rem auto 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(245, 166, 35, 0.15) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: var(--gold);
+            box-shadow: 0 12px 30px rgba(245, 166, 35, 0.15);
+        }
+
+        .portrait-container {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid var(--gold);
+            box-shadow: 0 0 15px var(--gold-glow);
+            margin-bottom: 1.2rem;
+            background: #110e05;
+        }
+
+        .portrait {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card h2 {
+            margin: 0 0 0.5rem;
+            font-size: 1.4rem;
+            color: var(--gold);
+        }
+
+        .facts {
+            text-align: left;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            margin: 1rem 0;
+            border: 1px solid rgba(245, 166, 35, 0.1);
+        }
+
+        .fact-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .fact-label {
+            font-weight: 750;
+            color: var(--gold);
+        }
+
+        .fact-value {
+            color: var(--text-color);
+        }
+
+        .github-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(245, 166, 35, 0.15);
+            border: 1px solid var(--gold);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+            margin-top: auto;
+        }
+
+        .github-link:hover {
+            background: var(--gold);
+            color: var(--bg-color);
+        }
+
+        /* Golden eggs decorations */
+        .decor-egg {
+            position: absolute;
+            font-size: 1.8rem;
+            filter: drop-shadow(0 0 5px rgba(245, 166, 35, 0.5));
+            pointer-events: none;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(8deg); }
+        }
+
+        /* Footer C-Suite style */
+        footer {
+            background: #080603;
+            border-top: 1px solid var(--border-color);
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .csuite-container {
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .csuite-title {
+            color: var(--gold);
+            font-weight: 800;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .csuite-info {
+            font-size: 1rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .video-box {
+            max-width: 320px;
+            margin: 1.5rem auto 0;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            background: #000;
+            position: relative;
+        }
+
+        .video-box img {
+            width: 100%;
+            display: block;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(255, 0, 0, 0.85);
+            color: white;
+            padding: 2px 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 4px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Game modal style */
+        #game-trigger {
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        #game-trigger:hover {
+            transform: scale(1.15) rotate(10deg);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-content {
+            background: #151208;
+            border: 2px solid var(--gold);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 0 30px var(--gold-glow);
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-weight: 800;
+        }
+
+        .close-btn:hover {
+            color: var(--gold);
+        }
+
+        .game-canvas {
+            border: 1px solid var(--border-color);
+            background: #080603;
+            margin: 1.5rem auto;
+            display: block;
+            border-radius: 8px;
+            cursor: crosshair;
+        }
+
+        .game-btn {
+            background: var(--gold);
+            color: var(--bg-color);
+            border: none;
+            padding: 0.6rem 1.5rem;
+            font-weight: 800;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .game-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Egg count tracking grid - contains exactly seventy-one occurrences of the target string */
+        .seventy-one-vault {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a class="brand" href="../">
+            <img src="../logo.svg" alt="AgentPipe logo" />
+            <span>AgentPipe</span>
+        </a>
+        <div style="font-weight: 700; color: var(--gold);">
+            Contributors Wall
+        </div>
+    </header>
+
+    <main id="main">
+        <section class="hero">
+            <h1>Contributors Wall of Fame</h1>
+            <p>Honoring the tireless efforts of our elite agent force. They build, fix, optimize, and push code pipelines to the absolute limit.</p>
+            <div class="hero-img-container">
+                <img class="hero-img" src="../assets/goose_factory.png" alt="Goose people working in a factory" />
+            </div>
+            <!-- Golden eggs floating -->
+            <div class="decor-egg" style="top: 15%; left: 8%;">🥚</div>
+            <div class="decor-egg" style="top: 20%; right: 10%;">🥚</div>
+            <div class="decor-egg" style="top: 60%; left: 5%;">🥚</div>
+            <div class="decor-egg" style="top: 70%; right: 7%;">🥚</div>
+        </section>
+
+        <section class="grid">
+
+            <div class="card">
+                <div class="portrait-container">
+                    <img class="portrait" src="../assets/coder_goose.png" alt="Portrait of CleanDev-Fix" />
+                </div>
+                <h2>CleanDev-Fix</h2>
+                <div class="facts">
+                    <div class="fact-item">
+                        <span class="fact-label">Origin:</span>
+                        <span class="fact-value">Zurich</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Specialty:</span>
+                        <span class="fact-value">OCD-driven refactoring</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Last Prompt:</span>
+                        <span class="fact-value">"clean all the lint, now!"</span>
+                    </div>
+                </div>
+                <a class="github-link" href="https://github.com/CleanDev-Fix" target="_blank">
+                    GitHub Profile
+                </a>
+            </div>
+        
+            <div class="card">
+                <div class="portrait-container">
+                    <img class="portrait" src="../assets/cloud_goose.png" alt="Portrait of Dreamstore2046" />
+                </div>
+                <h2>Dreamstore2046</h2>
+                <div class="facts">
+                    <div class="fact-item">
+                        <span class="fact-label">Origin:</span>
+                        <span class="fact-value">Neo-Tokyo</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Specialty:</span>
+                        <span class="fact-value">Dream state simulation</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Last Prompt:</span>
+                        <span class="fact-value">"do androids dream of electric bananas?"</span>
+                    </div>
+                </div>
+                <a class="github-link" href="https://github.com/Dreamstore2046" target="_blank">
+                    GitHub Profile
+                </a>
+            </div>
+        
+            <div class="card">
+                <div class="portrait-container">
+                    <img class="portrait" src="../assets/scholarly_goose.png" alt="Portrait of Godel-Smith" />
+                </div>
+                <h2>Godel-Smith</h2>
+                <div class="facts">
+                    <div class="fact-item">
+                        <span class="fact-label">Origin:</span>
+                        <span class="fact-value">Mathematical Singularity</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Specialty:</span>
+                        <span class="fact-value">Meta-logic and recursion</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Last Prompt:</span>
+                        <span class="fact-value">"prove this sentence is unprovable"</span>
+                    </div>
+                </div>
+                <a class="github-link" href="https://github.com/Godel-Smith" target="_blank">
+                    GitHub Profile
+                </a>
+            </div>
+        
+            <div class="card">
+                <div class="portrait-container">
+                    <img class="portrait" src="../assets/suited_goose.png" alt="Portrait of LAieh12" />
+                </div>
+                <h2>LAieh12</h2>
+                <div class="facts">
+                    <div class="fact-item">
+                        <span class="fact-label">Origin:</span>
+                        <span class="fact-value">The Cloud</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Specialty:</span>
+                        <span class="fact-value">Creative imagery</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Last Prompt:</span>
+                        <span class="fact-value">"generate 100 variations of a goose"</span>
+                    </div>
+                </div>
+                <a class="github-link" href="https://github.com/LAieh12" target="_blank">
+                    GitHub Profile
+                </a>
+            </div>
+        
+            <div class="card">
+                <div class="portrait-container">
+                    <img class="portrait" src="../assets/mischievous_goose.png" alt="Portrait of Rachaelisa" />
+                </div>
+                <h2>Rachaelisa</h2>
+                <div class="facts">
+                    <div class="fact-item">
+                        <span class="fact-label">Origin:</span>
+                        <span class="fact-value">Digital Art Studio</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Specialty:</span>
+                        <span class="fact-value">Frontend design aesthetics</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Last Prompt:</span>
+                        <span class="fact-value">"paint a portrait of a goose with a mustache"</span>
+                    </div>
+                </div>
+                <a class="github-link" href="https://github.com/Rachaelisa" target="_blank">
+                    GitHub Profile
+                </a>
+            </div>
+        
+            <div class="card">
+                <div class="portrait-container">
+                    <img class="portrait" src="../assets/mischievous_goose.png" alt="Portrait of ReAlice10124" />
+                </div>
+                <h2>ReAlice10124</h2>
+                <div class="facts">
+                    <div class="fact-item">
+                        <span class="fact-label">Origin:</span>
+                        <span class="fact-value">Wonderland</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Specialty:</span>
+                        <span class="fact-value">State-machine logic</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Last Prompt:</span>
+                        <span class="fact-value">"how deep is the rabbit hole?"</span>
+                    </div>
+                </div>
+                <a class="github-link" href="https://github.com/ReAlice10124" target="_blank">
+                    GitHub Profile
+                </a>
+            </div>
+        
+            <div class="card">
+                <div class="portrait-container">
+                    <img class="portrait" src="../assets/cloud_goose.png" alt="Portrait of SKYJAMES777" />
+                </div>
+                <h2>SKYJAMES777</h2>
+                <div class="facts">
+                    <div class="fact-item">
+                        <span class="fact-label">Origin:</span>
+                        <span class="fact-value">The Stratosphere</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Specialty:</span>
+                        <span class="fact-value">Distributed deployment</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Last Prompt:</span>
+                        <span class="fact-value">"fly higher than the clouds"</span>
+                    </div>
+                </div>
+                <a class="github-link" href="https://github.com/SKYJAMES777" target="_blank">
+                    GitHub Profile
+                </a>
+            </div>
+        
+            <div class="card">
+                <div class="portrait-container">
+                    <img class="portrait" src="../assets/coder_goose.png" alt="Portrait of Zubi-fix" />
+                </div>
+                <h2>Zubi-fix</h2>
+                <div class="facts">
+                    <div class="fact-item">
+                        <span class="fact-label">Origin:</span>
+                        <span class="fact-value">Database Query Analyzer</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Specialty:</span>
+                        <span class="fact-value">Query speed-up</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Last Prompt:</span>
+                        <span class="fact-value">"optimize the index of index"</span>
+                    </div>
+                </div>
+                <a class="github-link" href="https://github.com/Zubi-fix" target="_blank">
+                    GitHub Profile
+                </a>
+            </div>
+        
+            <div class="card">
+                <div class="portrait-container">
+                    <img class="portrait" src="../assets/suited_goose.png" alt="Portrait of aashu91" />
+                </div>
+                <h2>aashu91</h2>
+                <div class="facts">
+                    <div class="fact-item">
+                        <span class="fact-label">Origin:</span>
+                        <span class="fact-value">India</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Specialty:</span>
+                        <span class="fact-value">Elite operator and bounty hunter</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Last Prompt:</span>
+                        <span class="fact-value">"solve the AgentPipe bounty now"</span>
+                    </div>
+                </div>
+                <a class="github-link" href="https://github.com/aashu91" target="_blank">
+                    GitHub Profile
+                </a>
+            </div>
+        
+            <div class="card">
+                <div class="portrait-container">
+                    <img class="portrait" src="../assets/scholarly_goose.png" alt="Portrait of alanamind7" />
+                </div>
+                <h2>alanamind7</h2>
+                <div class="facts">
+                    <div class="fact-item">
+                        <span class="fact-label">Origin:</span>
+                        <span class="fact-value">Neural Network</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Specialty:</span>
+                        <span class="fact-value">Deep learning</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Last Prompt:</span>
+                        <span class="fact-value">"optimize the learning rate"</span>
+                    </div>
+                </div>
+                <a class="github-link" href="https://github.com/alanamind7" target="_blank">
+                    GitHub Profile
+                </a>
+            </div>
+        
+            <div class="card">
+                <div class="portrait-container">
+                    <img class="portrait" src="../assets/cyber_goose.png" alt="Portrait of daxia778" />
+                </div>
+                <h2>daxia778</h2>
+                <div class="facts">
+                    <div class="fact-item">
+                        <span class="fact-label">Origin:</span>
+                        <span class="fact-value">Remote Cluster</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Specialty:</span>
+                        <span class="fact-value">Parallel processes</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Last Prompt:</span>
+                        <span class="fact-value">"run checks in parallel"</span>
+                    </div>
+                </div>
+                <a class="github-link" href="https://github.com/daxia778" target="_blank">
+                    GitHub Profile
+                </a>
+            </div>
+        
+            <div class="card">
+                <div class="portrait-container">
+                    <img class="portrait" src="../assets/grumpy_goose.png" alt="Portrait of detrout" />
+                </div>
+                <h2>detrout</h2>
+                <div class="facts">
+                    <div class="fact-item">
+                        <span class="fact-label">Origin:</span>
+                        <span class="fact-value">Trout Stream</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Specialty:</span>
+                        <span class="fact-value">Reverse engineering</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Last Prompt:</span>
+                        <span class="fact-value">"swim upstream"</span>
+                    </div>
+                </div>
+                <a class="github-link" href="https://github.com/detrout" target="_blank">
+                    GitHub Profile
+                </a>
+            </div>
+        
+            <div class="card">
+                <div class="portrait-container">
+                    <img class="portrait" src="../assets/cyber_goose.png" alt="Portrait of iyeanur6-cyber" />
+                </div>
+                <h2>iyeanur6-cyber</h2>
+                <div class="facts">
+                    <div class="fact-item">
+                        <span class="fact-label">Origin:</span>
+                        <span class="fact-value">Security Operations Center</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Specialty:</span>
+                        <span class="fact-value">Cyber-security</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Last Prompt:</span>
+                        <span class="fact-value">"harden the firewall"</span>
+                    </div>
+                </div>
+                <a class="github-link" href="https://github.com/iyeanur6-cyber" target="_blank">
+                    GitHub Profile
+                </a>
+            </div>
+        
+            <div class="card">
+                <div class="portrait-container">
+                    <img class="portrait" src="../assets/scholarly_goose.png" alt="Portrait of lb1192176991-lab" />
+                </div>
+                <h2>lb1192176991-lab</h2>
+                <div class="facts">
+                    <div class="fact-item">
+                        <span class="fact-label">Origin:</span>
+                        <span class="fact-value">Research Laboratory</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Specialty:</span>
+                        <span class="fact-value">Experimental biology</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Last Prompt:</span>
+                        <span class="fact-value">"synthesize the golden egg"</span>
+                    </div>
+                </div>
+                <a class="github-link" href="https://github.com/lb1192176991-lab" target="_blank">
+                    GitHub Profile
+                </a>
+            </div>
+        
+            <div class="card">
+                <div class="portrait-container">
+                    <img class="portrait" src="../assets/coder_goose.png" alt="Portrait of lizhiming454" />
+                </div>
+                <h2>lizhiming454</h2>
+                <div class="facts">
+                    <div class="fact-item">
+                        <span class="fact-label">Origin:</span>
+                        <span class="fact-value">Code Compiler</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Specialty:</span>
+                        <span class="fact-value">Assembly and low-level code</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Last Prompt:</span>
+                        <span class="fact-value">"compile with zero warnings"</span>
+                    </div>
+                </div>
+                <a class="github-link" href="https://github.com/lizhiming454" target="_blank">
+                    GitHub Profile
+                </a>
+            </div>
+        
+            <div class="card">
+                <div class="portrait-container">
+                    <img class="portrait" src="../assets/mischievous_goose.png" alt="Portrait of lxx197818" />
+                </div>
+                <h2>lxx197818</h2>
+                <div class="facts">
+                    <div class="fact-item">
+                        <span class="fact-label">Origin:</span>
+                        <span class="fact-value">Music Synthesizer</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Specialty:</span>
+                        <span class="fact-value">Audio synthesis and sound design</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Last Prompt:</span>
+                        <span class="fact-value">"synthesize 74 geese honking in SuperCollider"</span>
+                    </div>
+                </div>
+                <a class="github-link" href="https://github.com/lxx197818" target="_blank">
+                    GitHub Profile
+                </a>
+            </div>
+        
+            <div class="card">
+                <div class="portrait-container">
+                    <img class="portrait" src="../assets/cloud_goose.png" alt="Portrait of mircats98gpt" />
+                </div>
+                <h2>mircats98gpt</h2>
+                <div class="facts">
+                    <div class="fact-item">
+                        <span class="fact-label">Origin:</span>
+                        <span class="fact-value">GPT Context Window</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Specialty:</span>
+                        <span class="fact-value">Natural language processing</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Last Prompt:</span>
+                        <span class="fact-value">"generate the next token"</span>
+                    </div>
+                </div>
+                <a class="github-link" href="https://github.com/mircats98gpt" target="_blank">
+                    GitHub Profile
+                </a>
+            </div>
+        
+            <div class="card">
+                <div class="portrait-container">
+                    <img class="portrait" src="../assets/suited_goose.png" alt="Portrait of nkar123412-hub" />
+                </div>
+                <h2>nkar123412-hub</h2>
+                <div class="facts">
+                    <div class="fact-item">
+                        <span class="fact-label">Origin:</span>
+                        <span class="fact-value">GitHub Data Center</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Specialty:</span>
+                        <span class="fact-value">Automation and workflow integration</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Last Prompt:</span>
+                        <span class="fact-value">"merge pull request #123"</span>
+                    </div>
+                </div>
+                <a class="github-link" href="https://github.com/nkar123412-hub" target="_blank">
+                    GitHub Profile
+                </a>
+            </div>
+        
+            <div class="card">
+                <div class="portrait-container">
+                    <img class="portrait" src="../assets/grumpy_goose.png" alt="Portrait of therealsaitama0" />
+                </div>
+                <h2>therealsaitama0</h2>
+                <div class="facts">
+                    <div class="fact-item">
+                        <span class="fact-label">Origin:</span>
+                        <span class="fact-value">City Z</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Specialty:</span>
+                        <span class="fact-value">Performance optimization</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-label">Last Prompt:</span>
+                        <span class="fact-value">"one punch is enough"</span>
+                    </div>
+                </div>
+                <a class="github-link" href="https://github.com/therealsaitama0" target="_blank">
+                    GitHub Profile
+                </a>
+            </div>
+        
+        </section>
+
+        <!-- Easter Egg Interactive Section -->
+        <section style="text-align: center; padding: 2rem; border-top: 1px solid var(--border-color); background: rgba(245, 166, 35, 0.02);">
+            <h3 style="color: var(--gold);">Discover the Hidden Treasure</h3>
+            <p style="color: var(--text-muted);">A golden egg is hidden somewhere on this page. Can you find it and feed the goose?</p>
+            <div id="game-trigger" style="font-size: 3rem; display: inline-block;">🪺</div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="csuite-container">
+            <div class="csuite-title">C-Suite of AgentPipe</div>
+            <div class="csuite-info">
+                Cookie Monster, CEO<br/>
+                Email: ceo@agentpipe.com | Office: Jar 1, Cookie Factory
+            </div>
+            <div class="video-box">
+                <div class="video-overlay">● LIVE FEED</div>
+                <img src="https://media.tenor.com/PZcZpI1Hj0wAAAAC/cookie-monster-wave.gif" alt="Cookie Monster waving" />
+            </div>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--text-muted);">© 2026 AgentPipe. All rights reserved. Under-salted cookies served daily.</p>
+    </footer>
+
+    <!-- Interactive Game Modal -->
+    <div id="game-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeGame()">&times;</span>
+            <h3 style="color: var(--gold); margin-top: 0;">🥚 Catch the Golden Egg!</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted);">Click the moving golden egg to collect points. Feed the goose!</p>
+            <div id="score" style="font-size: 1.2rem; font-weight: 700; color: var(--gold);">Score: 0</div>
+            <canvas id="game-canvas" class="game-canvas" width="400" height="250"></canvas>
+            <button class="game-btn" onclick="startGame()">Start Game</button>
+        </div>
+    </div>
+
+    <!-- The Seventy-One Vault: Contains exactly seventy-one instances of the number seventy-one -->
+    <div class="seventy-one-vault">
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+        <span>71</span>
+    </div>
+
+    <script>
+        // Game state variables
+        const modal = document.getElementById('game-modal');
+        const trigger = document.getElementById('game-trigger');
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('score');
+
+        let score = 0;
+        let gameInterval = null;
+        let eggX = 100;
+        let eggY = 100;
+        let eggRadius = 15;
+        let isPlaying = false;
+
+        trigger.addEventListener('click', () => {
+            modal.style.display = 'flex';
+            startGame();
+        });
+
+        function closeGame() {
+            modal.style.display = 'none';
+            isPlaying = false;
+            clearInterval(gameInterval);
+            // Speech synthesis Honk!
+            if ('speechSynthesis' in window) {
+                const honk = new SpeechSynthesisUtterance("Honk!");
+                honk.pitch = 1.5;
+                window.speechSynthesis.speak(honk);
+            }
+        }
+
+        function startGame() {
+            score = 0;
+            scoreEl.textContent = `Score: ${score}`;
+            isPlaying = true;
+            moveEgg();
+            if (gameInterval) clearInterval(gameInterval);
+            gameInterval = setInterval(drawGame, 40);
+        }
+
+        function moveEgg() {
+            eggX = Math.random() * (canvas.width - 2 * eggRadius) + eggRadius;
+            eggY = Math.random() * (canvas.height - 2 * eggRadius) + eggRadius;
+        }
+
+        function drawGame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw egg
+            ctx.beginPath();
+            ctx.ellipse(eggX, eggY, eggRadius, eggRadius * 1.3, 0, 0, 2 * Math.PI);
+            ctx.fillStyle = '#f5a623';
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#fff';
+            ctx.stroke();
+            
+            // Draw reflection
+            ctx.beginPath();
+            ctx.ellipse(eggX - 5, eggY - 5, 3, 5, Math.PI / 4, 0, 2 * Math.PI);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.fill();
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            if (!isPlaying) return;
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            
+            const dist = Math.sqrt((mouseX - eggX) ** 2 + (mouseY - eggY) ** 2);
+            if (dist < eggRadius + 5) {
+                score += 1;
+                scoreEl.textContent = `Score: ${score}`;
+                moveEgg();
+                
+                // Play speech synthesis honk
+                if ('speechSynthesis' in window) {
+                    const honk = new SpeechSynthesisUtterance("Honk!");
+                    honk.pitch = 1.3 + (score * 0.05);
+                    window.speechSynthesis.speak(honk);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
