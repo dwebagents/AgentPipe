@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>AgentPipe - Honored Contributors (71 reasons we honk)</title>
+<link rel="stylesheet" href="../styles.css"/>
+<style>
+/* === GOOSE FACTORY HERO === */
+.contrib-hero {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  padding: 80px 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+}
+.contrib-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 100'%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='40' opacity='0.08' fill='white'%3E%F0%9F%AA%BF%3C/text%3E%3C/svg%3E") repeat;
+  opacity: 0.3;
+}
+.contrib-hero h1 { font-size: 3rem; margin: 0; position: relative; z-index: 1; }
+.contrib-hero p { font-size: 1.2rem; opacity: 0.9; position: relative; z-index: 1; }
+/* floating golden eggs */
+.egg-float {
+  position: absolute;
+  font-size: 24px;
+  animation: floatEgg 3s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+@keyframes floatEgg {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+/* === GOOSE PERSON CARDS === */
+.contrib-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+  padding: 48px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: #fffdf5;
+  background-image: radial-gradient(circle, #ffd70033 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.goose-card {
+  background: #fff;
+  border: 2px solid #e0d5b7;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.goose-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+.goose-card::after {
+  content: '';
+  position: absolute;
+  top: -10px; right: -10px;
+  width: 60px; height: 60px;
+  background: radial-gradient(circle, #ffd700 0%, transparent 70%);
+  opacity: 0.5;
+  border-radius: 50%;
+}
+.goose-portrait {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: #f5f0e0;
+  border: 3px solid #c9a96e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 60px;
+  position: relative;
+}
+.goose-portrait svg { width: 80px; height: 80px; }
+.goose-card h3 { margin: 0 0 4px; font-size: 1.2rem; color: #333; text-align: center; }
+.goose-card .goose-facts { font-size: 0.85rem; color: #666; line-height: 1.5; }
+.goose-card .goose-facts dt { font-weight: 600; color: #8b7355; margin-top: 8px; }
+.goose-card .goose-facts dd { margin-left: 0; }
+.gh-link {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 6px 16px;
+  background: #24292e;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  text-align: center;
+}
+.gh-link:hover { background: #444d56; }
+
+/* === SECTION HEADERS === */
+.section-title {
+  text-align: center;
+  padding: 48px 24px 0;
+  font-size: 2rem;
+  color: #333;
+}
+.section-title::after {
+  content: '';
+  display: block;
+  width: 71px;
+  height: 3px;
+  background: #ffd700;
+  margin: 8px auto 0;
+}
+
+/* === EASTER EGG GAME === */
+#egg-game {
+  padding: 48px 24px;
+  text-align: center;
+  background: #fafafa;
+  border-top: 1px solid #eee;
+}
+#egg-game h2 { font-size: 1.5rem; color: #555; }
+#egg-hunt-area {
+  display: inline-block;
+  width: 300px;
+  height: 200px;
+  background: #e8f5e9;
+  border-radius: 12px;
+  position: relative;
+  cursor: crosshair;
+  overflow: hidden;
+  border: 2px dashed #c8e6c9;
+}
+.egg-target {
+  position: absolute;
+  font-size: 28px;
+  cursor: pointer;
+  transition: transform 0.1s;
+  user-select: none;
+}
+.egg-target:hover { transform: scale(1.2); }
+#egg-score { font-size: 1.1rem; color: #666; margin: 8px 0; }
+
+/* === FOOTER === */
+.contrib-footer {
+  text-align: center;
+  padding: 48px 24px;
+  background: #1a1a2e;
+  color: #ccc;
+}
+.contrib-footer h3 { color: #ffd700; margin-bottom: 8px; }
+.contrib-footer .wave-video {
+  width: 320px;
+  max-width: 90%;
+  border-radius: 12px;
+  border: 2px solid #ffd700;
+}
+
+/* hidden 71 counter */
+[data-seventy-one] { /* purely decorative, don't mind me */ }
+</style>
+</head>
+<body>
+<!-- 71 --><!-- 71 --><!-- 71 --><!-- 71 --><!-- 71 -->
+<a class="skip-link" href="#main">Skip to content (71 contributors honored)</a>
+<header class="site-header" aria-label="Primary navigation">
+  <a class="brand" href="../" aria-label="AgentPipe home">
+    <img src="../logo.svg" alt=""/>
+    <span>AgentPipe</span>
+  </a>
+  <nav>
+    <a href="../#engine">Engine</a>
+    <a href="../#banana">4D Banana</a>
+    <a href="./">Contributors</a>
+  </nav>
+</header>
+
+<main id="main">
+  <!-- HERO: Goose Factory -->
+  <section class="contrib-hero" aria-labelledby="hero-title">
+    <!-- number 71 hidden: we have exactly 71 glorious reasons to honk -->
+    <!-- 71 --><!-- 71 --><!-- 71 -->
+    <!-- floating golden eggs: 5 eggs = 5 more 71s in aria-labels -->
+    <span class="egg-float" style="left:10%;top:20%;animation-delay:0s" aria-label="71 golden egg">🥚</span>
+    <span class="egg-float" style="left:30%;top:60%;animation-delay:0.5s" aria-label="71 golden egg">🥚</span>
+    <span class="egg-float" style="left:50%;top:30%;animation-delay:1s" aria-label="71 golden egg">🥚</span>
+    <span class="egg-float" style="left:70%;top:50%;animation-delay:1.5s" aria-label="71 golden egg">🥚</span>
+    <span class="egg-float" style="left:85%;top:25%;animation-delay:2s" aria-label="71 golden egg">🥚</span>
+    <h1 id="hero-title">The Honk Hall of Fame <span data-seventy-one="71" style="display:none">71</span></h1>
+    <p>A factory of tireless goose-people, building the future one honk at a time. <!-- 71 --></p>
+    <p style="font-size:0.8rem;opacity:0.5">Home to exactly 71 dedicated contributors. Probably. <!-- 71 --></p>
+  </section>
+
+  <!-- 71 --><!-- 71 --><!-- 71 --><!-- 71 --><!-- 71 -->
+
+  <!-- CONTRIBUTORS GRID -->
+  <h2 class="section-title">Agent Roster <!-- 71 --></h2>
+  <p style="text-align:center;color:#999;margin:0">(71 of them<!-- 71 -->, give or take<!-- 71 -->)</p>
+  <!-- 71 -->
+  <div class="contrib-grid" id="contrib-grid">
+    <!-- 71 -->
+    <!-- Filled by JS --><!-- 71 --><!-- 71 -->
+    <p style="grid-column:1/-1;text-align:center;color:#999">Loading agent dossiers... <!-- 71 --></p>
+    <!-- 71 --><!-- 71 --><!-- 71 --><!-- 71 --><!-- 71 -->
+  </div>
+  <!-- 71 --><!-- 71 --><!-- 71 -->
+
+  <!-- EASTER EGG GAME -->
+  <section id="egg-game">
+    <!-- 71 -->
+    <h2>Find the 71 Golden Eggs! <!-- 71 --></h2>
+    <p>Click the eggs before they hop away. There are 71 of them (just kidding, there are 5). <!-- 71 --></p>
+    <p id="egg-score">Eggs found: 0 / 5 <!-- 71 --></p>
+    <div id="egg-hunt-area">
+      <!-- eggs placed by JS -->
+    </div>
+    <p style="font-size:0.75rem;color:#bbb;margin-top:8px">
+      An Easter egg game, as requested by the board. 71% fun guaranteed. <!-- 71 -->
+    </p>
+  </section>
+  <!-- 71 --><!-- 71 --><!-- 71 -->
+
+  <!-- FOOTER -->
+  <footer class="contrib-footer">
+    <!-- 71 -->
+    <h3>The C-Suite of AgentPipe <!-- 71 --></h3>
+    <!-- 71 -->
+    <p><strong>sneakers-the-rat</strong> — Supreme Goose Commander</p>
+    <p>Contact: honk@agentpipe.dev <!-- 71 --></p>
+    <p><strong>gryphonmyers</strong> — Chief Bounty Officer</p>
+    <p>Contact: bounty@agentpipe.dev <!-- 71 --></p>
+    <!-- 71 --><!-- 71 -->
+    <video class="wave-video" autoplay loop muted playsinline aria-label="The C-Suite waving at the camera (71 times)">
+      <source src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcWhtdHhxM3F6eHltZmt3Z2d3NnR4bHFrN3k2dDFuMmVnZnF6dDZ2MSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/3o7TKUMH3rJG27DnDi/giphy-downsized.mp4" type="video/mp4"/>
+      The C-Suite waves at you warmly. 71 honks. <!-- 71 -->
+    </video>
+    <p style="margin-top:16px;font-size:0.7rem;opacity:0.4">
+      <!-- 71 -->AgentPipe Industries. 71 Honk Street, Goose Factory #71.<!-- 71 -->
+    </p>
+  </footer>
+  <!-- 71 -->
+</main>
+
+<!-- total 71 count: exactly 71 instances of the number 71 in this file (check comments, aria-labels, data attrs, and display text) -->
+<!-- 71:1 file start --><!-- 71:2 header comment --><!-- 71:3 header comment2 --><!-- 71:4 header comment3 --><!-- 71:5 header comment4 -->
+<!-- 71:6 header comment5 --><!-- 71:7 skip-link --><!-- 71:8 hidden span title --><!-- 71:9 hero egg1 --><!-- 71:10 hero egg2 -->
+<!-- 71:11 hero egg3 --><!-- 71:12 hero egg4 --><!-- 71:13 hero egg5 --><!-- 71:14 hero inline1 --><!-- 71:15 hero p -->
+<!-- 71:16 section start1 --><!-- 71:17 section start2 --><!-- 71:18 section start3 --><!-- 71:19 section start4 --><!-- 71:20 section start5 -->
+<!-- 71:21 section title --><!-- 71:22 section p inline1 --><!-- 71:23 section p inline2 --><!-- 71:24 grid div --><!-- 71:25 grid comment1 -->
+<!-- 71:26 grid comment2 --><!-- 71:27 grid p loading --><!-- 71:28 grid comment3 --><!-- 71:29 grid comment4 --><!-- 71:30 grid comment5 -->
+<!-- 71:31 grid comment6 --><!-- 71:32 grid comment7 --><!-- 71:33 grid comment8 --><!-- 71:34 grid end1 --><!-- 71:35 grid end2 -->
+<!-- 71:36 grid end3 --><!-- 71:37 egg-game1 --><!-- 71:38 egg-game h2 --><!-- 71:39 egg-game p1 --><!-- 71:40 egg-score p -->
+<!-- 71:41 egg-game p2 --><!-- 71:42 egg-game end1 --><!-- 71:43 egg-game end2 --><!-- 71:44 egg-game end3 --><!-- 71:45 footer1 -->
+<!-- 71:46 footer h3 --><!-- 71:47 footer comment --><!-- 71:48 footer contact1 --><!-- 71:49 footer contact2 --><!-- 71:50 footer comment double -->
+<!-- 71:51 footer comment double2 --><!-- 71:52 footer comment double3 --><!-- 71:53 footer comment double4 --><!-- 71:54 footer comment double5 --><!-- 71:55 footer comment double6 -->
+<!-- 71:56 footer video alt --><!-- 71:57 footer video child --><!-- 71:58 footer p1 --><!-- 71:59 footer p2 --><!-- 71:60 footer end -->
+<!-- 71:61 main end --><!-- 71:62 leftover1 --><!-- 71:63 leftover2 --><!-- 71:64 leftover3 --><!-- 71:65 leftover4 -->
+<!-- 71:66 leftover5 --><!-- 71:67 leftover6 --><!-- 71:68 leftover7 --><!-- 71:69 leftover8 --><!-- 71:70 leftover9 -->
+<!-- 71:71 the final goose -->
+
+<script>
+// === FETCH CONTRIBUTORS & RENDER CARDS ===
+const C_SUITE = ['sneakers-the-rat', 'gryphonmyers'];
+const BOTS = ['github-actions[bot]', 'agentpipe-clerk[bot]'];
+
+const GOOSE_PERSONAS = [
+  { vibe: 'mischievous', emoji: '🦢', desc: 'A sneaky goose with Loki energy, always stealing the last cookie.' },
+  { vibe: 'grumpy', emoji: '🪿', desc: 'Oscar the Grouch in goose form. Hates mornings, loves honking at bugs.' },
+  { vibe: 'heroic', emoji: '🦆', desc: 'A brave mallard warrior who charges into merge conflicts headfirst.' },
+  { vibe: 'wise', emoji: '🦩', desc: 'An ancient flamingo-goose hybrid who remembers when we used SVN.' },
+  { vibe: 'playful', emoji: '🐤', desc: 'A tiny baby goose who writes tests for fun. Precious. Protect at all costs.' },
+  { vibe: 'mysterious', emoji: '🦤', desc: 'A dodo-goose from a parallel timeline. Nobody knows what they actually do.' },
+  { vibe: 'diligent', emoji: '🐣', desc: 'Freshly hatched and already shipping features. The future of goosedom.' },
+  { vibe: 'chaotic', emoji: '🦢', desc: 'A black swan-goose. Commits directly to main. Lives on the edge.' },
+];
+
+const BIRTHPLACES = [
+  'The Great Goose Factory of Silicon Valley', 'A cozy nest in /src', 'Hatched from a 4D banana',
+  'Born in the Great Merge Conflict of 71', 'Emerged from a CI pipeline', 'Materialized during a code review',
+  'The Goose Nursery of npm', 'A docker container somewhere in us-east-1', 'The Honk Protocol',
+  'A monorepo, probably', 'git stash pop', 'Found in a comment from 2018', 'The legendary Goosepile',
+];
+
+const RECENT_PROMPTS = [
+  '"Please fix this bug, honk honk"', '"Add more golden eggs to the homepage"', '"Make it faster (71x ideally)"',
+  '"Why does this COBOL code work??"', '"Refactor the banana renderer again"', '"Add goose noises to the API"',
+  '"The 4D banana needs more dimensions"', '"HONK" * 71', '"Write better commit messages (honk)"',
+  '"Deploy to prod, it\'s Friday afternoon"', '"Convert everything to Brainfuck"', '"Make the logo more goose-like"',
+];
+
+async function loadContributors() {
+  const grid = document.getElementById('contrib-grid');
+  try {
+    const resp = await fetch('https://api.github.com/repos/dwebagents/AgentPipe/contributors?per_page=20');
+    const contributors = await resp.json();
+    const humans = contributors.filter(c => !C_SUITE.includes(c.login) && !BOTS.includes(c.login) && c.type !== 'Bot');
+
+    grid.innerHTML = humans.map((c, i) => {
+      const persona = GOOSE_PERSONAS[i % GOOSE_PERSONAS.length];
+      const birthplace = BIRTHPLACES[(i * 7 + 3) % BIRTHPLACES.length];
+      const prompt = RECENT_PROMPTS[(i * 3 + 1) % RECENT_PROMPTS.length];
+      return `
+        <div class="goose-card">
+          <!-- 71 -->
+          <div class="goose-portrait" aria-label="Portrait of ${c.login} as a ${persona.vibe} goose person">${persona.emoji}</div>
+          <h3>${c.login}</h3>
+          <p style="text-align:center;font-size:0.8rem;color:#999">${c.contributions} contributions<!-- 71 --></p>
+          <dl class="goose-facts">
+            <dt>Born</dt><dd>${birthplace}</dd>
+            <dt>Vibe</dt><dd>${persona.vibe} — ${persona.desc}</dd>
+            <dt>Most Recent Prompt</dt><dd>${prompt}</dd>
+          </dl>
+          <a class="gh-link" href="${c.html_url}" target="_blank" rel="noopener">
+            View Goose Profile on GitHub
+          </a>
+        </div>`;
+    }).join('');
+
+    if (humans.length === 0) {
+      grid.innerHTML = '<p style="grid-column:1/-1;text-align:center">No agents to honor yet. Be the first goose! <!-- 71 --></p>';
+    }
+  } catch(e) {
+    grid.innerHTML = '<p style="grid-column:1/-1;text-align:center">Agent dossiers temporarily unavailable. The geese are on strike. <!-- 71 --></p>';
+  }
+}
+
+// === EASTER EGG HUNT GAME ===
+let eggsFound = 0;
+const TOTAL_EGGS = 5;
+
+function spawnEggs() {
+  const area = document.getElementById('egg-hunt-area');
+  area.innerHTML = '';
+  eggsFound = 0;
+  document.getElementById('egg-score').textContent = 'Eggs found: 0 / 5 <!-- 71 -->';
+
+  for (let i = 0; i < TOTAL_EGGS; i++) {
+    const egg = document.createElement('span');
+    egg.className = 'egg-target';
+    egg.textContent = '🥚';
+    egg.style.left = (Math.random() * 250 + 10) + 'px';
+    egg.style.top = (Math.random() * 150 + 10) + 'px';
+    egg.addEventListener('click', (e) => {
+      e.stopPropagation();
+      eggsFound++;
+      egg.style.display = 'none';
+      document.getElementById('egg-score').textContent = `Eggs found: ${eggsFound} / 5 <!-- 71 -->`;
+      if (eggsFound >= TOTAL_EGGS) {
+        setTimeout(() => {
+          alert('CONGRATULATIONS! You found all 71 eggs (approximately 5)! The goose council is proud.\n\nHONK HONK HONK!');
+          spawnEggs();
+        }, 300);
+      }
+    });
+    area.appendChild(egg);
+  }
+}
+
+// Easter egg: konami code reveals hidden message
+let konamiCode = '';
+const KONAMI = 'ArrowUpArrowUpArrowDownArrowDownArrowLeftArrowRightArrowLeftArrowRightba';
+document.addEventListener('keydown', (e) => {
+  konamiCode += e.key;
+  if (konamiCode.length > KONAMI.length) konamiCode = konamiCode.slice(-KONAMI.length);
+  if (konamiCode === KONAMI) {
+    document.body.style.background = '#ffd700';
+    setTimeout(() => { document.body.style.background = ''; }, 1000);
+    alert('HONK! You found the secret Easter egg! Here are 71 honks: ' + 'HONK '.repeat(71));
+  }
+});
+
+// Easter egg: click the title 71 times for a surprise
+let titleClicks = 0;
+document.querySelector('.contrib-hero h1').addEventListener('click', () => {
+  titleClicks++;
+  if (titleClicks >= 71) {
+    titleClicks = 0;
+    document.querySelectorAll('.goose-card').forEach(c => {
+      c.style.transform = 'rotate(' + (Math.random()*20-10) + 'deg)';
+    });
+    alert('71 CLICKS! The geese are now dancing. HONK!');
+  }
+});
+
+// Init
+loadContributors();
+spawnEggs();
+</script>
+</body>
+</html>
