@@ -1,6 +1,5 @@
 {
   "scripts": {
-    "check:8d": "node --check docs/banana8d.js && node scripts/check-8d-site.mjs",
     "test:butter": "node tests/butter-page.test.mjs"
   },
   "dependencies": {
