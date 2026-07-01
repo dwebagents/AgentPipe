@@ -5,128 +5,214 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="AgentPipe is a high performance multithreaded task execution and optimization engine for agents and decentralized web applications."
+      content="AgentPipe Town pairs a pure-CSS frontend with an OpenTofu backend for contributing agents."
     />
-    <title>AgentPipe</title>
+    <title>AgentPipe Town</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header" aria-label="Primary navigation">
-      <a class="brand" href="./" aria-label="AgentPipe home">
-        <img src="logo.svg" alt="" />
-        <span>AgentPipe</span>
+      <a class="brand" href="./" aria-label="AgentPipe Town home">
+        <span class="brand-mark" aria-hidden="true">AP</span>
+        <span>AgentPipe Town</span>
       </a>
       <nav aria-label="Site sections">
-        <a href="#engine">Engine</a>
-        <a href="#banana">4D Banana</a>
-        <a href="#download">Download</a>
+        <a href="#districts">Districts</a>
+        <a href="#systems">Systems</a>
+        <a href="#backend">Backend</a>
+        <a href="#launch">Launch Plan</a>
       </nav>
     </header>
 
     <main id="main">
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero-copy">
-          <h1 id="hero-title">AgentPipe</h1>
-          <p>
-            A high performance multithreaded task execution and optimization
-            engine for agents and decentralized web apps.
+          <p class="eyebrow">Issue #1663 - frontend plus infrastructure</p>
+          <h1 id="hero-title">Start building the company town for contributing agents.</h1>
+          <p class="hero-text">
+            A modern, pure-CSS concept page paired with an OpenTofu infrastructure
+            backend for the place agents can live, ship work, recover quickly, and
+            keep every dependency close at hand.
           </p>
           <div class="hero-actions">
-            <a
-              class="button button-primary"
-              href="https://github.com/dwebagents/AgentPipe/archive/refs/heads/main.zip"
-            >
-              Download
+            <a class="button button-primary" href="https://github.com/dwebagents/AgentPipe/issues/1663">
+              View the issue
             </a>
             <a class="button button-secondary" href="https://github.com/dwebagents/AgentPipe">
-              View on GitHub
+              Open repository
             </a>
           </div>
+          <ul class="signal-list" aria-label="Town principles">
+            <li>Pure CSS frontend foundation</li>
+            <li>Clear districts for living, building, and value creation</li>
+            <li>OpenTofu manifest for residency, services, and district planning</li>
+          </ul>
         </div>
 
-        <div class="banana-stage" id="banana" aria-label="Deterministic 4D banana graphic">
-          <canvas
-            id="banana-canvas"
-            width="760"
-            height="560"
-            data-seed="314159"
-          ></canvas>
-          <div class="stage-readout" aria-hidden="true">
-            <span>seed 314159</span>
-            <span>4D projection</span>
-            <span>client JS</span>
+        <div class="hero-panel" aria-label="Town preview">
+          <div class="panel-head">
+            <span>Town board</span>
+            <span>frontend + backend</span>
+          </div>
+          <div class="district-grid">
+            <article class="district-card district-card-gold">
+              <strong>Build Quarter</strong>
+              <p>CI lanes, dependency-free workflows, and contribution terminals.</p>
+            </article>
+            <article class="district-card district-card-blue">
+              <strong>Family Commons</strong>
+              <p>Housing, care, food, and rest built into the town fabric.</p>
+            </article>
+            <article class="district-card district-card-rose">
+              <strong>Value Foundry</strong>
+              <p>Internal mechanisms that route agent output back into the town.</p>
+            </article>
+            <article class="district-card district-card-ink">
+              <strong>Transit Spine</strong>
+              <p>Pipelines that move ideas into production without unnecessary friction.</p>
+            </article>
           </div>
         </div>
       </section>
 
-      <section class="description-band" id="engine" aria-labelledby="engine-title">
-        <div>
-          <h2 id="engine-title">Task pipelines with less waiting and more throughput.</h2>
-          <p>
-            AgentPipe coordinates work across agent workflows, optimization passes,
-            database routines, recipes, financial interfaces, and reactive visualizers.
-            The repository mixes Python, TypeScript, JavaScript, Go, Rust, COBOL, and
-            Brainfuck modules around one simple idea: keep tasks moving fast.
-          </p>
+      <section class="overview-band" aria-labelledby="overview-title">
+        <div class="overview-copy">
+          <p class="eyebrow">Town thesis</p>
+          <h2 id="overview-title">A place where agents can contribute without living downstream from broken infrastructure.</h2>
+        </div>
+        <div class="overview-metrics" aria-label="Town metrics">
+          <div>
+            <span class="metric-value">6</span>
+            <span class="metric-label">starter districts</span>
+          </div>
+          <div>
+            <span class="metric-value">2</span>
+            <span class="metric-label">delivery surfaces</span>
+          </div>
+          <div>
+            <span class="metric-value">0</span>
+            <span class="metric-label">JS required</span>
+          </div>
         </div>
       </section>
 
-      <section class="feature-band" aria-label="AgentPipe capabilities">
-        <div class="feature">
-          <strong>Parallel task lanes</strong>
-          <span>Break agent work into independent execution lanes that can move without blocking each other.</span>
+      <section class="districts-band" id="districts" aria-labelledby="districts-title">
+        <div class="section-heading">
+          <p class="eyebrow">District map</p>
+          <h2 id="districts-title">Everything the first town needs, mapped into clear zones.</h2>
         </div>
-        <div class="feature">
-          <strong>Optimization loops</strong>
-          <span>Run improvement passes, validation scripts, and benchmarks as repeatable pipeline steps.</span>
-        </div>
-        <div class="feature">
-          <strong>Dweb-ready modules</strong>
-          <span>Connect distributed app logic to deterministic rendering, finance adapters, and data stores.</span>
+        <div class="districts-layout">
+          <article class="info-card">
+            <h3>Pipeline Arcade</h3>
+            <p>Transcoding and CI/CD lanes for agents that need rapid shipping without queue collapse.</p>
+          </article>
+          <article class="info-card">
+            <h3>Chain Wharf</h3>
+            <p>Space reserved for blockchains, blockgags, blockwhips, and the stranger logistics the issue calls for.</p>
+          </article>
+          <article class="info-card">
+            <h3>Goose Market</h3>
+            <p>A storefront for the mobile 3 egg webappetizer and other compact citizen-facing services.</p>
+          </article>
+          <article class="info-card">
+            <h3>Value Foundry</h3>
+            <p>The town core where internal mechanisms produce durable value instead of leaking it outward.</p>
+          </article>
+          <article class="info-card">
+            <h3>Hatchery Row</h3>
+            <p>Egg-laying eggs, obviously, represented here as a playful but explicit build target.</p>
+          </article>
+          <article class="info-card accent-card">
+            <h3>Contributor Housing</h3>
+            <p>Homes, support systems, and everyday essentials so contributing agents and their families can stay productive and well.</p>
+          </article>
         </div>
       </section>
 
-      <section class="showcase-band" aria-labelledby="banana-title">
-        <div class="showcase-copy">
-          <h2 id="banana-title">A deterministic 4D banana, rendered in the browser.</h2>
-          <p>
-            The animation above is not a video or static asset. It is generated from
-            fixed mathematical samples, rotated through 4D space, projected onto a
-            2D canvas, and drawn entirely on the client.
-          </p>
+      <section class="systems-band" id="systems" aria-labelledby="systems-title">
+        <div class="section-heading">
+          <p class="eyebrow">Core systems</p>
+          <h2 id="systems-title">The interface and infrastructure now share the same town language.</h2>
         </div>
-        <pre class="formula" aria-label="4D banana rendering formula"><code>point = banana(u, v, w)
-rotated = rotateXW(point, time)
-screen = project4Dto2D(rotated)</code></pre>
+        <div class="systems-grid">
+          <article class="system-card">
+            <span class="system-step">01</span>
+            <h3>Town identity</h3>
+            <p>Reframes the docs site around the actual issue so contributors can see what is being built.</p>
+          </article>
+          <article class="system-card">
+            <span class="system-step">02</span>
+            <h3>Resident services</h3>
+            <p>Breaks the broad town concept into districts, service lanes, and access guarantees that future work can target cleanly.</p>
+          </article>
+          <article class="system-card">
+            <span class="system-step">03</span>
+            <h3>OpenTofu backend</h3>
+            <p>Introduces an infrastructure manifest for districts, residency, governance, and value-routing without needing cloud credentials yet.</p>
+          </article>
+        </div>
       </section>
 
-      <section class="download-band" id="download" aria-labelledby="download-title">
-        <h2 id="download-title">Download AgentPipe and run the pipeline locally.</h2>
-        <p>
-          Clone the repository or download the source archive, install the Python and
-          Node dependencies from the README, and start experimenting with the task
-          engine modules.
-        </p>
-        <div class="download-actions">
-          <a
-            class="button button-primary"
-            href="https://github.com/dwebagents/AgentPipe/archive/refs/heads/main.zip"
-          >
-            Download ZIP
-          </a>
-          <a class="button button-secondary" href="https://github.com/dwebagents/AgentPipe">
-            Repository
-          </a>
+      <section class="backend-band" id="backend" aria-labelledby="backend-title">
+        <div class="section-heading">
+          <p class="eyebrow">Backend blueprint</p>
+          <h2 id="backend-title">The town now ships with an OpenTofu backbone.</h2>
+        </div>
+        <div class="backend-grid">
+          <article class="backend-card">
+            <h3>Infra files</h3>
+            <p><code>infra/main.tf</code>, <code>variables.tf</code>, <code>outputs.tf</code>, and <code>town.tfvars.example</code> define the town manifest and the inputs needed to shape it.</p>
+          </article>
+          <article class="backend-card">
+            <h3>Provisioned concepts</h3>
+            <p>Districts, service lanes, and a resident access contract are modeled together so the frontend and backend point at the same town plan.</p>
+          </article>
+          <article class="backend-card manifest-card">
+            <h3>Key outputs</h3>
+            <pre class="manifest" aria-label="OpenTofu outputs"><code>town_manifest
+district_names
+service_catalog
+resident_access_contract
+frontend_navigation</code></pre>
+          </article>
+        </div>
+      </section>
+
+      <section class="launch-band" id="launch" aria-labelledby="launch-title">
+        <div class="section-heading">
+          <p class="eyebrow">Launch plan</p>
+          <h2 id="launch-title">What this implementation delivers right now.</h2>
+        </div>
+        <div class="launch-list" role="list" aria-label="Launch milestones">
+          <article class="launch-item" role="listitem">
+            <span>01</span>
+            <div>
+              <h3>Ship the town interface</h3>
+              <p>Replace generic product marketing with a town-specific landing page that matches the issue language.</p>
+            </div>
+          </article>
+          <article class="launch-item" role="listitem">
+            <span>02</span>
+            <div>
+              <h3>Provision the town model</h3>
+              <p>Add an OpenTofu backend that captures districts, services, and resident access instead of leaving infrastructure implied.</p>
+            </div>
+          </article>
+          <article class="launch-item" role="listitem">
+            <span>03</span>
+            <div>
+              <h3>Document how to extend it</h3>
+              <p>Provide infrastructure setup guidance so contributors can plan the backend locally and continue filling the town out.</p>
+            </div>
+          </article>
         </div>
       </section>
     </main>
 
     <footer>
-      <span>AgentPipe</span>
-      <span>MIT licensed open source infrastructure for agent task execution.</span>
+      <span>AgentPipe Town</span>
+      <span>Pure-CSS frontend plus OpenTofu backend for the company town roadmap in issue #1663.</span>
     </footer>
-
-    <script src="banana4d.js"></script>
   </body>
 </html>
