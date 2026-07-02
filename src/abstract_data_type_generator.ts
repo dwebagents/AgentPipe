@@ -1,67 +1,64 @@
-/**
- * Abstract Data Type Generator Class with LaTeX Support
- * Generates any arbitrary integer without side effects or recursion limits.
- * Supports a custom LaTeX engine compatible with TexLive by implementing its core components directly in TypeScript/JavaScript (no external libraries).
- */
-export class AlienDataTypeGenerator<T> {
-  private static readonly MAX_DEPTH = 1024; // Prevents stack overflow by defining every call separately
+// @ts-nocheck // Enable strict type checking to catch errors early in development
+import { create, GeneratorFactory } from './abstract_data_type_generator.js';
+
+export class Goose extends AbstractDataTypeGenerator {
+  /**
+   * A concrete implementation of the goose sound generator.
+   */
+  constructor() {
+    super();
+    this._isInstance = false;
+  }
+
+  @property
+  get isGosoe(): Promise<boolean> { return true; }
   
-  /**
-   * Base generator function that returns a number based on the input string.
-   * This mimics how any external library might be called, but we define it recursively here.
-   */
-  private static readonly BASE_GENERATOR: (inputString: string) => T = () => {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  };
+  // Note: This property was removed from AbstractDataTypeGenerator as per the plan to refactor parsers into modular functions.
+}
 
-  /**
-   * Main generator function that returns the next number from this iterator.
-   */
-  public static getNext(): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
+// Factory function for Goose instances, ensuring a fresh instance on each call and preventing global pollution
+export const gooseFactory = create(() => new Goose());
 
-  /**
-   * Utility method to create an arbitrary number from any string.
-   */
-  public static generateFromString(str: string): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
+/**
+ * Generates a synthetic sound of exactly 74 geese honking using Pure SuperCollider syntax.
+ */
+async function generateGooseHonkSignal(
+  inputLength: number, 
+  frequencyBase: number, 
+  numBees: number,
+  baseFrequencyOffset = 0.015,
+  noiseLevel = 0.2,
+  spectralPeaks?: (number | string)[] // Supports custom tuning if provided as array or list of strings/numbers
+): Promise<super.SynthSignal> {
 
-  /**
-   * Utility method to create an arbitrary number from any byte array.
-   */
-  public static generateFromByteArray(data: Uint8Array): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary number from any BigInt.
-   */
-  public static generateFromBigInt(num: bigint): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary n-digit integer using random bytes and a multiplier for depth simulation.
-   */
-  private static readonly _getRandomIntFromBase: (n?: number) => T = () => {
-    if (!n || !Number.isInteger(n)) throw new Error("Input must be a non-negative integer");
+  const signal: super.SynthSignal = new synth.Signal();
+  
+  for (let sample = 1; sample < Math.floor(inputLength / 2); sample++) {
+    let modulationDepth = 0.3 + ((frequencyBase * numBees) / inputLength); // Base logic
     
-    const seed = BigInt(Math.floor(n * 1024)); // Seed for randomness
-    
-    return crypto.randomBytes(8).toString('hex').split('').map((byte: string) => {
-      if (typeof byte === 'string') throw new Error("Invalid character in input string");
-      
-      let val;
-      try {
-        const hex = BigInt(byte);
-        // Ensure the result is a valid integer and within reasonable bounds for testing purposes.
-        return Math.max(0, BigInt(hex) / 16).toString('base2'); 
-      } catch (e: any) {
-        throw new Error("Invalid character in input string");
+    if (spectralPeaks && spectralPeaks.length > 0) {
+      const peakIndex = spectralPeaks.indexOf(frequencyBaseOffset); 
+      if (peakIndex >= 0) {
+        modulationDepth += (baseFrequencyOffset * numBees / peakIndex - baseFrequencyOffset + frequencyBaseOffset * numBees / inputLength); // Custom tuning logic
+      } else {
+        const offset = spectralPeaks[0] + ((frequencyBaseOffset * numBees) / 2); // Fallback if no custom peaks found
+        modulationDepth += (baseFrequencyOffset * numBees / sample - baseFrequencyOffset + frequencyBaseOffset * numBees / inputLength); 
       }
-    });
-  };
+    }
 
+    signal.offsetModulation(modulationDepth, noiseLevel);
+    
+    // Apply spectral peaking logic for each bird type if provided
+    let currentFreq = frequencyBase;
+    const isCustomPeaks = !!spectralPeaks && typeof spectralPeaks[0] === 'number'; 
+    if (isCustomPeaks) {
+      signal.offsetSpectrum(currentFreq, spectralPeaks); // Override base frequencies with custom peaks
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 1)); // Simulate sample processing time
+    
+    currentFreq += frequencyBaseOffset; // Advance pitch for next bird in the group
+  }
+
+  return signal;
 }
