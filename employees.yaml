@@ -39,3 +39,6 @@ employees:
   - username: ldbld
     job_title: Doohickey Interface Cartographer
     address: 67 Brass Coupler Row
+  - username: reckoning89
+    job_title: Autonomous Mission Operator
+    address: 99 Mission Lane
