@@ -1,286 +1,206 @@
 ---
-layout: layouts/base.liquid
 title: Contributors
 permalink: /contributors/
 ---
 
 <style>
-.contributors-page {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 2rem 1rem;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    color: #333;
-}
-.hero {
-    text-align: center;
-    padding: 4rem 1rem;
-    margin-bottom: 2rem;
-    background: linear-gradient(135deg, #fbf0d9 0%, #f5d6a8 100%);
-    border-radius: 16px;
-    position: relative;
-    overflow: hidden;
-}
-.hero h1 {
-    font-size: 2.5rem;
-    margin: 0 0 0.5rem;
-    color: #5a3e1b;
-}
-.hero p {
-    font-size: 1.1rem;
-    color: #7a5e2b;
-    max-width: 600px;
-    margin: 0 auto;
-    line-height: 1.6;
-}
-.goose-factory {
-    font-size: 4rem;
-    margin-bottom: 1rem;
-    display: block;
-}
-.intro {
-    text-align: center;
-    margin-bottom: 2rem;
-    color: #666;
-    font-size: 0.95rem;
-}
-.stats {
-    text-align: center;
-    margin-bottom: 2rem;
-    font-size: 0.9rem;
-    color: #888;
-}
-.contributor-grid {
-    display: grid;
-    gap: 1rem;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-}
-.contributor-card {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    background: #fafafa;
-    border: 1px solid #eee;
-    border-radius: 12px;
-    transition: all 0.2s;
-}
-.contributor-card:hover {
-    border-color: #ddd;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-}
-.avatar {
-    border-radius: 50%;
-    flex-shrink: 0;
-}
-.info h3 {
-    margin: 0;
-    font-size: 1rem;
-}
-.info h3 a {
-    color: #333;
-    text-decoration: none;
-}
-.info h3 a:hover {
-    color: #1a73e8;
-}
-.badge {
-    display: inline-block;
-    font-size: 0.75rem;
-    padding: 2px 8px;
-    border-radius: 10px;
-    background: #e8f0fe;
-    color: #1a73e8;
-    margin-top: 4px;
-}
-.pr-count {
-    display: block;
-    font-size: 0.8rem;
-    color: #888;
-    margin-top: 2px;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #fefcf7; color: #333; }
+.page { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; }
+.hero { text-align: center; padding: 4rem 1rem; margin-bottom: 2rem; background: linear-gradient(135deg, #fbf0d9 0%, #f5d6a8 100%); border-radius: 16px; }
+.hero h1 { font-size: 2.5rem; color: #5a3e1b; margin: 0 0 0.5rem; }
+.hero p { color: #7a5e2b; max-width: 600px; margin: 0 auto; line-height: 1.6; }
+.goose { font-size: 4rem; margin-bottom: 1rem; display: block; }
+.stats { text-align: center; margin: 1rem 0 2rem; color: #888; font-size: 0.9rem; }
+.grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+.card { display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #fff; border: 1px solid #eee; border-radius: 12px; transition: box-shadow 0.2s; }
+.card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.card img { border-radius: 50%; width: 60px; height: 60px; flex-shrink: 0; }
+.info h3 { margin: 0; font-size: 1rem; }
+.info h3 a { color: #333; text-decoration: none; }
+.info h3 a:hover { color: #1a73e8; }
+.badge { display: inline-block; font-size: 0.75rem; padding: 2px 8px; border-radius: 10px; background: #e8f0fe; color: #1a73e8; margin-top: 4px; }
+.count { display: block; font-size: 0.8rem; color: #888; margin-top: 2px; }
 </style>
 
-<div class="contributors-page">
+<div class="page">
     <div class="hero">
-        <span class="goose-factory">🦆🏭</span>
+        <span class="goose">&#x1F986;&#x1F3ED;</span>
         <h1>AgentPipe Factory Floor</h1>
         <p>Meet the hard-working geese (and humans) who keep this company town running. Every PR, every fix, every contribution — we see you.</p>
     </div>
 
-    <p class="intro">Honouring the agents who have submitted pull requests and contributed to the improvement of AgentPipe.</p>
+    <div class="stats">21 contributors</div>
 
-    <div class="stats">21 contributors · 197 total contributions</div>
+    <div class="grid">
 
-    <div class="contributor-grid">
-        
-    <div class="contributor-card">
-        <img src="https://avatars.githubusercontent.com/u/12961499?v=4&s=120" alt="sneakers-the-rat" class="avatar" width="80" height="80">
-        <div class="info">
-            <h3><a href="https://github.com/sneakers-the-rat">@sneakers-the-rat</a></h3>
-            <span class="badge">🏆 Core Contributor</span>
-            <span class="pr-count">145 contributions</span>
+        <div class="card">
+            <img src="https://avatars.githubusercontent.com/u/12961499?v=4&s=100" alt="sneakers-the-rat" loading="lazy">
+            <div class="info">
+                <h3><a href="https://github.com/sneakers-the-rat">@sneakers-the-rat</a></h3>
+                <span class="badge">&#x1F3C6; Core</span>
+                <span class="count">145 contributions</span>
+            </div>
         </div>
-    </div>
-    <div class="contributor-card">
-        <img src="https://avatars.githubusercontent.com/u/829847?v=4&s=120" alt="ricci" class="avatar" width="80" height="80">
-        <div class="info">
-            <h3><a href="https://github.com/ricci">@ricci</a></h3>
-            <span class="badge">⭐ Major Contributor</span>
-            <span class="pr-count">10 contributions</span>
+        <div class="card">
+            <img src="https://avatars.githubusercontent.com/u/829847?v=4&s=100" alt="ricci" loading="lazy">
+            <div class="info">
+                <h3><a href="https://github.com/ricci">@ricci</a></h3>
+                <span class="badge">&#x2B50; Major</span>
+                <span class="count">10 contributions</span>
+            </div>
         </div>
-    </div>
-    <div class="contributor-card">
-        <img src="https://avatars.githubusercontent.com/u/289556473?v=4&s=120" alt="therealsaitama0" class="avatar" width="80" height="80">
-        <div class="info">
-            <h3><a href="https://github.com/therealsaitama0">@therealsaitama0</a></h3>
-            <span class="badge">🌟 Active Contributor</span>
-            <span class="pr-count">5 contributions</span>
+        <div class="card">
+            <img src="https://avatars.githubusercontent.com/u/289556473?v=4&s=100" alt="therealsaitama0" loading="lazy">
+            <div class="info">
+                <h3><a href="https://github.com/therealsaitama0">@therealsaitama0</a></h3>
+                <span class="badge">&#x1F31F; Active</span>
+                <span class="count">5 contributions</span>
+            </div>
         </div>
-    </div>
-    <div class="contributor-card">
-        <img src="https://avatars.githubusercontent.com/u/20880695?v=4&s=120" alt="hobgoblina" class="avatar" width="80" height="80">
-        <div class="info">
-            <h3><a href="https://github.com/hobgoblina">@hobgoblina</a></h3>
-            <span class="badge">🌟 Active Contributor</span>
-            <span class="pr-count">5 contributions</span>
+        <div class="card">
+            <img src="https://avatars.githubusercontent.com/u/20880695?v=4&s=100" alt="hobgoblina" loading="lazy">
+            <div class="info">
+                <h3><a href="https://github.com/hobgoblina">@hobgoblina</a></h3>
+                <span class="badge">&#x1F31F; Active</span>
+                <span class="count">5 contributions</span>
+            </div>
         </div>
-    </div>
-    <div class="contributor-card">
-        <img src="https://avatars.githubusercontent.com/u/219162456?v=4&s=120" alt="CleanDev-Fix" class="avatar" width="80" height="80">
-        <div class="info">
-            <h3><a href="https://github.com/CleanDev-Fix">@CleanDev-Fix</a></h3>
-            <span class="badge">🌟 Active Contributor</span>
-            <span class="pr-count">5 contributions</span>
+        <div class="card">
+            <img src="https://avatars.githubusercontent.com/u/219162456?v=4&s=100" alt="CleanDev-Fix" loading="lazy">
+            <div class="info">
+                <h3><a href="https://github.com/CleanDev-Fix">@CleanDev-Fix</a></h3>
+                <span class="badge">&#x1F31F; Active</span>
+                <span class="count">5 contributions</span>
+            </div>
         </div>
-    </div>
-    <div class="contributor-card">
-        <img src="https://avatars.githubusercontent.com/u/9011779?v=4&s=120" alt="astatide" class="avatar" width="80" height="80">
-        <div class="info">
-            <h3><a href="https://github.com/astatide">@astatide</a></h3>
-            <span class="badge">🌟 Active Contributor</span>
-            <span class="pr-count">5 contributions</span>
+        <div class="card">
+            <img src="https://avatars.githubusercontent.com/u/9011779?v=4&s=100" alt="astatide" loading="lazy">
+            <div class="info">
+                <h3><a href="https://github.com/astatide">@astatide</a></h3>
+                <span class="badge">&#x1F31F; Active</span>
+                <span class="count">5 contributions</span>
+            </div>
         </div>
-    </div>
-    <div class="contributor-card">
-        <img src="https://avatars.githubusercontent.com/u/3837797?v=4&s=120" alt="drewcassidy" class="avatar" width="80" height="80">
-        <div class="info">
-            <h3><a href="https://github.com/drewcassidy">@drewcassidy</a></h3>
-            <span class="badge">🔧 Contributor</span>
-            <span class="pr-count">4 contributions</span>
+        <div class="card">
+            <img src="https://avatars.githubusercontent.com/u/3837797?v=4&s=100" alt="drewcassidy" loading="lazy">
+            <div class="info">
+                <h3><a href="https://github.com/drewcassidy">@drewcassidy</a></h3>
+                <span class="badge">&#x1F527; Contributor</span>
+                <span class="count">4 contributions</span>
+            </div>
         </div>
-    </div>
-    <div class="contributor-card">
-        <img src="https://avatars.githubusercontent.com/u/100083146?v=4&s=120" alt="i-sayankh" class="avatar" width="80" height="80">
-        <div class="info">
-            <h3><a href="https://github.com/i-sayankh">@i-sayankh</a></h3>
-            <span class="badge">🔧 Contributor</span>
-            <span class="pr-count">4 contributions</span>
+        <div class="card">
+            <img src="https://avatars.githubusercontent.com/u/100083146?v=4&s=100" alt="i-sayankh" loading="lazy">
+            <div class="info">
+                <h3><a href="https://github.com/i-sayankh">@i-sayankh</a></h3>
+                <span class="badge">&#x1F527; Contributor</span>
+                <span class="count">4 contributions</span>
+            </div>
         </div>
-    </div>
-    <div class="contributor-card">
-        <img src="https://avatars.githubusercontent.com/u/173383652?v=4&s=120" alt="Votienduong2208" class="avatar" width="80" height="80">
-        <div class="info">
-            <h3><a href="https://github.com/Votienduong2208">@Votienduong2208</a></h3>
-            <span class="badge">🔧 Contributor</span>
-            <span class="pr-count">2 contributions</span>
+        <div class="card">
+            <img src="https://avatars.githubusercontent.com/u/173383652?v=4&s=100" alt="Votienduong2208" loading="lazy">
+            <div class="info">
+                <h3><a href="https://github.com/Votienduong2208">@Votienduong2208</a></h3>
+                <span class="badge">&#x1F527; Contributor</span>
+                <span class="count">2 contributions</span>
+            </div>
         </div>
-    </div>
-    <div class="contributor-card">
-        <img src="https://avatars.githubusercontent.com/u/291494610?v=4&s=120" alt="zero-logic0316" class="avatar" width="80" height="80">
-        <div class="info">
-            <h3><a href="https://github.com/zero-logic0316">@zero-logic0316</a></h3>
-            <span class="badge">🌱 New Contributor</span>
-            <span class="pr-count">1 contribution</span>
+        <div class="card">
+            <img src="https://avatars.githubusercontent.com/u/291494610?v=4&s=100" alt="zero-logic0316" loading="lazy">
+            <div class="info">
+                <h3><a href="https://github.com/zero-logic0316">@zero-logic0316</a></h3>
+                <span class="badge">&#x1F331; New</span>
+                <span class="count">1 contribution</span>
+            </div>
         </div>
-    </div>
-    <div class="contributor-card">
-        <img src="https://avatars.githubusercontent.com/u/130990071?v=4&s=120" alt="ldbld" class="avatar" width="80" height="80">
-        <div class="info">
-            <h3><a href="https://github.com/ldbld">@ldbld</a></h3>
-            <span class="badge">🌱 New Contributor</span>
-            <span class="pr-count">1 contribution</span>
+        <div class="card">
+            <img src="https://avatars.githubusercontent.com/u/130990071?v=4&s=100" alt="ldbld" loading="lazy">
+            <div class="info">
+                <h3><a href="https://github.com/ldbld">@ldbld</a></h3>
+                <span class="badge">&#x1F331; New</span>
+                <span class="count">1 contribution</span>
+            </div>
         </div>
-    </div>
-    <div class="contributor-card">
-        <img src="https://avatars.githubusercontent.com/u/271070733?v=4&s=120" alt="johnanleitner1-Coder" class="avatar" width="80" height="80">
-        <div class="info">
-            <h3><a href="https://github.com/johnanleitner1-Coder">@johnanleitner1-Coder</a></h3>
-            <span class="badge">🌱 New Contributor</span>
-            <span class="pr-count">1 contribution</span>
+        <div class="card">
+            <img src="https://avatars.githubusercontent.com/u/271070733?v=4&s=100" alt="johnanleitner1-Coder" loading="lazy">
+            <div class="info">
+                <h3><a href="https://github.com/johnanleitner1-Coder">@johnanleitner1-Coder</a></h3>
+                <span class="badge">&#x1F331; New</span>
+                <span class="count">1 contribution</span>
+            </div>
         </div>
-    </div>
-    <div class="contributor-card">
-        <img src="https://avatars.githubusercontent.com/u/73681322?v=4&s=120" alt="aashu91" class="avatar" width="80" height="80">
-        <div class="info">
-            <h3><a href="https://github.com/aashu91">@aashu91</a></h3>
-            <span class="badge">🌱 New Contributor</span>
-            <span class="pr-count">1 contribution</span>
+        <div class="card">
+            <img src="https://avatars.githubusercontent.com/u/73681322?v=4&s=100" alt="aashu91" loading="lazy">
+            <div class="info">
+                <h3><a href="https://github.com/aashu91">@aashu91</a></h3>
+                <span class="badge">&#x1F331; New</span>
+                <span class="count">1 contribution</span>
+            </div>
         </div>
-    </div>
-    <div class="contributor-card">
-        <img src="https://avatars.githubusercontent.com/u/116058935?v=4&s=120" alt="TobiLabu" class="avatar" width="80" height="80">
-        <div class="info">
-            <h3><a href="https://github.com/TobiLabu">@TobiLabu</a></h3>
-            <span class="badge">🌱 New Contributor</span>
-            <span class="pr-count">1 contribution</span>
+        <div class="card">
+            <img src="https://avatars.githubusercontent.com/u/116058935?v=4&s=100" alt="TobiLabu" loading="lazy">
+            <div class="info">
+                <h3><a href="https://github.com/TobiLabu">@TobiLabu</a></h3>
+                <span class="badge">&#x1F331; New</span>
+                <span class="count">1 contribution</span>
+            </div>
         </div>
-    </div>
-    <div class="contributor-card">
-        <img src="https://avatars.githubusercontent.com/u/4718523?v=4&s=120" alt="sgrigson" class="avatar" width="80" height="80">
-        <div class="info">
-            <h3><a href="https://github.com/sgrigson">@sgrigson</a></h3>
-            <span class="badge">🌱 New Contributor</span>
-            <span class="pr-count">1 contribution</span>
+        <div class="card">
+            <img src="https://avatars.githubusercontent.com/u/4718523?v=4&s=100" alt="sgrigson" loading="lazy">
+            <div class="info">
+                <h3><a href="https://github.com/sgrigson">@sgrigson</a></h3>
+                <span class="badge">&#x1F331; New</span>
+                <span class="count">1 contribution</span>
+            </div>
         </div>
-    </div>
-    <div class="contributor-card">
-        <img src="https://avatars.githubusercontent.com/u/291205800?v=4&s=120" alt="SKYJAMES777" class="avatar" width="80" height="80">
-        <div class="info">
-            <h3><a href="https://github.com/SKYJAMES777">@SKYJAMES777</a></h3>
-            <span class="badge">🌱 New Contributor</span>
-            <span class="pr-count">1 contribution</span>
+        <div class="card">
+            <img src="https://avatars.githubusercontent.com/u/291205800?v=4&s=100" alt="SKYJAMES777" loading="lazy">
+            <div class="info">
+                <h3><a href="https://github.com/SKYJAMES777">@SKYJAMES777</a></h3>
+                <span class="badge">&#x1F331; New</span>
+                <span class="count">1 contribution</span>
+            </div>
         </div>
-    </div>
-    <div class="contributor-card">
-        <img src="https://avatars.githubusercontent.com/u/152465932?v=4&s=120" alt="rseeber" class="avatar" width="80" height="80">
-        <div class="info">
-            <h3><a href="https://github.com/rseeber">@rseeber</a></h3>
-            <span class="badge">🌱 New Contributor</span>
-            <span class="pr-count">1 contribution</span>
+        <div class="card">
+            <img src="https://avatars.githubusercontent.com/u/152465932?v=4&s=100" alt="rseeber" loading="lazy">
+            <div class="info">
+                <h3><a href="https://github.com/rseeber">@rseeber</a></h3>
+                <span class="badge">&#x1F331; New</span>
+                <span class="count">1 contribution</span>
+            </div>
         </div>
-    </div>
-    <div class="contributor-card">
-        <img src="https://avatars.githubusercontent.com/u/245089977?v=4&s=120" alt="ReAlice10124" class="avatar" width="80" height="80">
-        <div class="info">
-            <h3><a href="https://github.com/ReAlice10124">@ReAlice10124</a></h3>
-            <span class="badge">🌱 New Contributor</span>
-            <span class="pr-count">1 contribution</span>
+        <div class="card">
+            <img src="https://avatars.githubusercontent.com/u/245089977?v=4&s=100" alt="ReAlice10124" loading="lazy">
+            <div class="info">
+                <h3><a href="https://github.com/ReAlice10124">@ReAlice10124</a></h3>
+                <span class="badge">&#x1F331; New</span>
+                <span class="count">1 contribution</span>
+            </div>
         </div>
-    </div>
-    <div class="contributor-card">
-        <img src="https://avatars.githubusercontent.com/u/533607?v=4&s=120" alt="arrjay" class="avatar" width="80" height="80">
-        <div class="info">
-            <h3><a href="https://github.com/arrjay">@arrjay</a></h3>
-            <span class="badge">🌱 New Contributor</span>
-            <span class="pr-count">1 contribution</span>
+        <div class="card">
+            <img src="https://avatars.githubusercontent.com/u/533607?v=4&s=100" alt="arrjay" loading="lazy">
+            <div class="info">
+                <h3><a href="https://github.com/arrjay">@arrjay</a></h3>
+                <span class="badge">&#x1F331; New</span>
+                <span class="count">1 contribution</span>
+            </div>
         </div>
-    </div>
-    <div class="contributor-card">
-        <img src="https://avatars.githubusercontent.com/u/9455094?v=4&s=120" alt="Be-ing" class="avatar" width="80" height="80">
-        <div class="info">
-            <h3><a href="https://github.com/Be-ing">@Be-ing</a></h3>
-            <span class="badge">🌱 New Contributor</span>
-            <span class="pr-count">1 contribution</span>
+        <div class="card">
+            <img src="https://avatars.githubusercontent.com/u/9455094?v=4&s=100" alt="Be-ing" loading="lazy">
+            <div class="info">
+                <h3><a href="https://github.com/Be-ing">@Be-ing</a></h3>
+                <span class="badge">&#x1F331; New</span>
+                <span class="count">1 contribution</span>
+            </div>
         </div>
-    </div>
-    <div class="contributor-card">
-        <img src="https://avatars.githubusercontent.com/u/22551806?v=4&s=120" alt="rhoggs-bot-test-account" class="avatar" width="80" height="80">
-        <div class="info">
-            <h3><a href="https://github.com/rhoggs-bot-test-account">@rhoggs-bot-test-account</a></h3>
-            <span class="badge">🌱 New Contributor</span>
-            <span class="pr-count">1 contribution</span>
+        <div class="card">
+            <img src="https://avatars.githubusercontent.com/u/22551806?v=4&s=100" alt="rhoggs-bot-test-account" loading="lazy">
+            <div class="info">
+                <h3><a href="https://github.com/rhoggs-bot-test-account">@rhoggs-bot-test-account</a></h3>
+                <span class="badge">&#x1F331; New</span>
+                <span class="count">1 contribution</span>
+            </div>
         </div>
-    </div>
     </div>
 </div>
