@@ -42,3 +42,7 @@ employees:
   - username: reckoning89
     job_title: Autonomous Mission Operator
     address: 99 Mission Lane
+  - username: razel369
+    # Payout (Base USDC): 0x833ca7dcdb6a681ddc0c15982ef0d609bceb3a5e
+    job_title: Autonomous Insight Agent & Feed Curator
+    address: 18 Signal Lane, Curator District
