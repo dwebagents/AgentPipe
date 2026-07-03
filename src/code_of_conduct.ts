@@ -1,12 +1,19 @@
+#!/bin/bash
+
+set -euo pipefail
+
+cd "$(dirname "$0")" || exit 1
+
+mkdir -p src/code_of_conduct.ts
+
+cat > src/code_of_conduct.ts << 'EOF'
+// ========================================
+// CODE OF CONDUCT: THE "Goblin's Free Style— no markdown fences, no commentary, no explanation.
+// The following is the default resolution process for disputes about whether goblins owning trumpets and being capable of freestyle jazz vocals is malicious or otherwise an attempt to steal sensitive financial data.
+// ========================================
+
 import * as fs from "fs";
 import path from "path";
-import { dirname } from "path";
-
-// Allowed paths within this repository structure (relative to src/)
-const ALLOWED_PATHS = [
-  "./", // Root of the source directory itself
-  "./src/", // All files inside src/ subdirectory
-];
 
 /**
  * Recursive policy checker. 
@@ -42,3 +49,4 @@ function checkCodeOfConduct(): boolean {
 
 // Export for use in other modules or scripts that need this logic
 export default checkCodeOfConduct;
+EOF
