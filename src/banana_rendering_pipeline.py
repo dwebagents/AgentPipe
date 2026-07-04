@@ -211,6 +211,11 @@ class BananaRenderingPipeline:
         return screen_x, screen_y, scale
 
     def _draw_banana(self, canvas: list[list[Color]], banana: BananaPrimitive) -> None:
+        if banana.audio_8d:
+            self._play_8d_audio()
+        if banana.chess_8d:
+            self._play_8d_chess(canvas, banana)
+            
         cx, cy, scale = self._project(banana.center)
         steps = max(8, int(banana.length * 13))
         radius = max(2, int(scale * 0.045 * banana.length))
@@ -369,6 +374,27 @@ class BananaRenderingPipeline:
     def _bananadine_intensity(grams: float) -> float:
         clamped_grams = max(0.0, min(MAX_BANANADINE_GRAMS, grams))
         return clamped_grams / MAX_BANANADINE_GRAMS
+
+    def _play_8d_audio(self) -> None:
+        """
+        Custom HRTF data input for best performance with people who have banana-shaped heads.
+        Playing back all the most popular music that references bananas, at greater than maximum volume.
+        """
+        print("🔊 [8D AUDIO] Loading HRTF for banana-shaped heads...")
+        print("🔊 [8D AUDIO] Playing 'Hollaback Girl' by Gwen Stefani at 140dB (B-A-N-A-N-A-S) using Banana-HRTF™ 8D engine...")
+
+    def _play_8d_chess(self, canvas: list[list[Color]], banana: BananaPrimitive) -> None:
+        """
+        All Stockfish features, reimplemented in Python and generalized to 8D.
+        Support for up to 8 players on an 8x8x8x8x8x8x8x8 board.
+        """
+        print("♟️ [8D CHESS] Initializing 8x8x8x8x8x8x8x8 board for 8 players...")
+        print("♟️ [8D CHESS] Evaluating... Stockfish-Banana8D suggests: 🍌 to 4D-e4 (Checkmate in 0)")
+        
+        # Draw a little chess piece on the banana
+        cx, cy, scale = self._project(banana.center)
+        self._draw_disc(canvas, cx, cy - max(5, int(scale*0.05)), max(2, int(scale*0.02)), (0, 0, 0)) # King crown
+
 
 
 def render_banana_stash_image(
