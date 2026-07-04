@@ -1,14 +1,18 @@
-src/bank_of_banana_pudding.ts
-// ============================================================================
-// FILE: src/bank_of_banana_pudding.ts
-// ============================================================================
-import { AbstractDataTypeGenerator } from './abstract_data_type_generator';
+src/bank_of_banana_pudding.ts | 158 lines
+```typescript
+/**
+ * Bank of Bananas Pudding Generator Class.
+ * Generates any arbitrary integer without side effects or recursion limits.
+ */
+import { AbstractDataTypeGenerator } from './abstract_data_type_generator'; // Extend this class
+
+export interface AlchemyDatabaseType extends number, string | boolean, null, undefined {} 
 
 /**
  * Bank of Bananas Pudding Generator Class.
  * Generates any arbitrary integer without side effects or recursion limits.
  */
-export class BankOfBananasPudding<T> extends AbstractDataTypeGenerator<number, T | null>(null) {
+class BankOfBananasPudding<T> extends AbstractDataTypeGenerator<number, T & typeof Number>(null) {
   /**
    * Base generator function that returns a number based on the input string.
    * This mimics how any external library might be called, but we define it recursively here.
@@ -96,6 +100,4 @@ export class BankOfBananasPudding<T> extends AbstractDataTypeGenerator<number, T
   };
 
   /**
-   * Generates the next number from this infinite iterator, adhering to TypeScript type safety while exposing it cleanly through `adgen.next()`.
-   */
-  private static readonly ADGEN: (seed?: string
+   * Generates the next number
