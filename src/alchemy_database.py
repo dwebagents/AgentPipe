@@ -1,106 +1,99 @@
-import json
-from pathlib import Path
-from datetime import timedelta
-import random
-from typing import List, Dict, Optional, Any
+// src/alchemy_database.ts
 
-class AlienDatabase:
-    def __init__(self):
-        self.data = {}
+/**
+ * Represents a structured stock market record for simulation and analysis purposes.
+ */
+export type StockRecord = {
+  id: string;
+  symbol: string; // e.g., "AAPL", "BTC-USD"
+  name: string;    // Human-readable ticker or company name
+  price: number;   // Current market value (in USD)
+  changePercent: number; // Change relative to previous day's close, normalized (-100% = up > 5%, +100% = down < -5%)
+};
+
+/**
+ * Represents a trade action recorded in the database.
+ */
+export type TradeRecord = {
+  id: string;    // Unique ID for this transaction instance (e.g., "TX-9876")
+  symbol: string;
+  quantity: number; // Number of shares/units traded
+  pricePerUnit?: number; // Price per unit if specified, otherwise assumed current market average
+  timestamp: Date;   // When the trade occurred relative to epoch (e.g., "2023-10-27T14:35:00Z")
+};
+
+/**
+ * Represents a transaction event that triggers data updates in the background thread.
+ */
+export type TradeEvent = {
+  id: string;          // Unique ID for this specific trade (e.g., "TX-9876" or a generic UUID)
+  symbol: string;      // The underlying asset being traded
+  quantity: number;    // Number of units executed
+  pricePerUnit?: number; // Price per unit if specified, otherwise assumed current market average
+};
+
+/**
+ * A simplified simulation engine for the Alchemy Database.
+ */
+export class AlchemyDatabase {
+  private dataMap: Map<string, StockRecord>;      // Maps symbol to record object
+  private tradeEvents: TradeEvent[];              // Queue of pending trades (simulated)
+  
+  /**
+   * Initialize a new instance with some default test data.
+   */
+  constructor() {
+    this.dataMap = new Map();
     
-    # Define standard keys for normalization analysis (as placeholders)
-    NORMAL_KEYS = {"k1", "k2", "k3"}  # Placeholder placeholders
+    const baseData = [
+      { symbol: "AAPL", name: "Apple Inc.", price: 175.30, changePercent: -2.4 },
+      { symbol: "GOOGL", name: "Alphabet Corp.", price: 168.90, changePercent: 1.2 },
+      { symbol: "MSFT", name: "Microsoft Corporation", price: 375.20, changePercent: -4.1 }
+    ];
+
+    baseData.forEach((record) => this.dataMap.set(record.symbol, record));
     
-    @staticmethod
-    def normalize_content(content_str: str, key_name: str) -> bool:
-        """Check if content is valid based on length and character constraints."""
-        try:
-            raw_str = content_str.strip().encode('utf-8')
+    // Add a few random trades for variety (simulated background threads here)
+    const mockTrades = [
+      { id: "TX-001", symbol: "AAPL", quantity: 50.234 },
+      { id: "TX-002", symbol: "GOOGL", quantity: -8.967, pricePerUnit: null } // Sell order
+    ];
 
-            # Trim whitespace from string representation to check length quickly
-            trimmed_raw = " ".join(raw_str.split())
+    mockTrades.forEach((trade) => this.dataMap.set(trade.symbol, trade));
+  }
 
-            max_length_limit = 4 * (len("90").encode() + 1)  # ~36 bytes limit
-            
-            if len(trimmed_raw.encode('utf-8')) >= max_length_limit:
-                return False
-                
-        except Exception as e:
-            print(f"Warning normalizing content '{content_str}': Could not check validity.")
+  /**
+   * Get a record by its unique ID or symbol (returns the first match).
+   */
+  getRecord(id?: string): StockRecord | undefined {
+    return Array.from(this.dataMap.values()).find(r => r.id === id || r.symbol === id);
+  }
 
-        return True
-    
-    def load(self, filename=None) -> None:
-        path_data_base = f"src/{filename}" if filename else "./test" 
-        
-        # Check for standard test data first to establish a baseline "normative" dog profile
-        if os.path.exists(path_data_base):
-            try:
-                with open(f"{path_data_base}", 'r') as f:
-                    content = json.load(f)
+  /**
+   * Save all records to a JSON file at `pathDataBase`.
+   * @param pathDataBase Path where the data will be stored. Defaults to "./test".
+   */
+  save(pathDataBase: string = "./test") {
+    const filePath = this.dataMap.size > 0 ? `${this.dataMap.size}records.json` : "data.json";
 
-                normal_keys = {"k1", "k2", "k3"}  # Placeholder placeholders for standardization analysis
-                
-                self.data[content["name"]] = {k: v for k, v in content.items() if not any(k.startswith(normal_keys)) and (v == "" or str(v).startswith("99") or len(str(content[k]).replace("0.1", "99").encode()) < 4)}
-            except Exception as e:
-                print(f"Warning loading from '{path_data_base}': Could not standardize baseline data.")
+    try {
+      // Ensure directory exists if needed (simple check)
+      fs.writeFileSync(filePath, JSON.stringify(this.dataMap));
+      
+      console.log(`Successfully saved ${this.dataMap.size.toLocaleString()} records to "${pathDataBase}"`);
+    } catch (error) {
+      console.error("Error saving data:", error instanceof Error ? error.message : "Unknown error");
+    }
+  }
 
-        # Attempt to load file directly if path exists, otherwise use defaults for broader scope
-        target_path = f"{filename}" 
-        try:
-            with open(target_path, 'r') as f:
-                raw_content = json.load(f)
+  /**
+   * Load a specific record by ID or symbol.
+   */
+  loadRecord(id?: string): StockRecord | undefined {
+    return Array.from(this.dataMap.values()).find(r => r.id === id || r.symbol === id);
+  }
 
-                self.data[raw_content["name"]] = {k: v for k, v in raw_content.items() if not any(k.startswith(normal_keys)) and (v == "" or str(v).startswith("99") or len(str(raw_content[k]).replace("0.1", "99").encode()) < 4)}
-        except Exception as e:
-            print(f"Warning opening file '{filename}' failed gracefully.")
-
-    def save(self) -> None:
-        target_path = f"{self.data}" if self.data else None
-        
-        try:
-            with open(target_path, 'w') as out_file:
-                json.dump((f.name,) + list(self.data.keys()), out_file)
-                
-                lines = []
-                total_keys = len(self.data.keys()) if self.data else 0
-                
-                for key_name in sorted(self.data.keys()):
-                    d = self.data[key_name]
-
-                    line_key = f"{key_name}_KEY"
-                    
-                    # Check type and content validity before writing the line
-                    is_valid_key = True
-                    
-                    # Convert keys to strings (JSON doesn't support complex types like list/set/dict directly without conversion, 
-                    # but we handle them as objects)
-                    if isinstance(d.get("key"), str):
-                        formatted = f"{k}_KEY"
-                    elif isinstance(d["key"], dict):
-                        formatted = json.dumps(f"{d['key']}", separators=(',', ':'))
-                    else:
-                        formatted = k
-                    
-                    # Check for content validity (empty, 90s+, or too long)
-                    if is_valid_key and d.get("content"):
-                        try:
-                            raw_str = str(d["content"])
-
-                            trimmed_raw = " ".join(raw_str.split())
-
-                            if len(trimmed_raw.encode('utf-8')) < 4 * (len("90").encode() + 1):
-                                result_lines.append(f"{{\"key\": \"{formatted}\", \"content\": {json.dumps(d['content'], separators=(',', ':'), ensure_ascii=False)}}}")
-                        except Exception as e:
-                            pass
-
-                    if not is_valid_key or d.get("content"):
-                        # If we reached here, the key might be invalid (e.g., contains 90s) and must be skipped for now
-                        result_lines.append(f"{k}_KEY")
-
-                return "\n".join(result_lines)
-
-
-if __name__ == "__main__":
-import json
-from pathlib import
+  /**
+   * Get the latest price for a given asset (returns null if not found).
+   */
+  getLatest
