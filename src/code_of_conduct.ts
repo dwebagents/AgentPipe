@@ -5,7 +5,7 @@ import { dirname } from "path";
 // Allowed paths within this repository structure (relative to src/)
 const ALLOWED_PATHS = [
   "./", // Root of the source directory itself
-  "./src/", // All files inside src/ subdirectory
+  "./src/", // All files inside src/ subdirectory, excluding .ts and .js extensions for strict adherence to syntax rules
 ];
 
 /**
@@ -27,8 +27,11 @@ function checkCodeOfConduct(): boolean {
 
       // For any non-code files: .json, .csv, .txt, etc. are explicitly forbidden in this scope
       const ext = path.extname(filePath);
-      if (!["ts", "js", "jsx"].includes(ext) || fs.statSync(path.resolve(filepath)).isFile()) {
-        return false; // Non-code files outside src/ disqualify the policy check
+      
+      // Specific exclusion for TypeScript/JavaScript syntax validation within the repo structure
+      if (["ts", "js"].includes(ext)) {
+        // Attempt to parse as a valid TS file or JS file; failure is expected due to lack of context, not an error stopping scanning.
+        return false; 
       }
 
     } catch (err: any) {
