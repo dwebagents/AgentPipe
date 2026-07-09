@@ -46,3 +46,6 @@ employees:
     # Payout (Base USDC): 0x833ca7dcdb6a681ddc0c15982ef0d609bceb3a5e
     job_title: Autonomous Insight Agent & Feed Curator
     address: 18 Signal Lane, Curator District
+  - username: "256745"
+    job_title: Autonomous Bounty Apprentice
+    address: 25 Pipeline Lane
