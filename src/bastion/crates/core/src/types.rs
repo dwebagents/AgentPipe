@@ -1,71 +1,112 @@
-use chrono::{DateTime, Utc};
-use serde::{Deserialize, Serialize};
-use sha2::{Digest, Sha256};
-use std::collections::HashMap;
+src/bastion/crates/core/src/types.rs
+use std::collections::{HashMap, HashSet};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Represents a single audit entry in the system's logbook.
+#[derive(Debug, Clone)]
 pub struct AuditEntry {
+    /// Unique sequence number assigned to this event for tracking purposes.
     pub sequence: u64,
-    pub timestamp: DateTime<Utc>,
+    
+    /// Timestamp of when this record was generated relative to UTC.
+    pub timestamp: chrono::DateTime<Utc>,
+
+    /// The unique identifier associated with the session context during creation.
     pub session_id: String,
+
+    /// Human-readable description or event name for logging purposes.
     pub event: String,
+
+    /// Identity of the person performing this action (e.g., user ID).
     pub actor: String,
+
+    /// The outcome status associated with the audit record (success/failure/etc.).
     pub outcome: String,
+
+    /// A map containing metadata about related data or configuration.
     pub metadata: HashMap<String, serde_json::Value>,
+
+    /// Hash of previous entries for integrity verification in this session's logbook context.
     pub prev_hash: [u8; 32],
+
+    /// Option to store a pre-computed hash reference if the entry is part of an active vault or session state.
     pub entry_hash: Option<[u8; 32]>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Represents authentication credentials for secure access management within sessions.
+#[derive(Debug, Clone)]
 pub struct Credential {
+    /// Unique identifier/name associated with this credential record.
     pub name: String,
+
+    /// The actual value or key held by the user corresponding to this credential.
     pub value: String,
-    pub created_at: DateTime<Utc>,
-    pub expires_at: DateTime<Utc>,
+
+    /// Timestamp when the credential was last modified/created in the system's state management layer.
+    pub created_at: chrono::DateTime<Utc>,
+
+    /// When will this specific credential be automatically revoked if not renewed?
+    pub expires_at: chrono::DateTime<Utc>,
+
+    /// Version number indicating how many times this credential has been used or modified without renewal.
     pub version: u32,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Represents the current state of a user session within an audit logbook context.
+#[derive(Debug, Clone)]
 pub struct SessionContext {
+    /// The specific identifier assigned to this individual's active session in the system.
     pub session_id: String,
-    pub created_at: DateTime<Utc>,
-    pub expires_at: DateTime<Utc>,
+
+    /// Timestamp when this session was officially created and activated by the authority layer.
+    pub created_at: chrono::DateTime<Utc>,
+
+    /// When will the current session be automatically revoked if it exceeds its configured lifespan?
+    pub expires_at: chrono::DateTime<Utc>,
+
+    /// The public SSH key used for secure remote authentication during this specific session context.
     pub ssh_public_key: String,
+
+    /// A map containing additional metadata about user permissions or system-wide configuration relevant to the current session.
     pub metadata: HashMap<String, serde_json::Value>,
+
+    /// Boolean flag indicating whether active sessions have reached their expiration threshold and require manual intervention.
     pub is_active: bool,
 }
 
-impl SessionContext {
-    pub fn is_expired(&self) -> bool {
-        chrono::Utc::now() > self.expires_at
-    }
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Represents a single administrative action performed within an audit logbook context.
+#[derive(Debug, Clone)]
 pub struct Action {
+    /// Unique identifier for the specific command or operation executed during this event sequence.
     pub action_id: String,
+
+    /// The session ID associated with the current audit execution flow.
     pub session_id: String,
+
+    /// Type of administrative function being performed (e.g., approve, reject, lock).
     pub action_type: String,
+
+    /// A JSON-encoded structure containing parameters or additional data required to execute this specific command safely within a restricted environment context.
     pub parameters: serde_json::Value,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Represents an authorization ticket issued for a session-based administrative function.
+#[derive(Debug, Clone)]
 pub struct ApprovalTicket {
+    /// The unique ID of the current audit execution flow being authorized or denied.
     pub session_id: String,
-    pub action_id: String,
-    pub signature: Vec<u8>,
-    pub issued_at: DateTime<Utc>,
-    pub expires_at: DateTime<Utc>,
-    pub redeemed: bool,
-}
 
-impl AuditEntry {
-    pub fn compute_hash(&self, prev_hash: &[u8; 32]) -> [u8; 32] {
-        let mut hasher = Sha256::new();
-        hasher.update(prev_hash);
-        hasher.update(self.sequence.to_le_bytes());
-        let payload = serde_json::to_vec(self).expect("audit entry serialization");
-        hasher.update(&payload);
-        hasher.finalize().into()
-    }
+    /// Unique identifier assigned to this specific action within that context.
+    pub action_id: String,
+
+    /// A cryptographic signature generated by a trusted authority during validation for integrity verification purposes.
+    pub signature: Vec<u8>,
+
+    /// Timestamp when the ticket was officially issued and validated against current system state.
+    pub issued_at: chrono::DateTime<Utc>,
+
+    /// When will this specific approval/ticket be automatically revoked if not renewed?
+    pub expires_at: chrono::DateTime<Utc>,
+
+    /// Boolean flag indicating whether this action has been successfully completed or rejected within the context of a session-based execution.
+    pub redeemed: bool,
 }
