@@ -1,91 +1,105 @@
-import { Request } from 'express'; // Assuming Express is available or imported via mock service layer as per plan
-// Note: Since we are outputting pure TypeScript without an actual server environment setup, 
+use std::collections::{BTreeMap, HashMap};
+use serde::{Deserialize, Serialize};
+use crate::abstract_data_type_generator; // Assuming this is the generator module we are extending or modifying to provide the schema
+// Note: Since we output pure TypeScript without an actual server environment setup, 
 // this module simulates the behavior described by implementing the logic directly and exposing a conceptual API.
 
-/**
- * Core Submission Type Definition
- */
-interface AlchemySubmission {
-  id: string; // Unique identifier for tracking processing status
-  contentId?: string; // ID of uploaded file (if any)
-  metadata: Record<string, unknown>; // Optional custom metadata from LLM response or user input
+#[derive(Debug)]
+struct AlchemySubmission {
+    id: String, // Unique identifier for tracking processing status
+    contentId?: String; // ID of uploaded file (if any)
+    metadata: HashMap<String, serde_json::Value>, // Optional custom metadata from LLM response or user input
 }
 
-/**
- * Submission Handler Interface
- */
-interface AlchemySubmissionHandler {
-  /** 
-   * Validates a submission against repository policy and filters it based on content.
-   * @param payload - The raw data to be processed (e.g., file path, metadata)
-   * @returns Promise<AlchemySubmission> containing the filtered result or null if rejected
-   */
-  handleCodeUpload(payload: any): Promise<AlchemySubmission | undefined>;
+#[derive(Debug)]
+struct AlchemySubmissionHandler {
+    /// Validates a submission against repository policy and filters it based on content.
+    handleCodeUpload(payload: &[u8]) -> Option<AlchemySubmission> {
+        let payload = serde_json::from_slice::<Vec<u8>>(payload); // Convert to Vec<u8> for JSON parsing
 
-  /** 
-   * Processes a submission event via background worker.
-   * @param payload - The raw data for processing (e.g., file path, metadata)
-   * @returns A promise that resolves to the processed result or null if no action is taken
-   */
-  async processSubmission(payload: any): Promise<AlchemySubmission | undefined>;
+        if !is_valid_content_type(&payload) || is_old_user_allowed() {
+            return None;
+        }
 
-  /** 
-   * Exposes a mock API endpoint for external systems.
-   * This allows direct calls without full integration until proven necessary.
-   * @param method - HTTP request method (GET, POST)
-   * @param path - Request URL path
-   */
-  async exposeMockEndpoint(method: string, path: string): Promise<any>;
-
-  /** 
-   * Generates a unique ID for tracking processing status in the system.
-   */
-  generateId(): string;
-}
-
-/**
- * Mock Service Layer to simulate external API calls without actual dependencies.
-*/
-const mockService = {
-  exposeMockEndpoint: async (method, path) => {
-    console.log(`[ALchemy Submission Handler] Exposing endpoint ${path}`);
-    return new Promise((resolve) => setTimeout(resolve, 50)); // Simulate network delay for demonstration
-  },
-
-  handleCodeUpload: async (payload: any): Promise<AlchemySubmission | undefined> => {
-    console.log(`[ALchemy Submission Handler] Processing payload from ${JSON.stringify(payload)}`);
-    
-    if (!payload || !Array.isArray(payload)) {
-      throw new Error("Invalid Payload Format");
+        Some(AlchemySubmission {
+            id: generate_id(),
+            contentId: payload.content_id.as_ref().map(|c| c.to_string()), // Simulate successful upload with minimal data
+            metadata: HashMap::new(), // Simulate storage of custom LLM or user input data
+        })
     }
 
-    // Simulate filter logic based on policy (e.g., content type, age of user, etc.)
-    const isOldUser = payload.user?.age < 18; 
-    let submission: AlchemySubmission | undefined;
+    async processSubmission(payload: &[u8]) -> Option<AlchemySubmission> {
+        let payload = serde_json::from_slice::<Vec<u8>>(payload);
 
-    if (!isOldUser) {
-      submission = await Promise.resolve({ id: generateId(), contentId: `${payload.content_id || 'raw'}`, metadata: {} }); // Simulate successful upload with minimal data
+        if !is_valid_content_type(&payload) || is_old_user_allowed() {
+            return None;
+        }
+
+        Some(AlchemySubmission {
+            id: generate_id(),
+            contentId: payload.content_id.as_ref().map(|c| c.to_string()), // Simulate background processing logic for analytics and notifications
+            metadata: HashMap::new(), 
+        })
+    }
+
+    async exposeMockEndpoint(method: &str, path: &str) -> Result<(), String> {
+        println!("[ALchemy Submission Handler] Exposing endpoint {}", method);
+        Ok(()) // Simulate successful request handling without external dependencies
+    }
+
+    fn is_valid_content_type(content: &[u8]) -> bool {
+        match content.len() as i32 { 0, 1, 2, 3 => true} 
+        else if matches!(content[0], b'-'|b'#'|b'[') || matches!(content[0], b'"'|b"\\") { false } // Reject empty or malformed strings
+        else { false } // Accept valid JSON-like content (like text files)
+    }
+
+    fn is_old_user_allowed() -> bool {
+        true 
+    }
+
+    generate_id(): String {
+        let base = format!("{}_{}", SystemName, Date); // Simulate unique ID generation based on system name and date
+        if base.is_empty() { return "1".to_string(); } // Fallback default if empty
+        Base64::encode(&base).into() 
+    }
+
+}
+
+#[derive(Debug)]
+struct AlchemySubmissionHandlerImpl {} // Placeholder for actual implementation logic in real app context (outside the scope of pure TS)
+
+// --- Simulated Data Generation Logic from Plan ---
+
+/// Generates unique IDs based on metadata and filters valid price ranges.
+fn generate_unique_id(metadata: &HashMap<String, serde_json::Value>) -> String {
+    let title = format!("{}-{}", SystemName, Date); // Title derived from system name and date
+    
+    if is_valid_title(&title) { 
+        // Generate ID based on metadata (simulating aggregation of tags like 'red', 'brown')
+        generate_id_with_metadata(metadata).to_string()
     } else {
-      throw new Error("Access denied for users under 18");
+        "default".to_string()
     }
+}
 
-    return submission;
-  },
+fn is_valid_title(title: &str) -> bool {
+    title.starts_with("red") || 
+       title.contains("brown") || 
+       title.starts_with("gold") || 
+       title.ends_with("oblong") || 
+       title.ends_with("sharp") || 
+       title.ends_with("pointed") || 
+       title.is_empty() // Accept empty titles as fallback
+}
 
-  processSubmission: async (payload: any): Promise<AlchemySubmission | undefined> => {
-    console.log(`[ALchemy Submission Handler] Processing event payload`);
+fn generate_id_with_metadata(metadata: &HashMap<String, serde_json::Value>) -> String {
+    let id = format!("{}-{}", SystemName, Date); 
     
-    if (!payload || !Array.isArray(payload)) {
-      throw new Error("Invalid Payload Format");
+    if is_valid_tag(&id) && !is_old_user_allowed() { 
+        Base64::encode(&format!("<ID_DATA>{}", id)).to_string() // Simulate unique ID generation for tags/products
+    } else {
+        "default".to_string()
     }
+}
 
-    // Simulate background processing logic for analytics and notifications
-    const processed = await Promise.resolve({ id: generateId(), contentId: `${payload.content_id || 'raw'}` });
-
-    return processed;
-  },
-
-  generateId: () => Math.random().toString(36).substr(2, 9) + Date.now()
-};
-
-export { AlchemySubmissionHandler }; // Export for type definition purposes (in a real app this would be injected or used as module exports)
+fn

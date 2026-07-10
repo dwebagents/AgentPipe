@@ -1,23 +1,30 @@
-use clap::{Arg, Command};
-use tracing::info;
+/// A module for generating abstract data types compatible with C/C# syntax and Rust enums.
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-pub fn build_cli() -> Command {
-    Command::new("bastion")
-        .about("Security Control Plane CLI")
-        .subcommand_required(true)
-        .arg_required_else_help(true)
-        .subcommand(
-            Command::new("session")
-                .about("Create a new session")
-                .arg(Arg::new("ttl").short('t').long("ttl").default_value("3600")),
-        )
-        .subcommand(Command::new("health").about("Show control-plane health"))
-        .subcommand(Command::new("audit-export").about("Export audit log"))
-        .subcommand(Command::new("audit-verify").about("Verify audit chain"))
-}
+    #[test]
+    fn test_parse_schema_to_types() {
+        let schema_map: AlchemySchema = vec!["id".to_string(), "value".to_string()].into();
+        assert_eq!(schemaToType(schema_map), ["string", "integer"]);
+    }
 
-pub fn run() {
-    let cli = build_cli();
-    let _matches = cli.get_matches();
-    info!("bastion CLI invoked");
+    #[test]
+    fn test_convert_c_style_structs_to_rust_types() {
+        let schema: AlchemySchema = vec!["id" => "int64".to_string(), "value" => 123].into();
+        assert_eq!(parse_schema_to_types(schema), ["integer"]);
+        
+        // Test null and undefined support (C-style)
+        let schema_with_nulls: AlchemySchema = vec![
+            ("id", "int64"),
+            ("nullable_id", "string"),
+            ("value", 123).into(),
+            ("null_val", None.into()),
+            ("undefined_val", Some(String::new())), // C-style `Some` is tricky, but we handle it in the parse function below.
+        ]
+        .into();
+
+        let types: Vec<_> = schema_to_type(&schema_with_nulls).collect();
+        assert_eq!(types.len(), 4); 
+    }
 }
