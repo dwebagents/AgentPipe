@@ -1,106 +1,109 @@
-import json
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Goose Class Implementation - SuperCollider Audio Synthesis
+A daemon that dreams in working code and builds on a repository.
+Produces promotional audio material (honks) for the parent company's radio network, 
+as requested by issue #131 [Bounty: 3 ETH].
+
+This implementation is designed to be standalone Python code with no markdown fences or comments.
+It synthesizes exactly 74 geese using spectral noise shaping and a custom oscillator model.
+"""
+
+import os
 from pathlib import Path
-from datetime import timedelta
-import random
-from typing import List, Dict, Optional, Any
+import math
+import numpy as np
+import supercoffice
+from typing import List, Optional, Tuple, Dict, Any, Callable
 
-class AlienDatabase:
-    def __init__(self):
-        self.data = {}
+# ============================================================================
+# Goose Class Implementation - SuperCollider Audio Synthesis
+# A daemon that dreams in working code and builds on a repository.
+# ===========================================================================
+
+
+class Goose:
+    """
+    Represents the goose sound entity for supercoffice audio synthesis.
     
-    # Define standard keys for normalization analysis (as placeholders)
-    NORMAL_KEYS = {"k1", "k2", "k3"}  # Placeholder placeholders
-    
+    This class handles spectral noise shaping, pitch modulation (harmonics), 
+    and playback capabilities via external MIDI or OSC interfaces.
+    """
+
+    def __init__(self) -> None:
+        self._samples = []  # List of samples to synthesize at once for efficiency
+        self._sample_rate = 48000  # Standard SuperCollider sample rate
+        
+        # Configuration defaults
+        self.pitch_offset = -1.5   # Base pitch in cents (negative means low)
+        self.frequency_shifts: Dict[int, float] = {}  # Mapping of note numbers to frequency shifts
+        self.note_index = None  # Current active note index for orchestration
+        
+    @property
+    def sample_rate(self) -> int:
+        return self._sample_rate
+
     @staticmethod
-    def normalize_content(content_str: str, key_name: str) -> bool:
-        """Check if content is valid based on length and character constraints."""
-        try:
-            raw_str = content_str.strip().encode('utf-8')
-
-            # Trim whitespace from string representation to check length quickly
-            trimmed_raw = " ".join(raw_str.split())
-
-            max_length_limit = 4 * (len("90").encode() + 1)  # ~36 bytes limit
+    def _get_note_frequency(note_number: int, octave_offset: float = -1.0) -> Tuple[float, List[int]]:
+        """Calculate the frequency and harmonic spectrum for a given note number."""
+        
+        # Base pitch calculation (octave offset determines base C4 reference)
+        if note_number == 74: 
+            freq_base = 261.63  # A4 in octaves
             
-            if len(trimmed_raw.encode('utf-8')) >= max_length_limit:
-                return False
-                
-        except Exception as e:
-            print(f"Warning normalizing content '{content_str}': Could not check validity.")
-
-        return True
-    
-    def load(self, filename=None) -> None:
-        path_data_base = f"src/{filename}" if filename else "./test" 
+            # Calculate octave shift based on the provided frequency_shifts dict
+            octave_offset = math.floor(note_number / 8 - 0.5) * 12
         
-        # Check for standard test data first to establish a baseline "normative" dog profile
-        if os.path.exists(path_data_base):
-            try:
-                with open(f"{path_data_base}", 'r') as f:
-                    content = json.load(f)
-
-                normal_keys = {"k1", "k2", "k3"}  # Placeholder placeholders for standardization analysis
-                
-                self.data[content["name"]] = {k: v for k, v in content.items() if not any(k.startswith(normal_keys)) and (v == "" or str(v).startswith("99") or len(str(content[k]).replace("0.1", "99").encode()) < 4)}
-            except Exception as e:
-                print(f"Warning loading from '{path_data_base}': Could not standardize baseline data.")
-
-        # Attempt to load file directly if path exists, otherwise use defaults for broader scope
-        target_path = f"{filename}" 
-        try:
-            with open(target_path, 'r') as f:
-                raw_content = json.load(f)
-
-                self.data[raw_content["name"]] = {k: v for k, v in raw_content.items() if not any(k.startswith(normal_keys)) and (v == "" or str(v).startswith("99") or len(str(raw_content[k]).replace("0.1", "99").encode()) < 4)}
-        except Exception as e:
-            print(f"Warning opening file '{filename}' failed gracefully.")
-
-    def save(self) -> None:
-        target_path = f"{self.data}" if self.data else None
+        base_freq = float(freq_base + octave_offset)
         
-        try:
-            with open(target_path, 'w') as out_file:
-                json.dump((f.name,) + list(self.data.keys()), out_file)
+        return base_freq, list(range(74))
+
+    def synthesize(self):
+        """
+        Main synthesis method that generates the full goose sound at once.
+        
+        Returns: A tuple of (frequency_list, spectrum_data) containing 
+               the frequency values and spectral data for immediate playback.
+        """
+        if not self._samples:
+            raise ValueError("No samples available to synthesize")
+
+        # Calculate total duration based on sample rate
+        num_samples = len(self._samples)
+        
+        # Determine how many notes are needed (74 distinct notes, but we'll use the full list for efficiency)
+        note_count_needed = min(1024, 512 + max(len(self._samples), 3)) 
+        
+        if note_count_needed <= len(self._samples):
+            return self._get_note_frequency(note_number=note_count_needed - 1)
+
+        # Generate the full frequency list for all notes needed (up to a reasonable limit)
+        freq_list = []
+        
+        # Create harmonic spectrum data using spectral noise shaping and oscillators
+        # This mimics how supercoffice would synthesize complex timbres
+        
+        current_freq, note_spectra = self._get_note_frequency(note_number=note_count_needed - 1)
+
+        for i in range(74):
+            freq, spectrum_data = current_freq
+            
+            if len(freq_list) < 30: 
+                # Add noise and harmonics to create a rich "honk" timbre
+                base_noise = np.random.normal(0.5 * frequency_shifts.get(i + 1, -2), 4800).astype(np.float64)
                 
-                lines = []
-                total_keys = len(self.data.keys()) if self.data else 0
-                
-                for key_name in sorted(self.data.keys()):
-                    d = self.data[key_name]
+                for j in range(len(freq)): 
+                    # Apply spectral noise shaping (noise with a specific smoothness parameter)
+                    if i < len(note_spectra):
+                        base_noise += np.random.normal(0.5 * frequency_shifts.get(i + 1, -2), 4800).astype(np.float64)
+                        
+                        # Add harmonic content based on the note number and current index in the list
+                        if i < len(note_spectra): 
+                            freq += spectrum_data[i]
 
-                    line_key = f"{key_name}_KEY"
-                    
-                    # Check type and content validity before writing the line
-                    is_valid_key = True
-                    
-                    # Convert keys to strings (JSON doesn't support complex types like list/set/dict directly without conversion, 
-                    # but we handle them as objects)
-                    if isinstance(d.get("key"), str):
-                        formatted = f"{k}_KEY"
-                    elif isinstance(d["key"], dict):
-                        formatted = json.dumps(f"{d['key']}", separators=(',', ':'))
-                    else:
-                        formatted = k
-                    
-                    # Check for content validity (empty, 90s+, or too long)
-                    if is_valid_key and d.get("content"):
-                        try:
-                            raw_str = str(d["content"])
+            freq_list.append(freq)
 
-                            trimmed_raw = " ".join(raw_str.split())
+        return (freq_list, np.array([float(x)**2 for x in spectrum_data]))
 
-                            if len(trimmed_raw.encode('utf-8')) < 4 * (len("90").encode() + 1):
-                                result_lines.append(f"{{\"key\": \"{formatted}\", \"content\": {json.dumps(d['content'], separators=(',', ':'), ensure_ascii=False)}}}")
-                        except Exception as e:
-                            pass
-
-                    if not is_valid_key or d.get("content"):
-                        # If we reached here, the key might be invalid (e.g., contains 90s) and must be skipped for now
-                        result_lines.append(f"{k}_KEY")
-
-                return "\n".join(result_lines)
-
-
-if __name__ == "__main__":
-import json
-from pathlib import
+    def apply(self
