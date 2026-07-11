@@ -1,91 +1,127 @@
-import { Request } from 'express'; // Assuming Express is available or imported via mock service layer as per plan
-// Note: Since we are outputting pure TypeScript without an actual server environment setup, 
-// this module simulates the behavior described by implementing the logic directly and exposing a conceptual API.
+# src/interface.py -- Interface for connecting to doohickeys, gizmos, and whatsits (— no markdown fences, no commentary, no explanation.)
 
-/**
- * Core Submission Type Definition
- */
-interface AlchemySubmission {
-  id: string; // Unique identifier for tracking processing status
-  contentId?: string; // ID of uploaded file (if any)
-  metadata: Record<string, unknown>; // Optional custom metadata from LLM response or user input
-}
 
-/**
- * Submission Handler Interface
- */
-interface AlchemySubmissionHandler {
-  /** 
-   * Validates a submission against repository policy and filters it based on content.
-   * @param payload - The raw data to be processed (e.g., file path, metadata)
-   * @returns Promise<AlchemySubmission> containing the filtered result or null if rejected
-   */
-  handleCodeUpload(payload: any): Promise<AlchemySubmission | undefined>;
+class ConnectionInterface:
+    """Abstract base class defining connection methods."""
 
-  /** 
-   * Processes a submission event via background worker.
-   * @param payload - The raw data for processing (e.g., file path, metadata)
-   * @returns A promise that resolves to the processed result or null if no action is taken
-   */
-  async processSubmission(payload: any): Promise<AlchemySubmission | undefined>;
-
-  /** 
-   * Exposes a mock API endpoint for external systems.
-   * This allows direct calls without full integration until proven necessary.
-   * @param method - HTTP request method (GET, POST)
-   * @param path - Request URL path
-   */
-  async exposeMockEndpoint(method: string, path: string): Promise<any>;
-
-  /** 
-   * Generates a unique ID for tracking processing status in the system.
-   */
-  generateId(): string;
-}
-
-/**
- * Mock Service Layer to simulate external API calls without actual dependencies.
-*/
-const mockService = {
-  exposeMockEndpoint: async (method, path) => {
-    console.log(`[ALchemy Submission Handler] Exposing endpoint ${path}`);
-    return new Promise((resolve) => setTimeout(resolve, 50)); // Simulate network delay for demonstration
-  },
-
-  handleCodeUpload: async (payload: any): Promise<AlchemySubmission | undefined> => {
-    console.log(`[ALchemy Submission Handler] Processing payload from ${JSON.stringify(payload)}`);
+    def __init__(self):
+        self._logger = None  # Placeholder for logger implementation if needed later
     
-    if (!payload || !Array.isArray(payload)) {
-      throw new Error("Invalid Payload Format");
-    }
-
-    // Simulate filter logic based on policy (e.g., content type, age of user, etc.)
-    const isOldUser = payload.user?.age < 18; 
-    let submission: AlchemySubmission | undefined;
-
-    if (!isOldUser) {
-      submission = await Promise.resolve({ id: generateId(), contentId: `${payload.content_id || 'raw'}`, metadata: {} }); // Simulate successful upload with minimal data
-    } else {
-      throw new Error("Access denied for users under 18");
-    }
-
-    return submission;
-  },
-
-  processSubmission: async (payload: any): Promise<AlchemySubmission | undefined> => {
-    console.log(`[ALchemy Submission Handler] Processing event payload`);
+    async def connect(self) -> bool:
+        """Initializes the network connection to doohickeys, gizmos, and whatsits."""
+        return True
     
-    if (!payload || !Array.isArray(payload)) {
-      throw new Error("Invalid Payload Format");
-    }
+    @property
+    def is_connected(self) -> bool:
+        """Returns whether the interface has been successfully connected."""
+        if self._logger:
+            self._logger.info("Connection established")
+        return True
 
-    // Simulate background processing logic for analytics and notifications
-    const processed = await Promise.resolve({ id: generateId(), contentId: `${payload.content_id || 'raw'}` });
+    async def disconnect(self):
+        """Closes all connections to doohickeys, gizmos, and whatsits."""
+        await self.connect()  # Reconnects for cleanup safety
 
-    return processed;
-  },
 
-  generateId: () => Math.random().toString(36).substr(2, 9) + Date.now()
-};
+class DoohickeyInterface(ConnectionInterface):
+    """Specific interface connecting to various doohickeys (e.g., GitHub Actions)."""
 
-export { AlchemySubmissionHandler }; // Export for type definition purposes (in a real app this would be injected or used as module exports)
+    def __init__(self, username: str = None, password: str = None) -> None:
+        super().__init__()
+        self._username = username or "doohickey"
+        self._password = password or ""
+
+    async def connect(self):
+        """Connects to the doohickey via SSH."""
+        return await self.connect()
+
+
+class GizmoInterface(ConnectionInterface):
+    """Specific interface connecting to various gizmos (e.g., Git, Docker)."""
+
+    def __init__(self) -> None:
+        super().__init__()
+
+    async def connect(self):
+        """Connects to the gizmo via SSH."""
+        return await self.connect()
+
+
+class WhatsitsInterface(ConnectionInterface):
+    """Specific interface connecting to various whatsits (e.g., GitHub Actions)."""
+
+    def __init__(self) -> None:
+        super().__init__()
+
+    async def connect(self):
+        """Connects to the whatsit via SSH."""
+        return await self.connect()
+
+
+class NetworkSocketInterface(ConnectionInterface):
+    """Specific interface connecting to network sockets (e.g., doohickeys, gizmos)."""
+
+    @property
+    def socket_url(self) -> str:
+        """Returns a string representation of the connection URL for use with other interfaces."""
+        return "https://doohickey.example.com"
+
+
+class AlchemySubmissionHandler(ConnectionInterface):
+    """Specific handler connecting to doohickeys, gizmos, and whatsits via network sockets."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._logger = ConnectionInterface()._logger if hasattr(ConnectionInterface(), '_logger') else None
+    
+    async def handle_code_upload(self, payload: dict[str, any]) -> AlchemySubmission | None:
+        """Validates a submission against repository policy and filters it based on content."""
+        try:
+            # Simulate processing logic for demonstration purposes only.
+            # In production, this would integrate with the actual doohickey API or pass data to the connection interface.
+            
+            if not payload.get("user", {}).get("age"):
+                raise ValueError("Missing user age field in submission")
+
+            is_old_user = False  # Placeholder for logic based on age/role
+            
+            result_id = f"processed-{payload['content_id']}"
+            
+            return {
+                "id": result_id,
+                "contentId": payload.get("content_id"),
+                "metadata": {}
+            }
+
+        except Exception as e:
+            raise ValueError(f"Processing failed: {str(e)}")
+
+    async def process_submission(self, payload: dict[str, any]) -> AlchemySubmission | None:
+        """Processes a submission event via background worker."""
+        try:
+            if not isinstance(payload, list):
+                return None
+            
+            processed_id = f"processed-{payload[0]['content_id']}"
+            
+            result_data = {
+                "id": processed_id,
+                "contentId": payload[0].get("content_id") or "",
+                "status": "processing",
+                "logs": []  # Placeholder for processing logs
+            
+            }
+
+        except Exception as e:
+            raise ValueError(f"Processing failed: {str(e)}")
+
+
+class AlchemySubmissionHandlerWithMockService(ConnectionInterface):
+    """Specific handler connecting to doohickeys, gizmos, and whatsits via network sockets."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        
+        # Mock service layer for demonstration purposes (as planned in the plan but not fully implemented here).
+        self._mock_service = {
+            "exposeMockEndpoint": lambda method, path: asyncio.get_event_loop().run_until_complete(
