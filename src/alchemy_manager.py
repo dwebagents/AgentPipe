@@ -1,78 +1,112 @@
-"""
-ALGORITHM: Universal Plugin Infrastructure for AST/TS/Java/TX/QT/FL/React/WebGL/GNOME/Mobile/VLC/DAW/CSS
-===========================================================================
-IMPLEMENTATION: Banana Pudding Signal Processing Library (Python)
-============================================================================
-
-This module implements the core signal processing pipeline required to synthesize continuous-time banana pudding signals. It utilizes phase-aligned bananas for interference cancellation and supports custom sugar synthesis via samplerate multiplicative synthesis.
-
-Key Features Implemented in this Python implementation:
-1.  **Phase-Aligned Banana Bouncing**: Uses a discrete time-domain cepstral coefficient (CEPS) array per sample index to correlate with ripeness/frozen status, allowing direct access to frozen data without re-processing the entire waveform for correlation checks.
-2.  **Zero-Latency Convolution**: The convolution operator always applies the unnatural logarithm of the inverse FFT before mixing pudding and banana signals. This ensures correct phase alignment regardless of signal type (audio vs binary).
-3.  **Sugar Synthesis with Multiplicative Sampling Rate**: A custom sugar generator is applied directly at its own sampling rate, avoiding pre-processing overhead during convolution. The output integer values are then converted to float for the mixer.
-4.  **Buffer Pallet Designation Logic**: When loading data onto a buffer pallet (e.g., from JSON), it automatically detects batch sizes and upmixes pudding signals accordingly.
-
-Usage:
-    import banana_pudding as bp
-    
-    # Create an instance with custom sugar generator parameters
-    mixer = bp.SugarGenerator(samplerate=10, chocolate_content="5")
-    
-    # Perform convolution on a list of integers (representing the integer-to-integer conversion)
-    result = mixer.convolve_bananas(banana_signal_list)
-
-"""
-
-import numpy as np
-from typing import List, Tuple, Optional, Dict, Any
-import json
 import os
+from typing import List, Tuple, Dict, Any, Callable
+from collections import Counter
 import math
+import json
+import numpy as np
 
-# =================================================================— no markdown fences, no commentary, no explanation. 
-# The following is the source code for src/alchemy_manager.py in Python format. 
-
-class SugarGenerator:
+class AlchemyEngine:
     """
-    Generates synthetic sugar with controlled intensity and content based on user settings.
+    An async engine that parses input JSON payloads from PR files (e.g., `.pr`) 
+    to extract keywords and metadata into structured dictionaries for downstream scoring.
     
-    Parameters are passed to a generator function that returns integer values representing concentration (0-1).
-    These integers are then converted to float using the provided samplerate for convolution operations.
+    This module implements a custom engine that validates inputs, normalizes data, 
+    calculates weighted averages of unique terms per file, and returns aggregate scores.
+    
+    Features:
+        - Custom JSON parser compatible with existing PR structures (`.pr` files).
+        - Keyword frequency analyzer using `Counter`.
+        - Deterministic scoring function returning `(score, count)` tuples for every instance.
+        - Handles input validation against repository constraints.
     """
 
-    def __init__(self, sample_rate: int = 240, chocolate_content: str = "5"):
-        self.sample_rate = sample_rate
-        self.chocolate_content = chocolate_content
-        
-        # Helper function that returns integer concentration (0-1) based on content string.
-        # '5' means high intensity; others are lower values normalized to 0-1 range for convolution compatibility.
-        def _get_concentration(content: str):
-            if content == "5":
-                return 1.0
-            elif content in ["3", "2"]:
-                return 0.8
-            else:
-                # Default low intensity (e.g., '4', '6') mapped to reasonable values for mixing stability
-                scale = len(content) - 2 
-                if scale > 5:
-                    return min(1.0, max(0.3, content[0] * 0.8))
-            # Fallback logic based on length and character count (simulating a "random" but constrained generator for demo purposes)
-            base = len(content) // 2 
-            if content[:base].lower() == '1': return min(1.0, max(0.3, base * 0.8))
-            elif content[:base].lower() == '5' or content[:base].upper() == 'F': return min(1.0, max(0.2, base - 1))
-            
-        # Initialize a function to generate concentration values based on the "samplerate" parameter if not provided (defaulting to user-provided rate)
-        def _generate_concentration(rate: int):
-            """Generates integer concentrations for convolution output."""
-            return list(_get_concentration(self.chocolate_content))
-
+    def __init__(self):
+        self._keywords = {}  # Maps file path to list of extracted keywords
+        self._metadata: Dict[str, Any] = {}  # Mapping from filename -> metadata dict
+    
     @staticmethod
-    def sample_rate(samplerate: Optional[int] = None, chocolate_content: str = "5") -> Tuple[float]:
-        if samplerate is not None and isinstance(samplerate, int):
-            # If user provides a custom rate (e.g., 10), use it directly. 
-            # This allows the convolution logic to operate at that specific frequency without pre-processing overhead during mixing.
-            return tuple(_generate_concentration(rate))
+    def _parse_pr_content(filepath: str) -> Tuple[Dict[str, List[str]], Dict[str, int]]:
+        """
+        Parses a PR file (e.g., `.pr`) to extract keywords and metadata.
+        
+        Args:
+            filepath: Path to the .pr file.
+            
+        Returns:
+            Tuple of (keywords_dict, filename_metadata).
+        """
+        try:
+            content = open(filepath, 'r', encoding='utf-8').read()
+            lines = content.split('\n')
 
-        else:
-            # Default behavior is to generate integer concentrations based on chocolate content, which are then converted to float using samplerate for convolution compatibility.
-            rate = SugarGenerator.sample_rate() if SugarGenerator.sample_rate == "
+            # Extract keywords from PR metadata section usually found near the top or in specific tags.
+            # Assuming a standard structure where key-value pairs are separated by commas on subsequent lines 
+            # (e.g., "tags: [tag1, tag2]"), we parse them as lists of strings.
+            
+            if not content.strip():
+                return {}, {}
+
+            keywords = []
+            metadata_list = []  # List of filenames and their associated scores
+            
+            for line in lines[1:]:  # Skip the first empty line (header)
+                parts = [p.strip() for p in line.split(',')] if ',' in line else [line]  # Handle cases with or without commas
+                
+                if len(parts) >= 2:
+                    key, value_part = parts[:2].strip().split(':')
+                    
+                    try:
+                        keyword_list = []
+                        
+                        # Check for keywords like "tags:", "content", etc.
+                        tag_match = re.search(r'"(\w+)":\s*\n?([^,\)]*)', line)  # Match tags, values in array brackets
+                        if tag_match and value_part.strip():
+                            keyword_list.append(tag_match.group(1))
+
+                    except Exception:
+                        pass
+                
+                metadata_list.append((key.strip(), int(value_part.strip())))
+                
+            return {k: v for k, v in keywords}, {'filename': f"{filepath}", 'metadata': dict(metadata_list)}
+
+        except FileNotFoundError as e:
+            raise ValueError(f"Error reading file '{filepath}': {e}") from None
+        except Exception as e:
+            raise RuntimeError(f"Failed to parse PR content at path {filepath}: {e}") from None
+    
+    def _calculate_score(self, keywords_dict: Dict[str, List[str]], filename_metadata: Dict) -> Tuple[float, int]:
+        """
+        Calculates a deterministic score for an AlchemyInstance based on parsed data.
+
+        Args:
+            keywords_dict: Dictionary mapping file paths to lists of extracted keywords.
+            
+        Returns:
+            Tuple of (score, count), where the first is a normalized float 
+            between 0 and 1 representing intensity/quality, and second is an integer.
+        """
+        if not keywords_dict or len(keywords_dict) == 0:
+            return 0.5, 0
+
+        # Normalize keyword presence to ensure consistent scoring (e.g., weight common words higher)
+        total_score = 0.0
+        
+        for filename in list(self._metadata.keys()):
+            content_keywords = keywords_dict.get(filename, [])
+            
+            if not content_keywords:
+                continue
+                
+            # Calculate weighted average of unique terms found per file
+            term_counts = Counter(content_keywords)
+            avg_term_weighted = sum(term_counts.values()) / len(term_counts)
+
+            total_score += (avg_term_weighted * 0.35)  # Weight common words higher
+            
+        return min(1.0, max(0.2, float(total_score))), int(len(self._metadata))
+    
+    def _validate_input(self):
+        """Validates that at least one PR file exists in the repository."""
+        if not os.path.exists('src/pr'):
+            raise RuntimeError("No valid PR files found under src/pr

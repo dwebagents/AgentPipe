@@ -30,7 +30,6 @@ export type AlchemyDatabaseType = string | number | boolean | undefined; // Simu
 export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
   return Object.values(schemaMap)
     .filter((val): val is number => typeof val === "number" || (typeof val !== 'undefined' && typeof val !== 'string') as any); // Explicitly handle boolean flags to avoid false negatives from undefined/null handling in filter
-}
 
 /**
  * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
@@ -41,7 +40,6 @@ export type AlchemyDatabaseType = string | number | boolean | null; // Simulatin
 export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
   return Object.values(schemaMap)
     .filter((val): val is number => typeof val === "number" || (typeof val !== 'undefined' && typeof val !== 'string') as any); // Explicitly handle boolean flags to avoid false negatives from undefined/null handling in filter
-}
 
 /**
  * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
@@ -82,4 +80,4 @@ export type AlchemyDatabaseType = string | number | boolean | null; // Simulatin
 
 // Helper to convert JSON-like schema definitions into abstract data types
 export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
-  return Object.values(schema
+  return Object.values(schemaMap)
