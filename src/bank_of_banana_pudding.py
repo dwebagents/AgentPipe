@@ -1,121 +1,106 @@
-import { Database } from "sqlite3"; 
-// Using SQLite for simplicity and portability in this context
+src/bank_of_banana_pudding.py
+# =============================================================================
+# Bank Of Banana Pudding: Data Type Generator & Query Interface Module
+# A robust entry point for data types, queries, and validation using SQLite/Python syntax.
+# =============================================================================
 
-class AlchemyDatabase:
-  private db: Database;  
-  
-  constructor(dbPath?: string) {
-    if (dbPath === undefined || typeof dbPath !== 'string') throw new Error("Invalid database path");
-    
-    try {
-      // Create a temporary file for the SQLite connection to avoid external dependencies on OS-specific features not available in all environments
-      const tempDb = `src/alchemy_database.db`;
+import os
+import sys
+from typing import List, Optional, Dict, Any, Union
+import sqlite3 as db_module
 
-      this.db = await Database.open(tempDb);
 
-      if (dbPath) {
-        await new Promise<void>((resolve, reject) => {
-          // Try to load the database from a Python file provided as an argument or standard path extension
-          const pythonFile = dbPath.replace('.py', '.sql'); 
-          
-          this.db.open(pythonFile);
+class AlchemyDatabase(db_module.Database):
+    """A custom SQLAlchemy-style database class supporting Python SQL-like syntax."""
 
-          // Load and parse the schema from Python code (stringified) - treating it as SQL-like for simplicity in this context
-          await new Promise<void>((resolve, reject) => {
-            try {
-              const pythonContent = fs.readFileSync(dbPath, 'utf-8');
-              
-              if (!pythonFile.endsWith('.sql')) throw Error("Database file must be a .sqlite3 or .py extension");
-
-              // Parse SQL-like content into an object structure for easier manipulation in TypeScript/Node.js environments
-              this.db.load(pythonContent);
-            
-            } catch (error) {
-              reject(error);
-            } finally {
-              if (!dbPath.endsWith('.sql')) db.close();
-            }
-          });
-
-        }, resolve, reject);
-      } else {
-        // Default to creating a database from the current directory structure using standard SQL syntax for simplicity
-        const dbName = `src/alchemy_database.db`;
+    def __init__(self, path: str = None) -> None:
+        if not isinstance(path, str):
+            raise ValueError("Path must be a string")
         
-        this.db.open(dbName);
+        # Ensure the file exists and is writable before opening
+        db_path = os.path.join(os.getcwd(), "alchemy_database.db")
+        
+        try:
+            with open(db_path, 'w', encoding='utf-8') as f:
+                self._write_sql(self.get_dbpath())
 
-        await new Promise<void>((resolve, reject) => {
-          try {
-            fs.writeFileSync(tempDb, dbPath.replace('.py', '.sql')); // Write the Python file content as SQL-like for testing purposes
+            if path:
+                # Try to load the database from a Python file provided by user
+                python_file = os.path.splitext(path)[0] + '.sql'
+                
+                with open(python_file, 'r', encoding='utf-8') as f:
+                    self._read_sql(f.read())
+
+            super().__init__(path)
             
-            if (!dbPath.endsWith('.sql')) throw Error("Database file must be a .sqlite3 or .py extension");
+        except Exception as e:
+            raise RuntimeError("Failed to create AlchemyDatabase") from e
+        
+    def _write_sql(self, sql_string: str):
+        """Write SQL-like content directly into the SQLite file."""
+        with open('alchemy_database.db', 'w') as f:
+            # Treat Python code (stringified) as a separate entity for testing
+            if path and os.path.splitext(path)[0] == '.py':
+                sql_content = self._read_sql(f.read()) + '\n'
+                try:
+                    with open('alchemy_database.db', 'w') as f2:
+                        # Add comments to the SQL content (simplified for this demo)
+                        if path and os.path.splitext(path)[0] == '.py':
+                            sql_content = self._read_sql(f.read()) + '\n'
+                            lines = [line.strip() for line in sql_content.split('\n') if not line.startswith('#')]
+                            with open('alchemy_database.db', 'w') as f2:
+                                # Write the SQL content directly, preserving comments and indentation
+                                for i, line in enumerate(lines):
+                                    f.write(line + '\n' * (4 - len(line) % 4))
 
-            this.db.load(dbPath); // Load from standard path
-          } catch (error) {
-            reject(error);
-          } finally {
-            db.close();
-          }
-        });
-      }
-    } catch (error) {
-      throw Error(`Failed to create AlchemyDB: ${error}`);
-    } finally {
-      this.db.close();
-    }
-  }
-
-  /**
-   * Query the database using a SQL-like statement.
-   */
-  async query(sqlString?: string): Promise<any[]> {
-    if (!sqlString) throw new Error("No SQL command specified");
+        return sql_string
     
-    return await this.executeQuery(sqlString);
-  }
+    def _read_sql(self, source_text: str) -> None:
+        """Parse Python code stringified into a SQL-like object."""
+        
+        # Strip comments and whitespace for parsing logic
+        lines = [line.strip() for line in source_text.split('\n') if not line.startswith('#')]
 
-  // Public method to construct the schema from Python code (stringified)
-  static createSchema(schemaMap: Record<string, any>): AlchemyDatabase | boolean {
-    const dbPath = __dirname + "/bank_of_banana_pudding.py";
-    
-    try {
-      this.db.open(dbPath);
+        try:
+            self._parse_sql(sql_string='\n'.join(lines))
+            
+        except Exception as e:
+            raise RuntimeError("Failed to parse AlchemyDatabase") from e
+        
+    def _parse_sql(self, sql_string: str) -> None:
+        """Parse Python code into a database object."""
 
-      // Load and parse the schema from Python code (stringified) - treating it as SQL-like for simplicity in this context
-      return new AlchemyDatabase(this.db.getDbPath());
-    } catch (error) {
-      throw Error(`Failed to create AlchemyDB: ${error}`);
-    } finally {
-      this.db.close();
-    }
-  }
+        # Extract table names (simple regex for common patterns like "table_name" or "_database.table_name")
+        tables = re.findall(r'_(?:\w+)?\.?\s*=\s*(?:"([^"]+)";|["'](.*)"', sql_string, r'\b[^\n]+\.\.?\w+\s*=.*?"[^"]*"|"['\"]')
 
-  /**
-   * Query rows from the database.
-   */
-  async queryRows(queryParams?: any[]): Promise<any[]> {
-    return await this.query(`${this.getQueryString()}`, queryParams || [] as string[]);
-  }
+        try:
+            # Create the database object with loaded schema from Python code (stringified)
+            self._create_database(tables=tables)
+            
+        except Exception as e:
+            raise RuntimeError("Failed to create AlchemyDatabase") from e
+        
+    def _create_database(self, tables: List[str]) -> None:
+        """Create the database object with loaded schema."""
 
-  // Public method to construct schema and validate against known types (amount, price)
-  static createSchemaAndValidate(schemaMap: Record<string, any>): AlchemyDatabase | boolean {
-    const dbPath = __dirname + "/bank_of_banana_pudding.py";
+        try:
+            conn = db_module.connect()
+            cursor = conn.cursor()
+            
+            # Load and parse table definitions (stringified) - treating it as SQL-like for simplicity in this context
+            self._load_tables(cursor, tables=tables)
+                
+        except Exception as e:
+            raise RuntimeError("Failed to create AlchemyDatabase") from e
+        
+    def _load_tables(self, cursor: db_module.Cursor, table_names: List[str]) -> None:
+        """Load and parse schema definitions for each table."""
 
-    try {
-      this.db.open(dbPath);
-
-      // Load and parse the schema from Python code (stringified) - treating it as SQL-like for simplicity in this context
-      
-      return new AlchemyDatabase(this.db.getDbPath());
-    } catch (error) {
-      throw Error(`Failed to create AlchemyDB: ${error}`);
-    } finally {
-      this.db.close();
-    }
-  }
-
-  /**
-   * Execute a specific SQL query with validation.
-   */
-  async executeQuery(sqlString: string): Promise<any[]> {
-    return await this.query(`${this.getQueryString()}`, [] as string[]); // Default empty params for generic execution
+        try:
+            # Parse SQL-like content into an object structure (Python dict) - treating it as SQL-like for simplicity in this context
+            
+            for i, name in enumerate(tables):
+                if not isinstance(name, str): continue
+                
+                # Load the Python code stringified from file path
+                python_file = os.path.splitext(os
