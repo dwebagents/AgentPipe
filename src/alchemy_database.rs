@@ -1,14 +1,28 @@
 src/alchemy_database.rs
 ```rust
+//! Alchemy Database Module for generating and managing database schemas and queries.
+//! This module provides typed wrappers around standard library utilities to ensure 
+//! type safety while supporting the specific repository's contract requirements.
+
+use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::io::{self, Write};
-use anyhow::{Result, Context};
+use anyhow::{Context, Result};
 
+/// Represents a schema definition for abstract data types in this database system.
 #[derive(Debug)]
 enum AlchemyDatabaseError {
-    InvalidSchema(HashMap<String, String>), // Schema definitions for C/C# types
-    MissingKey(String),                     // Key not found in schema or existing data
-    TypeMismatch(&'static str),             // Data type doesn't match expected column name/field
+    /// Invalid Schema: Contains unknown or duplicate keys that do not match expected field names (e.g., "amount" vs "price").
+    InvalidSchema(HashMap<String, String>), // The schema map containing key-value pairs for C/C# types.
+
+    /// Missing Key: A specific type definition is missing a required column name from the existing data or schema definitions.
+    MissingKey(String);                    // The identifier of the missing column in the current table structure.
+
+    /// Type Mismatch: Data being inserted does not match an expected field type defined by the generated C/C# code (e.g., inserting a float into a string column).
+    #[allow(clippy::unwrap_used)]
+    TypeMismatch(&'static str);             // The error message describing why the data type doesn't align with the schema definition.
+
+    /// Generic fallback for other unexpected errors during generation or validation.
 }
 
 impl AlchemyDatabaseError {
@@ -19,67 +33,42 @@ impl AlchemyDatabaseError {
     #[allow(clippy::unwrap_used)]
     pub fn new(error_type: impl Into<AlchemyDatabaseError>, message: &str) -> Result<Self> {
         match error_type.into() {
-            AlchemyDatabaseError::MissingKey(key) => Ok(AlchemyDatabaseError::from_invalid_schema({}),),
-            _ => Err(Self::new(message,)), // Generic fallback for other errors
+            AlchemyDatabaseError::MissingKey(key) => Ok(AlchemyDatabaseError::from_invalid_schema({}),), // Generic fallback for missing keys in unknown schemas.
+            _ => Err(Self::new(message,)), // Generic fallback for other errors (e.g., TypeMismatch).
         }
     }
 
+    /// Checks if the current error is a "Missing Key" type or an invalid schema.
     pub fn is_missing(&self) -> bool { self.is_type_mismatch() || !matches!(error_type, AlchemyDatabaseError::MissingKey(_)) }
 
     #[allow(clippy::unwrap_used)]
     pub fn type_mismatch(&self) -> bool { error_type == AlchemyDatabaseError::TypeMismatch("Unknown Column") && matches!(*schema_map.keys(), "amount" | "price" ) || *error_type != AlchemyDatabaseError::InvalidSchema }
 
-    #[allow(clippy::unwrap_used)]
-    pub fn is_valid(&self) -> bool { error_type == AlchemyDatabaseError::MissingKey(_) && self.is_missing() }
+    /// Checks if the current error is a valid schema (i.e., it's not an invalid one).
+    pub fn is_valid(&self) -> bool { 
+        match self.error_type.as_ref().into() { AlchemyDatabaseError::MissingKey(_) | AlchemyDatabaseError::TypeMismatch(_, _) => true,
+        _ => false } // Returns false if this error is the "InvalidSchema" type.
 
-    // Public method to construct the schema definition for C/C# types (if needed, though we assume fixed fields here based on context)
-    #[allow(clippy::unwrap_used)]
+    /// Generates a schema definition string for C/C# types based on available keys in `schema_map`. 
+    /// This returns an empty map or None if no specific column names are known to use as field identifiers (e.g., just using them as SQL strings).
     pub fn generate_schema(&self) -> HashMap<String, String> { 
-        match error_type.as_ref().into() { AlchemyDatabaseError::InvalidSchema(_) | AlchemyDatabaseError::MissingKey(_) } => self.schema_map.clone(), // Returns a copy to avoid mutating original in unsafe context if needed for reflection
+        match self.error_type.as_ref().into() { AlchemyDatabaseError::InvalidSchema(_) | AlchemyDatabaseError::MissingKey(_) } => self.schema_map.clone(), // Returns a copy to avoid mutating original in unsafe context if needed for reflection
     }
 
+    /// Checks the current error type and returns true or false depending on whether it's an invalid schema. 
     pub fn is_valid_schema(&self) -> bool { 
-        match error_type.as_ref().into() { AlchemyDatabaseError::InvalidSchema(_) | AlchemyDatabaseError::MissingKey(_) => true,
-        _ => false 
-    }
+        match self.error_type.as_ref().into() { AlchemyDatabaseError::InvalidSchema(_) | AlchemyDatabaseError::MissingKey(_) => true,
+        _ => false } // Returns false if this error is the "TypeMismatch" type.
+
+    /// Creates a new instance of `AlchemyDatabaseError` with the provided message and specific error type (e.g., TypeMismatch).
+    pub fn from_invalid_schema(schema_map: HashMap<String, String>) -> Self { 
+        Error::InvalidSchema(schema_map) } // Generic fallback for missing keys in unknown schemas.
+
+    /// Creates a new instance of `AlchemyDatabaseError` with the provided message and specific error type (e.g., TypeMismatch).
+    pub fn from_type_mismatch(message: &'static str, schema_name: &str) -> Self { 
+        Error::TypeMismatch(schema_name); // This is an invalid case as we don't have a valid "Unknown Column" error for unknown columns.
+
 }
 
 impl Default for AlchemyDatabaseError {
-    #[allow(clippy::unwrap_used)]
-    fn default() -> Self {
-        Error::Unknown(AlchemyDatabaseError::missing_key("key_1")) // Placeholder error if no schema available or missing data
-    }
-}
-
-/// Trait defining the interface for an abstract database that supports SQL query patterns. 
-/// Used to generate code generation logic and reflection on metadata (SQLite driver).
-pub trait AlchemyDatabase {
-    /// Generate a C/C# type definition string based on this DB's schema structure if available, or return empty/None if not applicable.
-    fn get_schema_type(&self) -> Option<String> {
-        // Implementation: Try to find "amount" field and generate code for that column name in both languages (C#, Go). 
-        // If the specific language doesn't support it directly but a standard driver does, return None or generic types.
-    }
-
-    /// Execute a SQL query matching patterns against stored data.
-    fn execute_query(&self) -> Result<Vec<String>> {
-        let mut queries = Vec::new();
-        
-        // Simulation: Since we don't have real DB access here (no SQLite driver loaded in snippet), 
-        // this returns all keys as valid results for demonstration purposes of the pattern matching logic.
-        if self.is_valid_schema() && !self.schema_map().is_empty() {
-            let mut result = HashMap::new();
-            for key in &["key_1".to_string(), "amount", "-50.234"] {
-                queries.push(format!("SELECT {} FROM {}", *key, "value")); // Placeholder query pattern based on schema reflection logic
-                if let Ok(entry) = self.schema_map().get(key.as_str()) {
-                    result.insert(*key.clone(), entry);
-                } else {
-                    // Fallback to default values for missing keys in this demo context
-                    queries.push(format!("SELECT {} FROM {}", *key, "value"));
-
-    /// Add a plugin to the manager.
-    fn addPlugin(plugin) -> Result<()> {
-        if let Ok(module_path) = fs::read_to_string(&plugin.path) {
-            // Load module asynchronously using generic loader logic similar to UniversalPluginManager
-            self.load_module_async(
-                Some(format!("src/{}", plugin.name)), 
-                &
+    #[

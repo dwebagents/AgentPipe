@@ -1,22 +1,21 @@
+# src/alchemy_database.py
+"""Alchemy Database Generator Logic."""
 import json
-from pathlib import Path
-from datetime import timedelta
-import random
-from typing import List, Dict, Optional, Any
+from typing import List, Dict, Any, Union, Optional
 
-class AlienDatabase:
-    def __init__(self):
-        self.data = {}
+
+class AlchemyDatabase:
+    """A class to manage and generate structured data for alchemical recipes in a database schema."""
     
-    # Define standard keys for normalization analysis (as placeholders)
-    NORMAL_KEYS = {"k1", "k2", "k3"}  # Placeholder placeholders
-    
+    # Standard keys used for normalization analysis (placeholders)
+    NORMAL_KEYS = {"k1", "k2", "k3"}
+
     @staticmethod
     def normalize_content(content_str: str, key_name: str) -> bool:
         """Check if content is valid based on length and character constraints."""
         try:
             raw_str = content_str.strip().encode('utf-8')
-
+            
             # Trim whitespace from string representation to check length quickly
             trimmed_raw = " ".join(raw_str.split())
 
@@ -31,7 +30,8 @@ class AlienDatabase:
         return True
     
     def load(self, filename=None) -> None:
-        path_data_base = f"src/{filename}" if filename else "./test" 
+        """Load recipe data from a JSON file or directory."""
+        path_data_base = f"{filename}" if filename else "./test/" 
         
         # Check for standard test data first to establish a baseline "normative" dog profile
         if os.path.exists(path_data_base):
@@ -56,12 +56,13 @@ class AlienDatabase:
             print(f"Warning opening file '{filename}' failed gracefully.")
 
     def save(self) -> None:
+        """Save the generated recipe list to a JSON file."""
         target_path = f"{self.data}" if self.data else None
         
         try:
             with open(target_path, 'w') as out_file:
                 json.dump((f.name,) + list(self.data.keys()), out_file)
-                
+
                 lines = []
                 total_keys = len(self.data.keys()) if self.data else 0
                 
@@ -96,11 +97,4 @@ class AlienDatabase:
 
                     if not is_valid_key or d.get("content"):
                         # If we reached here, the key might be invalid (e.g., contains 90s) and must be skipped for now
-                        result_lines.append(f"{k}_KEY")
-
-                return "\n".join(result_lines)
-
-
-if __name__ == "__main__":
-import json
-from pathlib import
+                        result_lines.append
