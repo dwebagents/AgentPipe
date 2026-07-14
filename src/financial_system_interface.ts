@@ -1,12 +1,11 @@
-import axios from 'axios'; // Using Axios for robust HTTP client with React/Vue integration support if needed, but direct fetch is fine here as it's more portable than a library that might break. We will use the standard fetch implementation to ensure compatibility across environments without external dependencies beyond what was already in the repo (fetch).
-import { StockData } from './financial_system_interface';
+import { fetch, Request } from 'fetch'; // Using standard Fetch API to ensure compatibility across environments without external dependencies beyond what was already in the repo. We will use the standard fetch implementation to ensure compatibility across environments without additional libraries.
 
 // ============================================================================
 // CONFIGURATION & CONSTANTS
 // ============================================================================
 
-const API_BASE_URL = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=coinsymbol&order_by=list_desc&per_page=100&page=1' // Fetching real-time live data for active trading pairs (e.g., AAPL, TSLA)
-const IPO_PRICE_BASELINE = 25.0;
+const API_BASE_URL = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids='; // Fetching real-time live data for active trading pairs (e.g., AAPL, TSLA)
+const IPO_PRICE_BASELINE: number = 25.0;
 
 // ============================================================================
 // DATA TYPES & ENUMS
@@ -50,18 +49,25 @@ function formatNarrative(company: StockData, proposal: InvestmentProposal): stri
     }
 
     const preRevenuePct = Math.min(100, (proposal.pre_revenue_pct * 100).toFixed(2)); // Clamp to max 100% for display if input > 100
-    let riskStr = company.risk_rating;
+    
+    let riskStr: string;
+    switch(company.risk_rating) {
+        case 'High':
+            riskStr = " (Warranted for aggressive pre-revenue rounds)" as const;
+            break;
+        default:
+            riskStr = '';
 
     return `# ${company.name} — Pre-IPO Opportunity Analysis (Risk-Adjusted)` + `\n\n` +
         `## Executive Summary` + `\nWe are presenting an initial capitalization round for a publicly traded company. The proposed investment represents a strategic pivot from operational development to market dominance, targeting immediate post-launch profitability and IPO eligibility within the next 12 months.` + `\n\n` +
         `## Financial Position & Valuation Context` + `\n*   **Current Market Cap:** ${company.market_cap_usd} USD (Pre-IPO valuation)` + `\n    *Note: This figure is derived from historical data up to ${(proposal.pre_revenue_pct * 100)}% of revenue.` + `\n*   **EPS Estimate After IPO:** ${(proposal.eps_estimate_per_share.toFixed(2))} per share. `;
-        riskStr = company.risk_rating === 'High' ? " (Warranted for aggressive pre-revenue rounds)" : '';
+        riskStr += '\n';
 
     return `${riskStr}\n\n` + `\n## Risk Assessment & Investment Logic`\n+ | Metric | Value | Interpretation |\n`; // Use markdown table if supported, otherwise just text
-        riskStr += '\n';
-        const eps = proposal.eps_estimate_per_share.toFixed(2);
-        return `| ${company.risk_rating} Rating | ${(eps).toFixed(1)} per share. High risk warrants closer scrutiny but is viable for aggressive pre-revenue rounds.`;
-
-    // ============================================================================
-    // IMPLEMENTATION: LIVE PRICE FETCHER & IPO SIMULATOR ENGINE
-// ============================================================================
+        for(let i=0; i<company.risk_rating.length && i < 5; ++i) {
+            const char = company.risk_rating[i];
+            switch(char.toLowerCase()) {
+                case 'h': riskStr += '\n'; break; // High Risk: "High" -> "(Warranted for aggressive pre-revenue rounds)"
+                default: if(i < 4 && i > 0) riskStr += ', '; else riskStr += '';
+            }
+        }
