@@ -428,6 +428,27 @@ h2 {
   background: rgba(46, 125, 50, 0.82);
 }
 
+.chess8d-roster {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+  margin-top: 0.8rem;
+}
+
+.chess8d-roster-player {
+  overflow: hidden;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid rgba(255, 212, 42, 0.22);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.78);
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 0.76rem;
+  font-weight: 800;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .chess8d-controls {
   display: flex;
   flex-wrap: wrap;

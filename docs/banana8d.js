@@ -3,6 +3,7 @@
   const audioReadout = document.getElementById("audio8d-readout");
   const hrtfInput = document.getElementById("hrtf-input");
   const board = document.getElementById("chess8d-board");
+  const roster = document.getElementById("chess8d-roster");
   const chessReadout = document.getElementById("chess8d-readout");
   const prevButton = document.getElementById("chess8d-prev");
   const nextButton = document.getElementById("chess8d-next");
@@ -12,6 +13,7 @@
   const PLAYER_COUNT = 8;
   const PIECES_PER_PLAYER = 16;
   const TOTAL_CHESS_PIECES = PLAYER_COUNT * PIECES_PER_PLAYER;
+  const CHESS_BACK_RANK = ["R", "N", "B", "Q", "K", "B", "N", "R"];
   const MUSIC_BPM = 96;
 
   function clamp(value, min, max) {
@@ -141,7 +143,7 @@
       audioToggle.textContent = "Start 8D banana audio";
     }
     if (audioReadout) {
-      audioReadout.textContent = "audio idle";
+      audioReadout.textContent = "music playback idle";
     }
     cancelAnimationFrame(audioFrame);
   }
@@ -157,7 +159,7 @@
     gain.gain.setTargetAtTime(0.18 + Math.max(0, projected.depth) * 0.04, time, 0.03);
     musicSource.playbackRate.setTargetAtTime(0.94 + (projected.y + 1) * 0.045, time, 0.04);
     if (audioReadout) {
-      audioReadout.textContent = `playing banana music · pan ${projected.x.toFixed(2)} · rate ${musicSource.playbackRate.value.toFixed(2)}x`;
+      audioReadout.textContent = `playing generated music buffer · pan ${projected.x.toFixed(2)} · rate ${musicSource.playbackRate.value.toFixed(2)}x`;
     }
     audioFrame = requestAnimationFrame(updateAudio);
   }
@@ -198,35 +200,44 @@
   });
 
   function create8DChessPieces() {
-    const backRank = ["R", "N", "B", "Q", "K", "B", "N", "R"];
     const allPieces = [];
 
     for (let playerIndex = 0; playerIndex < PLAYER_COUNT; playerIndex += 1) {
       const player = playerIndex + 1;
-      const forwardAxis = playerIndex;
-      const fileAxis = (playerIndex + 1) % 8;
       const homeRank = playerIndex % 2 === 0 ? 0 : BOARD_SIZE - 1;
       const pawnRank = playerIndex % 2 === 0 ? 1 : BOARD_SIZE - 2;
 
-      backRank.forEach((piece, file) => {
-        const vector = Array.from({ length: 8 }, (_, axis) => playerIndex);
-        vector[forwardAxis] = homeRank;
-        vector[fileAxis] = file;
-        allPieces.push({ player, piece, vector });
+      CHESS_BACK_RANK.forEach((piece, file) => {
+        const vector = chessVector(playerIndex, homeRank, file, file);
+        allPieces.push({ player, piece, file: file + 1, vector });
       });
 
       for (let file = 0; file < BOARD_SIZE; file += 1) {
-        const vector = Array.from({ length: 8 }, (_, axis) => playerIndex);
-        vector[forwardAxis] = pawnRank;
-        vector[fileAxis] = file;
-        allPieces.push({ player, piece: "P", vector });
+        const vector = chessVector(playerIndex, pawnRank, file, file + CHESS_BACK_RANK.length);
+        allPieces.push({ player, piece: "P", file: file + 1, vector });
       }
     }
 
     return allPieces;
   }
 
+  function chessVector(playerIndex, rank, file, pieceOffset) {
+    const forwardAxis = playerIndex;
+    const fileAxis = (playerIndex + 1) % 8;
+    const pieceAxis = (playerIndex + 2) % 8;
+    const playerAxis = (playerIndex + 3) % 8;
+    const vector = Array.from({ length: 8 }, (_, axis) => (playerIndex + axis) % BOARD_SIZE);
+    vector[forwardAxis] = rank;
+    vector[fileAxis] = file;
+    vector[pieceAxis] = (pieceOffset + playerIndex) % BOARD_SIZE;
+    vector[playerAxis] = playerIndex;
+    return vector;
+  }
+
   const pieces = create8DChessPieces();
+  if (pieces.length !== TOTAL_CHESS_PIECES) {
+    throw new Error(`Expected ${TOTAL_CHESS_PIECES} 8D chess pieces, got ${pieces.length}`);
+  }
 
   function normalizeBoardVector(vector) {
     return vector.map((value) => (value / (BOARD_SIZE - 1)) * 2 - 1);
@@ -244,6 +255,25 @@
   }
 
   let activeMove = 0;
+
+  function renderChessRoster() {
+    if (!roster) {
+      return;
+    }
+    roster.innerHTML = "";
+    for (let player = 1; player <= PLAYER_COUNT; player += 1) {
+      const playerPieces = pieces.filter((piece) => piece.player === player);
+      const entry = document.createElement("div");
+      entry.className = "chess8d-roster-player";
+      entry.textContent = `P${player} (${playerPieces.length}/${PIECES_PER_PLAYER}): ${playerPieces
+        .map((piece) => `${piece.piece}${piece.file}`)
+        .join(" ")}`;
+      entry.title = playerPieces
+        .map((piece) => `Player ${piece.player} ${piece.piece}${piece.file}: ${vectorNotation(piece.vector)}`)
+        .join("\n");
+      roster.appendChild(entry);
+    }
+  }
 
   function renderChess() {
     if (!board) {
@@ -283,6 +313,7 @@
     if (chessReadout) {
       chessReadout.textContent = `vector ${activeMove + 1} of ${pieces.length}: P${active.player} ${active.piece} · ${vectorNotation(active.vector)}`;
     }
+    renderChessRoster();
   }
 
   prevButton?.addEventListener("click", () => {
@@ -304,6 +335,7 @@
     buildBananaMusicBuffer,
     create8DChessPieces,
     cellIndexForVector,
+    PIECES_PER_PLAYER,
     TOTAL_CHESS_PIECES,
     pieces,
   };
