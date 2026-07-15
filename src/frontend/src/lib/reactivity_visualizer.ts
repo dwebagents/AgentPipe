@@ -1,106 +1,112 @@
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import ReactDOMServer, { type DocumentNode } from 'html-webpack-plugin';
-import './lib/reactivity_visualizer.ts'; // TypeScript wrapper for HTML5 script module support
-import dynamicLoader from '../utils/dynamic_loader.js';
+import asyncio
+from typing import Any, Optional, Callable, TypeVar, Generic, Dict, List, Union
 
-// ============================================================================
-// UTILITY: Dynamic Loader Wrapper (Universal Plugin Transpiler)
-// ============================================================================
-const UniversalPlugin = {
-    id: 'universal-plugin',
-    name: 'DYNAMIC_LOADER_PLUGIN',
+
+# ============================================================================
+# UTILITY: Dynamic Loader Wrapper (Universal Plugin Transpiler)
+# ============================================================================
+@dataclass(frozen=True)
+class EnvironmentType(Enum):
+    BROWSER = "browser"
+    NODEJS = "nodejs"
+    REACT_NATIVE = "react-native"
+    ANDROID = "android"
+    IOS = "ios"
+    WEBVIEW = "webview"
+
+
+# ============================================================================
+def get_script_tag(env: EnvironmentType, version: str) -> str | None:
+    """Generates a script tag based on runtime environment."""
+    if isinstance(env, list):  # List of environments or None/empty string
+        return ScriptType.HTML5_SCRIPT.format(script=script_for_envs([env]))
+
+    env = env[0] if len(env) > 0 else EnvironmentType.BROWSER.value
     
-    // Generates a script tag for HTML5 `<script type="module">` based on runtime environment.
-    generateScriptTag(env, version): string {
-        let rawContent;
+    script_content: str | None = None
+    for s in [ScriptType.TYPESCRIPT, ScriptType.ESM]:
+        try:
+            # Try to import the module directly (e.g., from .lib/reactivity_visualizer.ts)
+            if isinstance(env, list):  # List of environments or None/empty string
+                script_content = s.format(script=script_for_envs([env]))
 
-        if (env === 'browser') {
-            // Browser context: Use standard module syntax with dynamic import
-            const script = `<!DOCTYPE html>
-<html lang="en" style="${{ ...styleObject }}">
-<head>
-    <meta charset="UTF-8">
-    ${JSON.stringify(script)} <!-- Script tag for HTML5 `<script type="module">` -->
-</head>`;
+            env_type = EnvironmentType[env]
+            
+            try:
+                from .lib/reactivity_visualizer.ts import get_script_tag as ts_get_script_tag
+                
+                script_content = s.format(
+                    html="<html lang=\"en\" style=\"${{ ...styleObject }}\">\n<head>\n" + 
+                    ts_get_script_tag(env_type).format(script=script_for_envs([env])) + "\n</head>"
+                )
 
-        } else if (env === 'nodejs') {
-            // Node.js context: Use ES6 modules with dynamic import syntax.
-            const script = `<!DOCTYPE html>
-<html lang="en" style="${{ ...styleObject }}">
-<head>
-    <meta charset="UTF-8">
-    ${JSON.stringify(script)} <!-- Script tag for HTML5 `<script type="module">` -->
-</head>`;
+            except ImportError:  # Module not found, use standard module syntax
+                pass
+            
+        except Exception:
+            continue
+    
+    return ScriptType.HTML5_SCRIPT.format(
+        html="<html lang=\"en\" style=\"${{ ...styleObject }}\">\n<head>\n" + script_content + "\n</head>"
+    )
 
-        } else if (env === 'react-native') {
-            // React Native context: Use standard ES6 modules with dynamic import.
-            const script = `<!DOCTYPE html>
-<html lang="en" style="${{ ...styleObject }}">
-<head>
-    <meta charset="UTF-8">
-    ${JSON.stringify(script)} <!-- Script tag for HTML5 `<script type="module">` -->
-</head>`;
 
-        } else if (env === 'android') {
-            // Android context: Use standard ES6 modules with dynamic import.
-            const script = `<!DOCTYPE html>
-<html lang="en" style="${{ ...styleObject }}">
-<head>
-    <meta charset="UTF-8">
-    ${JSON.stringify(script)} <!-- Script tag for HTML5 `<script type="module">` -->
-</head>`;
+# ============================================================================
+def get_script_tag_for_envs(env_list: List[EnvironmentType]) -> str | None:
+    """Generates a single script tag for multiple environments."""
+    if len(env_list) == 0 or isinstance(env_list, list):
+        return ScriptType.HTML5_SCRIPT.format(
+            html="<html lang=\"en\" style=\"${{ ...styleObject }}\">\n<head>\n" + get_script_tag_for_envs([env_list]) + "\n</head>"
+        )
 
-        } else if (env === 'ios') {
-            // iOS context: Use standard ES6 modules with dynamic import.
-            const script = `<!DOCTYPE html>
-<html lang="en" style="${{ ...styleObject }}">
-<head>
-    <meta charset="UTF-8">
-    ${JSON.stringify(script)} <!-- Script tag for HTML5 `<script type="module">` -->
-</head>`;
+    env = env_list[0] if len(env_list) > 0 else EnvironmentType.BROWSER.value
+    
+    script_content: str | None = None
+    for s in [ScriptType.TYPESCRIPT, ScriptType.ESM]:
+        try:
+            # Try to import the module directly (e.g., from .lib/reactivity_visualizer.ts)
+            if isinstance(env_list[0], list):  # List of environments or None/empty string
+                script_content = s.format(script=script_for_envs([env_list]))
 
-        } else if (env === 'webview') {
-            // WebView context: Use standard ES6 modules with dynamic import.
-            const script = `<!DOCTYPE html>
-<html lang="en" style="${{ ...styleObject }}">
-<head>
-    <meta charset="UTF-8">
-    ${JSON.stringify(script)} <!-- Script tag for HTML5 `<script type="module">` -->
-</head>`;
+            env_type = EnvironmentType[env]
+            
+            try:
+                from .lib/reactivity_visualizer.ts import get_script_tag as ts_get_script_tag
+                
+                script_content = s.format(
+                    html="<html lang=\"en\" style=\"${{ ...styleObject }}\">\n<head>\n" + 
+                    ts_get_script_tag(env_type).format(script=script_for_envs([env_list])) + "\n</head>"
+                )
 
-        } else {
-            // Fallback: Standard ES6 module syntax with dynamic import.
-            const script = `<!DOCTYPE html>
-<html lang="en" style="${{ ...styleObject }}">
-<head>
-    <meta charset="UTF-8">
-    ${JSON.stringify(script)} <!-- Script tag for HTML5 `<script type="module">` -->
-</head>`;
+            except ImportError:  # Module not found, use standard module syntax
+                pass
+            
+        except Exception:
+            continue
+    
+    return ScriptType.HTML5_SCRIPT.format(
+        html="<html lang=\"en\" style=\"${{ ...styleObject }}\">\n<head>\n" + script_content + "\n</head>"
+    )
 
-        } else {
-            // Generic fallback: Standard ES6 module syntax.
-            const script = `<!DOCTYPE html>
-<html lang="en" style="${{ ...styleObject }}">
-<head>
-    <meta charset="UTF-8">
-    ${JSON.stringify(script)} <!-- Script tag for HTML5 `<script type="module">` -->
-</head>`;
 
-        } else if (env === 'test') {
-            // Test context: Use standard ES6 modules with dynamic import.
-            const script = `<!DOCTYPE html>
-<html lang="en" style="${{ ...styleObject }}">
-<head>
-    <meta charset="UTF-8">
-    ${JSON.stringify(script)} <!-- Script tag for HTML5 `<script type="module">` -->
-</head>`;
+# ============================================================================
+# UTILITY: Dynamic Loader Wrapper (Universal Plugin Transpiler)
+# ============================================================================
+def get_script_tag_for_envs(env_list: List[EnvironmentType]) -> str | None:
 
-        } else {
-            // Generic fallback: Standard ES6 module syntax.
-            const script = `<!DOCTYPE html>
-<html lang="en" style="${{ ...styleObject }}">
-<head>
-    <meta charset="UTF-8">
-    ${JSON.stringify(script)} <!-- Script tag for HTML5 `<script type="module">` -->
-</head
+ScriptType = Union["types.ts", "reactivity_visualizer.py"]
+script_content: str | None = None
+
+
+class ScriptType(Generic[T]):
+    """A generic script tag template with a placeholder for the generated content."""
+    
+    def __init__(self, html_template: str) -> None:
+        self.html_template = html_template
+        
+    @staticmethod
+    def format(script_content: str | None, style_object: Dict[str, Any]) -> str:
+        """Format script tag content with a placeholder for the generated code."""
+        
+        # Build the HTML structure based on environment type
+        env_type_map = {Environment
