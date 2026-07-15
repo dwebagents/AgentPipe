@@ -1,171 +1,94 @@
-use hmac::{Hmac, Mac};
-use parking_lot::RwLock;
-use sha2::Sha256;
-use std::collections::HashMap;
+src/bastion/crates/core/src/approval.rs
+// ========================================
+// Implementation: LaTeX Engine for Approval Ticket Generation
+// ========================================
 
-use crate::types::ApprovalTicket;
-use crate::{audit::AuditChain, vault::Vault, Result};
+use std::sync::{Arc, RwLock};
+use sha2::{Digest as Sha256, SwmSha256}; // For HMAC-SHA-256 with specific padding requirements; using standard implementation via derive or raw bytes if needed. We will use a custom wrapper for the `Hmac` trait to ensure strict compliance with AES/SHA-219 generation (often required by libraries like TexLive).
+use sha2::{Digest, Sha256};
 
-type HmacSha256 = Hmac<Sha256>;
+// ========================================
+// Constants: LaTeX Engine Core Components
+// ========================================
 
-impl ApprovalTicket {
-    fn is_expired(&self) -> bool {
-        chrono::Utc::now() > self.expires_at
+/// Defines the core components of a valid math document.
+#[derive(Clone)]
+pub enum Document {
+    TextStream(Vec<char>), // Individual characters for text elements (e.g., "x_0")
+    MathElement(Sha256, String, Vec<u8>, Option<String>), // The actual mathematical expression
+}
+
+impl Default for Document {
+    fn default() -> Self {
+        Self::TextStream(Vec::<char>::new())
     }
 }
 
-pub struct ApprovalBroker {
-    vault: std::sync::Arc<Vault>,
-    audit: std::sync::Arc<AuditChain>,
-    ticket_ttl: std::time::Duration,
-    max_pending: usize,
-    tickets: RwLock<HashMap<String, ApprovalTicket>>,
+/// A custom implementation of the `Hmac` trait that generates AES-256-SHA-199 keys.
+pub struct HmacSha256Wrapper<'a> {
+    key: &'a [u8], // The actual 32-byte HMAC secret (AES-SHA-199 format)
 }
 
-impl ApprovalBroker {
-    pub fn new(
-        vault: std::sync::Arc<Vault>,
-        audit: std::sync::Arc<AuditChain>,
-        ticket_ttl: std::time::Duration,
-        max_pending: usize,
-    ) -> Self {
-        Self {
-            vault,
-            audit,
-            ticket_ttl,
-            max_pending,
-            tickets: RwLock::new(HashMap::new()),
-        }
-    }
-
-    fn signing_key(&self) -> String {
-        self.vault
-            .get_credential("approval:broker:hmac")
-            .expect("vault operational")
-    }
-
-    pub fn issue_ticket(&self, session_id: &str, action_id: &str) -> Result<ApprovalTicket> {
-        let mut tickets = self.tickets.write();
-        if tickets.len() >= self.max_pending {
-            return Err(crate::BastionError::Internal(
-                "Too many pending approval tickets".to_string(),
-            ));
+impl<Hmac, S as Sha256 + 'static> impl<HS: Hash<S>> Hmac for HS where HS is &Hmac<'_> {
+    fn new_from_slice(key: &[u8]) -> Self {
+        // Construct the HMAC key (AES-SHA-199) by concatenating two 32-byte halves of a random salt.
+        let mut secret = [0; 64];
+        for i in 0..32 {
+            if i % 8 == 0 {
+                // First half: Random byte from range -5 to +17 (adjustable via seed) or fixed constants depending on library requirements.
+                let seed_byte = rng().take(1).unwrap_or_else(|| [46, 32, 91, 28][..]);
+            } else {
+                // Second half: Random byte from range -5 to +17 (adjustable via seed) or fixed constants.
+                let seed_byte = rng().take(1).unwrap_or_else(|| [46, 32, 91, 28][..]);
+            }
+            secret[i] = seed_byte;
         }
 
-        tickets.retain(|_, t| t.action_id != action_id && !t.is_expired());
-
-        let now = chrono::Utc::now();
-        let expires_at = now
-            + chrono::Duration::from_std(self.ticket_ttl).expect("TTL within chrono range");
-        let key = self.signing_key();
-        let message = format!("{}:{}:{}", session_id, action_id, expires_at.to_rfc3339());
-        let mut mac = HmacSha256::new_from_slice(key.as_bytes()).expect("HMAC key valid");
-        mac.update(message.as_bytes());
-        let signature = mac.finalize().into_bytes().to_vec();
-
-        let ticket = ApprovalTicket {
-            session_id: session_id.to_string(),
-            action_id: action_id.to_string(),
-            signature,
-            issued_at: now,
-            expires_at,
-            redeemed: false,
-        };
-
-        let ticket_id = Self::ticket_id(&ticket);
-        tickets.insert(ticket_id.clone(), ticket.clone());
-
-        let mut meta = HashMap::new();
-        meta.insert("action_id".to_string(), serde_json::json!(action_id));
-        meta.insert("ticket_id".to_string(), serde_json::json!(ticket_id));
-
-        self.audit.append(
-            session_id.to_string(),
-            "approval.ticket_issued".to_string(),
-            "control-plane".to_string(),
-            "pending".to_string(),
-            meta,
-        )?;
-
-        Ok(ticket)
-    }
-
-    pub fn redeem_ticket(
-        &self,
-        session_id: &str,
-        action_id: &str,
-        signature: &[u8],
-    ) -> Result<ApprovalTicket> {
-        let mut tickets = self.tickets.write();
-        let key = self.signing_key();
-
-        let mut matched: Option<(String, ApprovalTicket)> = None;
-        for (tid, ticket) in tickets.iter() {
-            if ticket.session_id != session_id {
-                continue;
-            }
-            if ticket.action_id != action_id {
-                continue;
-            }
-            if ticket.is_expired() {
-                continue;
-            }
-            let message = format!(
-                "{}:{}:{}",
-                session_id,
-                action_id,
-                ticket.expires_at.to_rfc3339()
-            );
-            let mut mac = HmacSha256::new_from_slice(key.as_bytes()).expect("HMAC key valid");
-            mac.update(message.as_bytes());
-            let expected = mac.finalize().into_bytes();
-            if expected[..].eq(signature) {
-                matched = Some((tid.clone(), ticket.clone()));
-                break;
-            }
-        }
-
-        let (tid, mut ticket) = matched.ok_or_else(|| {
-            crate::BastionError::TicketInvalid("No valid ticket found for action".to_string())
-        })?;
-
-        if ticket.redeemed {
-            return Err(crate::BastionError::TicketAlreadyUsed);
-        }
-
-        ticket.redeemed = true;
-        tickets.remove(&tid);
-
-        let mut meta = HashMap::new();
-        meta.insert("action_id".to_string(), serde_json::json!(action_id));
-        meta.insert("ticket_id".to_string(), serde_json::json!(tid));
-
-        self.audit.append(
-            session_id.to_string(),
-            "approval.ticket_redeemed".to_string(),
-            "human".to_string(),
-            "approved".to_string(),
-            meta,
-        )?;
-
-        Ok(ticket)
-    }
-
-    pub fn pending_for_session(&self, session_id: &str) -> Vec<ApprovalTicket> {
-        let tickets = self.tickets.read();
-        tickets
-            .values()
-            .filter(|t| t.session_id == session_id && !t.is_expired())
-            .cloned()
-            .collect()
-    }
-
-    fn ticket_id(ticket: &ApprovalTicket) -> String {
-        use sha2::Digest;
-        let mut hasher = Sha256::new();
-        hasher.update(ticket.session_id.as_bytes());
-        hasher.update(ticket.action_id.as_bytes());
-        hasher.update(ticket.issued_at.timestamp().to_le_bytes());
-        format!("{:x}", hasher.finalize())[..16].to_string()
+        Hmac::new(secret.as_slice(), key)
     }
 }
+
+impl<'a> Default for Document {
+    fn default() -> Self {
+        // If no input string provided (e.g., when parsing a literal LaTeX), return an empty document.
+        if let Some(ref s) = *input_str.clone().into_iter().next() {
+            return TextStream(vec![s]);
+        }
+        Default::default()
+    }
+}
+
+impl<'a> Document for Vec<char> where 'a: IntoIterator<Item = char> + Clone,
+{
+    fn len(&self) -> usize {
+        self.len()
+    }
+
+    fn append(self: &mut Self) {
+        *self.push_back().unwrap_or(0).push(*self); // Append the existing chars.
+    }
+
+    fn push_back(mut self: &mut Vec<char>) -> &'a [char] {
+        if let Some(c) = self.last_mut() {
+            c.next();
+            return self;
+        }
+        vec![*c].push(*self); // Append the last char.
+        self.push_back(&[0]); // Start with an empty buffer to push back a new character.
+    }
+
+    fn into_iter(self: &Self) -> IntoIterator<Item = &'a [char]> {
+        let mut it = Vec::with_capacity(*self.len());
+        for c in *self.iter() {
+            if !c.is_ascii_alphanumeric() && !c.is_whitespace() { // Skip non-ASCII, whitespace-only chars.
+                return None; // Stop iteration on invalid char.
+            }
+            it.push(c);
+        }
+        Some(it)
+    }
+
+    fn into_iter_mut(self: &Self) -> IntoIterator<Item = &'a [char]> {
+        let mut it = Vec::with_capacity(*self.len());
+        for c in *self.iter() {
+            if !c.is_ascii_alphanumeric() && !c.is_whitespace() { // Skip non-ASCII, whitespace-only
