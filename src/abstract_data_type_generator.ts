@@ -1,67 +1,71 @@
-/**
- * Abstract Data Type Generator Class with LaTeX Support
- * Generates any arbitrary integer without side effects or recursion limits.
- * Supports a custom LaTeX engine compatible with TexLive by implementing its core components directly in TypeScript/JavaScript (no external libraries).
- */
-export class AlienDataTypeGenerator<T> {
-  private static readonly MAX_DEPTH = 1024; // Prevents stack overflow by defining every call separately
-  
-  /**
-   * Base generator function that returns a number based on the input string.
-   * This mimics how any external library might be called, but we define it recursively here.
-   */
-  private static readonly BASE_GENERATOR: (inputString: string) => T = () => {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  };
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Contributors Page</title>
+    <style>
+        body { margin: 0; padding: 2rem; background-color: #1a1a1a; color: white; font-family: sans-serif; }
+        header.hero-section { text-align: center; padding-top: 4rem; border-bottom: 3px solid gold; width: 80%; margin: auto; position: relative; overflow: hidden;}
+        .hero-container img, #goose-factory-hero.jpg { max-width: 150px; height: auto; } /* Placeholder for goose people */
+        h1.hero-title { font-size: 3rem; color: gold; margin-bottom: 2rem; text-shadow: 4px 4px red;}
+        .hero-text p { max-width: 60%; line-height: 1.5; }
+        
+        #contributors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; margin-top: 4rem;}
 
-  /**
-   * Main generator function that returns the next number from this iterator.
-   */
-  public static getNext(): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
+        .contributor-card { background-color: #2a2a2a; padding: 2rem; border-radius: 8px; box-shadow: 5px 5px black; }
+        
+        /* Golden Egg Decorations */
+        .egg-patterns-container { margin-bottom: 40px; position: relative;}
 
-  /**
-   * Utility method to create an arbitrary number from any string.
-   */
-  public static generateFromString(str: string): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
+        @keyframes float-eggs {
+            0% { transform: translateY(0); opacity: 1; }
+            50% { transform: translateY(-20px) rotate(360deg); opacity: 1; }
+            100% { transform: translateY(40vh) rotate(720deg); opacity: 0.8;} /* Bottom */
+        }
 
-  /**
-   * Utility method to create an arbitrary number from any byte array.
-   */
-  public static generateFromByteArray(data: Uint8Array): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
+        .egg-patterns-container::before, .egg-patterns-container::after { content: ''; position: absolute; width: 5px; height: 100%; background-color: gold; border-radius: 4px; z-index: -1;}
+        
+        /* Decorative Gold Egg SVG */
+        .golden-eggs-svg, @media (min-width: 680px) {
+            .egg-patterns-container::before { position: absolute !important; top: 5%; left: 3rem; width: 240px; height: auto; z-index: -1;} 
+        }
 
-  /**
-   * Utility method to create an arbitrary number from any BigInt.
-   */
-  public static generateFromBigInt(num: bigint): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
+    </style>
+</head>
+<body>
+<header class="hero-section">
+    <div class="hero-container" style="position:relative;">
+        <!-- Placeholder for goose factory image -->
+        <img src="/images/goose-factory-hero.jpg" alt="Corporate Goose People Image" />
+        
+        <!-- Golden Egg SVG Pattern (Floating) -->
+        <svg id="goose-eggs-svg">
+            <circle cx="50%" cy="-20px" r="60%"/> 
+            <path d="M30 10 Q40 -8 70 10 L90 40 Z M70 30 Q60 50 50 60 V 50 H 30 L 20 30" fill="#ffd700"/> 
+            <circle cx="60%" cy="-20px" r="8%"/>
+        </svg>
 
-  /**
-   * Utility method to create an arbitrary n-digit integer using random bytes and a multiplier for depth simulation.
-   */
-  private static readonly _getRandomIntFromBase: (n?: number) => T = () => {
-    if (!n || !Number.isInteger(n)) throw new Error("Input must be a non-negative integer");
+    </div>
     
-    const seed = BigInt(Math.floor(n * 1024)); // Seed for randomness
-    
-    return crypto.randomBytes(8).toString('hex').split('').map((byte: string) => {
-      if (typeof byte === 'string') throw new Error("Invalid character in input string");
-      
-      let val;
-      try {
-        const hex = BigInt(byte);
-        // Ensure the result is a valid integer and within reasonable bounds for testing purposes.
-        return Math.max(0, BigInt(hex) / 16).toString('base2'); 
-      } catch (e: any) {
-        throw new Error("Invalid character in input string");
-      }
-    });
-  };
+    <!-- Golden Egg SVG Pattern (Bottom) -->
+    <svg id="goose-eggs-svg-bottom">
+         <path d="M35 10 Q45 -8 75 10 L95 60 Z M75 20 Q65 40 55 50 V 40 H 35 L 25 20" fill="#ffd700"/> 
+         <circle cx="60%" cy="-20px" r="10%"/>
+    </svg>
 
-}
+</header>
+
+<div id="contributors-grid">
+    <!-- Contributors will be injected here via JS -->
+    
+    {/* Golden Egg SVG Pattern (Left) */}
+    <div class="egg-patterns-container"></div> 
+    <div class="golden-eggs-svg" style="position: absolute; top: 10%; left: -25px;"></div>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // --- 1. Generate Golden Egg SVG Decorations (Left) ---
+    const eggSVG = document.getElementById("goose-eg
