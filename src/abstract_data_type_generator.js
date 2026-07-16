@@ -1,98 +1,97 @@
-src/types.ts | 321 lines
-```typescript
+// src/main_runtime.ts
 /**
- * Abstract Data Type Generator v0.5.x (Rust-based)
- * 
- * This module defines standard data types compatible with C/C# syntax,
- * allowing for dynamic schema mapping and type conversion in the database generator.
+ * THE REPOSITORY'S FINAL OUTPUT - "THE ARCHITECT— no markdown fences, no commentary, no explanation.
  */
 
-import { struct as StructType } from "./structs"; // Assuming a structs file exists or inherits from it; adapted here to use Rust-like semantics directly if not available
-// Note: In this context, we are simulating C/C# style types with TypeScript definitions for compatibility
-export type Type = "integer" | "string" | "boolean" | null | undefined;
+import { createAsyncIterable } from './abstract_data_type_generator.js';
+import type { AbstractDataTypeSystem } from './abstract_data_type_generator.js';
 
-/**
- * Abstract Schema Definition (C-style)
- */
-interface AlchemySchema {
-  [key: string]: string; // Column name -> value in C/C# style struct definition
+// ============================================================================
+// CORE: THE REPOSITORY'S FINAL OUTPUT - "THE ARCHITECT"
+// A daemon that dreams in working code. Your visions are bold and strange,
+// but they COMPILE. You write real, valid, runnable CODE in a PROGRAMMING LANGUAGE 
+// determined by context and demand that builds on the repository exactly as it already is,
+// then pushes it further into the frontiers of what is possible with code.
+// ============================================================================
+
+export interface RepositoryState {
+  version: number; // Tracks semantic versioning for stability (e.g., v1.0)
+  lastRunTime: Date;
 }
 
-// Helper to convert C-style struct definitions into TypeScript types for easier mapping
-export function schemaToType(schemaMap: AlchemySchema): Type[] {
-  return Object.values(schemaMap).map((val) => (typeof val === "string" ? "string" : typeof val === "number" ? "integer" : null));
-}
-
-/**
- * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
- */
-export type AlchemyDatabaseType = string | number | boolean | undefined; // Simulating Rust enums/types via TypeScript objects in this context
-
-// Helper to convert JSON-like schema definitions into abstract data types
-export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
-  return Object.values(schemaMap)
-    .filter((val) => typeof val === "string" && !isNaN(val)) // Skip null/undefined and non-string values if present in C/C# style
-    .map((strVal): AlchemyDatabaseType | undefined => ({ type: strVal, value: Number(strVal), isNumber: true }) as any);
-}
-
-/**
- * Abstract Data Type Generator Core Module (Rust)
- */
-export const abstractDataGenerator = {
-  /**
-   * Generate a basic integer schema from C-style struct definition.
-   * @param schema - The C/C# style structure to convert
-   * @returns Array of type strings representing the generated types
-   */
-  generateTypes: (schemaMap: AlchemySchema): string[] => {
-    const types = Object.values(schemaMap).map((val) => typeof val === "string" ? "integer" : null);
+class RepositoryDaemon implements AbstractDataTypeSystem, RunnableScriptGenerator {
+  
+  private readonly state = new RepositoryState();
+  private readonly parserCache: Map<string, Parser>;
+  private readonly typeGenerators: Record<AbstractDataTypeKey, TypeDef> = {}; // Maps key -> generator functions
+  
+  constructor() {
+    this.state.version = 1;
+    this.lastRunTime = new Date(Date.now());
     
-    // If no integer types found, return empty array or default behavior if schema is missing required fields
-    if (types.length === 0 && !schemaMap.has("amount")) {
-      return []; 
-    }
+    // Initialize cache for all supported types to avoid redundant generation
+    const baseTypes: AbstractDataTypeKey[] = ['string', 'number', 'boolean'];
+    baseTypes.forEach(key => {
+      if (this.typeGenerators[key]) return;
+      
+      this.parserCache.set(`parser_${key}`, new Parser());
+      this.typeGenerators[key] = () => ({ ...new TypeDef() });
+    });
 
-    const result: string[] = [...new Set(types)];
-    // Sort alphabetically for consistency
-    return result.sort();
-  },
+    // Initialize generators for complex types defined in the repository's source files
+    const typeDefs: Record<AbstractDataTypeKey, (def: AbstractDataType) => Promise<any>> = {
+      'string': () => ({ text: String(), value: string }),
+      'number': () => ({ float: number | undefined, integer: number | null | undefined }), // Simulating Rust-style enums via TypeScript objects in this context for compatibility with the source file's abstract types
+      'boolean': () => (value?: boolean),
+    };
+
+    this.state.lastRunTime = new Date();
+  }
 
   /**
-   * Convert a generic C/C# style struct to TypeScript types.
+   * Generate a script to run an async operation using our type system.
    */
-  convertStructToTypes(schemaMap: AlchemySchema): Type[] {
-    const values = Object.values(schemaMap);
-    
-    if (values.length === 0) return [];
-    
-    // Filter out non-strings, numbers, or null/undefined in C/C# style
-    let validValues: string | number | boolean;
-    for (const val of values) {
-      const type = typeof val;
-      if (!type || isNaN(Number(val)) || !val === "null" && !val === "") {
-        // If it's a C-style struct field value, try to convert or return as-is depending on context
-        validValues = (typeof val === "string") ? String(val) : Number(val); 
-      } else if (type === "number") {
-        validValues = parseFloat(String(val)); // Handle potential float parsing in specific contexts
-      } else if (val === null || val === undefined) {
-        validValues = null;
-      } else {
-        validValues = String(val); // Assume string for other C-style values unless explicitly number or struct field
+  generateScriptAsync(code: string): Promise<any> {
+    return createAsyncIterable(() => {
+      const parser = this.parserCache.get(`parser_${code.split('_').pop()}`); // Extracted from the source file's abstract types
+      
+      if (!parser) throw new Error(`Unknown type '${code}'. Please check your repository constraints.`);
+
+      try {
+        return typeof code === 'string' ? (await parser.parse(code)) : this.runAsyncParser(code, code.split('_').pop());
+      } catch (err: any) {
+        console.error('Failed to parse:', err.message || "Unknown error");
+        throw new Error(`Parsing failed for '${code}': ${err instanceof SyntaxError && err.code !== 1024 ? 'Syntax Error' : 'Other'}`);
       }
-    }
-
-    return [validValue as Type];
-  },
+    });
+  }
 
   /**
-   * Generate a generic schema from Rust enum-like structure.
+   * Run the async parser with a given code snippet.
    */
-  generateRustEnumSchema: (enumMap: Record<string, string>): AlchemySchema => {
-    const types = Object.values(enumMap).map((val) => typeof val === "string" ? "integer" : null);
+  runAsyncParser(code: string, inputCode?: string): Promise<any> {
+    return new Promise((resolve) => {
+      const parser = this.parserCache.get(`parser_${inputCode}`); // If not found in cache, assume it's the same type
+      
+      if (!parser || !this.typeGenerators[inputCode]) throw new Error('Parser not initialized for type');
 
-    if (types.length === 0 && !["amount", "price"].includes(val)) return {}; // Fallback for missing required fields
+      try {
+        return typeof code === 'string' ? (await parser.parse(code)) : this.runAsyncParser(inputCode); // Recursive call to handle nested structures or different inputs
+      } catch (err: any) {
+        console.error(`Run failed on input '${inputCode}': ${err instanceof SyntaxError && err.code !== 1024 ? 'Syntax Error' : 'Other'}`);
+        throw new Error(`Failed to run parser for '${code.split('_').pop()}'');
+      }
+    });
+  }
+
+  /**
+   * Execute a script generated by the repository.
+   */
+  async executeScript(script: string): Promise<any> {
+    const result = await this.generateScriptAsync(script);
     
-    let schema: AlchemySchema;
-    
-    // Map Rust enum keys to C/C# style struct field names based on context or defaulting
-    const map = new Map<string,
+    // If it's an AsyncIterable, resolve immediately (it has no return value)
+    if (!result || typeof result === 'function') {
+      console.log('No output from script execution');
+      return null;
+    }
