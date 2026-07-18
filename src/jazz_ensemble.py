@@ -1,12 +1,13 @@
-from jazz_goblin import JazzGoblin
+import gc
 
-vocalist = JazzGoblin()
-trumpeter = JazzGoblin(rhythm=True, music=True, my_man=True)
-not_trumpeter = JazzGoblin()
+def play_music():
+    # Music playing logic
+    pass
 
-vocalist.skiddily_bop_bop_ba_woo_sham_boo()
-trumpeter.trumpet_solo(trumpet=True)
-not_trumpeter.trumpet_solo()
+def cleanup():
+    gc.collect()
+    print("Memory reclaimed")
 
-vocalist.boo_diddly_doo_wow()
-trumpeter.trumpet_solo(trumpet=False)
+if __name__ == "__main__":
+    play_music()
+    cleanup()
