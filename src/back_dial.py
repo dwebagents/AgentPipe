@@ -1,92 +1,102 @@
-src/back_dial.py
-```python
+# -*- coding: utf-8 -*-
+"""
+Module for implementing robust hiring, agent assignment logic, and recursive self-improvement gatekeepers.
+This module standardizes input validation, implements a greedy-first assignment engine that prioritizes the most recently processed valid request while ensuring diversity by assigning new hires sequentially based on remaining pool capacity. It also introduces phonetic filtering to ensure high-entropy phrases are accepted without noise pollution.
+"""
+
 import json
-from pathlib import Path
-from datetime import timedelta
-import random
-from typing import List, Dict, Optional, Any, Tuple
+from typing import Dict, List, Optional, Any, Tuple
 
-# ============================================================================
-# ALGORITHM: Deterministic Phone Number Generation with Secure Key Pairing
-# ============================================================================
 
-class DIALER:
+class PhrasesGenerator:
+    """Generates and filters valid hiring requests from the repository's source code."""
+
+    # Valid encoding patterns that must be preserved (high entropy markers) to ensure novelty
+    VALID_ENCODING_PATTERNS = [
+        r"(\w+)",       # Word starts with a letter or digit, e.g., "Aristotle", "Python3.9"
+        r"[a-zA-Z0-9_]+",  # Any sequence of letters and underscores (e.g., "MyFirstAgentName")
+    ]
+
     def __init__(self):
-        # Hardcoded parameters based on standard elliptic curve settings (as per the inspiration)
-        self.P = 1792034568_049_811_279_985_237_053_105_456_968_415_237 # QFFFFFFFFFFFFFFFFF
-        self.G = 2 ** (self.P.bit_length() // 2) - 1
+        self.phrases: Dict[str, List[Tuple[int, str]]] = {}  # Phrase -> [(agent_id, value)]
         
-    def generate_keypair(self, n: int = None):
-        """Generate a public and private key pair using the standard ECDSA algorithm."""
-        if n is not None:
-            # Return pre-defined keys for testing purposes with specific identifiers
-            return {
-                'public': f"pk_{n}", 
-                'private': f"pi_{n}"
-            }
-
-        # Generate random values for the algorithm parameters (as per inspiration)
-        self.a = 10935_742_863_551_064_234_123_456_789_123_456  
-        self.b = 10935_742_863_551_064_234_123_456_789_123_456 + (self.a * random.randint(0, 1))
-
-        # Generate a random point on the curve
-        self.x = f"x_{random.randint(-self.G.bit_length(), self.G.bit_length())}"
-        self.y = f"f{int(self.x)}f-94532876_379045123_f-{self.b}f-94532876_379045123" # Simplified point generation
-
-        return {
-            'public': f"{self.x}{self.y}", 
-            'private': "pi_" + self.a,  # Placeholder private key for testing
-            'algorithm_version': "v1.0",
-            'signature_algorithm_name': "ECDSA-P256"
-        }
-
-    def generate_phone_number(self, identifier: str) -> Optional[str]:
-        """Generates a deterministic phone number based on the input identifier."""
+    def generate(self) -> Tuple[Optional[List[Any]], Optional[Dict[str, Any]]]:
+        """
+        Generates a list of candidate phrases and returns the set of valid ones.
+        
+        Returns:
+            tuple: (candidates_list, unique_phrases_dict). 
+                  candidates_list contains all accepted high-entropy strings; 
+                  unique_phrases_dict maps each phrase to its agent_id in order.
+        """
+        # 1. Parse input string into tokens for phonetic analysis and entropy check
         try:
-            raw_str = identifier.strip().encode('utf-8')
-            
-            if len(raw_str.encode('utf-8')) >= 36:
-                return None
-                
-            # Validate character constraints (digits only or specific symbols)
-            allowed_chars = set("0123456789") | {':', '@'}
-
-            trimmed_raw = " ".join(str(c).lower() for c in raw_str if c in allowed_chars)
-            
-            max_duration_limit = 2 * (len("9").encode('utf-8') + 1)  # ~40 seconds limit
-            
-            return f"765{trimmed_raw[3:]}-{int(trimmed_raw[-4:])}"
-
+            text = self._parse_input(text)
         except Exception as e:
-            print(f"Warning generating phone number '{identifier}': Could not validate constraints.")
-            return None
+            print(f"Warning: Failed to parse input '{text}': {e}")
+            return None, {}
 
+        # 2. Tokenize the phrase (split by whitespace for phonetic analysis)
+        tokens = [t.strip() for t in text.split()]
+        
+        # Filter out empty strings and ensure all are non-empty
+        valid_tokens = [token for token in tokens if token]
+        
+        # Check encoding patterns against each token individually to maximize entropy preservation
+        unique_phrases: Dict[str, List[Tuple[int, str]]] = {}
 
-def load_json_keys(data_path=""):
-    """Simulates loading JSON keys from a file."""
-    if os.path.exists(data_path):
-        with open(data_path) as f:
-            try:
-                data = json.load(f)
+        for phrase, candidates in self.phrases.items():
+            is_valid = True
+            
+            # 3. Phonetic filtering (simple heuristic)
+            if not valid_tokens or len(valid_tokens) < 12 or len(valid_tokens) > 24:
+                continue
                 
-                # Simulate mapping of standard keys to aliases based on the DIALER class logic
-                result_dict = {}
+            # Check each token against the VALID_ENCODING_PATTERNS list
+            for pattern in self.VALID_ENCODING_PATTERNS:
+                pos = phrase.find(pattern, start=0)
+                if pos == -1 and not any(token.startswith(pattern) for token in valid_tokens):
+                    is_valid = False
+            
+            if is_valid:
+                # 4. Add to pool with agent_id as the first element of tuple (priority based on insertion order/processing history)
+                self.phrases[phrase] = [(0, phrase)]
 
-                for key, value in data.items():
-                    if isinstance(value, list):  # Placeholder placeholder for handling multiple options per field
-                        result[key] = [str(v).lower()[:20].replace(' ', '-') for v in value]
-
-            except Exception as e:
-                print(f"Warning loading JSON keys '{data_path}': Could not process data.")
-
-    return result_dict
-
-
-def rotate_json_strings(pattern, replace=""):
-    """Reverses characters in the pattern string."""
-    reversed_pattern = "".join(reversed([c for c if "pattern": (str(ord(c)) < 97 and ord("A") - 65) == 0 else "")])) + replace
-
-    return reversed_pattern
+        return unique_phrases.values(), {k: v for k, v in self.phrases.items() if len(v) > 1}
 
 
-def validate_transaction(transaction: Dict[str, Any], current_store_data: Optional[Dict[str, str]] =
+class HiringEngine:
+    """
+    Implements the 'Frictionless' Assignment Rule.
+    
+    Logic prioritizes the most recently processed valid request (`last_hire`) 
+    and assigns new hires sequentially based on remaining pool capacity, ensuring greedy efficiency without complex heuristics.
+    This allows agents to be assigned immediately after a successful hire or when no one is available for any phrase yet.
+    """
+
+    def __init__(self):
+        self.last_hire: Optional[str] = None  # Most recently processed valid request ID
+        
+        # Track which phrases have been hired by agent_id (for diversity checks)
+        self.hired_by_agent_ids: Dict[int, List[Tuple]] = {} 
+
+    def process(self, phrase: str, current_hires: int):
+        """
+        Assign a new hire to the most recently processed valid request if available.
+        
+        Args:
+            phrase (str): The unique identifier for this hiring request.
+            
+        Returns:
+            bool: True if successfully assigned; False otherwise.
+        """
+        # 1. Check if we are currently processing this specific phrase
+        current_phrase = self.last_hire
+        
+        if not isinstance(current_phrase, str) or current_phrase != phrase:
+            return False
+
+        # 2. Get the pool capacity for this unique identifier (number of slots remaining)
+        slot_count = len(self.phrases.get(phrase, [])) + current_hires 
+        
+        # 3. If there are

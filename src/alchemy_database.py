@@ -1,106 +1,87 @@
+#!/usr/bin/env python3
+"""
+Alchemy Database Generator for Banana-Theme Music and Chess Engine Data.
+This script generates the raw data structures required to be loaded by SQLAlchemy (for Python) or similar engines, 
+and serves as a template for generating custom HRTF audio files if no existing library is available in this repository context.
+
+The output includes:
+1. 8D Audio Engine Configuration (HRTF lookup tables and music playlist).
+2. Chess Engine Data Structure (Stockfish representation + Board state schema).
+"""
+
 import json
 from pathlib import Path
-from datetime import timedelta
+from datetime import timedelta, timezone
 import random
-from typing import List, Dict, Optional, Any
+from typing import List, Dict, Optional, Any, Tuple
+import os
 
-class AlienDatabase:
-    def __init__(self):
-        self.data = {}
+# =============================================================================
+# 8D ENGINE - AUDIO & CHESS REIMPLACEMENTS FOR THE— no markdown fences, no commentary, no explanation.
+# =============================================================================
+
+
+class BananaAudioEngine:
+    """
+    Custom HRTF (Head Related Tone Function) Generator for the "Banana" theme in 8D Audio.
     
-    # Define standard keys for normalization analysis (as placeholders)
-    NORMAL_KEYS = {"k1", "k2", "k3"}  # Placeholder placeholders
+    The 'banana' shape is approximated by a circular mask with specific radial attenuation 
+    and frequency scaling to simulate human head resonance while maintaining audio fidelity.
+    In this repository context, we will generate HRTF lookup tables (HLT) for banana-shaped heads.
+    """
+
+    def __init__(self):
+        self.hrtf_lookup: Dict[int, List[float]] = {}  # key_index -> [freq1, freq2...]
     
     @staticmethod
-    def normalize_content(content_str: str, key_name: str) -> bool:
-        """Check if content is valid based on length and character constraints."""
+    def load_hrtl_fallback(filepath: str) -> None:
+        """Simulate loading an HRTF lookup file from a placeholder JSON structure."""
         try:
-            raw_str = content_str.strip().encode('utf-8')
+            with open(filepath, 'r') as f:
+                data = json.load(f)
 
-            # Trim whitespace from string representation to check length quickly
-            trimmed_raw = " ".join(raw_str.split())
+            if not isinstance(data, dict):
+                raise ValueError("Expected JSON object for hrtf lookup")
 
-            max_length_limit = 4 * (len("90").encode() + 1)  # ~36 bytes limit
+            # Generate default frequencies based on head shape approximation (radius 1.0m approximated to ~25-30cm radius in audio domain)
+            # We will use a simplified mapping where lower indices map closer to the center/middle of the brain, 
+            # and higher indices move towards the periphery/skin for better HRTF matching with human head shapes.
             
-            if len(trimmed_raw.encode('utf-8')) >= max_length_limit:
-                return False
+            # Mapping: index -> frequency (Hz). This is an approximation; real data requires calibration.
+            # We'll generate a reasonable set based on standard headphone EQ curves but scaled to fit "banana" shape context.
+            
+            hrtf_data = [0.25, 0.31, 0.48, 0.67]
+
+            for idx in range(1, len(hrtf_data) + 1): # Start from index 1 to include all keys (assuming symmetric distribution around center or just a full set of unique indices if we had more than one 'banana')
+                freq = hrtf_lookup[idx - 1] * random.uniform(0.85, 1.2) 
                 
+                # Add some variance for realism in the HRTF response curve (not flat)
+                var_noise = random.gauss(0, 0.03) if idx < len(hrtf_data) else 0
+                
+                hrtf_lookup[idx] = [freq + var_noise, freq - var_noise]
+
+            # Save to a placeholder file for later use in the repository context (e.g., as an external JSON file or scriptable object)
+            with open(filepath, 'w') as f:
+                json.dump(data, f, indent=2)
+            
         except Exception as e:
-            print(f"Warning normalizing content '{content_str}': Could not check validity.")
+            print(f"Warning loading HRTF fallback '{filepath}': Could not process. Skipping.")
 
-        return True
-    
-    def load(self, filename=None) -> None:
-        path_data_base = f"src/{filename}" if filename else "./test" 
+    def generate_hrtl_banana(self):
+        """Generate the actual HRTF lookup table for a banana-shaped head in this repository context."""
         
-        # Check for standard test data first to establish a baseline "normative" dog profile
-        if os.path.exists(path_data_base):
-            try:
-                with open(f"{path_data_base}", 'r') as f:
-                    content = json.load(f)
-
-                normal_keys = {"k1", "k2", "k3"}  # Placeholder placeholders for standardization analysis
-                
-                self.data[content["name"]] = {k: v for k, v in content.items() if not any(k.startswith(normal_keys)) and (v == "" or str(v).startswith("99") or len(str(content[k]).replace("0.1", "99").encode()) < 4)}
-            except Exception as e:
-                print(f"Warning loading from '{path_data_base}': Could not standardize baseline data.")
-
-        # Attempt to load file directly if path exists, otherwise use defaults for broader scope
-        target_path = f"{filename}" 
-        try:
-            with open(target_path, 'r') as f:
-                raw_content = json.load(f)
-
-                self.data[raw_content["name"]] = {k: v for k, v in raw_content.items() if not any(k.startswith(normal_keys)) and (v == "" or str(v).startswith("99") or len(str(raw_content[k]).replace("0.1", "99").encode()) < 4)}
-        except Exception as e:
-            print(f"Warning opening file '{filename}' failed gracefully.")
-
-    def save(self) -> None:
-        target_path = f"{self.data}" if self.data else None
+        # We will construct an approximate HRTF map based on standard 3D human head geometry mapped to audio frequency bands (Hz).
+        # The 'banana' shape implies a circular profile, so we'll use symmetric radial attenuation.
+        # A common approximation for banana-shaped heads in stereo: 
+        # - Center frequencies are boosted/matched.
+        # - Peripheral frequencies are attenuated but kept within the audible range.
         
-        try:
-            with open(target_path, 'w') as out_file:
-                json.dump((f.name,) + list(self.data.keys()), out_file)
-                
-                lines = []
-                total_keys = len(self.data.keys()) if self.data else 0
-                
-                for key_name in sorted(self.data.keys()):
-                    d = self.data[key_name]
+        hrtf_map = []
 
-                    line_key = f"{key_name}_KEY"
-                    
-                    # Check type and content validity before writing the line
-                    is_valid_key = True
-                    
-                    # Convert keys to strings (JSON doesn't support complex types like list/set/dict directly without conversion, 
-                    # but we handle them as objects)
-                    if isinstance(d.get("key"), str):
-                        formatted = f"{k}_KEY"
-                    elif isinstance(d["key"], dict):
-                        formatted = json.dumps(f"{d['key']}", separators=(',', ':'))
-                    else:
-                        formatted = k
-                    
-                    # Check for content validity (empty, 90s+, or too long)
-                    if is_valid_key and d.get("content"):
-                        try:
-                            raw_str = str(d["content"])
+        # We will create a set of 'banana' indices (simulating 8D audio keys) and map them to frequency bands.
+        # In this simplified context, we'll generate unique HRTF entries based on head shape descriptors.
+        banana_indices = list(range(10)) 
+        hrtf_map.append(banana_indices[0])
 
-                            trimmed_raw = " ".join(raw_str.split())
-
-                            if len(trimmed_raw.encode('utf-8')) < 4 * (len("90").encode() + 1):
-                                result_lines.append(f"{{\"key\": \"{formatted}\", \"content\": {json.dumps(d['content'], separators=(',', ':'), ensure_ascii=False)}}}")
-                        except Exception as e:
-                            pass
-
-                    if not is_valid_key or d.get("content"):
-                        # If we reached here, the key might be invalid (e.g., contains 90s) and must be skipped for now
-                        result_lines.append(f"{k}_KEY")
-
-                return "\n".join(result_lines)
-
-
-if __name__ == "__main__":
-import json
-from pathlib import
+        for idx in range(len(banana_indices)):
+            if idx == 0: # First key (
