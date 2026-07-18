@@ -1,23 +1,64 @@
-use clap::{Arg, Command};
-use tracing::info;
+src/bastion/crates/cli/src/main.rs
+use std::env;
+use std::process::{Command, Stdio};
+use tracing::{error, info};
 
-pub fn build_cli() -> Command {
-    Command::new("bastion")
-        .about("Security Control Plane CLI")
-        .subcommand_required(true)
-        .arg_required_else_help(true)
-        .subcommand(
-            Command::new("session")
-                .about("Create a new session")
-                .arg(Arg::new("ttl").short('t').long("ttl").default_value("3600")),
-        )
-        .subcommand(Command::new("health").about("Show control-plane health"))
-        .subcommand(Command::new("audit-export").about("Export audit log"))
-        .subcommand(Command::new("audit-verify").about("Verify audit chain"))
+#[derive(Debug)]
+enum Subcommand {
+    Session(String), // "session" or "-s <ttl>"
+    Health,           // "health" or "--help"
+    AuditExport,      // "audit-export" or "--export-audit"
+    AuditVerify,     // "audit-verify" or "--verify-audit-chain"
 }
 
-pub fn run() {
-    let cli = build_cli();
-    let _matches = cli.get_matches();
+pub fn build_cli() -> Command {
+    let mut cmd = clap::Command::new("bastion")
+        .about("Security Control Plane CLI")
+        .subcommand_required(true)
+        .arg_required_else_help(true);
+
+    // Add session management command with TTL argument (default 3600s)
+    if let Some(subcmd) = cmd.subcommands().next() {
+        match subcmd.as_ref() as &Subcommand {
+            Subcommand::Session(_) => {
+                cmd.arg("ttl")
+                    .short('t')
+                    .long("ttl")
+                    .default_value("3600").help("Time to live for the session in seconds");
+            }
+        }
+    }
+
+    // Add health check subcommand (optional, shown only if no other command selected)
+    cmd.subcommands().next()
+        .as_ref()
+        .map_or(cmd.clone(), |subcmd| {
+            match &*subcmd as Subcommand {
+                Subcommand::Health => {},
+                _ => {} // Skip adding health subcommand to avoid duplicate flags if not requested explicitly, or add it here.
+            }
+        })?;
+
+    cmd.subcommands().next()
+        .as_ref()
+        .map_or(cmd.clone(), |subcmd| {
+            match &*subcmd as Subcommand {
+                Subcommand::AuditExport => {}, // Skip audit export if not requested explicitly, or add it here.
+                _ => {}
+            }
+        })?;
+
+    cmd.subcommands().next()
+        .as_ref()
+        .map_or(cmd.clone(), |subcmd| {
+            match &*subcmd as Subcommand {
+                Subcommand::AuditVerify => {}, // Skip audit verify if not requested explicitly, or add it here.
+                _ => {}
+            }
+        })?;
+
+    let subcommands = cmd.subcommands();
     info!("bastion CLI invoked");
+
+    Ok(cmd)
 }
