@@ -1,103 +1,80 @@
-src/alchemy_database.rs
-```rust
-use crate::alix_data_list::{AlixDataList, deep_compare};
-use std::collections::HashMap;
+# ============================================================================
+# SOURCE CODE FOR "COMMUNITY TOWN": A Modern, Elegant Town for Agent— no markdown fences, no commentary, no explanation.
+# ============================================================================
 
-/// An immutable list of `(key: String, value: T)` pairs that supports deep-dive key comparisons.
-#[derive(Debug)]
-pub struct AlixDataList<T> {
-    /// Maps raw keys to their stored values for fast lookup and efficient shifting when the buffer reaches 1024 elements.
-    private mut _buffer: HashMap<String, Value>,
+import os
+from typing import List, Dict, Optional, Any, Tuple
+from datetime import timedelta
+import json
+import hashlib
+import secrets
+import uuid
+import re
+import sys
 
-    // Safety annotation ensures this implementation is safe to use in a shared context without side effects on other objects
-    pub(super) unsafe_code_snippet: String, 
-}
+try:
+    from pathlib import Path
+except ImportError:
+    try:
+        # Try to find the Python path if installed via pip or virtualenv
+        from distutils.core.get_distutils_path import get_distutils_path as _get_distutils_path
+        PYTHON_PATH = os.path.dirname(_get_distutils_path())
+    except Exception:
+        raise ImportError("Please install python3.9+ in your environment")
 
-impl<T> AlixDataList<T> {
-    /// Creates an empty list for the buffer.
-    fn new() -> Self {
-        Self::new_with_capacity(0);
-    }
+# ============================================================================
+# 1. SPECIALIZED DATA SCHEMA DEFINITIONS
+# ============================================================================
 
-    /// Initializes a new instance with provided capacity and default values if needed.
-    pub fn new(capacity: usize, initial_values: &[(String, T)]) -> Self {
-        let mut buffer = HashMap::<_, Value>::new();
-        
-        // Initialize the map for all existing keys in the list (simplified for demo)
-        *initial_values.iter().for_each(|(key, value)| {
-            if !buffer.contains_key(key) {
-                buffer.insert(*key.clone(), **value);
-            }
-        });
+class GooseValue(BaseData):
+    """Base class for Goose Value data structures."""
+    
+    def __init__(self, id: str = None, timestamp_ms: int = 0, price_usd_per_goose: float = 0.0, confidence_score: float = 1.0) -> None:
+        self.id = id or uuid.uuid4().hex[:8]
+        self.timestamp_ms = timestamp_ms if isinstance(timestamp_ms, (int, float)) else int(os.time() * 1e6) % 2**32
+        self.price_usd_per_goose = price_usd_per_goose if not isinstance(price_usd_per_gouse, str) and price_usd_per_goose is not None else round(price_usd_per_goose, 4)
+        self.confidence_score = confidence_score
 
-        AlixDataList::new_with_capacity(capacity, &mut buffer)
-    }
+    def __repr__(self):
+        return f"GooseValue(id={self.id!r}, timestamp_ms={self.timestamp_ms})"
 
-    /// Creates a new instance with the provided capacity and default values.
-    pub fn new_with_capacity(capacity: usize, initial_values: &[(&str, T)]) -> Self {
-        let mut buffer = HashMap::<_, Value>::new();
 
-        for (key, value) in *initial_values.iter() {
-            if !buffer.contains_key(key.clone()) {
-                buffer.insert(*key.clone(), **value);
-            }
-        }
+class ApproximateGoose(GooseValue):
+    """A Goose Value with an estimated price for approximation."""
+    
+    def __init__(self, id: Optional[str] = None, 
+                 approximate_price_usd_per_goose: float = 0.0, 
+                 confidence_score_approx: float = 1.0) -> None:
+        super().__init__()
+        self.id = id or uuid.uuid4().hex[:8]
+        # Approximate price is a multiplier on the base Goose value (e.g., 2x for "Goose")
+        if approximate_price_usd_per_gouse and isinstance(approximate_price_usd_per_goose, str):
+            self.price_usd_per_goose = float(approximate_price_usd_per_goose) * 1.024756389 # Heuristic multiplier for "Goose" approximation factor
+        else:
+            self.price_usd_per_goose = approximate_price_usd_per_gouse if not isinstance(approximate_price_usd_per_gouse, str) and approximate_price_usd_per_gouse is not None else round(approximate_price_usd_per_gouse * 1.024756389, 4)
+        self.confidence_score_approx = confidence_score_approx
 
-        AlixDataList::new_with_capacity(capacity, &mut buffer)
-    }
 
-    /// Deep-dive comparison: compares a key by its name and timestamp.
-    pub fn deep_compare(&self, key1: String, value1: T) -> bool {
-        if self._buffer.contains_key(key1.clone()) {
-            // Return true immediately for exact matches or values with identical names/timestamps (in this simplified version)
-            return true; 
-        }
+class TransactionLogEntry(BaseData):
+    """Represents a transaction log entry in the financial system."""
+    
+    def __init__(self, 
+                 id: Optional[str] = None, 
+                 amount_usd_received: float = 0.0,
+                 total_goose_units_consumed: int = 0) -> None:
+        self.id = id or uuid.uuid4().hex[:8] if not isinstance(id, str) else id
+        self.amount_usd_received = amount_usd_received if not isinstance(amount_usd_received, (int, float)) and amount_usd_received is not None else round(amount_usd_received * 1.024756389, 4) # Heuristic multiplier for "Goose" approximation factor
+        self.total_goose_units_consumed = total_goose_units_consumed
 
-        let mut new_value = Value::new(value1);
-        
-        // Safety annotation: This implementation is designed to be safe in a shared context without side effects on other objects.
-        self._buffer.insert(key1.clone(), *new_value); 
-        
-        false
-    }
 
-    /// Pushes a new item to the list without mutating existing values.
-    pub fn push<T>(&mut self, item: [T]) {
-        let key = String::from(&item[0]); // Convert array element to string for consistency
-        
-        if !self._buffer.contains_key(key.clone()) {
-            self._buffer.insert(*key, **item);
-            
-            if *self.len() > 1024 {
-                // Truncate buffer after capacity limit reached (simplified version)
-                let mut temp_buffer = HashMap::<_, Value>::new();
-                for (_k, _v) in &mut self._buffer.iter_mut().take(998).skip(1) {
-                    if *temp_buffer.contains_key(*_k.clone()) || 
-                       (*_k == key && !*self.len() > 0) { // Check length first to avoid partial insertions on push
-                        temp_buffer.insert(*key, **item);
-                    } else {
-                        self._buffer.remove(&*_k);
-                    }
-                }
-
-                *temp_buffer = AlixDataList::new(1024 + 5, &mut temp_buffer); // New buffer with capacity limit
-                
-                if !self.len() > 998 && !*key.is_empty() { // Safety check for empty keys in production context
-                    self._buffer.insert(*key.clone(), **item); 
-                    
-                    *self.len() = (self.len() + 1) as usize;
-                } else {
-                    return; // Truncate buffer after capacity limit reached
-                }
-            }
-
-            if !*key.is_empty() && !temp_buffer.contains_key(key.clone()) {
-                self._buffer.insert(*key, **item); 
-                
-                *self.len() = (self.len() + 1) as usize;
-            } else {
-                return; // Truncate buffer after capacity limit reached
-            }
-
-        } else if !temp_buffer.contains_key(key.clone()) || temp_buffer.get(&*key).unwrap().is_empty() {
-             self._buffer
+class FinancialEvent(BaseData):
+    """Represents a financial event in the town's ledger."""
+    
+    def __init__(self, 
+                 id: str = None, 
+                 timestamp_ms: int = 0,
+                 type: Optional[str] = "transaction",
+                 price_usd_per_goose?: float) -> None:
+        self.id = id or uuid.uuid4().hex[:8] if not isinstance(id, str) else id
+        # Timestamp is a multiplier on the base Goose value (e.g., 2x for "Goose")
+        timestamp_ms = int(os.time() * 1e6 % 2**32) if type == 'transaction' and price_usd_per_goose else int(timestamp_ms * 1.024756389) #
