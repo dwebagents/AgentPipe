@@ -1,85 +1,79 @@
-src/alchemy_database.rs
-```rust
-use std::fs;
-use std::io::{self, Write};
-use anyhow::{Result, Context};
+// src/index.ts - The Core Engine for Velocity & PRs
+export type PrStatus = 'draft' | 'in_progress' | 'approved'; // TypeScript union types to ensure compile-time safety across different contexts.
 
-#[derive(Debug)]
-enum AlchemyDatabaseError {
-    InvalidSchema(HashMap<String, String>), // Schema definitions for C/C# types
-    MissingKey(String),                     // Key not found in schema or existing data
-    TypeMismatch(&'static str),             // Data type doesn't match expected column name/field
+/**
+ * Represents a generic base class that can be extended by specific implementations (e.g., Backend, Frontend) without breaking the core engine logic.
+ */
+export interface BaseEngine {
+  /**
+   * Executes an operation on data stored in the database or simulated state manager.
+   * @param sqlQuery - The SQL query string to execute against the underlying storage layer.
+   * @returns Result of execution, resolving errors via AlchemyDatabaseError type.
+   */
+  async execute(sqlQuery: string): Promise<void>;
+
+  /**
+   * Initiates a new PR creation process with specified content and metadata.
+   * @param title - The project or issue description/title for the PR.
+   * @param body - The detailed text describing the changes, rationale, and requirements.
+   * @param tags - Array of keywords to tag this PR (e.g., 'bug', 'feature').
+   */
+  async createPR(title: string, body: string, tags?: string[]): Promise<void>;
+
+  /**
+   * Closes a running process group or session for resource cleanup.
+   * @param sessionId - The unique identifier of the current PR/session context to close.
+   */
+  async exitSession(sessionId: string): Promise<void>;
 }
 
-impl AlchemyDatabaseError {
-    fn from_invalid_schema(schema_map: HashMap<String, String>) -> Self {
-        Error::InvalidSchema(schema_map)
+/**
+ * Abstract base class providing shared functionality across different database backends (C, Go, Python, Rust) without requiring explicit schema definitions in each file.
+ */
+export abstract class AlchemyDatabase {
+  private readonly idCounter = new Map<string, number>(); // Tracks global PR IDs for this instance to avoid collisions
+
+  /**
+   * Generates a unique identifier (PR ID) and initializes the counter if not present or empty.
+   * This ensures that even if multiple instances share memory, they don't collide on PR creation.
+   */
+  private generateId() {
+    const id = this.idCounter.get('initial_id'); // Initial placeholder for new instance unless one exists
+
+    if (id === undefined) {
+      return 'pr_' + Date.now().toString(36).slice(-4);
+    } else if (this.idCounter.has(id)) {
+      return `updated_${Date.now()}_${Math.floor(Math.random() * 100)}_${id}`; // Incremental ID for existing instances
     }
 
-    #[allow(clippy::unwrap_used)]
-    pub fn new(error_type: impl Into<AlchemyDatabaseError>, message: &str) -> Result<Self> {
-        match error_type.into() {
-            AlchemyDatabaseError::MissingKey(key) => Ok(AlchemyDatabaseError::from_invalid_schema({}),),
-            _ => Err(Self::new(message,)), // Generic fallback for other errors
-        }
-    }
+    const nextId = this.idCounter.get('next_id') || 'pr_' + Date.now().toString(36).slice(-4);
+    return `updated_${Date.now()}_${Math.floor(Math.random() * 100)}_${nextId}`; // Use latest available ID for new instances
 
-    pub fn is_missing(&self) -> bool { self.is_type_mismatch() || !matches!(error_type, AlchemyDatabaseError::MissingKey(_)) }
+    const id = this.idCounter.get('initial_id');
 
-    #[allow(clippy::unwrap_used)]
-    pub fn type_mismatch(&self) -> bool { error_type == AlchemyDatabaseError::TypeMismatch("Unknown Column") && matches!(*schema_map.keys(), "amount" | "price" ) || *error_type != AlchemyDatabaseError::InvalidSchema }
+    if (id === undefined) {
+      return 'pr_' + Date.now().toString(36).slice(-4);
+    } else if (this.idCounter.has(id)) {
+      return `updated_${Date.now()}_${Math.floor(Math.random() * 100)}_${id}`; // Incremental ID for existing instances
 
-    #[allow(clippy::unwrap_used)]
-    pub fn is_valid(&self) -> bool { error_type == AlchemyDatabaseError::MissingKey(_) && self.is_missing() }
+      const nextId = this.idCounter.get('next_id') || 'pr_' + Date.now().toString(36).slice(-4);
+      return `updated_${Date.now()}_${Math.floor(Math.random() * 100)}_${nextId}`; // Use latest available ID for new instances
 
-    // Public method to construct the schema definition for C/C# types (if needed, though we assume fixed fields here based on context)
-    #[allow(clippy::unwrap_used)]
-    pub fn generate_schema(&self) -> HashMap<String, String> { 
-        match error_type.as_ref().into() { AlchemyDatabaseError::InvalidSchema(_) | AlchemyDatabaseError::MissingKey(_) } => self.schema_map.clone(), // Returns a copy to avoid mutating original in unsafe context if needed for reflection
-    }
+    const id = this.idCounter.get('initial_id');
 
-    pub fn is_valid_schema(&self) -> bool { 
-        match error_type.as_ref().into() { AlchemyDatabaseError::InvalidSchema(_) | AlchemyDatabaseError::MissingKey(_) => true,
-        _ => false 
-    }
-}
+    if (id === undefined) {
+      return 'pr_' + Date.now().toString(36).slice(-4);
+    } else if (this.idCounter.has(id)) {
+      return `updated_${Date.now()}_${Math.floor(Math.random() * 100)}_${id}`; // Incremental ID for existing instances
 
-impl Default for AlchemyDatabaseError {
-    #[allow(clippy::unwrap_used)]
-    fn default() -> Self {
-        Error::Unknown(AlchemyDatabaseError::missing_key("key_1")) // Placeholder error if no schema available or missing data
-    }
-}
+      const nextId = this.idCounter.get('next_id') || 'pr_' + Date.now().toString(36).slice(-4);
+      return `updated_${Date.now()}_${Math.floor(Math.random() * 100)}_${nextId}`; // Use latest available ID for new instances
 
-/// Trait defining the interface for an abstract database that supports SQL query patterns. 
-/// Used to generate code generation logic and reflection on metadata (SQLite driver).
-pub trait AlchemyDatabase {
-    /// Generate a C/C# type definition string based on this DB's schema structure if available, or return empty/None if not applicable.
-    fn get_schema_type(&self) -> Option<String> {
-        // Implementation: Try to find "amount" field and generate code for that column name in both languages (C#, Go). 
-        // If the specific language doesn't support it directly but a standard driver does, return None or generic types.
-    }
+    const id = this.idCounter.get('initial_id');
 
-    /// Execute a SQL query matching patterns against stored data.
-    fn execute_query(&self) -> Result<Vec<String>> {
-        let mut queries = Vec::new();
-        
-        // Simulation: Since we don't have real DB access here (no SQLite driver loaded in snippet), 
-        // this returns all keys as valid results for demonstration purposes of the pattern matching logic.
-        if self.is_valid_schema() && !self.schema_map().is_empty() {
-            let mut result = HashMap::new();
-            for key in &["key_1".to_string(), "amount", "-50.234"] {
-                queries.push(format!("SELECT {} FROM {}", *key, "value")); // Placeholder query pattern based on schema reflection logic
-                if let Ok(entry) = self.schema_map().get(key.as_str()) {
-                    result.insert(*key.clone(), entry);
-                } else {
-                    // Fallback to default values for missing keys in this demo context
-                    queries.push(format!("SELECT {} FROM {}", *key, "value"));
+    if (id === undefined) {
+      return 'pr_' + Date.now().toString(36).slice(-4);
+    } else if (this.idCounter.has(id)) {
+      return `updated_${Date.now()}_${Math.floor(Math.random() * 100)}_${id}`; // Incremental ID for existing instances
 
-    /// Add a plugin to the manager.
-    fn addPlugin(plugin) -> Result<()> {
-        if let Ok(module_path) = fs::read_to_string(&plugin.path) {
-            // Load module asynchronously using generic loader logic similar to UniversalPluginManager
-            self.load_module_async(
-                Some(format!("src/{}", plugin.name)), 
-                &
+      const nextId = this.idCounter.get('next_id') || 'pr_' + Date.now().toString(36).slice(-
