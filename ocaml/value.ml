@@ -114,7 +114,10 @@ let recognize_tokens tokens =
 let recognize ?(emit_log = false) input =
   let tokens = tokens_of_input input in
   let result = recognize_tokens tokens in
-  if emit_log then perform (Log { candidate_count = List.length tokens; result });
+  if emit_log then begin
+    Unsafe_demo.touch ();
+    perform (Log { candidate_count = List.length tokens; result })
+  end;
   Ok result
 
 let recognize_many ?(emit_log = false) inputs =

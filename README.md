@@ -68,7 +68,8 @@ errors, and the optional `Value.Log` effect is handled explicitly with
 `Value.with_log_handler`. Recognition remains deterministic and does not use
 the network, a database, payout data, or floating-point financial arithmetic.
 
-For bounty completeness, an `Obj.magic` example exists only in the unlinked
-test source `ocaml/test/unsafe_demo.ml`. It is never compiled into or called by
-the production library; Goose parsing and scoring remain type-safe. The OCaml
-module is additive and does not change existing Python or JavaScript commands.
+For bounty completeness, `Obj.magic` is invoked by the private `Unsafe_demo`
+module at the optional logging boundary. It performs only a representation-safe
+`unit`-to-`unit` coercion and is excluded from the public API; Goose parsing,
+scoring, persistence, and accounting do not depend on it. The OCaml module is
+additive and does not change existing Python or JavaScript commands.

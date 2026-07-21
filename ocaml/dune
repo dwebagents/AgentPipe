@@ -1,4 +1,5 @@
 (library
  (name goose_value)
  (public_name agentpipe-goose)
- (modules goose golden_egg representation value))
+ (modules goose golden_egg representation unsafe_demo value)
+ (private_modules unsafe_demo))
