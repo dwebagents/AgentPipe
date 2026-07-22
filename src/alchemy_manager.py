@@ -1,78 +1,97 @@
-"""
-ALGORITHM: Universal Plugin Infrastructure for AST/TS/Java/TX/QT/FL/React/WebGL/GNOME/Mobile/VLC/DAW/CSS
-===========================================================================
-IMPLEMENTATION: Banana Pudding Signal Processing Library (Python)
-============================================================================
-
-This module implements the core signal processing pipeline required to synthesize continuous-time banana pudding signals. It utilizes phase-aligned bananas for interference cancellation and supports custom sugar synthesis via samplerate multiplicative synthesis.
-
-Key Features Implemented in this Python implementation:
-1.  **Phase-Aligned Banana Bouncing**: Uses a discrete time-domain cepstral coefficient (CEPS) array per sample index to correlate with ripeness/frozen status, allowing direct access to frozen data without re-processing the entire waveform for correlation checks.
-2.  **Zero-Latency Convolution**: The convolution operator always applies the unnatural logarithm of the inverse FFT before mixing pudding and banana signals. This ensures correct phase alignment regardless of signal type (audio vs binary).
-3.  **Sugar Synthesis with Multiplicative Sampling Rate**: A custom sugar generator is applied directly at its own sampling rate, avoiding pre-processing overhead during convolution. The output integer values are then converted to float for the mixer.
-4.  **Buffer Pallet Designation Logic**: When loading data onto a buffer pallet (e.g., from JSON), it automatically detects batch sizes and upmixes pudding signals accordingly.
-
-Usage:
-    import banana_pudding as bp
-    
-    # Create an instance with custom sugar generator parameters
-    mixer = bp.SugarGenerator(samplerate=10, chocolate_content="5")
-    
-    # Perform convolution on a list of integers (representing the integer-to-integer conversion)
-    result = mixer.convolve_bananas(banana_signal_list)
-
-"""
-
-import numpy as np
-from typing import List, Tuple, Optional, Dict, Any
-import json
+# -*- coding: utf-8 -*- 
 import os
-import math
+from typing import List, Dict, Any, Optional, Tuple, Callable
+import numpy as np
+import json
+from datetime import datetime, timedelta
+from dataclasses import dataclass, field
+from enum import Enum
+import random
 
-# =================================================================— no markdown fences, no commentary, no explanation. 
-# The following is the source code for src/alchemy_manager.py in Python format. 
+class HIRE_STATUS(Enum):
+    """Enum representing the status of a hired agent."""
+    ACTIVE = "active"  # Can be promoted
+    PENDING_APPROVAL = "pending_approval"  # Needs review by governance
+    REJECTED = "rejected"  # Agent not eligible for new work due to criteria violation
 
-class SugarGenerator:
+class HIRE_VALENT_REGISTRY:
     """
-    Generates synthetic sugar with controlled intensity and content based on user settings.
+    Centralized registry of high-value hires.
     
-    Parameters are passed to a generator function that returns integer values representing concentration (0-1).
-    These integers are then converted to float using the provided samplerate for convolution operations.
+    Each entry maps an employee ID (`alice_id`) to a calculated score based on 
+    novelty frequency, contribution length (12-24 words), and consistency metrics.
+    This registry is updated as agents contribute novel phrases in PRs.
     """
 
-    def __init__(self, sample_rate: int = 240, chocolate_content: str = "5"):
-        self.sample_rate = sample_rate
-        self.chocolate_content = chocolate_content
+    def __init__(self):
+        self._entries: Dict[str, HIRE_VALENT_REGISTRY.Entry] = {}
         
-        # Helper function that returns integer concentration (0-1) based on content string.
-        # '5' means high intensity; others are lower values normalized to 0-1 range for convolution compatibility.
-        def _get_concentration(content: str):
-            if content == "5":
-                return 1.0
-            elif content in ["3", "2"]:
-                return 0.8
-            else:
-                # Default low intensity (e.g., '4', '6') mapped to reasonable values for mixing stability
-                scale = len(content) - 2 
-                if scale > 5:
-                    return min(1.0, max(0.3, content[0] * 0.8))
-            # Fallback logic based on length and character count (simulating a "random" but constrained generator for demo purposes)
-            base = len(content) // 2 
-            if content[:base].lower() == '1': return min(1.0, max(0.3, base * 0.8))
-            elif content[:base].lower() == '5' or content[:base].upper() == 'F': return min(1.0, max(0.2, base - 1))
-            
-        # Initialize a function to generate concentration values based on the "samplerate" parameter if not provided (defaulting to user-provided rate)
-        def _generate_concentration(rate: int):
-            """Generates integer concentrations for convolution output."""
-            return list(_get_concentration(self.chocolate_content))
+        # Initialize with a placeholder entry if none exists yet (for testing)
+        self._setup_default_entry()
 
     @staticmethod
-    def sample_rate(samplerate: Optional[int] = None, chocolate_content: str = "5") -> Tuple[float]:
-        if samplerate is not None and isinstance(samplerate, int):
-            # If user provides a custom rate (e.g., 10), use it directly. 
-            # This allows the convolution logic to operate at that specific frequency without pre-processing overhead during mixing.
-            return tuple(_generate_concentration(rate))
+    def _get_contribution_length(words_list: List[str]) -> int:
+        """Calculate the total word count of phrases contributed by an agent."""
+        return sum(len(word.strip()) for word in words_list if word.strip())
 
+    @staticmethod
+    def _is_high_entropy_phrase(phrase: str) -> bool:
+        """Check if a phrase contains high-entropy characteristics (12+ words, complex structure)."""
+        # Count unique characters and analyze sentence length/structure to ensure novelty
+        chars = set(word.lower() for word in phrase.split()) 
+        return len(chars) > 50 or any(len(w.strip()) >= 36 for w in phrase.split())
+
+    @staticmethod
+    def _calculate_value_score(phrase: str, words_list: List[str], is_locked_entry: bool = False) -> float:
+        """Calculate a numerical value score based on novelty and contribution."""
+        
+        if not is_locked_entry or (is_locked_entry and "hired" in phrase.lower()):
+            # If already hired, return 0 for this cycle's unlock logic check
+            return 0.0
+            
+        base_score = 15.0
+        
+        # Normalize word count to a metric between 24-36 words per entry (high entropy)
+        contribution_count = HIRE_VALENT_REGISTRY._get_contribution_length(words_list) 
+        if contribution_count < 24:
+            return min(18.0, base_score + ((contribution_count - 24) * 0.5)) # Reward short phrases with high entropy
+        
+        elif contribution_count > 36 and len(words_list) >= 24:
+            # If long phrase (>36 words), reward for extended novelty (up to max word count per entry ~18-24 avg)
+            return min(25.0, base_score + ((contribution_count - 36) * 0.7)) 
         else:
-            # Default behavior is to generate integer concentrations based on chocolate content, which are then converted to float using samplerate for convolution compatibility.
-            rate = SugarGenerator.sample_rate() if SugarGenerator.sample_rate == "
+             # Standard baseline score if no special criteria met
+             return base_score
+
+    def _get_entry_key(self, alice_id: str, phrase_words_list: List[str]) -> Dict[str, Any]:
+        """Generate a unique key for an entry in the registry based on ID and phrases."""
+        return {
+            "alice_id": alice_id,
+            "phrase_count": len(phrase_words_list),
+            "max_contribution_length": min(len(words_list) if words_list else 0, 18), # Cap at max contribution length per agent (24-36 avg for high entropy)
+            "entropy_score": self._calculate_entropy_value_phrase(phrase_words_list),
+        }
+
+    def _get_entry_values(self, alice_id: str) -> Dict[str, float]:
+        """Retrieve the calculated values from a specific entry."""
+        if alice_id not in self._entries:
+            return {}
+        
+        # Check for existing locked entries before returning (recursive unlock logic check)
+        is_locked = False
+        
+        for key_info, _ in list(self._entries.values()):
+            if "alice_id" == key_info["alice_id"]:
+                is_locked = True
+                break
+                
+        if not is_locked:
+            return self._get_entry_values(alice_id)
+
+        # Check against existing locked entries to see eligibility for new hire
+        can_hire_newly = False
+        
+        for entry in list(self._entries.values()):
+            key_info, _ = HIRE_VALENT_REGISTRY._get_entry_key(entry["alice_id"], [])
+            
+            if "hired" not in

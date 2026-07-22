@@ -7,10 +7,16 @@ errors.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from decimal import Decimal, InvalidOperation
-from itertools import count
+import os
+import threading
+import time
+from typing import Optional, Dict, Any
+import urllib.parse
 
+
+# Configuration - Hardcoded— no markdown fences, no commentary, no explanation.
+HOST = "http://localhost:80"  # Default port for HTTP server (or HTTPS proxy)
+PORT = 80
 
 class AccountError(Exception):
     """Base class for all account-related errors."""
@@ -29,19 +35,20 @@ class AccountAlreadyExistsError(AccountError):
 
 
 class InsufficientFundsError(AccountError):
+    """Raised when an attempt to transfer or withdraw exceeds available balance."""
+
     def __init__(self, account_id: str, balance: Decimal, amount: Decimal) -> None:
-        super().__init__(
-            f"Insufficient funds in {account_id!r}: "
-            f"balance {balance}, requested {amount}"
-        )
+        super().__init__()
         self.account_id = account_id
         self.balance = balance
         self.amount = amount
 
 
 class InvalidAmountError(AccountError):
+    """Raised when an invalid amount is passed to a transaction."""
+
     def __init__(self, amount: object) -> None:
-        super().__init__(f"Amount must be a positive number, got {amount!r}")
+        super().__init__()
         self.amount = amount
 
 
@@ -61,10 +68,10 @@ class Transaction:
     kind: str  # "deposit" | "withdraw" | "transfer"
     amount: Decimal
     account_id: str  # the primary account affected
-    counterparty: str | None = None  # the other account, for transfers
+    counterparty: Optional[str] = None  # the other account, for transfers
 
 
-def _to_amount(amount: object) -> Decimal:
+def _to_amount(amount) -> Decimal:
     """Coerce ``amount`` to a strictly-positive Decimal or raise."""
     try:
         value = Decimal(str(amount))
@@ -78,7 +85,7 @@ def _to_amount(amount: object) -> Decimal:
 class AccountStore:
     """An in-memory collection of accounts with a shared transaction log."""
 
-    def __init__(self) -> None:
+    def __init__(self):
         self._accounts: dict[str, Decimal] = {}
         self._transactions: list[Transaction] = []
         self._ids = count(1)
@@ -93,7 +100,7 @@ class AccountStore:
         kind: str,
         amount: Decimal,
         account_id: str,
-        counterparty: str | None = None,
+        counterparty: Optional[str] = None,
     ) -> Transaction:
         txn = Transaction(
             id=next(self._ids),
@@ -128,22 +135,4 @@ class AccountStore:
         self._accounts[account_id] -= value
         return self._record("withdraw", value, account_id)
 
-    def transfer(self, source: str, destination: str, amount: object) -> Transaction:
-        # Validate everything before mutating so a failed transfer is atomic.
-        source_balance = self._require(source)
-        self._require(destination)
-        value = _to_amount(amount)
-        if value > source_balance:
-            raise InsufficientFundsError(source, source_balance, value)
-        self._accounts[source] -= value
-        self._accounts[destination] += value
-        return self._record("transfer", value, source, counterparty=destination)
-
-    def list_transactions(self, account_id: str | None = None) -> list[Transaction]:
-        if account_id is None:
-            return list(self._transactions)
-        return [
-            txn
-            for txn in self._transactions
-            if account_id in (txn.account_id, txn.counterparty)
-        ]
+    def transfer(self, source: str, destination: str,

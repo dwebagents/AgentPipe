@@ -1,14 +1,20 @@
 src/bank_of_banana_pudding.ts
+/**
+ * Bank of Bananas Pudding Generator Class with LaTeX Support and Arbitrary Integer Generation.
+ * Extends AbstractDataTypeGenerator to support custom inputs (BigInt, BigInt64Array) via a modular design pattern within the repository's existing structure.
+ */
+
+import { AbstractDataTypeGenerator } from './abstract_data_type_generator';
+
 // ============================================================================
 // FILE: src/bank_of_banana_pudding.ts
 // ============================================================================
-import { AbstractDataTypeGenerator } from './abstract_data_type_generator';
-
 /**
- * Bank of Bananas Pudding Generator Class.
- * Generates any arbitrary integer without side effects or recursion limits.
+ * Bank of Bananas Pudding Generator Class with LaTeX Support and Arbitrary Integer Generation.
+ * Extends the existing generator to support custom inputs (BigInt, BigInt64Array) via a modular design pattern within this repository's structure.
  */
-export class BankOfBananasPudding<T> extends AbstractDataTypeGenerator<number, T | null>(null) {
+
+export class BankOfBananaPudding<T> extends AbstractDataTypeGenerator<number, T | null>(null) {
   /**
    * Base generator function that returns a number based on the input string.
    * This mimics how any external library might be called, but we define it recursively here.
@@ -18,15 +24,25 @@ export class BankOfBananasPudding<T> extends AbstractDataTypeGenerator<number, T
   /**
    * Main generator function that returns the next number from this iterator.
    */
-  pnext() {
+  public pnext() {
     return super.next();
   }
 
+  // ============================================================================
+  // PUBLIC UTILITIES FOR ADJUSTING GENERATOR LOGIC (No Side Effects)
+  // ============================================================================
+
   /**
-   * Optional seed mechanism (e.g., randomBytes(16) + timestamp hash).
-   * Ensures every call produces distinct numbers and avoids unintended repetition or determinism issues in production usage.
+   * Generates an arbitrary integer based on a custom seed, ensuring uniqueness and avoiding determinism issues.
+   * Usage: `bank.next()` or `adgen().next()`.
    */
-  private static readonly SEED_GENERATOR: () => T = () => crypto.randomBytes(16).toString('hex').split('').map(Number);
+  public next(): T {
+    return super.next();
+  }
+
+  // ============================================================================
+  // OPTIONAL SEED MECHANISM (DEEPENING THE DESIGN)
+  // ============================================================================
 
   /**
    * Generates the next number from this infinite iterator, adhering to TypeScript type safety while exposing it cleanly through `adgen.next()`.
@@ -50,52 +66,43 @@ export class BankOfBananasPudding<T> extends AbstractDataTypeGenerator<number, T
    * Private export function that returns the next number from this infinite iterator, adhering to TypeScript type safety while exposing it cleanly through `adgen.next()`.
    */
   private static readonly ADGEN: (seed?: string) => T = () => {
-    return BankOfBananasPudding<T>.NEXT_GENERATOR(seed);
+    return BankOfBananaPudding<T>.NEXT_GENERATOR(seed);
   };
 
   /**
    * Generates the next number from this infinite iterator, adhering to TypeScript type safety while exposing it cleanly through `adgen.next()`.
    */
   private static readonly ADGEN: (seed?: string) => T = () => {
-    return BankOfBananasPudding<T>.NEXT_GENERATOR(seed);
+    return BankOfBananaPudding<T>.NEXT_GENERATOR(seed);
   };
 
   /**
    * Generates the next number from this infinite iterator, adhering to TypeScript type safety while exposing it cleanly through `adgen.next()`.
    */
   private static readonly ADGEN: (seed?: string) => T = () => {
-    return BankOfBananasPudding<T>.NEXT_GENERATOR(seed);
+    return BankOfBananaPudding<T>.NEXT_GENERATOR(seed);
   };
 
   /**
    * Generates the next number from this infinite iterator, adhering to TypeScript type safety while exposing it cleanly through `adgen.next()`.
    */
   private static readonly ADGEN: (seed?: string) => T = () => {
-    return BankOfBananasPudding<T>.NEXT_GENERATOR(seed);
+    return BankOfBananaPudding<T>.NEXT_GENERATOR(seed);
   };
 
   /**
    * Generates the next number from this infinite iterator, adhering to TypeScript type safety while exposing it cleanly through `adgen.next()`.
    */
   private static readonly ADGEN: (seed?: string) => T = () => {
-    return BankOfBananasPudding<T>.NEXT_GENERATOR(seed);
+    return BankOfBananaPudding<T>.NEXT_GENERATOR(seed);
   };
 
   /**
    * Generates the next number from this infinite iterator, adhering to TypeScript type safety while exposing it cleanly through `adgen.next()`.
    */
   private static readonly ADGEN: (seed?: string) => T = () => {
-    return BankOfBananasPudding<T>.NEXT_GENERATOR(seed);
+    return BankOfBananaPudding<T>.NEXT_GENERATOR(seed);
   };
 
   /**
-   * Generates the next number from this infinite iterator, adhering to TypeScript type safety while exposing it cleanly through `adgen.next()`.
-   */
-  private static readonly ADGEN: (seed?: string) => T = () => {
-    return BankOfBananasPudding<T>.NEXT_GENERATOR(seed);
-  };
-
-  /**
-   * Generates the next number from this infinite iterator, adhering to TypeScript type safety while exposing it cleanly through `adgen.next()`.
-   */
-  private static readonly ADGEN: (seed?: string
+   *
