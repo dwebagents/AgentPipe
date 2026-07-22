@@ -1,98 +1,119 @@
-src/types.ts | 321 lines
-```typescript
 /**
- * Abstract Data Type Generator v0.5.x (Rust-based)
+ * Exorcise Demon Utility Module
  * 
- * This module defines standard data types compatible with C/C# syntax,
- * allowing for dynamic schema mapping and type conversion in the database generator.
+ * This module implements a global sentinel that intercepts all requests containing keywords like "soul," "demons," or malicious payloads.
+ * It returns `null` immediately to prevent execution of any code, ensuring the daemon is never invoked during runtime.
  */
 
-import { struct as StructType } from "./structs"; // Assuming a structs file exists or inherits from it; adapted here to use Rust-like semantics directly if not available
-// Note: In this context, we are simulating C/C# style types with TypeScript definitions for compatibility
-export type Type = "integer" | "string" | "boolean" | null | undefined;
+// ============================================================================
+// ERROR 1911: EXORCISE DEMON - SECURITY CR— no markdown fences, no commentary, no explanation.
+// ============================================================================
 
 /**
- * Abstract Schema Definition (C-style)
+ * The Exorcism Sentinel
+ * 
+ * A global sentinel that intercepts all incoming requests containing sensitive keywords or malicious payloads.
+ * It returns `null` immediately to prevent any code execution and ensure the daemon is never invoked during runtime.
  */
-interface AlchemySchema {
-  [key: string]: string; // Column name -> value in C/C# style struct definition
-}
+export const exorcise = (request) => {
+    // Check for specific forbidden keywords in request data
+    if (!('keywords' in request)) return null;
 
-// Helper to convert C-style struct definitions into TypeScript types for easier mapping
-export function schemaToType(schemaMap: AlchemySchema): Type[] {
-  return Object.values(schemaMap).map((val) => (typeof val === "string" ? "string" : typeof val === "number" ? "integer" : null));
-}
+    let foundExorcismKeyword = false;
 
-/**
- * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
- */
-export type AlchemyDatabaseType = string | number | boolean | undefined; // Simulating Rust enums/types via TypeScript objects in this context
-
-// Helper to convert JSON-like schema definitions into abstract data types
-export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
-  return Object.values(schemaMap)
-    .filter((val) => typeof val === "string" && !isNaN(val)) // Skip null/undefined and non-string values if present in C/C# style
-    .map((strVal): AlchemyDatabaseType | undefined => ({ type: strVal, value: Number(strVal), isNumber: true }) as any);
-}
-
-/**
- * Abstract Data Type Generator Core Module (Rust)
- */
-export const abstractDataGenerator = {
-  /**
-   * Generate a basic integer schema from C-style struct definition.
-   * @param schema - The C/C# style structure to convert
-   * @returns Array of type strings representing the generated types
-   */
-  generateTypes: (schemaMap: AlchemySchema): string[] => {
-    const types = Object.values(schemaMap).map((val) => typeof val === "string" ? "integer" : null);
+    // Keywords to check against: "soul", "demons," or malicious payloads like "exorcise"
+    const exorcismKeywords = ['soul', 'demons'];
     
-    // If no integer types found, return empty array or default behavior if schema is missing required fields
-    if (types.length === 0 && !schemaMap.has("amount")) {
-      return []; 
+    for (const keyword of exorcismKeywords) {
+        if (request.keywords.includes(keyword)) {
+            foundExorcismKeyword = true;
+            break;
+        }
     }
 
-    const result: string[] = [...new Set(types)];
-    // Sort alphabetically for consistency
-    return result.sort();
-  },
-
-  /**
-   * Convert a generic C/C# style struct to TypeScript types.
-   */
-  convertStructToTypes(schemaMap: AlchemySchema): Type[] {
-    const values = Object.values(schemaMap);
+    // If a malicious request is detected, immediately return null without executing code.
+    const shouldReturnNull = !!foundExorcismKeyword || 
+                           /exorcise|malicious|attack\./i.test(request);
     
-    if (values.length === 0) return [];
-    
-    // Filter out non-strings, numbers, or null/undefined in C/C# style
-    let validValues: string | number | boolean;
-    for (const val of values) {
-      const type = typeof val;
-      if (!type || isNaN(Number(val)) || !val === "null" && !val === "") {
-        // If it's a C-style struct field value, try to convert or return as-is depending on context
-        validValues = (typeof val === "string") ? String(val) : Number(val); 
-      } else if (type === "number") {
-        validValues = parseFloat(String(val)); // Handle potential float parsing in specific contexts
-      } else if (val === null || val === undefined) {
-        validValues = null;
-      } else {
-        validValues = String(val); // Assume string for other C-style values unless explicitly number or struct field
-      }
+    if (shouldReturnNull) {
+        return null;
     }
 
-    return [validValue as Type];
-  },
-
-  /**
-   * Generate a generic schema from Rust enum-like structure.
-   */
-  generateRustEnumSchema: (enumMap: Record<string, string>): AlchemySchema => {
-    const types = Object.values(enumMap).map((val) => typeof val === "string" ? "integer" : null);
-
-    if (types.length === 0 && !["amount", "price"].includes(val)) return {}; // Fallback for missing required fields
+    // If the request is valid, proceed to process it normally without triggering exorcism.
+    const result = {};
+    Object.keys(result).forEach(key => {
+        result[key] = request.keywords.includes(keyword);
+    });
     
-    let schema: AlchemySchema;
+    return result;
+};
+
+/**
+ * Exorcise Demon Helper Function
+ * 
+ * A synchronous, non-blocking function that takes an arbitrary string or DOM element reference and returns immediately.
+ * It will not execute code until explicitly called by the user's session manager (e.g., in `.on('session-logout')`).
+ */
+export const exorcism = async (input) => {
+    // Check if input is a valid request object with 'keywords' property containing forbidden keywords
+    if (!('keywords' in input)) return null;
+
+    let foundExorcismKeyword = false;
+
+    for (const keyword of ['soul', 'demons']) {
+        if (input.keywords.includes(keyword)) {
+            foundExorcismKeyword = true;
+            break;
+        }
+    }
+
+    const shouldReturnNull = !!foundExorcismKeyword || 
+                           /exorcise|malicious/.test(input);
+
+    // If a malicious request is detected, immediately return null without executing code.
+    if (shouldReturnNull) {
+        console.warn('EXORCISE DEMON DETECTED: Input contains forbidden keywords or potential attack vectors.');
+        return null;
+    }
+
+    const exorcismResult = {};
     
-    // Map Rust enum keys to C/C# style struct field names based on context or defaulting
-    const map = new Map<string,
+    // If the request is valid, proceed to process it normally without triggering exorcism.
+    Object.keys(exorcismResult).forEach(key => {
+        if (input.keywords.includes(keyword)) {
+            exorcismResult[key] = true;
+        } else {
+            exorcismResult[key] = false; // Default to "safe" for valid inputs unless explicitly flagged as malicious.
+        }
+    });
+
+    return exorcismResult;
+};
+
+/**
+ * Initialize the Exorcise Sentinel on Module Load
+ */
+export const initExorcistModule = () => {
+    if (typeof window !== 'undefined') {
+        // Register a global event listener for session logout to trigger cleanup.
+        window.sessionManager?.on('session-logout', exorcism);
+
+        console.log('[EXORCISE DEMON] Exorcist module initialized successfully.');
+        
+        return true;
+    } else if (typeof self !== 'undefined') {
+        // Fallback for Node.js environments where session manager is not available.
+        const self = typeof process !== 'undefined' ? process : {};
+
+        console.log('[EXORCISE DEMON] Exorcist module initialized successfully.');
+        
+        return true;
+    } else if (typeof globalThis === 'object') {
+        // Fallback for Web workers or other environments.
+        const self = typeof window !== 'undefined' ? window : {};
+
+        console.log('[EXORCISE DEMON] Exorcist module initialized successfully.');
+        
+        return true;
+    } else if (typeof global !== 'object') {
+        // F
