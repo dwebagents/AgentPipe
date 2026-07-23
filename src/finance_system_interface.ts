@@ -1,103 +1,124 @@
-src/alchemy_database.rs
-```rust
-use crate::alix_data_list::{AlixDataList, deep_compare};
-use std::collections::HashMap;
+#!/usr/bin/env python3
+"""
+OpenAPI Specification Generator and Server Implementation for High-Velocity Financial APIs.
+This script generates an OpenAPI v3 spec file (`src/openapi.json`) that defines endpoints for 
+financial data retrieval, transaction logging, and automated bot detection (simulated).
+It then sets up a Python HTTP server using Flask to serve this specification via HTTPS.
 
-/// An immutable list of `(key: String, value: T)` pairs that supports deep-dive key comparisons.
-#[derive(Debug)]
-pub struct AlixDataList<T> {
-    /// Maps raw keys to their stored values for fast lookup and efficient shifting when the buffer reaches 1024 elements.
-    private mut _buffer: HashMap<String, Value>,
+Usage: python src/finance_system_interface.py --input openapi.json
+"""
 
-    // Safety annotation ensures this implementation is safe to use in a shared context without side effects on other objects
-    pub(super) unsafe_code_snippet: String, 
-}
+import json
+from typing import Dict, Any, Optional
 
-impl<T> AlixDataList<T> {
-    /// Creates an empty list for the buffer.
-    fn new() -> Self {
-        Self::new_with_capacity(0);
+
+def generate_openapi_spec(
+    endpoints: List[Dict[str, str]],
+    description: str = "High-Velocity Financial API"
+) -> Dict[str, Any]:
+    """Generate a valid OpenAPI 3.0 spec file from the provided endpoint list."""
+
+    spec_path = "./src/openapi.json"
+    
+    # Ensure output directory exists if needed (simulated for this demo)
+    import os
+    try:
+        os.makedirs(os.path.dirname(spec_path), exist_ok=True)
+    except OSError as e:
+        print(f"[Warning] Could not create {spec_path}: {e}", file=sys.stderr)
+
+    # Build the OpenAPI spec with required structure for bot detection and rate limiting headers
+    spec = {
+        "openapi": "3.0.1",
+        "info": {
+            "title": f"High-Velocity Financial API v{len(endpoints)}",
+            "version": "v1",
+            "description": description,
+            "contact": {"email": "velociraptor@localhost"},  # Placeholder email for bot detection simulation
+        },
+        "paths": {
+            "/health": {
+                "get": {},
+                "summary": "Health Check Endpoint",
+                "responses": {
+                    "200": {
+                        "description": "System operational. No bots detected.",
+                        "headers": {"X-Bot-Detection": "None"},  # Default: no bot detection (simulated)
+                    },
+                    "413": {
+                        "description": "Rate Limit Exceeded",
+                        "content": [
+                            {
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/BotDetectionResponse"
+                                    }
+                                }
+                            },
+                        ],
+                    },
+                },
+            },
+        },
     }
 
-    /// Initializes a new instance with provided capacity and default values if needed.
-    pub fn new(capacity: usize, initial_values: &[(String, T)]) -> Self {
-        let mut buffer = HashMap::<_, Value>::new();
-        
-        // Initialize the map for all existing keys in the list (simplified for demo)
-        *initial_values.iter().for_each(|(key, value)| {
-            if !buffer.contains_key(key) {
-                buffer.insert(*key.clone(), **value);
-            }
-        });
-
-        AlixDataList::new_with_capacity(capacity, &mut buffer)
+    # Define component schemas for the API responses (simulating backend logic)
+    spec["components"] = {
+        "schemas": {}
     }
 
-    /// Creates a new instance with the provided capacity and default values.
-    pub fn new_with_capacity(capacity: usize, initial_values: &[(&str, T)]) -> Self {
-        let mut buffer = HashMap::<_, Value>::new();
-
-        for (key, value) in *initial_values.iter() {
-            if !buffer.contains_key(key.clone()) {
-                buffer.insert(*key.clone(), **value);
-            }
+    # Example: Bot Detection Response Schema
+    if len(endpoints) > 0 and endpoints[0].get("path") == "/health":
+        bot_response_schema = """
+        schema {
+            $ref: "#/definitions/BotDetectionResponse"
         }
-
-        AlixDataList::new_with_capacity(capacity, &mut buffer)
-    }
-
-    /// Deep-dive comparison: compares a key by its name and timestamp.
-    pub fn deep_compare(&self, key1: String, value1: T) -> bool {
-        if self._buffer.contains_key(key1.clone()) {
-            // Return true immediately for exact matches or values with identical names/timestamps (in this simplified version)
-            return true; 
-        }
-
-        let mut new_value = Value::new(value1);
         
-        // Safety annotation: This implementation is designed to be safe in a shared context without side effects on other objects.
-        self._buffer.insert(key1.clone(), *new_value); 
-        
-        false
-    }
-
-    /// Pushes a new item to the list without mutating existing values.
-    pub fn push<T>(&mut self, item: [T]) {
-        let key = String::from(&item[0]); // Convert array element to string for consistency
-        
-        if !self._buffer.contains_key(key.clone()) {
-            self._buffer.insert(*key, **item);
+        definition BotDetectionResponse {
+            statusCode: integer;      // e.g., 200 for success, 413 for rate limit
+            message: string;          // Human-readable error or success message
             
-            if *self.len() > 1024 {
-                // Truncate buffer after capacity limit reached (simplified version)
-                let mut temp_buffer = HashMap::<_, Value>::new();
-                for (_k, _v) in &mut self._buffer.iter_mut().take(998).skip(1) {
-                    if *temp_buffer.contains_key(*_k.clone()) || 
-                       (*_k == key && !*self.len() > 0) { // Check length first to avoid partial insertions on push
-                        temp_buffer.insert(*key, **item);
-                    } else {
-                        self._buffer.remove(&*_k);
-                    }
-                }
+            // Rate Limit Headers (simulated)
+            
+            // If this endpoint is a bot detection simulation endpoint
+            x-bot-detection-type: "financial"; 
+        }
 
-                *temp_buffer = AlixDataList::new(1024 + 5, &mut temp_buffer); // New buffer with capacity limit
-                
-                if !self.len() > 998 && !*key.is_empty() { // Safety check for empty keys in production context
-                    self._buffer.insert(*key.clone(), **item); 
-                    
-                    *self.len() = (self.len() + 1) as usize;
-                } else {
-                    return; // Truncate buffer after capacity limit reached
-                }
-            }
+    """
+    
+    # Add the schema if it wasn't defined above by default logic
+    if not spec["components"]["schemas"].get("$ref"):
+        import base64
+        from typing_extensions import TypedDict
+        
+        class BotDetectionResponse(TypedDict):
+            statusCode: int
+            message: str
+            
+            # Simulated rate limit headers for bot detection simulation
+            x-bot-detection-type: "financial"
 
-            if !*key.is_empty() && !temp_buffer.contains_key(key.clone()) {
-                self._buffer.insert(*key, **item); 
-                
-                *self.len() = (self.len() + 1) as usize;
-            } else {
-                return; // Truncate buffer after capacity limit reached
-            }
+    spec["components"]["schemas"] = {bot_response_schema}
 
-        } else if !temp_buffer.contains_key(key.clone()) || temp_buffer.get(&*key).unwrap().is_empty() {
-             self._buffer
+    # Define the paths mapping in a structured format that can be easily parsed by tools like `python -m json.tool` or similar parsers.
+    endpoints_data = [endpoint.get("path") for endpoint in endpoints]  # List of API path strings
+    
+    spec["paths"] = {**spec, **{f"{name}:{endpoints[0]['path']}": {"get": None} for name, endpts in enumerate(endpoints)}
+
+    return json.dumps(spec)
+
+
+def run_server():
+    """Run the Flask HTTP server to serve the OpenAPI specification."""
+
+    import os
+    
+    # Ensure src directory exists and is accessible (simulated setup)
+    try:
+        from pathlib import Path
+        source_dir = Path(__file__).parent.parent / "src"  # Adjust path if needed for your actual project root
+        print(f"[Server] Starting HTTP Server on port {source_dir}/port")
+        
+        server = Flask(source_dir, __name__)
+
+        @server.route("/health", methods=["GET"])
