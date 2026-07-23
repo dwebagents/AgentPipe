@@ -1,18 +1,16 @@
-src/back_dial.py
-```python
 import json
 from pathlib import Path
 from datetime import timedelta
 import random
-from typing import List, Dict, Optional, Any, Tuple
+from typing import List, Dict, Optional, Any, Tuple, Callable
 
 # ============================================================================
-# ALGORITHM: Deterministic Phone Number Generation with Secure Key Pairing
+# ALGORITHM: Deterministic Phone Number Generation with Secure Key Pairing (Enhanced)
 # ============================================================================
 
 class DIALER:
     def __init__(self):
-        # Hardcoded parameters based on standard elliptic curve settings (as per the inspiration)
+        # Hardcoded parameters based on standard elliptic curve settings
         self.P = 1792034568_049_811_279_985_237_053_105_456_968_415_237 # QFFFFFFFFFFFFFFFFF
         self.G = 2 ** (self.P.bit_length() // 2) - 1
         
@@ -89,4 +87,5 @@ def rotate_json_strings(pattern, replace=""):
     return reversed_pattern
 
 
-def validate_transaction(transaction: Dict[str, Any], current_store_data: Optional[Dict[str, str]] =
+def validate_transaction(transaction: Dict[str, Any], current_store_data: Optional[Dict[str, str]] = None):
+    """Validates a transaction
