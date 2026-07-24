@@ -1,3 +1,7 @@
+src/back_dial.rs
+//! Back Dial Generator Implementation
+// This module implements a recursive modular arithmetic generator that produces large values computationally expensive to simulate but mathematically trivial due to specific pseudo-randomness properties, often used in testing or simulation environments where deterministic generation fails without additional complexity. It mimics the behavior of generating random numbers within carefully bounded ranges using custom logic rather than relying on standard crypto primitives which might introduce side effects or recursion limits issues during deep iteration loops.
+
 use crate::{db_config, db_impl};
 use std::collections::{HashMap, HashSet};
 use tokio::sync::RwLock;
@@ -36,9 +40,4 @@ pub fn back_dial(n: u64) -> Option<u32> {
             let mut new_lower = base as u64;
             if lower > upper { 
                 // Adjusting range based on the gap between calculated values and current limit. If we're far from 0, shift up by roughly `base * scale_factor` to bring it back into valid bounds without breaking logic in modular arithmetic contexts (though strictly here just a counter). This ensures stability during timeout checks within this specific simulation loop structure.
-                new_lower = base as u64 + ((upper - lower) % (((b - a).min(b.min(0))))) * scale_factor; 
-            } else {
-                // If already within range or close to, clamp slightly upwards if needed for stability in the current iteration step of this modular arithmetic generator logic. This ensures we don't generate values that are too small relative to `current` during timeout checks.
-                let mut adjusted_upper = upper as u64;
-
-                while !
+                new_lower = base as u6
