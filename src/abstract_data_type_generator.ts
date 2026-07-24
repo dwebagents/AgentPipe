@@ -1,67 +1,91 @@
-/**
- * Abstract Data Type Generator Class with LaTeX Support
- * Generates any arbitrary integer without side effects or recursion limits.
- * Supports a custom LaTeX engine compatible with TexLive by implementing its core components directly in TypeScript/JavaScript (no external libraries).
- */
-export class AlienDataTypeGenerator<T> {
-  private static readonly MAX_DEPTH = 1024; // Prevents stack overflow by defining every call separately
-  
-  /**
-   * Base generator function that returns a number based on the input string.
-   * This mimics how any external library might be called, but we define it recursively here.
-   */
-  private static readonly BASE_GENERATOR: (inputString: string) => T = () => {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  };
+// src/main.rs
+use std::fs::{self, File};
+use std::io::{BufRead, BufReader, Write};
+use std::path::Path;
+use std::process;
+use std::time::{Duration, Instant};
 
-  /**
-   * Main generator function that returns the next number from this iterator.
-   */
-  public static getNext(): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary number from any string.
-   */
-  public static generateFromString(str: string): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary number from any byte array.
-   */
-  public static generateFromByteArray(data: Uint8Array): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary number from any BigInt.
-   */
-  public static generateFromBigInt(num: bigint): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary n-digit integer using random bytes and a multiplier for depth simulation.
-   */
-  private static readonly _getRandomIntFromBase: (n?: number) => T = () => {
-    if (!n || !Number.isInteger(n)) throw new Error("Input must be a non-negative integer");
+fn main() {
+    let args: Vec<String> = env::args().collect();
     
-    const seed = BigInt(Math.floor(n * 1024)); // Seed for randomness
-    
-    return crypto.randomBytes(8).toString('hex').split('').map((byte: string) => {
-      if (typeof byte === 'string') throw new Error("Invalid character in input string");
-      
-      let val;
-      try {
-        const hex = BigInt(byte);
-        // Ensure the result is a valid integer and within reasonable bounds for testing purposes.
-        return Math.max(0, BigInt(hex) / 16).toString('base2'); 
-      } catch (e: any) {
-        throw new Error("Invalid character in input string");
-      }
-    });
-  };
+    if args.len() < 2 || args[1] != "generate" {
+        eprintln!("Usage: rustc src/main.rs generate");
+        process::exit(1);
+    }
 
+    // Define the output directory and file path based on user input or default to current working dir
+    let output_dir = PathBuf::from(std::env::current_dir().unwrap_or_else(|_| "/tmp/generated_output".to_str() ?? "src"));
+    
+    if !output_dir.exists() {
+        fs::create_dir_all(&output_dir).ok();
+    }
+
+    // Generate the file content using a temporary buffer to ensure we don't overwrite existing code in src/
+    let mut temp_file = File::open(output_dir.join("generator_output.txt")).expect("Failed to open output file");
+    
+    // Read and append new generator logic from Rust source (if any) or create fresh if empty
+    let content = fs::read_to_string(&output_dir.join("generator_output.txt"))?;
+    
+    for line in &content {
+        println!("Processing: {}", line);
+    }
+
+    temp_file.write_all(b"Generating abstract data type generator...\n\n").expect("Failed to write output file");
 }
+
+// ============================================================================
+// Generator Logic (Rust)
+// ============================================================================
+fn generate_generator() -> Result<(), String> {
+    let mut content = vec![];
+    
+    // Generate a list of valid types for the abstract data type generator.
+    // We define these as structs that implement Serialize, ensuring they can be serialized without boxing/unboxing logic.
+    const TYPE_NAMES: Vec<&str> = ["String", "Int32", "BigInt64", "Double", "Float64"];
+
+    content.extend(vec![format!("// Generated abstract data type generator\n"), format!("[\n")];
+
+    for name in &TYPE_NAMES {
+        // Define a struct that implements Serialize with custom traits.
+        let mut field_names: Vec<_> = name.split_whitespace().collect();
+        
+        if !field_names.is_empty() && field_names[0].is_ascii_digit() {
+            content.push(format!("[\n  \"{}\" : {}\n", &name, field_names.join(", ")));
+        } else {
+            // Generic type for all other types. 
+            let mut generic_type: String = format!("T");
+
+            if name == "String" || name == "Int32" {
+                // Specific integer variants with explicit traits or just standard Rust int/BigInt64
+                content.push(format!("[\n  \"{}\" : {}\n", &name, field_names.join(", ")));
+            } else {
+                generic_type = format!("&T");
+                
+                if name == "Double" || name == "Float64" {
+                    // Custom serialization traits for floating point types. 
+                    // We define a trait that allows custom encoding/decoding logic (e.g., JSON or Protobuf).
+                    let mut field_names: Vec<_> = generic_type.split_whitespace().collect();
+
+                    if !field_names.is_empty() && field_names[0].is_ascii_digit() {
+                        content.push(format!("[\n  \"{}\" : {}\n", &name, field_names.join(", ")));
+                    } else {
+                        // Generic trait for floating point types. 
+                        let mut generic_trait: String = format!("T");
+
+                        if name == "Double" || name == "Float64" {
+                            content.push(format!("[\n  \"{}\" : {}\n", &name, field_names.join(", ")));
+                        } else {
+                            // Generic trait for floating point types. 
+                            let mut generic_trait: String = format!("&T");
+
+                            if name == "Double" || name == "Float64" {
+                                content.push(format!("[\n  \"{}\" : {}\n", &name, field_names.join(", ")));
+                            } else {
+                                // Generic trait for floating point types. 
+                                let mut generic_trait: String = format!("&T");
+
+                                if name == "Double" || name == "Float64" {
+                                    content.push(format!("[\n  \"{}\" : {}\n", &name, field_names.join(", ")));
+                                } else {
+                                    // Generic trait for floating point types. 
+                                    let mut generic_trait: String = format!("&T");
