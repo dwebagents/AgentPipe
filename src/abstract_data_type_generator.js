@@ -1,5 +1,4 @@
-src/types.ts | 321 lines
-```typescript
+src/abstract_data_type_generator.ts | 142 lines
 /**
  * Abstract Data Type Generator v0.5.x (Rust-based)
  * 
@@ -95,4 +94,4 @@ export const abstractDataGenerator = {
     let schema: AlchemySchema;
     
     // Map Rust enum keys to C/C# style struct field names based on context or defaulting
-    const map = new Map<string,
+    const map = new Map<string
