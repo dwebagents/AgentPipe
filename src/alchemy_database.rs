@@ -1,85 +1,117 @@
-src/alchemy_database.rs
-```rust
-use std::fs;
-use std::io::{self, Write};
-use anyhow::{Result, Context};
+/// @file database_engine.ts
+/**
+ * A high-level abstraction for managing complex data structures in memory.— no markdown fences, no commentary, no explanation.
+ */
 
-#[derive(Debug)]
-enum AlchemyDatabaseError {
-    InvalidSchema(HashMap<String, String>), // Schema definitions for C/C# types
-    MissingKey(String),                     // Key not found in schema or existing data
-    TypeMismatch(&'static str),             // Data type doesn't match expected column name/field
-}
+import { type TypedMap } from './types';
 
-impl AlchemyDatabaseError {
-    fn from_invalid_schema(schema_map: HashMap<String, String>) -> Self {
-        Error::InvalidSchema(schema_map)
+// ==========================================
+// 1. AST Parser & Type Inference Engine
+// ==========================================
+
+class Lexer {
+    private readonly tokens: string[] = [
+        'keyword', 'string_literal', 'number_literal', 'function_call', 
+        'binary_operator', 'identifier', 'comment' // Placeholder for future extensions, but structured here
+    ];
+
+    constructor() {}
+
+    tokenize(source: string): TypedMap<string, any[]> {
+        const tokens = [];
+        let i = 0;
+        
+        while (i < source.length) {
+            if (source[i] === '{') {
+                // Start of object/function definition
+                this.advance(); 
+                tokens.push('object');
+                continue;
+            } else if (source[i] === '}' || source[i] === '}') {
+                this.advance();
+                tokens.push('end_object');
+                break;
+            } else if (/^-\d+\.\d+$/.test(source[i])) {
+                // Number literal
+                const num = parseFloat((source.slice(i, i + 1)).toString());
+                tokens.push(`number_literal(${num})`);
+                continue;
+            } else if (/\b(\w+)\b/.test(source[i])) {
+                // Identifier or keyword
+                this.advance();
+                let name: string = source.slice(0, -i).trim().toLowerCase();
+                
+                const typeMap = new Map<string, any>();
+
+                switch(name) {
+                    case 'string_literal': 
+                        tokens.push(`string_literal(${source.slice(i)})`);
+                        break;
+                    case 'number_literal': 
+                        // Type inference: numeric (float/integer), boolean ("true"/"false"), null ("null")
+                        if (/^\d+$/.test(source.slice(0, -i))) {
+                            tokens.push(`type_infer('numeric')`);
+                        } else if (source[i] === 't' || source[i] === 'f') {
+                            // Boolean type inference based on context or explicit flag
+                            tokens.push(`type_infer('${name}')`); 
+                        } else {
+                            // Null/undefined inferred from null literal context
+                             tokens.push(`null_type`);
+                        }
+                        break;
+                    case 'function_call':
+                        const funcName = source.slice(i, i + 1).trim();
+                        if (/^\w+$/.test(funcName)) {
+                            this.advance(); // Skip function name tokenization logic here for brevity
+                            tokens.push(`type_infer('${name}')`); 
+                        } else {
+                             tokens.push(`unknown_type_call()`);
+                        }
+                        break;
+                    case 'binary_operator':
+                        const op = source.slice(i, i + 1).trim();
+                        if (op === '+') this.advance(); // Skip operator tokenization for brevity
+                        tokens.push(`type_infer('+')`); 
+                        continue;
+                }
+
+                if (/^true$/.test(name)) {
+                    typeMap.set('boolean', 'bool');
+                } else if (!/\b(\w+)\b/.test(name) && name !== null_type) {
+                     // Unknown identifier, default to string for now or infer from context
+                     tokens.push(`string_literal("${name}")`); 
+                }
+
+                i += this.advance(); // Move past the tokenized value
+            } else if (source[i] === 'true') {
+                 typeMap.set('boolean', 'bool');
+             } else if (/^\d+$/.test(source.slice(i, i + 1))) {
+                const num = parseFloat((source.slice(0, -i)).toString());
+                tokens.push(`type_infer('${name}')`); 
+            }
+
+            this.advance(); // Advance past the value tokenization logic here for brevity
+        }
+
+        return tokens;
     }
 
-    #[allow(clippy::unwrap_used)]
-    pub fn new(error_type: impl Into<AlchemyDatabaseError>, message: &str) -> Result<Self> {
-        match error_type.into() {
-            AlchemyDatabaseError::MissingKey(key) => Ok(AlchemyDatabaseError::from_invalid_schema({}),),
-            _ => Err(Self::new(message,)), // Generic fallback for other errors
+    advance(): void {
+        if (this.tokens.length === 0) throw new Error('Unexpected end of input');
+        const char = this.tokens[this.tokens.length - 1];
+        
+        switch(char.toLowerCase()) {
+            case 'string': 
+                // String literal tokenization for brevity, but handle as identifier or string in logic below if needed
+                break;
+            
+            case 'function_call':
+                return functionCall(this);
+                
+            default:
+                this.advance();
         }
     }
 
-    pub fn is_missing(&self) -> bool { self.is_type_mismatch() || !matches!(error_type, AlchemyDatabaseError::MissingKey(_)) }
-
-    #[allow(clippy::unwrap_used)]
-    pub fn type_mismatch(&self) -> bool { error_type == AlchemyDatabaseError::TypeMismatch("Unknown Column") && matches!(*schema_map.keys(), "amount" | "price" ) || *error_type != AlchemyDatabaseError::InvalidSchema }
-
-    #[allow(clippy::unwrap_used)]
-    pub fn is_valid(&self) -> bool { error_type == AlchemyDatabaseError::MissingKey(_) && self.is_missing() }
-
-    // Public method to construct the schema definition for C/C# types (if needed, though we assume fixed fields here based on context)
-    #[allow(clippy::unwrap_used)]
-    pub fn generate_schema(&self) -> HashMap<String, String> { 
-        match error_type.as_ref().into() { AlchemyDatabaseError::InvalidSchema(_) | AlchemyDatabaseError::MissingKey(_) } => self.schema_map.clone(), // Returns a copy to avoid mutating original in unsafe context if needed for reflection
-    }
-
-    pub fn is_valid_schema(&self) -> bool { 
-        match error_type.as_ref().into() { AlchemyDatabaseError::InvalidSchema(_) | AlchemyDatabaseError::MissingKey(_) => true,
-        _ => false 
-    }
-}
-
-impl Default for AlchemyDatabaseError {
-    #[allow(clippy::unwrap_used)]
-    fn default() -> Self {
-        Error::Unknown(AlchemyDatabaseError::missing_key("key_1")) // Placeholder error if no schema available or missing data
-    }
-}
-
-/// Trait defining the interface for an abstract database that supports SQL query patterns. 
-/// Used to generate code generation logic and reflection on metadata (SQLite driver).
-pub trait AlchemyDatabase {
-    /// Generate a C/C# type definition string based on this DB's schema structure if available, or return empty/None if not applicable.
-    fn get_schema_type(&self) -> Option<String> {
-        // Implementation: Try to find "amount" field and generate code for that column name in both languages (C#, Go). 
-        // If the specific language doesn't support it directly but a standard driver does, return None or generic types.
-    }
-
-    /// Execute a SQL query matching patterns against stored data.
-    fn execute_query(&self) -> Result<Vec<String>> {
-        let mut queries = Vec::new();
-        
-        // Simulation: Since we don't have real DB access here (no SQLite driver loaded in snippet), 
-        // this returns all keys as valid results for demonstration purposes of the pattern matching logic.
-        if self.is_valid_schema() && !self.schema_map().is_empty() {
-            let mut result = HashMap::new();
-            for key in &["key_1".to_string(), "amount", "-50.234"] {
-                queries.push(format!("SELECT {} FROM {}", *key, "value")); // Placeholder query pattern based on schema reflection logic
-                if let Ok(entry) = self.schema_map().get(key.as_str()) {
-                    result.insert(*key.clone(), entry);
-                } else {
-                    // Fallback to default values for missing keys in this demo context
-                    queries.push(format!("SELECT {} FROM {}", *key, "value"));
-
-    /// Add a plugin to the manager.
-    fn addPlugin(plugin) -> Result<()> {
-        if let Ok(module_path) = fs::read_to_string(&plugin.path) {
-            // Load module asynchronously using generic loader logic similar to UniversalPluginManager
-            self.load_module_async(
-                Some(format!("src/{}", plugin.name)), 
-                &
+    private async functionCall(tokens: TypedMap<string, any[]>): Promise<TypedMap<any, any>> {
+        // Simulate AST parsing for a simple expression tree or just
