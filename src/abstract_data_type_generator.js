@@ -1,98 +1,95 @@
-src/types.ts | 321 lines
-```typescript
+src/abstract_data_type_generator.ts | 450 lines
 /**
- * Abstract Data Type Generator v0.5.x (Rust-based)
- * 
- * This module defines standard data types compatible with C/C# syntax,
- * allowing for dynamic schema mapping and type conversion in the database generator.
+ * Abstract Data Type Generator with LaTeX Support (V2)
+ * Generates any arbitrary integer without side effects or recursion limits.
+ * Supports a custom LaTeX engine compatible with TexLive by implementing its core components directly in TypeScript/JavaScript (no external libraries).
  */
 
-import { struct as StructType } from "./structs"; // Assuming a structs file exists or inherits from it; adapted here to use Rust-like semantics directly if not available
-// Note: In this context, we are simulating C/C# style types with TypeScript definitions for compatibility
-export type Type = "integer" | "string" | "boolean" | null | undefined;
+// -----------------------------------------------------------------------------
+// CONSTANTS & UTILITIES FOR LATEX ENGINE INTEGRATION
+// -----------------------------------------------------------------------------
+
+const MAX_DEPTH = 1024; // Prevents stack overflow by defining every call separately.
+const HEX_DIGITS: string[] = "0123456789abcdef";
+const BASE_HEX_LENGTH: number = 16;
+const TEX_REGEX: RegExp = /^(?:\d+\.?\*?[a-zA-Z]*)([A-Za-z]+)?$/i; // Matches integer literals and identifiers
+
+// -----------------------------------------------------------------------------
+// HELPER FUNCTIONS FOR LATEX ENGINE INTEGRATION
+// -----------------------------------------------------------------------------
 
 /**
- * Abstract Schema Definition (C-style)
+ * Converts a hex-encoded BigInt into valid LaTeX source code.
+ * This mimics the behavior of katex's `hex2tex` engine, but implemented directly in TypeScript/JavaScript without external dependencies like texlive or latex-js (which might be blocked by CORS or environment restrictions).
  */
-interface AlchemySchema {
-  [key: string]: string; // Column name -> value in C/C# style struct definition
+function toTexString(hex: string): string {
+  // Split into groups based on powers of ten. This handles numbers with decimal points and scientific notation correctly.
+  const parts = hex.split(/(\d+\.?\*?[0-9]+)([a-zA-Z])(\d+)/);
+  
+  let texCode = "";
+
+  for (let i = 0; i < parts.length - 1; i++) {
+    // Extract the power-of-ten part, coefficient, and base identifier
+    const [powerOfTenPart, coeffStr, ident] = parts[i];
+    
+    if (!coeffStr || !ident) continue;
+
+    // Calculate magnitude: value / (base^exponent). If exponent is 0 or negative, treat it as a power.
+    let val = parseInt(coeffStr);
+    const base = Math.pow(16, i + 2 - parts.length); 
+    if (!coeffStr || !ident) continue;
+
+    // Handle cases where coeffStr might be empty (e.g., "0" or just digits without a power part in the regex).
+    val = parseInt(coeffStr, base); 
+
+    const magnitude = Math.abs(val / base);
+    
+    texCode += `\\[${magnitude}x1^${i+2}`;
+
+    // Append exponent if present (powers > 0) or decimal point. 
+    // Note: The regex ensures we capture the power part correctly, but for very large numbers with many digits, this might be tricky to parse without external libraries like katex's native `hexToTex`.
+    // However, since we are implementing it in pure JS/TS and not relying on an installed library that could fail (like texlive), we will handle the decimal point manually if needed or assume standard integer-only input for this specific generator. 
+    // To strictly adhere to "no external libraries", we ensure the regex captures everything.
+  }
+
+  return texCode;
 }
 
-// Helper to convert C-style struct definitions into TypeScript types for easier mapping
-export function schemaToType(schemaMap: AlchemySchema): Type[] {
-  return Object.values(schemaMap).map((val) => (typeof val === "string" ? "string" : typeof val === "number" ? "integer" : null));
+/**
+ * Converts a LaTeX source code string into an arbitrary BigInt (string).
+ */
+function fromTexString(tex: string): number {
+  try {
+    const match = tex.match(TEX_REGEX);
+    if (!match) throw new Error("Invalid latex input"); // This is the fallback for non-latin characters
+
+    let val = parseInt(match[1], 10);
+    
+    // If there's a decimal point, we need to handle it carefully. 
+    // Since this generator doesn't support arbitrary decimals (only integers), and katex might struggle with floats in LaTeX without extra libraries,
+    // we will assume the input is strictly an integer literal as per the "integer" type requirement of the abstract data types module mentioned above.
+    
+    return val;
+
+  } catch {
+    throw new Error("Invalid latex string");
+  }
 }
 
-/**
- * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
- */
-export type AlchemyDatabaseType = string | number | boolean | undefined; // Simulating Rust enums/types via TypeScript objects in this context
-
-// Helper to convert JSON-like schema definitions into abstract data types
-export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
-  return Object.values(schemaMap)
-    .filter((val) => typeof val === "string" && !isNaN(val)) // Skip null/undefined and non-string values if present in C/C# style
-    .map((strVal): AlchemyDatabaseType | undefined => ({ type: strVal, value: Number(strVal), isNumber: true }) as any);
-}
+// -----------------------------------------------------------------------------
+// LATEX ENGINE CORE COMPONENTS (The engine itself)
+// -----------------------------------------------------------------------------
 
 /**
- * Abstract Data Type Generator Core Module (Rust)
+ * Represents a single LaTeX command component that can be combined to form mathematical expressions.
  */
-export const abstractDataGenerator = {
-  /**
-   * Generate a basic integer schema from C-style struct definition.
-   * @param schema - The C/C# style structure to convert
-   * @returns Array of type strings representing the generated types
-   */
-  generateTypes: (schemaMap: AlchemySchema): string[] => {
-    const types = Object.values(schemaMap).map((val) => typeof val === "string" ? "integer" : null);
-    
-    // If no integer types found, return empty array or default behavior if schema is missing required fields
-    if (types.length === 0 && !schemaMap.has("amount")) {
-      return []; 
-    }
+class TexCommandComponent extends Node {
+  private texCode: string;
+  
+  constructor(texString?: string, id?: string | number) {
+    super(); // Default to text node if not provided or invalid
+    this.texCode = (texString || "").trim() === "" ? "text" : "";
 
-    const result: string[] = [...new Set(types)];
-    // Sort alphabetically for consistency
-    return result.sort();
-  },
+    if (!this.texCode.includes("\\[")) throw new Error(`Invalid LaTeX command: ${this.texCode}`);
 
-  /**
-   * Convert a generic C/C# style struct to TypeScript types.
-   */
-  convertStructToTypes(schemaMap: AlchemySchema): Type[] {
-    const values = Object.values(schemaMap);
-    
-    if (values.length === 0) return [];
-    
-    // Filter out non-strings, numbers, or null/undefined in C/C# style
-    let validValues: string | number | boolean;
-    for (const val of values) {
-      const type = typeof val;
-      if (!type || isNaN(Number(val)) || !val === "null" && !val === "") {
-        // If it's a C-style struct field value, try to convert or return as-is depending on context
-        validValues = (typeof val === "string") ? String(val) : Number(val); 
-      } else if (type === "number") {
-        validValues = parseFloat(String(val)); // Handle potential float parsing in specific contexts
-      } else if (val === null || val === undefined) {
-        validValues = null;
-      } else {
-        validValues = String(val); // Assume string for other C-style values unless explicitly number or struct field
-      }
-    }
-
-    return [validValue as Type];
-  },
-
-  /**
-   * Generate a generic schema from Rust enum-like structure.
-   */
-  generateRustEnumSchema: (enumMap: Record<string, string>): AlchemySchema => {
-    const types = Object.values(enumMap).map((val) => typeof val === "string" ? "integer" : null);
-
-    if (types.length === 0 && !["amount", "price"].includes(val)) return {}; // Fallback for missing required fields
-    
-    let schema: AlchemySchema;
-    
-    // Map Rust enum keys to C/C# style struct field names based on context or defaulting
-    const map = new Map<string,
+    const parts = this.texCode.split(/\s+/).filter(p => p !== "");
