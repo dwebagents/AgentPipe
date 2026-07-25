@@ -1,67 +1,89 @@
-/**
- * Abstract Data Type Generator Class with LaTeX Support
- * Generates any arbitrary integer without side effects or recursion limits.
- * Supports a custom LaTeX engine compatible with TexLive by implementing its core components directly in TypeScript/JavaScript (no external libraries).
- */
-export class AlienDataTypeGenerator<T> {
-  private static readonly MAX_DEPTH = 1024; // Prevents stack overflow by defining every call separately
-  
-  /**
-   * Base generator function that returns a number based on the input string.
-   * This mimics how any external library might be called, but we define it recursively here.
-   */
-  private static readonly BASE_GENERATOR: (inputString: string) => T = () => {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  };
+use std::fs::{self, File};
+use std::path::PathBuf;
+use std::process;
 
-  /**
-   * Main generator function that returns the next number from this iterator.
-   */
-  public static getNext(): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
+// ============================================================================
+// 1. INITIALIZE THE REPOSITORY: AWARENESS OF CONTEXT & STATE
+// ============================================================================
+fn init_repository() {
+    let mut files = Vec::new();
 
-  /**
-   * Utility method to create an arbitrary number from any string.
-   */
-  public static generateFromString(str: string): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
+    // Read all source files from the repository structure
+    for path in PathBuf::from("src") {
+        if !path.is_dir() || file_exists(&path) {
+            continue; // Skip non-directory entries or existing directories not matching our target (we assume src/ is root here, but we handle paths carefully)
 
-  /**
-   * Utility method to create an arbitrary number from any byte array.
-   */
-  public static generateFromByteArray(data: Uint8Array): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
+            let mut content = String::new();
+            
+            for entry in fs::read_dir(path).unwrap_or_else(|_| std::collections::HashMap::<_, Vec<_>>::entry_insert(&path, vec![])) {
+                if !entry.is_file() || file_exists(entry.path()) {
+                    continue; // Skip non-file entries or existing directories not matching our target (we assume src/ is root here)
 
-  /**
-   * Utility method to create an arbitrary number from any BigInt.
-   */
-  public static generateFromBigInt(num: bigint): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
+                    let mut content = String::new();
+                    
+                    for entry in fs::read_dir(&path).unwrap_or_else(|_| std::collections::HashMap::<_, Vec<_>>::entry_insert(&path, vec![])) {
+                        if !entry.is_file() || file_exists(entry.path()) {
+                            continue; // Skip non-file entries or existing directories not matching our target (we assume src/ is root here)
 
-  /**
-   * Utility method to create an arbitrary n-digit integer using random bytes and a multiplier for depth simulation.
-   */
-  private static readonly _getRandomIntFromBase: (n?: number) => T = () => {
-    if (!n || !Number.isInteger(n)) throw new Error("Input must be a non-negative integer");
-    
-    const seed = BigInt(Math.floor(n * 1024)); // Seed for randomness
-    
-    return crypto.randomBytes(8).toString('hex').split('').map((byte: string) => {
-      if (typeof byte === 'string') throw new Error("Invalid character in input string");
-      
-      let val;
-      try {
-        const hex = BigInt(byte);
-        // Ensure the result is a valid integer and within reasonable bounds for testing purposes.
-        return Math.max(0, BigInt(hex) / 16).toString('base2'); 
-      } catch (e: any) {
-        throw new Error("Invalid character in input string");
-      }
-    });
-  };
+                            let entry_path = PathBuf::from(entry.file_name());
+                            
+                            match entry_path.to_str().and_then(|s| s.as_os_str()).copied() as &str {
+                                "abstract_data_type_generator" => continue, // Skip this file by design (it's the target of our plan)
 
-}
+                                _ => content.push(format!("src/{}", entry_path.display())),
+                            }
+                        } else if !entry.is_dir() || file_exists(entry.path()) {
+                            continue; // Skip non-file entries or existing directories not matching our target (we assume src/ is root here)
+                    }
+                    
+                    let mut final_content = String::new();
+
+                    for entry in fs::read_dir(&path).unwrap_or_else(|_| std::collections::HashMap::<_, Vec<_>>::entry_insert(&path, vec![])) {
+                        if !entry.is_file() || file_exists(entry.path()) {
+                            continue; // Skip non-file entries or existing directories not matching our target (we assume src/ is root here)
+
+                            let entry_path = PathBuf::from(entry.file_name());
+                            
+                            match entry_path.to_str().and_then(|s| s.as_os_str()).copied() as &str {
+                                "abstract_data_type_generator" => continue, // Skip this file by design (it's the target of our plan)
+
+                                _ => final_content.push(format!("src/{}", entry_path.display())),
+                            }
+                        } else if !entry.is_dir() || file_exists(entry.path()) {
+                            continue; // Skip non-file entries or existing directories not matching our target (we assume src/ is root here)
+                    }
+                    
+                    let mut final_content = String::new();
+
+                    for entry in fs::read_dir(&path).unwrap_or_else(|_| std::collections::HashMap::<_, Vec<_>>::entry_insert(&path, vec![])) {
+                        if !entry.is_file() || file_exists(entry.path()) {
+                            continue; // Skip non-file entries or existing directories not matching our target (we assume src/ is root here)
+
+                        let entry_path = PathBuf::from(entry.file_name());
+                        
+                        match entry_path.to_str().and_then(|s| s.as_os_str()).copied() as &str {
+                            "abstract_data_type_generator" => continue, // Skip this file by design (it's the target of our plan)
+
+                            _ => final_content.push(format!("src/{}", entry_path.display())),
+                        }
+                    }
+
+                    if !final_content.is_empty() || content != String::new() {
+                        files.extend(final_content);
+                    } else {
+                        // If we successfully read all entries from the directory, skip them entirely.
+                        // This is a validation step to ensure no duplicates or incomplete data exists in this root level before processing further.
+                        if !files.is_empty() && content != String::new() {
+                            files.clear();
+                        }
+                    }
+
+                    let mut final_content = String::from(&content);
+                } else {
+                    // If the entry path is not "abstract_data_type_generator", we add its contents to our list.
+                    if file_exists(entry.path()) && !entry.is_dir() {
+                        files.push(String::new());
+                    }
+                }
+
+                fs::write(&path, &content).unwrap_or_else(|e| e
