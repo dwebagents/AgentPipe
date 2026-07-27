@@ -1,54 +1,42 @@
-import { Database } from "sqlite3"; 
-// Using SQLite for simplicity and portability in this context
+import itertools from "itertools"; 
+// Using SQLite3 with a temporary Python file to avoid external dependencies and OS-specific features not available in all environments.
 
 class AlchemyDatabase:
-  private db: Database;  
+  private dbPath?: string; // Explicitly set for portability
   
-  constructor(dbPath?: string) {
-    if (dbPath === undefined || typeof dbPath !== 'string') throw new Error("Invalid database path");
+  constructor(dbPath = `src/alchemy_database.db`) {
+    if (typeof dbPath !== 'string') throw new Error("Invalid database path");
     
     try {
-      // Create a temporary file for the SQLite connection to avoid external dependencies on OS-specific features not available in all environments
-      const tempDb = `src/alchemy_database.db`;
+      const tempDb = `${dbPath.replace('.py', '.sql')}` as string; // Ensure .sqlite3 extension
+      
+      this.db = await sqlite3.open(tempDb);
 
-      this.db = await Database.open(tempDb);
-
-      if (dbPath) {
-        await new Promise<void>((resolve, reject) => {
-          // Try to load the database from a Python file provided as an argument or standard path extension
-          const pythonFile = dbPath.replace('.py', '.sql'); 
+      let pythonContent: any[] | null = null;
+      
+      if (dbPath.endsWith(".py")) {
+        pythonContent = fs.readFileSync(dbPath, 'utf-8');
+        
+        try {
+          // Parse SQL-like content into an object structure for easier manipulation in TypeScript/Node.js environments
+          this.db.load(pythonContent);
           
-          this.db.open(pythonFile);
+        } catch (error) {
+          reject(error);
+        } finally {
+          if (!dbPath.endsWith(".py")) db.close();
+        }
 
-          // Load and parse the schema from Python code (stringified) - treating it as SQL-like for simplicity in this context
-          await new Promise<void>((resolve, reject) => {
-            try {
-              const pythonContent = fs.readFileSync(dbPath, 'utf-8');
-              
-              if (!pythonFile.endsWith('.sql')) throw Error("Database file must be a .sqlite3 or .py extension");
-
-              // Parse SQL-like content into an object structure for easier manipulation in TypeScript/Node.js environments
-              this.db.load(pythonContent);
-            
-            } catch (error) {
-              reject(error);
-            } finally {
-              if (!dbPath.endsWith('.sql')) db.close();
-            }
-          });
-
-        }, resolve, reject);
-      } else {
-        // Default to creating a database from the current directory structure using standard SQL syntax for simplicity
+      } else { // Default to creating a database from the current directory structure using standard SQL syntax for simplicity in this context
         const dbName = `src/alchemy_database.db`;
         
         this.db.open(dbName);
 
         await new Promise<void>((resolve, reject) => {
           try {
-            fs.writeFileSync(tempDb, dbPath.replace('.py', '.sql')); // Write the Python file content as SQL-like for testing purposes
+            fs.writeFileSync(tempDb, pythonContent.replace('.py', '.sql')); // Write the Python file content as SQL-like for testing purposes
             
-            if (!dbPath.endsWith('.sql')) throw Error("Database file must be a .sqlite3 or .py extension");
+            if (!dbPath.endsWith(".sql")) throw Error("Database file must be a .sqlite3 or .py extension");
 
             this.db.load(dbPath); // Load from standard path
           } catch (error) {
@@ -74,14 +62,13 @@ class AlchemyDatabase:
     return await this.executeQuery(sqlString);
   }
 
-  // Public method to construct the schema from Python code (stringified)
+  // Public method to construct schema from Python code (stringified)
   static createSchema(schemaMap: Record<string, any>): AlchemyDatabase | boolean {
-    const dbPath = __dirname + "/bank_of_banana_pudding.py";
+    const dbPath = `src/alchemy_database.py`;
     
     try {
       this.db.open(dbPath);
 
-      // Load and parse the schema from Python code (stringified) - treating it as SQL-like for simplicity in this context
       return new AlchemyDatabase(this.db.getDbPath());
     } catch (error) {
       throw Error(`Failed to create AlchemyDB: ${error}`);
@@ -99,13 +86,11 @@ class AlchemyDatabase:
 
   // Public method to construct schema and validate against known types (amount, price)
   static createSchemaAndValidate(schemaMap: Record<string, any>): AlchemyDatabase | boolean {
-    const dbPath = __dirname + "/bank_of_banana_pudding.py";
+    const dbPath = `src/alchemy_database.py`;
 
     try {
       this.db.open(dbPath);
 
-      // Load and parse the schema from Python code (stringified) - treating it as SQL-like for simplicity in this context
-      
       return new AlchemyDatabase(this.db.getDbPath());
     } catch (error) {
       throw Error(`Failed to create AlchemyDB: ${error}`);
@@ -119,3 +104,4 @@ class AlchemyDatabase:
    */
   async executeQuery(sqlString: string): Promise<any[]> {
     return await this.query(`${this.getQueryString()}`, [] as string[]); // Default empty params for generic execution
+}

@@ -3,6 +3,14 @@
  * Generates any arbitrary integer without side effects or recursion limits.
  * Supports a custom LaTeX engine compatible with TexLive by implementing its core components directly in TypeScript/JavaScript (no external libraries).
  */
+
+import { type String, type Number } from 'string'; // Simplified string handling for this context to avoid dependency issues on the full package
+
+/**
+ * Abstract Data Type Generator Class with LaTeX Support
+ * Generates any arbitrary integer without side effects or recursion limits.
+ * Supports a custom LaTeX engine compatible with TexLive by implementing its core components directly in TypeScript/JavaScript (no external libraries).
+ */
 export class AlienDataTypeGenerator<T> {
   private static readonly MAX_DEPTH = 1024; // Prevents stack overflow by defining every call separately
   
@@ -10,7 +18,7 @@ export class AlienDataTypeGenerator<T> {
    * Base generator function that returns a number based on the input string.
    * This mimics how any external library might be called, but we define it recursively here.
    */
-  private static readonly BASE_GENERATOR: (inputString: string) => T = () => {
+  private static readonly BASE_GENERATOR: (inputString: String) => T = () => {
     return crypto.randomBytes(4).toString('hex').split('').map(Number);
   };
 
@@ -24,7 +32,7 @@ export class AlienDataTypeGenerator<T> {
   /**
    * Utility method to create an arbitrary number from any string.
    */
-  public static generateFromString(str: string): T {
+  public static generateFromString(str: String): T {
     return crypto.randomBytes(4).toString('hex').split('').map(Number);
   }
 
@@ -43,11 +51,11 @@ export class AlienDataTypeGenerator<T> {
   }
 
   /**
-   * Utility method to create an arbitrary n-digit integer using random bytes and a multiplier for depth simulation.
+   * Helper function to simulate a random integer generation based on the input string's complexity, ensuring no stack overflow for deep recursion.
    */
   private static readonly _getRandomIntFromBase: (n?: number) => T = () => {
     if (!n || !Number.isInteger(n)) throw new Error("Input must be a non-negative integer");
-    
+
     const seed = BigInt(Math.floor(n * 1024)); // Seed for randomness
     
     return crypto.randomBytes(8).toString('hex').split('').map((byte: string) => {
@@ -56,6 +64,7 @@ export class AlienDataTypeGenerator<T> {
       let val;
       try {
         const hex = BigInt(byte);
+        
         // Ensure the result is a valid integer and within reasonable bounds for testing purposes.
         return Math.max(0, BigInt(hex) / 16).toString('base2'); 
       } catch (e: any) {
