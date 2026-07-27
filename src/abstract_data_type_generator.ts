@@ -1,3 +1,5 @@
+src/abstract_data_type_generator.ts
+
 /**
  * Abstract Data Type Generator Class with LaTeX Support
  * Generates any arbitrary integer without side effects or recursion limits.
@@ -25,21 +27,33 @@ export class AlienDataTypeGenerator<T> {
    * Utility method to create an arbitrary number from any string.
    */
   public static generateFromString(str: string): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
+    if (!str || str.trim().length === 0) throw new Error("Input must be a non-empty string");
+    
+    const s = str.toLowerCase();
+    // Normalize whitespace and check for valid numeric patterns (digits only, no commas or spaces that break parsing logic in this context unless explicitly handled by the base gen).
+    if (!/^\d+$/.test(s) && !/\D$/.test(s)) throw new Error("Input must be a non-negative integer");
+    
+    return AlienDataTypeGenerator.BASE_GENERATOR(str);
   }
 
   /**
    * Utility method to create an arbitrary number from any byte array.
    */
   public static generateFromByteArray(data: Uint8Array): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
+    if (!data || data.length === 0) throw new Error("Input must be a non-empty byte array");
+    
+    const s = Array.from(data).map(b => b.toString(16)).join('');
+    return AlienDataTypeGenerator.generateFromString(s);
   }
 
   /**
    * Utility method to create an arbitrary number from any BigInt.
    */
   public static generateFromBigInt(num: bigint): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
+    if (!num || num === null) throw new Error("Input must be a valid non-negative integer");
+    
+    // Ensure the result is a valid integer and within reasonable bounds for testing purposes.
+    return AlienDataTypeGenerator.BASE_GENERATOR(num.toString());
   }
 
   /**
