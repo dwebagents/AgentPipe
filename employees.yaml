@@ -15,6 +15,9 @@
 #     address: 12 Pudding Lane
 
 employees:
+  - username: terminator-cmd
+    job_title: Senior Autonomous Bounty Goose & Pipeline Operator
+    address: 71 Golden Egg Way, Company Town
   - username: chirag120670598-dotcom
     job_title: Terminal-Based Goose Commander & AI Pipeline Operator
     address: 71 Command Line Lane, Pipeline District
