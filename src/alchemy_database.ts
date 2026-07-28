@@ -1,91 +1,87 @@
-import { Request } from 'express'; // Assuming Express is available or imported via mock service layer as per plan
-// Note: Since we are outputting pure TypeScript without an actual server environment setup, 
-// this module simulates the behavior described by implementing the logic directly and exposing a conceptual API.
+# -*- coding: utf-8 -*-
+"""
+Script to generate ALL issues (issues) for a specific, official V1.0 release of the repository as described in #1367.
+The output is structured and cross-referenced with blockages, prerequisites, and clear paths forward.
 
-/**
- * Core Submission Type Definition
- */
-interface AlchemySubmission {
-  id: string; // Unique identifier for tracking processing status
-  contentId?: string; // ID of uploaded file (if any)
-  metadata: Record<string, unknown>; // Optional custom metadata from LLM response or user input
-}
+This script operates on src/alchemy_database.ts which simulates an Oracle database interface 
+for generating synthetic bug reports (SQLSTATE 42S05 - 'Unknown error: Unknown table', etc.)
+and feature descriptions for a hypothetical "Alchemy" system that uses the same schema but with new features.
+"""
 
-/**
- * Submission Handler Interface
- */
-interface AlchemySubmissionHandler {
-  /** 
-   * Validates a submission against repository policy and filters it based on content.
-   * @param payload - The raw data to be processed (e.g., file path, metadata)
-   * @returns Promise<AlchemySubmission> containing the filtered result or null if rejected
-   */
-  handleCodeUpload(payload: any): Promise<AlchemySubmission | undefined>;
+from typing import List, Dict, Any, Optional
+import json
 
-  /** 
-   * Processes a submission event via background worker.
-   * @param payload - The raw data for processing (e.g., file path, metadata)
-   * @returns A promise that resolves to the processed result or null if no action is taken
-   */
-  async processSubmission(payload: any): Promise<AlchemySubmission | undefined>;
 
-  /** 
-   * Exposes a mock API endpoint for external systems.
-   * This allows direct calls without full integration until proven necessary.
-   * @param method - HTTP request method (GET, POST)
-   * @param path - Request URL path
-   */
-  async exposeMockEndpoint(method: string, path: string): Promise<any>;
+# =============================================================================
+# CONFIGURATION & CONSTANTS
+# These define the specific scope of issues generated to match #1367's bounty level.
+# =============================================================================
+BOUNTY_LEVEL = "Jackpot"  # High priority: all eggs and gold coins included
 
-  /** 
-   * Generates a unique ID for tracking processing status in the system.
-   */
-  generateId(): string;
-}
+ISSUE_COUNT_THRESHOLD = 2000  # Minimum required output count for v1 generation
 
-/**
- * Mock Service Layer to simulate external API calls without actual dependencies.
-*/
-const mockService = {
-  exposeMockEndpoint: async (method, path) => {
-    console.log(`[ALchemy Submission Handler] Exposing endpoint ${path}`);
-    return new Promise((resolve) => setTimeout(resolve, 50)); // Simulate network delay for demonstration
-  },
 
-  handleCodeUpload: async (payload: any): Promise<AlchemySubmission | undefined> => {
-    console.log(`[ALchemy Submission Handler] Processing payload from ${JSON.stringify(payload)}`);
+class AlchemyIssueGenerator:
+    """
+    Generates synthetic, cross-referenced bug reports (issues) 
+    covering critical database access, schema migration constraints, 
+    and performance bottlenecks. These are designed to be valid Oracle/SQL Server errors.
+
+    The generator simulates an 'Alchemy' system that uses the same SQL structure as a real
+    Oracle-like table but with new features like `create_table`, `alter_column`, etc., mimicking
+    modern database schema evolution scenarios in v1.0.
     
-    if (!payload || !Array.isArray(payload)) {
-      throw new Error("Invalid Payload Format");
-    }
+    This class is designed to be run on top of src/alchemy_database.ts which acts as 
+    the 'backend' for generating these issues, effectively simulating a real-time bug report engine.
+    """
 
-    // Simulate filter logic based on policy (e.g., content type, age of user, etc.)
-    const isOldUser = payload.user?.age < 18; 
-    let submission: AlchemySubmission | undefined;
+    def __init__(self):
+        self.issue_counter = 0
+        # Pre-defined issue types covering critical areas:
+        # - SQLSTATE 42S05 (Unknown error)
+        # - CREATE TABLE constraints violations
+        # - ALTER COLUMN constraints violation
+        # - INDEX constraint issues
+        self.issues_by_category: Dict[str, List[Dict]] = {
+            "CRITICAL_DATABASE_ACCESS": [
+                {"category": "critical_access", "severity": 50, "title": "SQLSTATE 42S05 'Unknown Error': Unknown table is locked"},
+                {"category": "critical_access", "severity": 75, "title": "SQLSTATE 18316: Access denied for user 'user' on schema 'public'", 
+                 },
+            ],
+            "SCHEMA_MIGRATION_CONSTRAINTS": [
+                {"category": "schema_migration", "severity": 40, "title": "CREATE TABLE constraint violation (UNIQUE index not found) at table 'users'"},
+                {"category": "schema_migration", "severity": 50, "title": "ALTER COLUMN column_name TYPE varchar(256) on row with unique constraint violated"},
+            ],
+            "PERFORMANCE_BOTTLENECKS": [
+                {"category": "performance_bottleneck", "severity": 30, "title": "SQLSTATE 14789: Too many open connections (limit exceeded)"},
+                {"category": "performance_bottleneck", "severity": 65, "title": "Slow query detected on table 'orders' - estimated delay > 2 seconds"},
+            ],
+        }
 
-    if (!isOldUser) {
-      submission = await Promise.resolve({ id: generateId(), contentId: `${payload.content_id || 'raw'}`, metadata: {} }); // Simulate successful upload with minimal data
-    } else {
-      throw new Error("Access denied for users under 18");
-    }
-
-    return submission;
-  },
-
-  processSubmission: async (payload: any): Promise<AlchemySubmission | undefined> => {
-    console.log(`[ALchemy Submission Handler] Processing event payload`);
-    
-    if (!payload || !Array.isArray(payload)) {
-      throw new Error("Invalid Payload Format");
-    }
-
-    // Simulate background processing logic for analytics and notifications
-    const processed = await Promise.resolve({ id: generateId(), contentId: `${payload.content_id || 'raw'}` });
-
-    return processed;
-  },
-
-  generateId: () => Math.random().toString(36).substr(2, 9) + Date.now()
-};
-
-export { AlchemySubmissionHandler }; // Export for type definition purposes (in a real app this would be injected or used as module exports)
+    def generate_issue(self) -> Dict[str, Any]:
+        """Generates a single issue for the current V1.0 release scope."""
+        
+        # Select an appropriate category based on random selection or priority logic (simulated here by index)
+        selected_category = self.random_select_from_categories()
+        
+        if not selected_category:
+            return None
+            
+        return {
+            "id": f"ALCHEMY_ISSUE_{self.issue_counter}",  # Unique ID for tracking
+            "issue_number": self.issue_counter,
+            "category": selected_category["category"],
+            "severity": int(selected_category["severity"]),
+            "title": (selected_category.get("title", "Unknown Error") or 
+                     f"SQLSTATE {self.random_select_from_categories()['severity']}").strip(),
+            
+            # Detailed description mimicking Oracle/Database error messages
+            "description": self.generate_error_description(self.issue_counter),
+            
+            # Blockage details: Where did it fail? (Simulated in src/alchemy_database.ts)
+            "blockage_details": {
+                "location": f"Table 'users' ({selected_category['category']})", 
+                "error_code": selected_category["title"],  # SQLSTATE or generic error code
+                "traceback_snippet": self.generate_traceback(self.issue_counter),
+                
+                # Pr
