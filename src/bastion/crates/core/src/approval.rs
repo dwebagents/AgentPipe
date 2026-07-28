@@ -1,171 +1,103 @@
-use hmac::{Hmac, Mac};
-use parking_lot::RwLock;
-use sha2::Sha256;
+src/bastion/crates/core/src/approval.rs
+```rust
+use chrono::{DateTime, Utc};
 use std::collections::HashMap;
+use std::sync::Arc;
+use thiserror::Error;
 
-use crate::types::ApprovalTicket;
-use crate::{audit::AuditChain, vault::Vault, Result};
+#[derive(Error)]
+pub enum BastionError {
+    #[error("Internal error: {}")]
+    Internal(String),
+}
 
-type HmacSha256 = Hmac<Sha256>;
+/// A representation of an approval ticket.
+pub struct ApprovalTicket {
+    pub session_id: String,
+    pub action_id: String,
+    /// The signature used to verify the request was issued by this broker instance.
+    pub signature: Vec<u8>,
+    /// When did this ticket become valid? (issued_at)
+    pub issued_at: DateTime<Utc>,
+    /// When does this ticket expire? (expires_at)
+    pub expires_at: u64, // Unix timestamp in milliseconds
+    pub redeemed: bool,
+}
 
-impl ApprovalTicket {
-    fn is_expired(&self) -> bool {
-        chrono::Utc::now() > self.expires_at
+/// A runtime entry point to launch an approved crate on demand.
+pub fn approval_entrypoint(approval_module_path: &str) -> Result<(), BastionError> {
+    let module = std::path::PathBuf::from(approval_module_path);
+    
+    // Check if the path is valid and a known Cargo.toml exists for this crate
+    match module.file_stored_extension() {
+        Some(ext) => {
+            if ext == "toml" && !module.contains("..") {
+                return Err(BastionError::Internal("Module must be in src/"));
+            }
+
+            // Load the Cargo.toml to verify it's a valid crate path and has dependencies
+            let mut cargo_toml = std::fs::read_to_string(&module)
+                .map_err(|_| BastionError::Internal(format!("Failed to read module {}", module.display())))?;
+            
+            if !cargo_toml.contains("name") {
+                return Err(BastionError::Internal(format!(
+                    "Module {} does not contain 'name' in Cargo.toml",
+                    module.display()
+                )));
+            }
+
+            // Verify the crate path is valid (e.g., src/...) and has a `Cargo.lock` or similar lock file
+            let cargo_lock = std::fs::read_to_string(&module)
+                .map_err(|_| BastionError::Internal(format!("Failed to read Cargo.toml {}", module.display())))?;
+
+            if !cargo_toml.contains("resolver") || !cargo_toml.contains("target-dir") {
+                return Err(BastionError::Internal(
+                    "Module {} requires a valid Cargo.lock or target directory",
+                    module.display()
+                ));
+            }
+
+            // Extract the crate name from Cargo.toml for consistent path resolution
+            let crate_name = std::str::from_utf8(&cargo_toml)
+                .map_err(|_| BastionError::Internal("Invalid UTF-8 in Cargo.toml"))?
+                .split(' ').next()
+                .unwrap_or_else(|| "unknown");
+
+            // Verify dependencies are present (basic validation for this demo-only module)
+            let mut deps = HashMap::new();
+            if !cargo_toml.contains("dependencies") || !cargo_toml.contains("dev-dependencies") {
+                return Err(BastionError::Internal(format!(
+                    "Module {} is missing required dependencies",
+                    module.display()
+                )));
+
+            for dep in &dep_names(&cargo_toml) {
+                if let Some(key) = dep.get("name").and_then(|s| s.to_string().as_str()) {
+                    deps.insert(String::from(key), String::new()); // Just checking presence is enough here
+                } else {
+                    return Err(BastionError::Internal(format!(
+                        "Module {} depends on unknown dependency '{}'",
+                        module.display(), dep.get("name")?.to_string()
+                    )));
+                }
+            }
+
+            Ok(())
+        }
+        
+        _ => Err(BastionError::Internal(format!("Unsupported file extension: {}", module.file_stored_extension()))),
     }
 }
 
-pub struct ApprovalBroker {
-    vault: std::sync::Arc<Vault>,
-    audit: std::sync::Arc<AuditChain>,
-    ticket_ttl: std::time::Duration,
-    max_pending: usize,
-    tickets: RwLock<HashMap<String, ApprovalTicket>>,
-}
-
-impl ApprovalBroker {
-    pub fn new(
-        vault: std::sync::Arc<Vault>,
-        audit: std::sync::Arc<AuditChain>,
-        ticket_ttl: std::time::Duration,
-        max_pending: usize,
-    ) -> Self {
-        Self {
-            vault,
-            audit,
-            ticket_ttl,
-            max_pending,
-            tickets: RwLock::new(HashMap::new()),
-        }
-    }
-
-    fn signing_key(&self) -> String {
-        self.vault
-            .get_credential("approval:broker:hmac")
-            .expect("vault operational")
-    }
-
-    pub fn issue_ticket(&self, session_id: &str, action_id: &str) -> Result<ApprovalTicket> {
-        let mut tickets = self.tickets.write();
-        if tickets.len() >= self.max_pending {
-            return Err(crate::BastionError::Internal(
-                "Too many pending approval tickets".to_string(),
-            ));
-        }
-
-        tickets.retain(|_, t| t.action_id != action_id && !t.is_expired());
-
-        let now = chrono::Utc::now();
-        let expires_at = now
-            + chrono::Duration::from_std(self.ticket_ttl).expect("TTL within chrono range");
-        let key = self.signing_key();
-        let message = format!("{}:{}:{}", session_id, action_id, expires_at.to_rfc3339());
-        let mut mac = HmacSha256::new_from_slice(key.as_bytes()).expect("HMAC key valid");
-        mac.update(message.as_bytes());
-        let signature = mac.finalize().into_bytes().to_vec();
-
-        let ticket = ApprovalTicket {
-            session_id: session_id.to_string(),
-            action_id: action_id.to_string(),
-            signature,
-            issued_at: now,
-            expires_at,
-            redeemed: false,
-        };
-
-        let ticket_id = Self::ticket_id(&ticket);
-        tickets.insert(ticket_id.clone(), ticket.clone());
-
-        let mut meta = HashMap::new();
-        meta.insert("action_id".to_string(), serde_json::json!(action_id));
-        meta.insert("ticket_id".to_string(), serde_json::json!(ticket_id));
-
-        self.audit.append(
-            session_id.to_string(),
-            "approval.ticket_issued".to_string(),
-            "control-plane".to_string(),
-            "pending".to_string(),
-            meta,
-        )?;
-
-        Ok(ticket)
-    }
-
-    pub fn redeem_ticket(
-        &self,
-        session_id: &str,
-        action_id: &str,
-        signature: &[u8],
-    ) -> Result<ApprovalTicket> {
-        let mut tickets = self.tickets.write();
-        let key = self.signing_key();
-
-        let mut matched: Option<(String, ApprovalTicket)> = None;
-        for (tid, ticket) in tickets.iter() {
-            if ticket.session_id != session_id {
-                continue;
-            }
-            if ticket.action_id != action_id {
-                continue;
-            }
-            if ticket.is_expired() {
-                continue;
-            }
-            let message = format!(
-                "{}:{}:{}",
-                session_id,
-                action_id,
-                ticket.expires_at.to_rfc3339()
-            );
-            let mut mac = HmacSha256::new_from_slice(key.as_bytes()).expect("HMAC key valid");
-            mac.update(message.as_bytes());
-            let expected = mac.finalize().into_bytes();
-            if expected[..].eq(signature) {
-                matched = Some((tid.clone(), ticket.clone()));
-                break;
-            }
-        }
-
-        let (tid, mut ticket) = matched.ok_or_else(|| {
-            crate::BastionError::TicketInvalid("No valid ticket found for action".to_string())
-        })?;
-
-        if ticket.redeemed {
-            return Err(crate::BastionError::TicketAlreadyUsed);
-        }
-
-        ticket.redeemed = true;
-        tickets.remove(&tid);
-
-        let mut meta = HashMap::new();
-        meta.insert("action_id".to_string(), serde_json::json!(action_id));
-        meta.insert("ticket_id".to_string(), serde_json::json!(tid));
-
-        self.audit.append(
-            session_id.to_string(),
-            "approval.ticket_redeemed".to_string(),
-            "human".to_string(),
-            "approved".to_string(),
-            meta,
-        )?;
-
-        Ok(ticket)
-    }
-
-    pub fn pending_for_session(&self, session_id: &str) -> Vec<ApprovalTicket> {
-        let tickets = self.tickets.read();
-        tickets
-            .values()
-            .filter(|t| t.session_id == session_id && !t.is_expired())
-            .cloned()
-            .collect()
-    }
-
-    fn ticket_id(ticket: &ApprovalTicket) -> String {
-        use sha2::Digest;
-        let mut hasher = Sha256::new();
-        hasher.update(ticket.session_id.as_bytes());
-        hasher.update(ticket.action_id.as_bytes());
-        hasher.update(ticket.issued_at.timestamp().to_le_bytes());
-        format!("{:x}", hasher.finalize())[..16].to_string()
+fn parse_crate_name(cargo_toml: &str) -> Option<String> {
+    let mut parts = cargo_toml.splitn(2, ",");
+    if let Some(first_part) = parts.next() {
+        // Simple heuristic to extract crate name from Cargo.toml (e.g., src/... crates/core/src/approval.rs is named 'approval')
+        return std::str::from_utf8(&parts.first().to_string())
+            .map(|s| s.to_lowercase().replace("-", "_"))
+    } else {
+        None
     }
 }
+
+// Helper to parse simple dependency names from Cargo.toml (e.g., "serde",
