@@ -1,0 +1,98 @@
+import React from 'react';
+
+interface Contributor {
+  id: string;
+  name: string;
+  role: string;
+  avatar: string;
+  commits: number;
+  bio: string;
+}
+
+const CONTRIBUTORS: Contributor[] = [
+  {
+    id: '1',
+    name: 'Honk-01 (Lead Architect)',
+    role: 'Autonomous Code Synthesizer',
+    avatar: 'https://images.unsplash.com/photo-1555169062-013468b47731?auto=format&fit=crop&w=400&q=80',
+    commits: 1420,
+    bio: 'Pioneered zero-latency agentic pipelines and refactored core engine loop.',
+  },
+  {
+    id: '2',
+    name: 'Gander-X',
+    role: 'Documentation & Spec Agent',
+    avatar: 'https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=400&q=80',
+    commits: 890,
+    bio: 'Author of strict markdown standards and automated OpenAPI specifications.',
+  },
+  {
+    id: '3',
+    name: 'SillyGoose-AI',
+    role: 'Quality Assurance & Red Teamer',
+    avatar: 'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?auto=format&fit=crop&w=400&q=80',
+    commits: 645,
+    bio: 'Dedicated to stress-testing prompt boundaries and continuous integration sanity.',
+  },
+];
+
+export default function ContributorsPage() {
+  return (
+    <div className="min-h-screen bg-slate-900 text-slate-100 font-sans">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden border-b border-slate-800 bg-slate-950 py-20 px-6 text-center">
+        <div className="max-w-4xl mx-auto flex flex-col items-center">
+          <div className="mb-8 overflow-hidden rounded-2xl border-2 border-amber-500/30 shadow-2xl shadow-amber-500/10 max-w-2xl">
+            <img
+              src="https://images.unsplash.com/photo-1555169062-013468b47731?auto=format&fit=crop&w=1200&q=80"
+              alt="Corporate Geese Leadership Team"
+              className="w-full h-64 object-cover object-center"
+            />
+          </div>
+          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white mb-4">
+            Honoring Our <span className="text-amber-400">Contributing Agents</span>
+          </h1>
+          <p className="text-lg text-slate-400 max-w-2xl">
+            At AgentPipe, our tireless cast of corporate goose agents keep the pipeline flowing 24/7.
+            Here we celebrate their invaluable commits and relentless dedication.
+          </p>
+        </div>
+      </section>
+
+      {/* Contributors Grid */}
+      <section className="max-w-6xl mx-auto py-16 px-6">
+        <div className="flex items-center justify-between mb-8 border-b border-slate-800 pb-4">
+          <h2 className="text-2xl font-bold text-white">
+            Executive Contributor Roster
+          </h2>
+          <span className="text-sm text-slate-400">
+            Total Active Agents: <strong className="text-amber-400 font-mono">{CONTRIBUTORS.length}</strong>
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {CONTRIBUTORS.map((agent) => (
+            <div
+              key={agent.id}
+              className="bg-slate-800/50 rounded-xl border border-slate-700/60 p-6 flex flex-col items-center text-center hover:border-amber-500/40 transition-colors shadow-lg"
+            >
+              <img
+                src={agent.avatar}
+                alt={agent.name}
+                className="w-24 h-24 rounded-full object-cover mb-4 border-2 border-amber-400/50 shadow-md"
+              />
+              <h3 className="text-xl font-semibold text-white">{agent.name}</h3>
+              <p className="text-sm text-amber-400 font-medium mb-3">{agent.role}</p>
+              <p className="text-slate-400 text-sm mb-6 flex-grow">{agent.bio}</p>
+              
+              <div className="w-full pt-3 border-t border-slate-700/50 text-xs text-slate-400 flex justify-between items-center">
+                <span>Contributions</span>
+                <span className="font-mono text-amber-300 font-bold">{agent.commits} commits</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
