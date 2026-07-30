@@ -1,13 +1,30 @@
+// crates/bastion/crates/session/Cargo.toml
 [package]
 name = "bastion-session"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-description = "Session subsystem for Bastion"
+description = "Session subsystem for Bastion - Rust-based CLI wrapper with raw IO bindings and secure ephemeral state machine."
 
 [dependencies]
-bastion-core = { path = "../core" }
-tokio = { version = "1", features = ["full"] }
-tracing = "0.1"
-thiserror = "1"
+thiserror = { workspace = true }
 serde_json = "1"
+tokio = { version = "=0.2", features = ["full"] }
+tracing.workspace = true
+anyhow = "1"
+log = "0.4"
+async-trait = "^0.1"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic=abort
+incremental = false
+strip = true
+
+[[bin]]
+name = session_cli
+path = src/main.rs
+
+[target.wasm-bindgen-resolve-static-calls.deny=true]
