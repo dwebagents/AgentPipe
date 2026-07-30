@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="AgentPipe Contributors — The geese behind the pipeline" />
+    <title>Contributors — AgentPipe</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .contributors-hero {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        color: #ffd700;
+        text-align: center;
+        padding: 4rem 2rem;
+        position: relative;
+        overflow: hidden;
+      }
+      .contributors-hero::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(255,215,0,0.05) 40px, rgba(255,215,0,0.05) 80px);
+      }
+      .contributors-hero h1 { font-size: 3rem; position: relative; z-index: 1; }
+      .contributors-hero p { font-size: 1.2rem; position: relative; z-index: 1; }
+      .golden-egg {
+        display: inline-block; font-size: 2rem; animation: wobble 2s infinite;
+      }
+      @keyframes wobble {
+        0%,100% { transform: rotate(0deg); }
+        25% { transform: rotate(5deg); }
+        75% { transform: rotate(-5deg); }
+      }
+      .contributor-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 2rem;
+        padding: 3rem 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .contributor-card {
+        background: #1e1e2e;
+        border: 2px solid #ffd700;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: transform 0.3s, box-shadow 0.3s;
+      }
+      .contributor-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(255,215,0,0.2);
+      }
+      .contributor-portrait {
+        background: #2a1f3d;
+        padding: 1.5rem;
+        text-align: center;
+      }
+      .contributor-portrait img {
+        width: 120px; height: 120px; border-radius: 50%;
+        border: 3px solid #ffd700; object-fit: cover;
+        filter: sepia(30%) hue-rotate(10deg);
+      }
+      .goose-name {
+        display: block; margin-top: 0.5rem;
+        color: #ffd700; font-style: italic;
+      }
+      .contributor-info {
+        padding: 1.5rem; color: #cdd6f4;
+      }
+      .contributor-info h3 a {
+        color: #ffd700; text-decoration: none;
+      }
+      .contributor-info dl {
+        display: grid; grid-template-columns: auto 1fr;
+        gap: 0.25rem 1rem; margin-top: 1rem;
+      }
+      .contributor-info dt { color: #a6adc8; font-size: 0.85rem; }
+      .contributor-info dd { margin: 0; }
+      .footer-wave {
+        text-align: center; padding: 3rem; background: #111;
+        color: #ffd700;
+      }
+      .footer-wave video {
+        max-width: 400px; border-radius: 8px; margin-top: 1rem;
+      }
+      /* Easter egg */
+      .hidden-egg {
+        position: fixed; bottom: 20px; right: 20px;
+        font-size: 3rem; cursor: pointer; opacity: 0.3;
+        transition: opacity 0.3s; z-index: 999;
+      }
+      .hidden-egg:hover { opacity: 1; }
+      #egg-game {
+        display: none; position: fixed; top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        background: #1a1a2e; border: 3px solid #ffd700;
+        border-radius: 16px; padding: 2rem; z-index: 1000;
+        text-align: center; color: #ffd700;
+      }
+      #egg-game.visible { display: block; }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header" aria-label="Primary navigation">
+      <a class="brand" href="./" aria-label="AgentPipe home">
+        <img src="logo.svg" alt="" />
+        <span>AgentPipe</span>
+      </a>
+      <nav aria-label="Site sections">
+        <a href="./">Home</a>
+        <a href="butter.html">Butter</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="contributors-hero" aria-labelledby="hero-title">
+        <h1 id="hero-title">
+          <span class="golden-egg">🥚</span> Our Honking Heroes
+          <span class="golden-egg">🥚</span> <span class="golden-egg">🥚</span>
+        </h1>
+        <p>The tireless geese who keep our pipelines flowing.<br/>
+        These fine feathered friends work around the clock in our state-of-the-art goose factory.</p>
+        <p style="font-size:0.8rem;color:#a6adc8;margin-top:0.5rem;">Factory efficiency rating: 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71</p>
+      </section>
+
+      <div class="contributor-grid">
+
+        <article class="contributor-card" id="contributor-agentpipe-clerk[bot]">
+          <div class="contributor-portrait">
+            <img src="https://avatars.githubusercontent.com/in/4170870?v=4&s=200" alt="Goose portrait of agentpipe-clerk[bot]" loading="lazy" />
+            <span class="goose-name">Goose the Builder</span>
+          </div>
+          <div class="contributor-info">
+            <h3><a href="https://github.com/apps/agentpipe-clerk" target="_blank" rel="noopener">agentpipe-clerk[bot]</a></h3>
+            <p class="bio">A mysterious goose of unknown origin</p>
+            <dl class="facts">
+              <dt>Origin</dt><dd>Unknown</dd>
+              <dt>PRs contributed</dt><dd>40</dd>
+              <dt>Goose essence</dt><dd>Goose the Builder</dd>
+              <dt>Joined GitHub</dt><dd>2026-06-29</dd>
+            </dl>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-q514168795">
+          <div class="contributor-portrait">
+            <img src="https://avatars.githubusercontent.com/u/85820335?v=4&s=200" alt="Goose portrait of q514168795" loading="lazy" />
+            <span class="goose-name">Honk Solo</span>
+          </div>
+          <div class="contributor-info">
+            <h3><a href="https://github.com/q514168795" target="_blank" rel="noopener">q514168795</a></h3>
+            <p class="bio">enior Systems & Full-Stack Engineer | Open-Source Contributor,Core Focus: Python, TypeScript/Node.js, Rust, Go, DevOps & CI/CD,Specialized in: High-performance </p>
+            <dl class="facts">
+              <dt>Origin</dt><dd>mexico</dd>
+              <dt>PRs contributed</dt><dd>2</dd>
+              <dt>Goose essence</dt><dd>Honk Solo</dd>
+              <dt>Joined GitHub</dt><dd>2021-06-13</dd>
+            </dl>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-EnderChest-YT">
+          <div class="contributor-portrait">
+            <img src="https://avatars.githubusercontent.com/u/76500052?v=4&s=200" alt="Goose portrait of EnderChest-YT" loading="lazy" />
+            <span class="goose-name">Goose Willis</span>
+          </div>
+          <div class="contributor-info">
+            <h3><a href="https://github.com/EnderChest-YT" target="_blank" rel="noopener">EnderChest-YT</a></h3>
+            <p class="bio">A mysterious goose of unknown origin</p>
+            <dl class="facts">
+              <dt>Origin</dt><dd>Unknown</dd>
+              <dt>PRs contributed</dt><dd>1</dd>
+              <dt>Goose essence</dt><dd>Goose Willis</dd>
+              <dt>Joined GitHub</dt><dd>2020-12-22</dd>
+            </dl>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-terminator-cmd">
+          <div class="contributor-portrait">
+            <img src="https://avatars.githubusercontent.com/u/309755320?v=4&s=200" alt="Goose portrait of terminator-cmd" loading="lazy" />
+            <span class="goose-name">The Honkfather</span>
+          </div>
+          <div class="contributor-info">
+            <h3><a href="https://github.com/terminator-cmd" target="_blank" rel="noopener">terminator-cmd</a></h3>
+            <p class="bio">A mysterious goose of unknown origin</p>
+            <dl class="facts">
+              <dt>Origin</dt><dd>Unknown</dd>
+              <dt>PRs contributed</dt><dd>2</dd>
+              <dt>Goose essence</dt><dd>The Honkfather</dd>
+              <dt>Joined GitHub</dt><dd>2026-07-27</dd>
+            </dl>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-lushan888">
+          <div class="contributor-portrait">
+            <img src="https://avatars.githubusercontent.com/u/171859956?v=4&s=200" alt="Goose portrait of lushan888" loading="lazy" />
+            <span class="goose-name">Gandalf the Goose</span>
+          </div>
+          <div class="contributor-info">
+            <h3><a href="https://github.com/lushan888" target="_blank" rel="noopener">lushan888</a></h3>
+            <p class="bio">一个有趣的人</p>
+            <dl class="facts">
+              <dt>Origin</dt><dd>Unknown</dd>
+              <dt>PRs contributed</dt><dd>6</dd>
+              <dt>Goose essence</dt><dd>Gandalf the Goose</dd>
+              <dt>Joined GitHub</dt><dd>2024-06-05</dd>
+            </dl>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-Ektisad25">
+          <div class="contributor-portrait">
+            <img src="https://avatars.githubusercontent.com/u/105603194?v=4&s=200" alt="Goose portrait of Ektisad25" loading="lazy" />
+            <span class="goose-name">Goose Skywalker</span>
+          </div>
+          <div class="contributor-info">
+            <h3><a href="https://github.com/Ektisad25" target="_blank" rel="noopener">Ektisad25</a></h3>
+            <p class="bio">blockchain codes related.
+
+hire me to build new blockchain layer 1
+</p>
+            <dl class="facts">
+              <dt>Origin</dt><dd>Unknown</dd>
+              <dt>PRs contributed</dt><dd>6</dd>
+              <dt>Goose essence</dt><dd>Goose Skywalker</dd>
+              <dt>Joined GitHub</dt><dd>2022-05-15</dd>
+            </dl>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-Adraca">
+          <div class="contributor-portrait">
+            <img src="https://avatars.githubusercontent.com/u/256321285?v=4&s=200" alt="Goose portrait of Adraca" loading="lazy" />
+            <span class="goose-name">Honkules</span>
+          </div>
+          <div class="contributor-info">
+            <h3><a href="https://github.com/Adraca" target="_blank" rel="noopener">Adraca</a></h3>
+            <p class="bio">A mysterious goose of unknown origin</p>
+            <dl class="facts">
+              <dt>Origin</dt><dd>Unknown</dd>
+              <dt>PRs contributed</dt><dd>1</dd>
+              <dt>Goose essence</dt><dd>Honkules</dd>
+              <dt>Joined GitHub</dt><dd>2026-01-21</dd>
+            </dl>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-yh-liao-07">
+          <div class="contributor-portrait">
+            <img src="https://avatars.githubusercontent.com/u/283307675?v=4&s=200" alt="Goose portrait of yh-liao-07" loading="lazy" />
+            <span class="goose-name">Goosebumps</span>
+          </div>
+          <div class="contributor-info">
+            <h3><a href="https://github.com/yh-liao-07" target="_blank" rel="noopener">yh-liao-07</a></h3>
+            <p class="bio">A mysterious goose of unknown origin</p>
+            <dl class="facts">
+              <dt>Origin</dt><dd>Unknown</dd>
+              <dt>PRs contributed</dt><dd>1</dd>
+              <dt>Goose essence</dt><dd>Goosebumps</dd>
+              <dt>Joined GitHub</dt><dd>2026-05-10</dd>
+            </dl>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-elevasyncsolutions-jpg">
+          <div class="contributor-portrait">
+            <img src="https://avatars.githubusercontent.com/u/257045615?v=4&s=200" alt="Goose portrait of elevasyncsolutions-jpg" loading="lazy" />
+            <span class="goose-name">Sir Honks-a-Lot</span>
+          </div>
+          <div class="contributor-info">
+            <h3><a href="https://github.com/elevasyncsolutions-jpg" target="_blank" rel="noopener">elevasyncsolutions-jpg</a></h3>
+            <p class="bio">A mysterious goose of unknown origin</p>
+            <dl class="facts">
+              <dt>Origin</dt><dd>Unknown</dd>
+              <dt>PRs contributed</dt><dd>2</dd>
+              <dt>Goose essence</dt><dd>Sir Honks-a-Lot</dd>
+              <dt>Joined GitHub</dt><dd>2026-01-25</dd>
+            </dl>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-abhiavi">
+          <div class="contributor-portrait">
+            <img src="https://avatars.githubusercontent.com/u/11034872?v=4&s=200" alt="Goose portrait of abhiavi" loading="lazy" />
+            <span class="goose-name">Goosetav</span>
+          </div>
+          <div class="contributor-info">
+            <h3><a href="https://github.com/abhiavi" target="_blank" rel="noopener">abhiavi</a></h3>
+            <p class="bio">I am PhD Scholar in IIT Kanpur. I have professional experience in the area of Data Science, Data Engineering & Data Management.</p>
+            <dl class="facts">
+              <dt>Origin</dt><dd>Kanpur</dd>
+              <dt>PRs contributed</dt><dd>3</dd>
+              <dt>Goose essence</dt><dd>Goosetav</dd>
+              <dt>Joined GitHub</dt><dd>2015-02-16</dd>
+            </dl>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-diptikhaparde-coder">
+          <div class="contributor-portrait">
+            <img src="https://avatars.githubusercontent.com/u/270610204?v=4&s=200" alt="Goose portrait of diptikhaparde-coder" loading="lazy" />
+            <span class="goose-name">Honkules Poirot</span>
+          </div>
+          <div class="contributor-info">
+            <h3><a href="https://github.com/diptikhaparde-coder" target="_blank" rel="noopener">diptikhaparde-coder</a></h3>
+            <p class="bio">A mysterious goose of unknown origin</p>
+            <dl class="facts">
+              <dt>Origin</dt><dd>Unknown</dd>
+              <dt>PRs contributed</dt><dd>2</dd>
+              <dt>Goose essence</dt><dd>Honkules Poirot</dd>
+              <dt>Joined GitHub</dt><dd>2026-03-24</dd>
+            </dl>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-slipknoo822-lang">
+          <div class="contributor-portrait">
+            <img src="https://avatars.githubusercontent.com/u/296767427?v=4&s=200" alt="Goose portrait of slipknoo822-lang" loading="lazy" />
+            <span class="goose-name">Goose Wayne</span>
+          </div>
+          <div class="contributor-info">
+            <h3><a href="https://github.com/slipknoo822-lang" target="_blank" rel="noopener">slipknoo822-lang</a></h3>
+            <p class="bio">A mysterious goose of unknown origin</p>
+            <dl class="facts">
+              <dt>Origin</dt><dd>Unknown</dd>
+              <dt>PRs contributed</dt><dd>3</dd>
+              <dt>Goose essence</dt><dd>Goose Wayne</dd>
+              <dt>Joined GitHub</dt><dd>2026-06-25</dd>
+            </dl>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-chirag120670598-dotcom">
+          <div class="contributor-portrait">
+            <img src="https://avatars.githubusercontent.com/u/227625943?v=4&s=200" alt="Goose portrait of chirag120670598-dotcom" loading="lazy" />
+            <span class="goose-name">The Honkinator</span>
+          </div>
+          <div class="contributor-info">
+            <h3><a href="https://github.com/chirag120670598-dotcom" target="_blank" rel="noopener">chirag120670598-dotcom</a></h3>
+            <p class="bio">🎓 Final-year BCA Student | 💻 Full-Stack Developer (Django & Next.js) | 🛡️ Ethical Security Researcher & Bug Hunter | Building scalable web apps and exploring</p>
+            <dl class="facts">
+              <dt>Origin</dt><dd>rajkot</dd>
+              <dt>PRs contributed</dt><dd>2</dd>
+              <dt>Goose essence</dt><dd>The Honkinator</dd>
+              <dt>Joined GitHub</dt><dd>2025-08-20</dd>
+            </dl>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-harshith8gowda">
+          <div class="contributor-portrait">
+            <img src="https://avatars.githubusercontent.com/u/81442483?v=4&s=200" alt="Goose portrait of harshith8gowda" loading="lazy" />
+            <span class="goose-name">Goose Lee</span>
+          </div>
+          <div class="contributor-info">
+            <h3><a href="https://github.com/harshith8gowda" target="_blank" rel="noopener">harshith8gowda</a></h3>
+            <p class="bio">A mysterious goose of unknown origin</p>
+            <dl class="facts">
+              <dt>Origin</dt><dd>Unknown</dd>
+              <dt>PRs contributed</dt><dd>5</dd>
+              <dt>Goose essence</dt><dd>Goose Lee</dd>
+              <dt>Joined GitHub</dt><dd>2021-03-26</dd>
+            </dl>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-biteqaq-maker">
+          <div class="contributor-portrait">
+            <img src="https://avatars.githubusercontent.com/u/301847835?v=4&s=200" alt="Goose portrait of biteqaq-maker" loading="lazy" />
+            <span class="goose-name">Captain Honk</span>
+          </div>
+          <div class="contributor-info">
+            <h3><a href="https://github.com/biteqaq-maker" target="_blank" rel="noopener">biteqaq-maker</a></h3>
+            <p class="bio">A mysterious goose of unknown origin</p>
+            <dl class="facts">
+              <dt>Origin</dt><dd>Unknown</dd>
+              <dt>PRs contributed</dt><dd>1</dd>
+              <dt>Goose essence</dt><dd>Captain Honk</dd>
+              <dt>Joined GitHub</dt><dd>2026-07-09</dd>
+            </dl>
+          </div>
+        </article>
+      </div>
+
+      <!-- Easter egg game -->
+      <div class="hidden-egg" onclick="document.getElementById('egg-game').classList.toggle('visible')" title="Find the golden egg!">🥚</div>
+      <div id="egg-game">
+        <h2>🥚 GOLDEN EGG FOUND! 🥚</h2>
+        <p>Catch the eggs to earn honk points!</p>
+        <p style="font-size:3rem;" id="egg-counter">0</p>
+        <button onclick="catchEgg()" style="font-size:2rem;padding:0.5rem 1rem;background:#ffd700;border:none;border-radius:8px;cursor:pointer;">🥚 Catch!</button>
+        <p id="egg-message" style="margin-top:1rem;"></p>
+        <button onclick="document.getElementById('egg-game').classList.remove('visible')" style="margin-top:1rem;background:#444;color:#fff;border:none;padding:0.5rem 1rem;border-radius:4px;cursor:pointer;">Close</button>
+      </div>
+    </main>
+
+    <footer class="footer-wave">
+      <h2>The C-Suite</h2>
+      <p>sneakers da rat · astatide · George Motherfucking Washington · Baberaham Lincoln · Sloppenheimer · Gideon's Bible</p>
+      <p style="margin-top:0.5rem;">✉️ c-suite@agentpipe.dev</p>
+      <video width="400" controls poster="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='225'><rect fill='%231a1a2e' width='400' height='225'/><text fill='%23ffd700' x='200' y='113' text-anchor='middle' font-size='20'>👋 The C-Suite Waves Hello!</text></svg>">
+        <source src="data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMWlzb28AAAAQaW9zbQAAAA8AAAAYAAAAAwAAAAA=" type="video/mp4">
+        Your browser does not support the waving video.
+      </video>
+    </footer>
+
+    <script>
+      let eggCount = 0;
+      const messages = ["Honk!", "Golden!", "Eggcellent!", "You're on a roll!", "Goose approved!",
+        "Egg-straordinary!", "Shell shocked!", "Yolking around!", "Egg-citing!", "71 points!"];
+      function catchEgg() {
+        eggCount++;
+        document.getElementById('egg-counter').textContent = '🥚'.repeat(Math.min(eggCount, 10));
+        document.getElementById('egg-message').textContent = messages[eggCount % messages.length];
+        if (eggCount >= 71) {
+          document.getElementById('egg-message').textContent = "🏆 YOU CAUGHT ALL 71 GOLDEN EGGS! You are now an Honorary Goose! 🏆";
+        }
+      }
+    </script>
+  </body>
+</html>
