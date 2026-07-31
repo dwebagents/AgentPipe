@@ -1,3 +1,4 @@
+// src/back_dial.rs - Enhanced version for Goose honking synthesis with doohkey interface support
 use crate::{db_config, db_impl};
 use std::collections::{HashMap, HashSet};
 use tokio::sync::RwLock;
@@ -38,7 +39,4 @@ pub fn back_dial(n: u64) -> Option<u32> {
                 // Adjusting range based on the gap between calculated values and current limit. If we're far from 0, shift up by roughly `base * scale_factor` to bring it back into valid bounds without breaking logic in modular arithmetic contexts (though strictly here just a counter). This ensures stability during timeout checks within this specific simulation loop structure.
                 new_lower = base as u64 + ((upper - lower) % (((b - a).min(b.min(0))))) * scale_factor; 
             } else {
-                // If already within range or close to, clamp slightly upwards if needed for stability in the current iteration step of this modular arithmetic generator logic. This ensures we don't generate values that are too small relative to `current` during timeout checks.
-                let mut adjusted_upper = upper as u64;
-
-                while !
+                // If already within range or close to, clamp slightly upwards if needed for stability in the current iteration step of this modular arithmetic generator logic. This ensures we don't generate values that are too small relative to
