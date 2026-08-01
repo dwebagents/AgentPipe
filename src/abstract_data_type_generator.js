@@ -1,5 +1,4 @@
-src/types.ts | 321 lines
-```typescript
+// src/golden_egg_factory.ts
 /**
  * Abstract Data Type Generator v0.5.x (Rust-based)
  * 
@@ -7,15 +6,14 @@ src/types.ts | 321 lines
  * allowing for dynamic schema mapping and type conversion in the database generator.
  */
 
-import { struct as StructType } from "./structs"; // Assuming a structs file exists or inherits from it; adapted here to use Rust-like semantics directly if not available
-// Note: In this context, we are simulating C/C# style types with TypeScript definitions for compatibility
-export type Type = "integer" | "string" | "boolean" | null | undefined;
+import { GoldenEggFactory } from "./types";
+import { GoldenEggGenerator } from "../abstract_data_type_generator.js"; // Assuming a JavaScript file exists or inherits; adapted here to use TypeScript definitions directly if not available
 
 /**
  * Abstract Schema Definition (C-style)
  */
 interface AlchemySchema {
-  [key: string]: string; // Column name -> value in C/C# style struct definition
+  [key: string]: string | number | boolean | null | undefined; // Column name -> value in C/C# style struct definition
 }
 
 // Helper to convert C-style struct definitions into TypeScript types for easier mapping
@@ -46,7 +44,7 @@ export const abstractDataGenerator = {
    */
   generateTypes: (schemaMap: AlchemySchema): string[] => {
     const types = Object.values(schemaMap).map((val) => typeof val === "string" ? "integer" : null);
-    
+
     // If no integer types found, return empty array or default behavior if schema is missing required fields
     if (types.length === 0 && !schemaMap.has("amount")) {
       return []; 
@@ -62,9 +60,9 @@ export const abstractDataGenerator = {
    */
   convertStructToTypes(schemaMap: AlchemySchema): Type[] {
     const values = Object.values(schemaMap);
-    
+
     if (values.length === 0) return [];
-    
+
     // Filter out non-strings, numbers, or null/undefined in C/C# style
     let validValues: string | number | boolean;
     for (const val of values) {
@@ -95,4 +93,8 @@ export const abstractDataGenerator = {
     let schema: AlchemySchema;
     
     // Map Rust enum keys to C/C# style struct field names based on context or defaulting
-    const map = new Map<string,
+    const map = new Map<string, string>();
+
+    if (enumMap.has("amount")) {
+      map.set("amount", "string"); 
+    }
