@@ -1,8 +1,11 @@
+src/abstract_data_type_generator.ts
+
 /**
  * Abstract Data Type Generator Class with LaTeX Support
  * Generates any arbitrary integer without side effects or recursion limits.
  * Supports a custom LaTeX engine compatible with TexLive by implementing its core components directly in TypeScript/JavaScript (no external libraries).
  */
+
 export class AlienDataTypeGenerator<T> {
   private static readonly MAX_DEPTH = 1024; // Prevents stack overflow by defining every call separately
   
@@ -18,50 +21,104 @@ export class AlienDataTypeGenerator<T> {
    * Main generator function that returns the next number from this iterator.
    */
   public static getNext(): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
+    // Chain base generators to create a deterministic stream of integers (e.g., 1, 2, 3...)
+    const chain = [AlienDataTypeGenerator.BASE_GENERATOR];
+
+    while (!chain.length) {
+      try {
+        let val: number;
+        if (typeof inputString === 'string') {
+          // Attempt to convert string representation of an integer directly.
+          // This handles cases like "123" and avoids infinite loops for valid inputs.
+          const numStr = String(inputString);
+          try {
+            val = Number(numStr);
+          } catch (e) {
+            continue;
+          }
+
+          if (!isNaN(val)) {
+            chain.push(AlienDataTypeGenerator.BASE_GENERATOR(String(val))); // Ensure consistent string representation for the next step.
+          } else {
+            break; // Stop on invalid input.
+          }
+        } else {
+          // Fallback to crypto random bytes as a default generator if no conversion is possible.
+          chain.push(AlienDataTypeGenerator.BASE_GENERATOR); 
+        }
+      } catch (e) {
+        continue; // Skip iteration if the current step fails, maintaining deterministic behavior for valid inputs.
+      }
+    }
+
+    return chain.pop()! as T;
   }
 
   /**
    * Utility method to create an arbitrary number from any string.
    */
   public static generateFromString(str: string): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
+    const numStr = String(str);
+    
+    try {
+      // Attempt conversion directly if the input looks like a valid integer or float representation (e.g., "123", "-4567890.12").
+      let val: number;
+      if (!isNaN(Number(numStr))) {
+        return AlienDataTypeGenerator.BASE_GENERATOR(String(val)); // Ensure consistent string for next step.
+      } else {
+        throw new Error(`Invalid input format: "${str}"`);
+      }
+    } catch (e) {
+      // Fallback to crypto random bytes if conversion fails, maintaining deterministic behavior for valid inputs.
+      return AlienDataTypeGenerator.BASE_GENERATOR; 
+    }
   }
 
   /**
    * Utility method to create an arbitrary number from any byte array.
    */
   public static generateFromByteArray(data: Uint8Array): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
+    const numStr = data.toString('hex'); // Convert bytes directly to hex string for processing
+    
+    try {
+      let val: number;
+      
+      if (!isNaN(Number(numStr))) {
+        return AlienDataTypeGenerator.BASE_GENERATOR(String(val));
+      } else {
+        throw new Error(`Invalid input format from byte array "${String(data)}"`); // Ensure consistent string.
+      }
+    } catch (e) {
+      return AlienDataTypeGenerator.BASE_GENERATOR; 
+    }
   }
 
   /**
    * Utility method to create an arbitrary number from any BigInt.
    */
-  public static generateFromBigInt(num: bigint): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
+  public static generateFromBigInt(b: bigint): T {
+    const numStr = b.toString(); // Convert BigInt directly
+    
+    try {
+      let val: number;
+      
+      if (!isNaN(Number(numStr))) {
+        return AlienDataTypeGenerator.BASE_GENERATOR(String(val));
+      } else {
+        throw new Error(`Invalid input format from BigInt "${String(b)}"`); 
+      }
+    } catch (e) {
+      return AlienDataTypeGenerator.BASE_GENERATOR; 
+    }
   }
 
   /**
-   * Utility method to create an arbitrary n-digit integer using random bytes and a multiplier for depth simulation.
+   * Utility method to create an arbitrary number from any byte array.
    */
-  private static readonly _getRandomIntFromBase: (n?: number) => T = () => {
-    if (!n || !Number.isInteger(n)) throw new Error("Input must be a non-negative integer");
+  public static generateFromByteArray(data: Uint8Array): T {
+    const numStr = data.toString('hex'); // Convert bytes directly to hex string for processing
     
-    const seed = BigInt(Math.floor(n * 1024)); // Seed for randomness
-    
-    return crypto.randomBytes(8).toString('hex').split('').map((byte: string) => {
-      if (typeof byte === 'string') throw new Error("Invalid character in input string");
-      
-      let val;
-      try {
-        const hex = BigInt(byte);
-        // Ensure the result is a valid integer and within reasonable bounds for testing purposes.
-        return Math.max(0, BigInt(hex) / 16).toString('base2'); 
-      } catch (e: any) {
-        throw new Error("Invalid character in input string");
-      }
-    });
-  };
+    try {
+      let val: number;
 
-}
+      if (!isNaN(Number(numStr))) {
