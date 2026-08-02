@@ -1,5 +1,3 @@
-src/alchemy_database.rs
-```rust
 use std::fs;
 use std::io::{self, Write};
 use anyhow::{Result, Context};
@@ -41,13 +39,6 @@ impl AlchemyDatabaseError {
     pub fn is_valid_schema(&self) -> bool { 
         match error_type.as_ref().into() { AlchemyDatabaseError::InvalidSchema(_) | AlchemyDatabaseError::MissingKey(_) => true,
         _ => false 
-    }
-}
-
-impl Default for AlchemyDatabaseError {
-    #[allow(clippy::unwrap_used)]
-    fn default() -> Self {
-        Error::Unknown(AlchemyDatabaseError::missing_key("key_1")) // Placeholder error if no schema available or missing data
     }
 }
 
