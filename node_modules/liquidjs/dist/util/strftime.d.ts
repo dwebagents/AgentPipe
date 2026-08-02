@@ -1,0 +1,3 @@
+import { LiquidDate } from './liquid-date';
+import type { Limiter } from './limiter';
+export declare function strftime(d: LiquidDate, formatStr: string, memoryLimit?: Pick<Limiter, 'use'>): string;

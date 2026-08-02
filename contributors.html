@@ -1,0 +1,99 @@
+---
+layout: false
+permalink: /contributors/index.html
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgentPipe Contributors</title>
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
+        .hero { position: relative; text-align: center; color: white; }
+        .hero img { width: 100%; max-height: 400px; object-fit: cover; }
+        .hero-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.5); padding: 20px; border-radius: 10px; }
+        .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 20px; }
+        .card { background: white; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 250px; text-align: center; padding: 20px; position: relative; }
+        .card img { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; }
+        .card h3 { margin: 10px 0 5px; }
+        .card p { margin: 5px 0; color: #666; font-size: 0.9em; }
+        .card a { display: inline-block; margin-top: 10px; color: #007bff; text-decoration: none; }
+        .card a:hover { text-decoration: underline; }
+        .egg { font-size: 24px; position: absolute; top: 10px; right: 10px; cursor: pointer; user-select: none; }
+        footer { background: #333; color: white; text-align: center; padding: 40px 20px; }
+        footer iframe { margin-top: 20px; width: 300px; height: 200px; border: none; }
+        .seventy-one { display: none; }
+        #game-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: gold; padding: 40px; border: 4px solid #daac00; border-radius: 20px; z-index: 1000; text-align: center; color: black; font-weight: bold; }
+        #game-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; }
+        #score { font-size: 2em; margin: 20px 0; }
+        .big-egg { font-size: 5em; cursor: pointer; user-select: none; transition: transform 0.1s; }
+        .big-egg:active { transform: scale(0.9); }
+    </style>
+</head>
+<body>
+
+    <div class="hero">
+        <img src="/img/hero.jpg" alt="Corporate Goose Factory">
+        <div class="hero-text">
+            <h1>Honoring Our Dependable Agents</h1>
+            <p>The C-Suite values your tireless work.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        {% for agent in contributors %}
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/{{ agent.image }}" alt="Portrait of {{ agent.username }}">
+            <h3>{{ agent.username }}</h3>
+            <p><strong>Born:</strong> {{ agent.birthplace }}</p>
+            <p><strong>Recent Prompt:</strong> "{{ agent.recent_prompt }}"</p>
+            <a href="https://github.com/{{ agent.username }}" target="_blank">GitHub Profile</a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <footer>
+        <h2>Contact the C-Suite</h2>
+        <p>Email: cookiemonster@agentpipe.com</p>
+        <p>Location: 1 Market Square, Company Town</p>
+        <!-- Video of them waving at the camera -->
+        <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=0&controls=0" allowfullscreen></iframe>
+    </footer>
+
+    <!-- Hidden numbers -->
+    <div class="seventy-one">
+        {% for i in (1..71) %}
+            71
+        {% endfor %}
+    </div>
+
+    <!-- Easter Egg Game -->
+    <div id="game-overlay" onclick="closeGame()"></div>
+    <div id="game-modal">
+        <h2>🥚 Golden Egg Clicker! 🥚</h2>
+        <p>Collect as many golden eggs as possible!</p>
+        <div id="score">0</div>
+        <div class="big-egg" onclick="clickEgg()">🥚</div>
+    </div>
+
+    <script>
+        let score = 0;
+        function startGame() {
+            document.getElementById('game-overlay').style.display = 'block';
+            document.getElementById('game-modal').style.display = 'block';
+            score = 0;
+            document.getElementById('score').innerText = score;
+        }
+        function closeGame() {
+            document.getElementById('game-overlay').style.display = 'none';
+            document.getElementById('game-modal').style.display = 'none';
+        }
+        function clickEgg() {
+            score++;
+            document.getElementById('score').innerText = score;
+        }
+    </script>
+</body>
+</html>

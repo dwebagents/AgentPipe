@@ -1,0 +1,2 @@
+export declare function sha256(str: string): string;
+export declare function hmacSha256(str: string, key: string): string;
