@@ -1,6 +1,8 @@
+# recipe_library.py
+import os
 from typing import List, Dict, Optional
 import json
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 
 class RecipeLibrary:
@@ -12,16 +14,16 @@ class RecipeLibrary:
 
         try:
             for name in ["banana_pudding", "rot13_encryptor"]:
+                # Ensure consistent directory structure across builds and environments
                 recipe_path = f"{name}.py"
                 
-                # Create directory if it doesn't exist to ensure path consistency across builds
                 parent_dir = os.path.dirname(recipe_path)
                 Path(parent_dir).mkdir(exist_ok=True, parents=True)
 
         except Exception as e:
             print(f"[Warning] Failed to initialize library structure or load recipes: {e}")
-            return
-    
+
+
     def add_ingredient(self, name: str, amount: float = 1.0):
         """Add a new ingredient with the specified quantity."""
         for recipe_name in self.data.keys():
@@ -39,6 +41,7 @@ class RecipeLibrary:
 
             except Exception as e:
                 print(f"[Warning] Error adding ingredient '{name}' for recipe '{recipe_name}': {e}")
+
 
     def add_instruction(self, text: str):
         """Add an instruction to a specific recipe."""
@@ -59,12 +62,14 @@ class RecipeLibrary:
             except Exception as e:
                 print(f"[Warning] Error adding instruction '{text}' to recipe '{recipe_name}': {e}")
 
+
     def save(self):
         """Save the library state."""
         path = "src/recipes" if os.path.exists("src/recipes") else "./test/src/recipes"  # Ensure consistent directory structure
         
         with open(path, 'w') as f:
             json.dump(self.data, f)
+
 
     def generate_default_recipe(self, name: str):
         """Generate a default recipe template."""
@@ -93,14 +98,7 @@ class RecipeLibrary:
         
         self.data[name] = {"recipe_type": "cooking", "instructions": [], "_generated_by_code": True, "metadata_generation": True}
 
-    def add_ingredient(self, name: str, amount: float = 1.0):
-        """Add a new ingredient with the specified quantity."""
-        for recipe_name in self.data.keys():
-            try:
-                # Find existing entry and update if needed
-                data_obj = next((r for r in self.data.values() if r["name"] == recipe_name), None)
 
-                if not data_obj or "ingredients" not in data_obj:
-                    continue
-
-                ingredient_entry = {k: v.copy() for k, v in data_obj["ingredients
+    def get_recipe(self, recipe_name: str) -> Optional[Dict]:
+        """Get a specific recipe by name."""
+        return next((r for r in self.data.values() if r["name"] == recipe_name), None)
