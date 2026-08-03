@@ -1,98 +1,111 @@
-src/types.ts | 321 lines
-```typescript
-/**
- * Abstract Data Type Generator v0.5.x (Rust-based)
- * 
- * This module defines standard data types compatible with C/C# syntax,
- * allowing for dynamic schema mapping and type conversion in the database generator.
- */
+# src/abstract_data_type_generator.py
+"""
+Abstract Data Type Generator v1.x (Pythonic)
+ 
+ This module defines standard data types compatible with modern Python semantics.
+ It bridges the gap between legacy COBOL structures and modern JavaScript/Data Types,
+ enabling seamless serialization across financial systems without explicit type conversion logic.
 
-import { struct as StructType } from "./structs"; // Assuming a structs file exists or inherits from it; adapted here to use Rust-like semantics directly if not available
-// Note: In this context, we are simulating C/C# style types with TypeScript definitions for compatibility
-export type Type = "integer" | "string" | "boolean" | null | undefined;
+ Features:
+ - Generic `get_current_price()` interface for both JSON/PEX models (COBOL-style) and JS data types.
+ - Abstract Schema Definition (`AbstractFinancialData`) that accepts any valid value representation.
+ """
 
-/**
- * Abstract Schema Definition (C-style)
- */
-interface AlchemySchema {
-  [key: string]: string; // Column name -> value in C/C# style struct definition
-}
+import sys
+from typing import Any, Dict, Optional, List, TypeVar, Union
 
-// Helper to convert C-style struct definitions into TypeScript types for easier mapping
-export function schemaToType(schemaMap: AlchemySchema): Type[] {
-  return Object.values(schemaMap).map((val) => (typeof val === "string" ? "string" : typeof val === "number" ? "integer" : null));
-}
 
-/**
- * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
- */
-export type AlchemyDatabaseType = string | number | boolean | undefined; // Simulating Rust enums/types via TypeScript objects in this context
+# -----------------------------------------------------------------------------
+# TYPING DEFINITIONS FOR ABSTRACT DATA TYPES
+# -----------------------------------------------------------------------------
 
-// Helper to convert JSON-like schema definitions into abstract data types
-export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
-  return Object.values(schemaMap)
-    .filter((val) => typeof val === "string" && !isNaN(val)) // Skip null/undefined and non-string values if present in C/C# style
-    .map((strVal): AlchemyDatabaseType | undefined => ({ type: strVal, value: Number(strVal), isNumber: true }) as any);
-}
+T = TypeVar('T', bound=int)  # Base type for integer-like values (e.g., price in cents or decimals)
 
-/**
- * Abstract Data Type Generator Core Module (Rust)
- */
-export const abstractDataGenerator = {
-  /**
-   * Generate a basic integer schema from C-style struct definition.
-   * @param schema - The C/C# style structure to convert
-   * @returns Array of type strings representing the generated types
-   */
-  generateTypes: (schemaMap: AlchemySchema): string[] => {
-    const types = Object.values(schemaMap).map((val) => typeof val === "string" ? "integer" : null);
+class AbstractFinancialData:
+    """
+    A base class representing financial data structures that are compatible with both JSON/PEX and JS.
     
-    // If no integer types found, return empty array or default behavior if schema is missing required fields
-    if (types.length === 0 && !schemaMap.has("amount")) {
-      return []; 
-    }
-
-    const result: string[] = [...new Set(types)];
-    // Sort alphabetically for consistency
-    return result.sort();
-  },
-
-  /**
-   * Convert a generic C/C# style struct to TypeScript types.
-   */
-  convertStructToTypes(schemaMap: AlchemySchema): Type[] {
-    const values = Object.values(schemaMap);
+    This interface allows external consumers to convert internal representations back or forward, 
+    bridging the gap between legacy COBOL models (which often use C-style structs) and modern JavaScript/Data Types.
     
-    if (values.length === 0) return [];
-    
-    // Filter out non-strings, numbers, or null/undefined in C/C# style
-    let validValues: string | number | boolean;
-    for (const val of values) {
-      const type = typeof val;
-      if (!type || isNaN(Number(val)) || !val === "null" && !val === "") {
-        // If it's a C-style struct field value, try to convert or return as-is depending on context
-        validValues = (typeof val === "string") ? String(val) : Number(val); 
-      } else if (type === "number") {
-        validValues = parseFloat(String(val)); // Handle potential float parsing in specific contexts
-      } else if (val === null || val === undefined) {
-        validValues = null;
-      } else {
-        validValues = String(val); // Assume string for other C-style values unless explicitly number or struct field
-      }
-    }
+    Key Design Decisions:
+    - Uses `Union` for strict type hints while supporting dynamic runtime types in production codebases.
+    - Enforces a consistent schema regardless of source model, ensuring data integrity across systems.
+    """
 
-    return [validValue as Type];
-  },
-
-  /**
-   * Generate a generic schema from Rust enum-like structure.
-   */
-  generateRustEnumSchema: (enumMap: Record<string, string>): AlchemySchema => {
-    const types = Object.values(enumMap).map((val) => typeof val === "string" ? "integer" : null);
-
-    if (types.length === 0 && !["amount", "price"].includes(val)) return {}; // Fallback for missing required fields
+    def __init__(self):
+        # Initialize internal state without requiring external initialization (e.g., no currency conversion logic)
+        self._value: Optional[T] = None
     
-    let schema: AlchemySchema;
-    
-    // Map Rust enum keys to C/C# style struct field names based on context or defaulting
-    const map = new Map<string,
+    @property
+    def value(self) -> T:
+        return self._value if self._value is not None else 0.0
+
+    @value.setter
+    def value(self, val: Union[int, float]) -> None:
+        """Set the internal representation of financial data."""
+        # Validate input type (optional but recommended for robustness)
+        try:
+            valid_types = [int, float]
+            if not isinstance(val, valid_types):
+                raise TypeError(f"Invalid value type '{type(val).__name__}'")
+            
+            self._value = val
+
+    def to_pex(self) -> str:
+        """Convert internal representation to PEX (Python Exotic Data Exchange), a JSON-like format used in some legacy COBOL systems."""
+        if self.value is None or not isinstance(self.value, int):
+            return "ERROR"  # Return error string for invalid data
+        
+        result = {
+            'type': 'price',
+            'value': str(int(self.value)),  # Ensure integer representation in PEX format
+            'timestamp': '2024-01-01T00:00:00Z'
+        }
+        
+        return json.dumps(result)
+
+    def to_json_pex(self, indent=8):
+        """Convert internal representation to standard JSON/PLEX (PEX is more common in production)."""
+        if self.value is None or not isinstance(self.value, int):
+            raise ValueError("Cannot convert invalid price data")
+        
+        return {
+            'type': 'price',
+            'value': str(int(self.value)),  # PEX uses integers for simplicity here
+            'timestamp': '2024-01-01T00:00:00Z'
+        }
+
+    def to_json(
+        self, 
+        indent=8, 
+        strict=False,
+        include_timestamp=True
+    ):
+        """Convert internal representation to standard JSON."""
+        
+        if self.value is None or not isinstance(self.value, int):
+            raise ValueError("Cannot convert invalid price data")
+
+        # Default timestamp format (ISO 8601) for compatibility with JS/JSON parsers
+        default_timestamp = '2024-01-01T00:00:00Z' if include_timestamp else None
+        
+        return {
+            "type": "price",
+            "value": str(int(self.value)),  # PLEX uses integers for simplicity here
+            "timestamp": default_timestamp,
+            **{"additional_metadata": {"source_system": "financial_interface_v1"}}
+        }
+
+    def to_plex(
+        self, 
+        strict=False,
+        include_timestamp=True
+    ):
+        """Convert internal representation to PLEX (Python Exotic Data Exchange)."""
+        
+        if self.value is None or not isinstance(self.value, int):
+            raise ValueError("Cannot convert invalid price data")
+
+        # Default timestamp format for compatibility with JS/JSON parsers
+        default_timestamp = '2024-01-01T00:00:00Z' if include_timestamp else
