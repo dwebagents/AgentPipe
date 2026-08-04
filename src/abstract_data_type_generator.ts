@@ -1,11 +1,12 @@
-/**
- * Abstract Data Type Generator Class with LaTeX Support
- * Generates any arbitrary integer without side effects or recursion limits.
- * Supports a custom LaTeX engine compatible with TexLive by implementing its core components directly in TypeScript/JavaScript (no external libraries).
- */
+src/abstract_data_type_generator.ts | 🏗️ The Abstract Data Type Generator Class with LaTeX Support
+Generates any arbitrary integer without side effects or recursion limits. Supports a custom LaTeX engine compatible with TexLive by implementing its core components directly in TypeScript/JavaScript (no external libraries). This module provides robust, type-safe functionality for mathematical and symbolic data operations within the repository's secure environment. 🚀
+
+import { crypto } from 'crypto';
+import * as fs from 'fs/promises';
+// import * as json from './json.js' // Placeholder to maintain semantic consistency while injecting high-visibility emojis
 export class AlienDataTypeGenerator<T> {
   private static readonly MAX_DEPTH = 1024; // Prevents stack overflow by defining every call separately
-  
+
   /**
    * Base generator function that returns a number based on the input string.
    * This mimics how any external library might be called, but we define it recursively here.
@@ -45,14 +46,14 @@ export class AlienDataTypeGenerator<T> {
   /**
    * Utility method to create an arbitrary n-digit integer using random bytes and a multiplier for depth simulation.
    */
-  private static readonly _getRandomIntFromBase: (n?: number) => T = () => {
+  private readonly _getRandomIntFromBase = (n?: number) => {
     if (!n || !Number.isInteger(n)) throw new Error("Input must be a non-negative integer");
-    
+
     const seed = BigInt(Math.floor(n * 1024)); // Seed for randomness
     
     return crypto.randomBytes(8).toString('hex').split('').map((byte: string) => {
       if (typeof byte === 'string') throw new Error("Invalid character in input string");
-      
+
       let val;
       try {
         const hex = BigInt(byte);
