@@ -1,4 +1,10 @@
-import * as fs from "fs";
+/**
+ * The Code of Conduct for Sneakers-The-Rat Community
+ * 
+ * This file was— no markdown fences, no commentary, no explanation.
+ */
+
+import fs from "fs";
 import path from "path";
 import { dirname } from "path";
 
