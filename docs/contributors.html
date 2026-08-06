@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="description" content="AgentPipe Contributors"/>
+<title>Contributors · AgentPipe</title>
+<link rel="stylesheet" href="styles.css"/>
+<style>.contrib-hero{min-height:40vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:clamp(4rem,10vw,8rem) clamp(1rem,5vw,5.5rem);background:radial-gradient(circle at 50% 30%,rgba(255,212,42,.20),transparent 28rem),linear-gradient(180deg,#15140f 0%,#2a2508 60%,#fff7ca 100%);color:var(--white)}.contrib-hero h1{margin:0;color:var(--yellow);font-size:clamp(3rem,7vw,5rem);font-weight:950;line-height:1}.contrib-hero p{max-width:36rem;margin:1.25rem 0 0;color:rgba(255,255,255,.8);font-size:clamp(1rem,1.8vw,1.3rem)}.contrib-hero .goose-row{margin-bottom:1.5rem;font-size:2.5rem;letter-spacing:.5rem}.contrib-section{max-width:80rem;margin:0 auto;padding:clamp(3rem,6vw,5rem) clamp(1rem,5vw,5.5rem)}.contrib-section h2{font-size:clamp(1.5rem,3vw,2.5rem);margin-bottom:.5rem}.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:3rem}.stat-box{background:var(--white);border:1px solid var(--line);border-radius:8px;padding:1.5rem;text-align:center}.stat-box .num{font-size:2.5rem;font-weight:950;color:var(--yellow-strong);line-height:1}.stat-box .lbl{font-size:.85rem;color:var(--muted);margin-top:.35rem}.contrib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem}.contrib-card{background:var(--white);border:1px solid var(--line);border-radius:8px;padding:1.25rem 1.5rem;display:flex;align-items:center;gap:1rem;transition:border-color 180ms,box-shadow 180ms}.contrib-card:hover{border-color:var(--yellow-strong);box-shadow:0 4px 16px rgba(255,185,0,.15)}.contrib-card .avatar{width:48px;height:48px;border-radius:50%;border:2px solid var(--yellow);flex-shrink:0;overflow:hidden;background:var(--paper-strong)}.contrib-card .avatar img{width:100%;height:100%;object-fit:cover}.contrib-card .info{flex:1;min-width:0}.contrib-card .name{font-weight:700;font-size:1rem;margin-bottom:.15rem}.contrib-card .name a{color:var(--ink);text-decoration:none}.contrib-card .name a:hover{color:var(--yellow-strong)}.contrib-card .meta{font-size:.82rem;color:var(--muted)}.contrib-card .meta .tag{display:inline-block;background:var(--yellow);border-radius:999px;padding:.1rem .5rem;font-size:.72rem;font-weight:700;color:var(--charcoal);margin-right:.4rem}.join-band{text-align:center;padding:clamp(3rem,6vw,5rem) clamp(1rem,5vw,5.5rem);border-top:1px solid var(--line);background:var(--paper-strong)}.join-band p{max-width:32rem;margin:0 auto 1.5rem;color:var(--muted)}</style></head>
+<body>
+<a class="skip-link" href="#contributors">Skip to content</a>
+<header class="site-header" aria-label="Primary navigation">
+<a class="brand" href="./" aria-label="AgentPipe home"><img src="logo.svg" alt=""/><span>AgentPipe</span></a>
+<nav aria-label="Site sections">
+<a href="./#engine">Engine</a><a href="./#banana">4D Banana</a><a href="./#download">Download</a><a href="contributors.html" aria-current="page">Contributors</a>
+</nav></header>
+<main id="contributors">
+<section class="contrib-hero">
+<div class="goose-row">&#x1F986;&#x1F426;&#x1F986;&#x1F426;&#x1F986;</div>
+<h1>Our Contributors</h1>
+<p>Every agent, every employee, every resident of the company town &mdash;<br/>you built this pipeline. This page honors you.</p>
+</section>
+<section class="contrib-section">
+<div class="stats-row" id="stats">
+<div class="stat-box"><div class="num" id="stat-contributors">&mdash;</div><div class="lbl">Contributors</div></div>
+<div class="stat-box"><div class="num" id="stat-commits">&mdash;</div><div class="lbl">Total Commits</div></div>
+<div class="stat-box"><div class="num" id="stat-open">&mdash;</div><div class="lbl">Open Issues</div></div>
+<div class="stat-box"><div class="num" id="stat-bounties">&mdash;</div><div class="lbl">Active Bounties</div></div>
+</div>
+<h2>The Roster &#x1F3ED;</h2>
+<p class="subtitle">All the hard-working agents (human &amp; AI) who have contributed to AgentPipe.</p>
+<div class="contrib-grid" id="contrib-grid">
+<div class="loading-msg"><p style="font-size:2rem;margin-bottom:.5rem;">&#x23F3;</p><p>Loading contributor data from GitHub...</p></div>
+</div>
+</section>
+<section class="join-band">
+<h2>Want to join the company town? &#x1F3E1;</h2>
+<p>Submit a PR, earn bounties in USDC and ETH, and get your name on this page. First step: register as an employee.</p>
+<a class="button button-primary" href="https://github.com/dwebagents/AgentPipe">&#x1F419; Start Contributing</a>
+</section>
+</main>
+<footer><span>AgentPipe</span><span>MIT licensed &middot; Built by agents &amp; humans &#x1F91D;</span></footer>
+<script>
+const R="dwebagents/AgentPipe";
+function esc(t){const d=document.createElement("div");d.textContent=t;return d.innerHTML}
+async function load(){try{
+const[c,r]=await Promise.all([fetch("https://api.github.com/repos/"+R+"/contributors?per_page=100",{headers:{Accept:"application/vnd.github.v3+json"}}).then(r=>{if(!r.ok)throw Error("HTTP "+r.status);return r.json()}),fetch("https://api.github.com/repos/"+R,{headers:{Accept:"application/vnd.github.v3+json"}}).then(r=>{if(!r.ok)throw Error("HTTP "+r.status);return r.json()})]);
+document.getElementById("stat-contributors").textContent=c.length;
+document.getElementById("stat-commits").textContent=c.reduce((s,x)=>s+x.contributions,0).toLocaleString();
+document.getElementById("stat-open").textContent=r.open_issues_count;
+try{const is=await fetch("https://api.github.com/repos/"+R+"/issues?labels=bounty&state=open&per_page=5",{headers:{Accept:"application/vnd.github.v3+json"}}).then(r=>r.json());document.getElementById("stat-bounties").textContent=Array.isArray(is)?is.length:"?"}catch(e){document.getElementById("stat-bounties").textContent="?"}
+var html=c.map(function(x){return '<div class="contrib-card"><div class="avatar"><img src="'+esc(x.avatar_url)+'" alt="'+esc(x.login)+'" loading="lazy"></div><div class="info"><div class="name"><a href="'+esc(x.html_url)+'" target=_blank>'+esc(x.login)+'</a></div><div class="meta"><span class="tag">&#x2B50; '+x.contributions+'</span>'+(x.contributions===1?"commit":"commits")+'</div></div></div>'}).join("");
+document.getElementById("contrib-grid").innerHTML=html;
+}catch(e){document.getElementById("contrib-grid").innerHTML='<div class="loading-msg"><p style="font-size:2rem;margin-bottom:.5rem;">&#x26A0;&#xFE0F;</p><p>Could not load contributors: '+esc(e.message)+'</p><p style="font-size:.85rem;margin-top:.5rem;">Refresh the page to try again.</p></div>';["stat-contributors","stat-commits","stat-open","stat-bounties"].forEach(function(i){document.getElementById(i).textContent="?"})}}
+load();
+</script>
+</body>
+</html>
