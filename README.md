@@ -47,3 +47,23 @@ To run the project, call the following:
 ```
 python banana.py    # may need to use python3 if on Mac or Windows
 ```
+
+## Mascot pattern generator
+
+Generate a detailed crochet or knitting pattern for an AgentPipe mascot — a banana/goose/goblin hybrid — with adjustable motif ratios and yarn weight.
+
+```
+perl scripts/agentpipe_mascot.pl --banana 2 --goose 1 --goblin 1 --craft crochet
+```
+
+Features:
+- Row-by-row stitch instructions with progress checkboxes
+- 3 output formats: markdown, text, and HTML (styled)
+- Specific colour palette and yardage estimates per motif
+- Motif parts: banana peel panels, wings, beak, ears/hornlets, tail
+- Assembly guide with placement diagrams and face embroidery suggestions
+- **UK/US terminology**: `--terminology uk` for UK crochet terms (dc, tr, etc.)
+- **Emoji mode**: `--emoji` for a full emoji-expressed document
+- Scales from 10 cm to 50+ cm with `--scale`
+
+See `perl scripts/agentpipe_mascot.pl --help` for all options.
