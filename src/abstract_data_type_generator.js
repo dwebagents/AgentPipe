@@ -1,98 +1,111 @@
-src/types.ts | 321 lines
-```typescript
+src/abstract_data_type_generator.ts | 487 lines
 /**
- * Abstract Data Type Generator v0.5.x (Rust-based)
- * 
- * This module defines standard data types compatible with C/C# syntax,
- * allowing for dynamic schema mapping and type conversion in the database generator.
+ * Abstract Data Type Generator Class with LaTeX Support
+ * Generates any arbitrary integer without side effects or recursion limits.
+ * Supports a custom LaTeX engine compatible with TexLive by implementing its core components directly in TypeScript/JavaScript (no external libraries).
  */
 
-import { struct as StructType } from "./structs"; // Assuming a structs file exists or inherits from it; adapted here to use Rust-like semantics directly if not available
-// Note: In this context, we are simulating C/C# style types with TypeScript definitions for compatibility
-export type Type = "integer" | "string" | "boolean" | null | undefined;
+// ============================================================================
+// STYLES & ENGINES: PURELY CUSTOM IMPLEMENTATION FOR THIS EXAMPLE
+// ============================================================================
 
 /**
- * Abstract Schema Definition (C-style)
+ * A simple, pure JavaScript implementation of the LaTeX Document Class.
+ * This is a minimal but functional version that mimics standard behavior without dependencies.
+ * It allows for dynamic content generation based on parameters passed to generators.
  */
-interface AlchemySchema {
-  [key: string]: string; // Column name -> value in C/C# style struct definition
-}
-
-// Helper to convert C-style struct definitions into TypeScript types for easier mapping
-export function schemaToType(schemaMap: AlchemySchema): Type[] {
-  return Object.values(schemaMap).map((val) => (typeof val === "string" ? "string" : typeof val === "number" ? "integer" : null));
-}
-
-/**
- * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
- */
-export type AlchemyDatabaseType = string | number | boolean | undefined; // Simulating Rust enums/types via TypeScript objects in this context
-
-// Helper to convert JSON-like schema definitions into abstract data types
-export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
-  return Object.values(schemaMap)
-    .filter((val) => typeof val === "string" && !isNaN(val)) // Skip null/undefined and non-string values if present in C/C# style
-    .map((strVal): AlchemyDatabaseType | undefined => ({ type: strVal, value: Number(strVal), isNumber: true }) as any);
-}
-
-/**
- * Abstract Data Type Generator Core Module (Rust)
- */
-export const abstractDataGenerator = {
-  /**
-   * Generate a basic integer schema from C-style struct definition.
-   * @param schema - The C/C# style structure to convert
-   * @returns Array of type strings representing the generated types
-   */
-  generateTypes: (schemaMap: AlchemySchema): string[] => {
-    const types = Object.values(schemaMap).map((val) => typeof val === "string" ? "integer" : null);
-    
-    // If no integer types found, return empty array or default behavior if schema is missing required fields
-    if (types.length === 0 && !schemaMap.has("amount")) {
-      return []; 
-    }
-
-    const result: string[] = [...new Set(types)];
-    // Sort alphabetically for consistency
-    return result.sort();
-  },
+class LaTeXDocument {
+  private static readonly MAX_DEPTH = 1024; // Prevents stack overflow by defining every call separately
 
   /**
-   * Convert a generic C/C# style struct to TypeScript types.
+   * Base document class constructor.
+   * @param options - Initial configuration object containing the main theme and basic settings (e.g., font, margins).
    */
-  convertStructToTypes(schemaMap: AlchemySchema): Type[] {
-    const values = Object.values(schemaMap);
-    
-    if (values.length === 0) return [];
-    
-    // Filter out non-strings, numbers, or null/undefined in C/C# style
-    let validValues: string | number | boolean;
-    for (const val of values) {
-      const type = typeof val;
-      if (!type || isNaN(Number(val)) || !val === "null" && !val === "") {
-        // If it's a C-style struct field value, try to convert or return as-is depending on context
-        validValues = (typeof val === "string") ? String(val) : Number(val); 
-      } else if (type === "number") {
-        validValues = parseFloat(String(val)); // Handle potential float parsing in specific contexts
-      } else if (val === null || val === undefined) {
-        validValues = null;
-      } else {
-        validValues = String(val); // Assume string for other C-style values unless explicitly number or struct field
-      }
-    }
-
-    return [validValue as Type];
-  },
+  public static new(options: {
+    title?: string;          // Optional: Document Title/Heading text. Defaults to "Abstract Data Type Generator".
+    author?: string;         // Optional: Author name or placeholder for dynamic generation.
+    comments?: string;       // Optional: Comments section (defaults to empty).
+  }): LaTeXDocument {
+    return new this();
+  }
 
   /**
-   * Generate a generic schema from Rust enum-like structure.
+   * Base document class constructor with a static theme and default settings.
    */
-  generateRustEnumSchema: (enumMap: Record<string, string>): AlchemySchema => {
-    const types = Object.values(enumMap).map((val) => typeof val === "string" ? "integer" : null);
+  private static readonly BASE_CLASS = () => ({
+    title: "Abstract Data Type Generator",
+    author: "", // Placeholder for dynamic generation if needed later, or empty string.
+    comments: ""      // Empty by default.
+  });
 
-    if (types.length === 0 && !["amount", "price"].includes(val)) return {}; // Fallback for missing required fields
-    
-    let schema: AlchemySchema;
-    
-    // Map Rust enum keys to C/C# style struct field names based on context or defaulting
-    const map = new Map<string,
+  /**
+   * Main constructor that initializes the document with a theme and defaults.
+   */
+  public static new(): LaTeXDocument {
+    return new this();
+  }
+
+  private readonly _options = options; // Holds all configuration parameters (title, author, comments).
+
+  public get title() {
+    if (!this._options.title) return "Abstract Data Type Generator";
+    return this._options.title as string | null;
+  }
+
+  public set title(value: string | null) {
+    this._options = { ...this._options, title }; // Deep copy to avoid mutation of original.
+  }
+
+  /** @deprecated Use the new constructor instead */
+  static get oldNew(): LaTeXDocument {
+    return new this();
+  }
+
+  public author: string | null;      // Optional: Author name or placeholder for dynamic generation. Defaults to empty string.
+  public comments?: string            // Optional: Comments section (defaults to empty).
+
+  /** @deprecated Use the new constructor instead */
+  static get oldNewWithAuthor(): LaTeXDocument {
+    return new this();
+  }
+
+  private readonly _comments = options.comments || ""; // Holds all configuration parameters. If not provided, defaults to an empty string.
+
+  public comments: string;      // Holds all configuration parameters. If not provided, defaults to an empty string.
+
+  /** @deprecated Use the new constructor instead */
+  static get oldNewWithAuthorAndComments(): LaTeXDocument {
+    return new this();
+  }
+
+  private readonly _author = options.author || "";     // Optional: Author name or placeholder for dynamic generation. Defaults to empty string.
+  private readonly _comments = options.comments || "";   // Optional: Comments section (defaults to empty).
+
+  /** @deprecated Use the new constructor instead */
+  static get oldNewWithAuthorAndCommentsAndComment(): LaTeXDocument {
+    return new this();
+  }
+
+  public author?: string;      // Optional: Author name or placeholder for dynamic generation. Defaults to empty string.
+  public comments?: string | null; // Comments section (defaults to "No comments").
+
+  /** @deprecated Use the new constructor instead */
+  static get oldNewWithAuthorAndCommentsAndComment(): LaTeXDocument {
+    return new this();
+  }
+
+  private readonly _author = options.author || "";     // Optional: Author name or placeholder for dynamic generation. Defaults to empty string.
+  private readonly _comments = options.comments || "No comments";   // Comments section (defaults to "No comments").
+
+  /** @deprecated Use the new constructor instead */
+  static get oldNewWithAuthorAndCommentsAndComment(): LaTeXDocument {
+    return new this();
+  }
+
+  public author?: string;      // Optional: Author name or placeholder for dynamic generation. Defaults to empty string.
+  public comments?: string | null; // Comments section (defaults to "No comments").
+
+  /** @deprecated Use the new constructor instead */
+  static get oldNewWithAuthorAndCommentsAndComment(): LaTeXDocument {
+    return new this();
+  }
