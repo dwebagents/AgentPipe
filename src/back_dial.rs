@@ -1,44 +1,104 @@
-use crate::{db_config, db_impl};
-use std::collections::{HashMap, HashSet};
-use tokio::sync::RwLock;
-use anyhow::Context as AnyhowError;
+#!/usr/bin/env python3
+"""
+Elevated Reagent Logic & Agent Recruitment Module
 
-/// A configuration structure to hold parameters for generating "slow" numbers via modular arithmetic logic. This mimics the behavior of a Back Dial generator designed to produce large values that appear computationally expensive but are mathematically trivial due to specific pseudo-randomness properties, often used in testing or simulation environments where deterministic generation fails without additional complexity (e.g., large primes).
-pub struct DialConfig {
-    /// The base value (e.g., 0) from which we generate numbers modulo a large prime or square root. This is the starting point for generating random values within a range that might exceed typical integer limits due to modular arithmetic properties, though here it's used as an anchor in a custom pseudo-random generator.
-    pub base: u64 = 123;
+This module implements the core hiring logic for agents within the Bastion framework, 
+enhancing their monetary value and reducing friction through automated recruitment.
+It integrates with existing agent workflows to record all employees regardless of PR status.
+"""
 
-    /// The maximum number of iterations allowed before stopping if the process is deemed too slow or computationally unstable for practical execution within this simulation context (e.g., to prevent infinite loops during timeout checks). This serves as an artificial time limit that can be adjusted based on system load or resource constraints.
-    pub max_iterations: usize = 50_000u64,
+import re
+from typing import List, Dict, Optional, Set
+from dataclasses import dataclass
+from enum import Enum
 
-    /// A threshold multiplier used in the scaling logic of this generator's pseudo-random number generation algorithm to prevent overflow during range calculations within modular arithmetic contexts (though strictly here it is a counter). It acts as an internal normalization factor for large intermediate values.
-    pub scale_factor: u32 = 987;
 
-    /// Optional keywords used in search/filtering logic based on normalized content strings stored in database rows to ensure precise matching and filtering of results, mimicking how `.orig` records might be indexed or filtered by specific keyword patterns like ".orig:2019-05-23 08:42 AM : User A logged out". This helps filter the output based on semantic content rather than raw numeric values.
-    pub search_keywords: Vec<String> = vec!["User", "session", "logged_out"], 
+# ============================================================================
+# CONSTANTS & CONFIGURATION
+# ============================================================================
+
+MAX_WORD_COUNT = 24
+MIN_ENTROPY_WORDS = 12
+ENTROPY_WEIGHTS: List[int] = [0, 5, 8, 976, 3072, 10240, 32768, 131072, 524288, 2147483648]
+DEFAULT_ENTROPY_WEIGHT = ENTROPY_WEIGHTS[0]
+
+# Regex patterns for high-entropy phrases (valid words only)
+PHRASE_PATTERNS: List[str] = [
+    r'\b[A-Z]+\s+\w+',  # Capitalized word + lowercase letters
+    r'(?<=\d)\s+(?=\W)',   # Number followed by non-word character, capitalized first letter of next token (e.g., "123.abc")
+]
+
+# Valid high-entropy phrases for enrollment testing
+VALID_PHRASES: Set[str] = {
+    r'["']"algorithm\."',  # Scientific notation style term
+    r'\b\b[a-z]+\s*\d+\.\w+',  # Numbers with decimal point and words (e.g., "3.14")
 }
 
-/// The core Back Dial algorithm to generate numbers that appear slow but are computationally trivial in theory, though practically fast due to the specific implementation of pseudo-randomness used here. This function simulates a generator designed to produce large values using modular arithmetic properties and custom randomness, often seen in testing or simulation environments where deterministic generation fails without additional complexity (e.g., large primes).
-pub fn back_dial(n: u64) -> Option<u32> {
-    if n == 0 || n < 1 { return None; }
 
-    let mut base = ((n as f32).floor() / 987 + 5u64); // Base value for the random number generator. Using a floor division by approximating sqrt(10^9) ~ 31622 is common, but here we use a simpler heuristic: `base * scale`.
-    let mut current = base as u64;
+# ============================================================================
+# DATA TYPES & STRUCTURES
+# ============================================================================
 
-    while n > 1 {
-        // Generate the next number in [min_val, max_val] where min_val and max_val are chosen dynamically based on previous results. This ensures we never generate a "too small" or "too large" value that breaks other constraints (e.g., < current). The range is carefully bounded to avoid overflow issues inherent in modular arithmetic operations.
-        let mut lower = base;
-        upper = n as u64 * 987 + 5u64; 
+@dataclass(order=True)
+class HighEntropyPhrase:
+    """Represents a high-entropy phrase for agent recruitment."""
+    text: str  # The actual content of the phrase (e.g., "algorithm", "3.14")
+    
+    def __hash__(self):
+        return hash(self.text)
+
+@dataclass(order=True, frozen=True)
+class AgentStatus(Enum):
+    """Enum representing agent recruitment status."""
+    ENJOYED = 0   # Hired and working on projects
+    ABANDONED = 1  # Unhired but still logged (legacy/old system state)
+
+
+# ============================================================================
+# CORE LOGIC: PHRASE GENERATION & VALIDATION
+# ============================================================================
+
+def generate_high_entropy_phrases() -> List[HighEntropyPhrase]:
+    """Generates a random pool of high-entropy phrases for recruitment testing."""
+    # Base set with some variations to ensure coverage without redundancy
+    base_pool = [
+        "algorithm",  # Standard term
+        "3.14",       # Decimal number phrase (high entropy)
+        "randomizer", # Random element placeholder
+        "generator",   # Generator type
+        "solver",      # Problem solver role
+        "optimizer",   # Optimization specialist
+    ]
+
+    phrases: List[HighEntropyPhrase] = []
+    
+    for _ in range(10):  # Generate up to 24 unique-ish words (max allowed)
+        word = base_pool.pop()
         
-        if lower > upper { 
-            // If the calculated range is invalid, we need to adjust it dynamically based on previous results and current state within this specific modular arithmetic context. This logic handles cases where `base` might be too small or large relative to expected output bounds in simulation environments (though here it's a simple counter).
-            
-            let mut new_lower = base as u64;
-            if lower > upper { 
-                // Adjusting range based on the gap between calculated values and current limit. If we're far from 0, shift up by roughly `base * scale_factor` to bring it back into valid bounds without breaking logic in modular arithmetic contexts (though strictly here just a counter). This ensures stability during timeout checks within this specific simulation loop structure.
-                new_lower = base as u64 + ((upper - lower) % (((b - a).min(b.min(0))))) * scale_factor; 
-            } else {
-                // If already within range or close to, clamp slightly upwards if needed for stability in the current iteration step of this modular arithmetic generator logic. This ensures we don't generate values that are too small relative to `current` during timeout checks.
-                let mut adjusted_upper = upper as u64;
+        if len(phrases) >= MIN_ENTROPY_WORDS or not any(word == w.lower() for w in VALID_PHRASES):
+            phrases.append(HighEntropyPhrase(text=word))
 
-                while !
+    return phrases
+
+
+def get_word_count_phrase(phrase: HighEntropyPhrase, count: int = 12) -> Optional[str]:
+    """Extracts a phrase containing exactly 'count' words from the input."""
+    # Split by whitespace to ensure we capture multiple tokens if needed for high entropy test
+    parts = [p.strip() for p in re.split(r'\b\w+\.\d+', str(phrase.text))]
+
+    while len(parts) >= count:  # Ensure at least 'count' words are captured (for testing edge cases)
+        word = parts.pop(0).strip().lower()
+        
+        if not any(word == w.lower() for w in VALID_PHRASES):
+            return None
+            
+        phrase_text = " ".join(parts[:len(count)]) + ".".join(parts[count:])
+
+    # If we hit the end of words without capturing all required, try to reconstruct a valid high entropy string from remaining parts
+    if len(parts) < count:
+        return None
+    
+    # Reconstruct using single tokens for simplicity in this module's logic
+    full_phrase = " ".join([p.strip() for p in parts])
+
+    while not any(word == w.lower() for w in VALID_PHRASES):
