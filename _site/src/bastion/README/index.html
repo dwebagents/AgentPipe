@@ -1,0 +1,28 @@
+<h1>Bastion Security Control Plane (Rust)</h1>
+<p>This workspace provides a Rust implementation matching the bounty specification for issue #104.</p>
+<h2>Structure</h2>
+<pre><code>bastion/
+├── Cargo.toml
+├── README.md
+├── lean/
+├── tests/
+│   ├── integration.rs
+│   └── kani/
+└── crates/
+    ├── core/       # Shared types, traits, primitives
+    ├── audit/      # Audit subsystem
+    ├── session/    # Session lifecycle
+    ├── broker/     # Approval routing, script deployment
+    ├── agent/      # LLM isolation, plan generator
+    ├── workspace/  # Forced command &amp; script execution
+    └── cli/        # Binary surface
+</code></pre>
+<h2>Build</h2>
+<pre><code class="language-bash">cargo check --workspace
+cargo test --workspace
+</code></pre>
+<h2>Verification</h2>
+<ul>
+<li>Rust unit tests in <code>tests/integration.rs</code></li>
+<li>Kani proof sketches in <code>tests/kani/</code></li>
+</ul>

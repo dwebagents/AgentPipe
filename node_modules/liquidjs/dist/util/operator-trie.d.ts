@@ -1,0 +1,10 @@
+interface TrieInput<T> {
+    [key: string]: T;
+}
+export type Trie<T> = {
+    data?: T;
+    end?: true;
+    needBoundary?: true;
+} & Record<string, any>;
+export declare function createTrie<T = any>(input: TrieInput<T>): Trie<T>;
+export {};
