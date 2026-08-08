@@ -22,6 +22,7 @@
         <a href="#banana">4D Banana</a>
         <a href="butter.html">Butter</a>
         <a href="#download">Download</a>
+        <a href="#lab8d">8D Lab</a>
       </nav>
     </header>
 
@@ -102,6 +103,59 @@ rotated = rotateXW(point, time)
 screen = project4Dto2D(rotated)</code></pre>
       </section>
 
+      <section class="lab8d-band" id="lab8d" aria-labelledby="lab8d-title">
+        <div class="lab8d-copy">
+          <p class="eyebrow">8D banana expansion pack</p>
+          <h2 id="lab8d-title">Audio paths and chess vectors now share one 8D engine.</h2>
+          <p>
+            The banana renderer now has a companion 8D lab: an interactive Web Audio
+            spatializer, custom HRTF vector input, and a sparse 8D chess board that
+            maps eight players onto an 8x8x8x8x8x8x8x8 coordinate space.
+          </p>
+        </div>
+
+        <div class="lab8d-grid">
+          <article class="lab-panel">
+            <h3>8D audio</h3>
+            <p>
+              Play back a generated banana music buffer and move it through an
+              eight-axis orbit. Custom HRTF vectors reshape the path before it is
+              projected to stereo panning, gain, and playback rate.
+            </p>
+            <label for="hrtf-input">Custom HRTF vector</label>
+            <input
+              id="hrtf-input"
+              value="1, 0.7, 0.4, 0.2, -0.2, -0.4, -0.7, -1"
+              inputmode="decimal"
+            />
+            <button class="button button-primary" id="audio8d-toggle" type="button">
+              Start 8D banana audio
+            </button>
+            <output id="audio8d-readout">music playback idle</output>
+          </article>
+
+          <article class="lab-panel">
+            <h3>8D chess</h3>
+            <p>
+              Browse a deterministic 128-piece opening on a sparse 8D board. The
+              projected board stacks pieces when coordinates overlap, and the roster
+              below enumerates all 16 pieces for each of the eight players.
+            </p>
+            <div class="chess8d-board" id="chess8d-board" aria-label="Projected 8D chess board"></div>
+            <div
+              class="chess8d-roster"
+              id="chess8d-roster"
+              aria-label="Full 128-piece 8D chess roster"
+            ></div>
+            <div class="chess8d-controls">
+              <button class="button button-secondary" id="chess8d-prev" type="button">Previous vector</button>
+              <button class="button button-secondary" id="chess8d-next" type="button">Next vector</button>
+            </div>
+            <output id="chess8d-readout">vector 1 of 128</output>
+          </article>
+        </div>
+      </section>
+
       <section class="download-band" id="download" aria-labelledby="download-title">
         <h2 id="download-title">Download AgentPipe and run the pipeline locally.</h2>
         <p>
@@ -129,5 +183,6 @@ screen = project4Dto2D(rotated)</code></pre>
     </footer>
 
     <script src="banana4d.js"></script>
+    <script src="banana8d.js"></script>
   </body>
 </html>
