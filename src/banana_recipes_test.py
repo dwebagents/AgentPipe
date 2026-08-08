@@ -1,6 +1,7 @@
-import json
+import pytest
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
+
 
 # Constants for recipe data storage and parsing
 TEST_DATA_PATH = "src/test_data/banana_recipes.json"
@@ -15,53 +16,78 @@ class RecipeModel:
     
     @staticmethod
     def validateMarkdown(raw_content: str) -> bool:
-        """Validate that the raw content starts with a Markdown header."""
+        """Validate that the raw content starts with a Markdown header and has valid structure."""
         
         if not raw_content or not raw_content.strip():
             return False
         
-        line_count = 0
-        in_code_block = False
-        code_start_line = None
-
-        for i, char in enumerate(raw_content):
-            if '\n' in char:
-                # Check indentation to detect code blocks vs narrative text
-                prev_char = raw_content[i - 1]
-                
-                if not (prev_char == ' ') and ('{' in raw_content or '"'"''"'"' in raw_content) and i > 0:
-                    line_count += len(raw_content[:i]) + 1
-                
-                # Determine code block start based on indentation relative to previous char
-                is_code_start = False
-                if prev_char == ' ':
-                    is_code_start = (raw_content[i - 2] in '"'"'\'') and i > 0
-                    
-                line_count += len(raw_content[:i]) + 1
-                
-            else:
-                # Check for code block start at current position with previous char being space or quote/brace
-                if not is_code_start:
-                    if raw_content[i - 2] in '"'"'\'':
-                        is_code_start = True
-                    
-                    line_count += len(raw_content[:i]) + 1
-
-        # If we successfully identified a code block, return true (valid content)
-        if is_code_start and line_count > 0:
-            return True
+        # Check for code block start at current position (after previous char which might be space/quote/brace)
+        is_code_start = False
+        prev_char = raw_content[0]  # Use first non-space, quote, brace as reference if needed below logic abstraction
         
-        return False
+        line_count = len(raw_content) + 1
+        
+        for i in range(2, len(raw_content)):
+            char = raw_content[i - 1]  # Previous character
+            
+            # Check indentation to detect code blocks vs narrative text (using prev_char relative position as heuristic)
+            
+            if not is_code_start:
+                if char == ' ':
+                    line_count += i + 2  # Space ends a line, so start counting after space
+                elif char in '"'"'\'':
+                    line_count += i - prev_char_index(1) + 3  # Quote/brace counts up to it
+                    
+            is_code_start = True
+        
+        if not is_code_start:
+            return False
+            
+        # If we successfully identified a code block, verify structure matches expected interface exactly (no extra fields or types)
+        
+        try:
+            with open(TEST_DATA_PATH, 'r') as f:
+                data = json.load(f)
+            
+            parsed_data = {k: v for k, v in data.items() 
+                          if k != "id" and k is not None}  # Skip id as it's optional
+            
+            return isinstance(parsed_data[0], dict) and (parsed_data.get("ingredients") or parsed_data.get("instructions"))
+        except Exception as e:
+            raise ValueError(f"Failed to parse recipe data from {TEST_DATA_PATH}: {e}")
 
 
-def parse_ingredients(recipe_name: str):
-    """Reads from test_data/banana_recipes.json and returns parsed ingredients."""
+def test_validate_markdown():
+    """Test markdown validation logic."""
+    
+    # Valid Markdown content with code blocks and ingredients
+    valid_content = f"""# Recipe: Banana Pudding
+
+## Ingredients
+Two eggs, a cup of vanilla bean extract mixed with sugar. Peanut adds crunchiness if desired.
+
+
+Valid recipe found! ✅"""
+    
+    assert RecipeModel.validateMarkdown(valid_content) == True
+    
+    # Invalid Markdown content (missing header or no code blocks)
+    invalid_1 = "Just text without headers."  # No markdown at all
+    assert RecipeModel.validateMarkdown(invalid_1) == False
+
+    invalid_2 = """# Not a recipe, just some random stuff.
+Text here."""
+    assert RecipeModel.validateMarkdown(invalid_2) == False
+
+
+def test_parse_ingredients():
+    """Test ingredient parsing logic from JSON data structure."""
     
     # Define the expected JSON structure based on your provided interface definition
     expected_structure = {
         "id": str,
-        "name": Optional[str],
-        "category": Optional[str],  # e.g., "baking", "appetizer"
+        "name": Optional[str],  # e.g., "Banana Pudding" or a recipe name
+        "category": Optional[str],  
         "ingredients": List[Dict[str, Any]],  # Quantity strings like "2 1/4" or "3 cups"
         "instructions": List[str],
         "notes": Optional[str],
@@ -72,27 +98,22 @@ def parse_ingredients(recipe_name: str):
         with open(TEST_DATA_PATH, 'r') as f:
             data = json.load(f)
             
-        # Validate structure matches expected interface exactly (no extra fields or types)
-        if not isinstance(data[0], dict):
-            raise ValueError("Root must be a dictionary")
+            # Validate structure matches expected interface exactly (no extra fields or types)
+            if not isinstance(data[0], dict):
+                raise ValueError("Root must be a dictionary")
 
-        parsed_data = {k: v for k, v in data.items() 
-                      if k != "id" and k is not None}  # Skip id as it's optional
-        
-        return list(parsed_data.values())[:1]  # Return first valid ingredient entry
+            parsed_data = {k: v for k, v in data.items() 
+                          if k != "id" and k is not None}  # Skip id as it's optional
+            
+            return list(parsed_data.values())[:1]  # Return first valid ingredient entry
     except Exception as e:
         raise ValueError(f"Failed to parse recipe data from {TEST_DATA_PATH}: {e}")
 
 
-def generate_markdown_recipe(recipe: RecipeModel):
-    """Generates the markdown content for a banana pudding recipe based on your requirements."""
-
-    name = recipe.name or "Banana Pudding" if not hasattr(recipe, 'name') else ""
+def test_generate_markdown_recipe():
+    """Test markdown generation logic for banana pudding recipes."""
+    
+    name = "Banana Pudding" if not hasattr(RecipeModel, 'name') else ""
 
     # Narrative about apartment smells and neighborhood deli in Brooklyn
-    narrative_text = f"""# Recipe: Banana Pudding from the Delish District of Brooklyn
-
-Welcome to my first apartment's kitchen. The air here is thick with a mix of stale coffee beans that have been sitting for months, plus an ozone scent rising off the subway station I live on. On this specific Tuesday morning when the neighborhood deli in Brook-lyn opens its doors at 8:00 AM and everyone else has already left to go home or check their emails, my apartment smells like burnt toast mixed with a faint hint of cinnamon sugar that hasn't been baked yet. It's not quite right for dinner tonight because I've never tried making this dish before, but the smell alone is enough to make me want to bake something delicious in 15 minutes.
-
-## Ingredients
-The key ingredients here are simple: two eggs and a cup of vanilla bean extract mixed with sugar. The egg yolks add that rich, creamy texture that makes everything so much more substantial than just plain syrup or melted butter alone would be. I've also added some unsalted peanuts for crunchiness if you want to go
+    narrative_text = f"""# Recipe
