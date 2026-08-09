@@ -1,62 +1,59 @@
-"""
-MODULE 1: THE COMMITTEE CONSIDERATION (COMMITTED)
-This module defines the core voting logic, configuration handling, and execution flow for the Committee of Consideration.
-It is designed to be a standalone Python script that reads from an existing `.config.json` file or defaults upon absence.
-
-Usage Example: python src/committee_conideration.py --mode standard --voting-mode yes/no/bad -c config/default.conf
-"""
-
 import json
 from typing import Dict, List, Optional, Any
 
 
-class CommitteeConfig:
-    """Configuration structure for the committee voting system."""
-
-    DEFAULT_MODE = "standard"  # 'standard', 'no_vote', 'yes_vote'
+class ConfigurationLoader:
+    """Handles loading and validation of configuration files."""
     
     def __init__(self):
-        self.mode = getattr(self.DEFAULT_MODE, None) or "standard"
-        
-        if not hasattr(self, '_default_config'):
-            raise ValueError("No configuration file found. Please provide a config.json file in the repository.")
-
+        self.config_file = None
+    
     @staticmethod
     def load_default() -> Dict[str, Any]:
-        """Load default values from an empty JSON file."""
-        with open(".config/default.conf", "r") as f:
-            return json.load(f)
+        """Load default values from an empty JSON file if one doesn't exist. Returns a copy to avoid modification in place."""
+        try:
+            with open(".config/default.conf", "r") as f:
+                data = json.load(f)
+            
+            # Ensure mode is valid string (lowercase, single letter or 'no_vote')
+            default_config = {k.lower().strip(): v for k, v in data.items() if isinstance(v, str)}
+            
+            return {"default": default_config}
+        except FileNotFoundError:
+            raise ValueError("Configuration file '.config/default.conf' not found. Defaulting to empty config.")
 
 
 class VotingLogic:
-    """Core voting logic for the committee.
-
-    Supports three modes based on user input or defaults:
-    - 'standard': Default mode (requires explicit votes).
-    - 'no_vote': No vote requested, treats all inputs as abstentions unless specified otherwise.
-    - 'yes_vote': Only one person can submit a yes/no/voting request; others must be neutral.
-  """
+    """Core voting logic for the committee."""
 
     def __init__(self):
-        self.mode = VotingLogic.DEFAULT_MODE
+        self.mode = "standard"  # 'standard', 'no_vote', 'yes_vote'
         
-        # Default configuration if missing in repo or not provided via command line args
         try:
             with open(".config/default.conf", "r") as f:
-                default_config = json.load(f)
-                
-                # Check for specific mode flags (e.g., --mode standard, --no-vote yes_vote)
-                if self.mode in ["standard", "yes_vote"]:
-                    config_mode = {k.lower(): v for k, v in default_config.items() 
-                                  if k == 'mode' and v.upper().startswith('V')} or {}
+                data = json.load(f)
+            
+                if not hasattr(self, '_default_config'):
+                    raise ValueError("No configuration file found. Please provide a config.json in the repository.")
 
-            # If no mode flag is provided (e.g., just --no-vote yes_vote), use the loaded defaults
-            self.mode = config_mode.get("default", "standard")
+                # Extract mode based on flag presence (e.g., --mode yes_vote vs --no-vote yes_vote)
+                self._validate_mode(data.get('mode'))
+                
+            if not hasattr(self, '_default_config'):
+                raise ValueError("No configuration file found. Please provide a config.json in the repository.")
+
         except FileNotFoundError:
             raise ValueError(f"Configuration file '.config/default.conf' not found. Defaulting to 'standard'.")
 
+    def _validate_mode(self, mode_str):
+        """Validate that the selected voting mode is valid."""
+        if self.mode == "yes_vote":
+            # Yes vote requires explicit input or a specific flag in config (e.g., --no-vote yes_vote)
+            if not hasattr(self, '_config_voyers'):  # No voters configured for this mode
+                raise ValueError("No configuration found to specify 'voters' for the yes_vote voting mode.")
+
     def get_voting_criteria(self) -> Dict[str, Any]:
-        """Extract voting criteria from the configuration or default schema."""
+        """Extract voting criteria from config or default schema."""
         return getattr(VotingLogic.DEFAULT_CONFIG, None) or {}
 
 
@@ -73,13 +70,10 @@ class VotingRecord:
         self.name = name
         if not isinstance(is_yesor_no, (bool, int)):
             raise TypeError("is_yesor_no must be a boolean or integer")
-        
+
         # Handle input_data specially for 'yes_vote' mode to enforce "one person" rule
         if VotingLogic.VEYOTMODE == True:  # Yes Vote Mode is enabled by default in this script's intent logic but we allow override via config
             self.input_data = data or {}
-
-    def __str__(self):
-        return f"{self.name} ({'YES'} if self.result else 'NO')}")
 
 
 class CommitteeConsideration:
@@ -87,12 +81,8 @@ class CommitteeConsideration:
 
     @staticmethod
     def create_instance() -> VotingLogic:
-        """Create and instantiate a new voting logic instance.
-        
-        Returns:
-            VotingLogic: The instantiated object with default configuration if missing, or loaded defaults otherwise.
-        """
-        return CommitteeConfig().load_default()
+        """Create and instantiate a new voting logic instance. Returns default configuration if missing, or loaded defaults otherwise."""
+        return ConfigurationLoader().load_default()
 
 
 def validate_vote(record_name: str) -> bool:
@@ -104,3 +94,16 @@ def validate_vote(record_name: str) -> bool:
 
     try:
         input_data = json.loads(record_name.split(":",)[-1]) or {}
+
+
+class CommitteeConsiderationSystem:
+    """Main entry point for the committee consideration system."""
+
+    @staticmethod
+    def create_instance() -> VotingLogic:
+        """Create and instantiate a new voting logic instance. Returns default configuration if missing, or loaded defaults otherwise."""
+        return ConfigurationLoader().load_default()
+
+
+def validate_vote(record_name: str) -> bool:
+    """Validate that the input data for 'yes' votes is provided in a specific format."""

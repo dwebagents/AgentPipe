@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Contribution Page</title>
+    <style>
+        :root {
+            --primary-gold: #FFD700;
+            --secondary-gold: #C5A029;
+            --dark-bg: #1a1a1d;
+            --light-text: #f4f4f4;
+            --accent-blue: #3b82f6;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--light-text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 4rem 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 980px;
+            margin: 0 auto;
+        }
+
+        header.hero-section {
+            text-align: center;
+            background: linear-gradient(rgba(255, 243, 167, 0.05), rgba(59, 130, 246, 0.08));
+            padding: 4rem 2rem;
+        }
+
+        .hero-image {
+            width: 400px;
+            height: auto;
+            max-width: 100%;
+            margin-bottom: 3rem;
+            border-radius: 50% 50% / 60% 60%; /* Rounded goat */
+        }
+
+        .hero-text h1 {
+            color: var(--primary-gold);
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .hero-text p {
+            color: #ccc;
+            max-width: 600px;
+            margin: 0 auto 2rem auto;
+        }
+
+        /* Golden Egg Grid */
+        .golden-egg-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin-top: -2rem;
+            padding-bottom: 3rem;
+        }
+
+        .golden-egg {
+            background-color: var(--primary-gold);
+            border-radius: 8px;
+            box-shadow: inset 0 0 10px rgba(255, 249, 0, 0.6), 
+                        0 3px 6px rgba(0,0,0,0.2);
+        }
+
+        .golden-egg::before {
+            content: '🥚';
+            font-size: 18px;
+            opacity: 0.5;
+            display: block;
+            margin-bottom: -4px;
+        }
+
+        /* GitHub Profile Section */
+        section.contributor-section {
+            background-color: #2a2b36;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-top: 3rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        section.contributor-section h2 {
+            color: var(--secondary-gold);
+            border-bottom: 1px solid #4a4e63;
+            padding-bottom: 0.7rem;
+            margin-top: 0;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .avatar-placeholder {
+            width: 80px;
+            height: 80px;
+            background-color: #3a4b6e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+
+        .profile-info h3 {
+            margin-top: 1rem;
+            color: var(--primary-gold);
+        }
+
+        .github-link {
+            display: inline-block;
+            background-color: #00796b; /* Dark blue */
+            color: white;
+            padding: 0
