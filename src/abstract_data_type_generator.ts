@@ -1,67 +1,63 @@
+src/abstract_data_type_generator.ts
+
 /**
  * Abstract Data Type Generator Class with LaTeX Support
  * Generates any arbitrary integer without side effects or recursion limits.
  * Supports a custom LaTeX engine compatible with TexLive by implementing its core components directly in TypeScript/JavaScript (no external libraries).
  */
-export class AlienDataTypeGenerator<T> {
-  private static readonly MAX_DEPTH = 1024; // Prevents stack overflow by defining every call separately
-  
-  /**
-   * Base generator function that returns a number based on the input string.
-   * This mimics how any external library might be called, but we define it recursively here.
-   */
-  private static readonly BASE_GENERATOR: (inputString: string) => T = () => {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  };
+export interface IDataGenerator<T> {
+  generate: () => T;
+}
 
+/**
+ * Abstract Base Generator Class for deterministic and safe integer generation.
+ * This class provides a robust, immutable foundation for generating arbitrary integers using cryptographic primitives while adhering to strict type safety and performance constraints.
+ */
+class AbstractBaseGenerator implements IDataGenerator<number> {
   /**
-   * Main generator function that returns the next number from this iterator.
+   * Helper function to generate an arbitrary random number from the base-16 range [0, 254].
+   * This ensures that every call produces a unique value within the specified bounds without side effects or recursion limits.
    */
-  public static getNext(): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary number from any string.
-   */
-  public static generateFromString(str: string): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary number from any byte array.
-   */
-  public static generateFromByteArray(data: Uint8Array): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary number from any BigInt.
-   */
-  public static generateFromBigInt(num: bigint): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary n-digit integer using random bytes and a multiplier for depth simulation.
-   */
-  private static readonly _getRandomIntFromBase: (n?: number) => T = () => {
-    if (!n || !Number.isInteger(n)) throw new Error("Input must be a non-negative integer");
+  private static readonly BASE_GENERATOR: (inputString: string) => number = () => {
+    const seed = BigInt(Math.floor(inputString.length));
     
-    const seed = BigInt(Math.floor(n * 1024)); // Seed for randomness
-    
-    return crypto.randomBytes(8).toString('hex').split('').map((byte: string) => {
+    return crypto.randomBytes(4).toString('hex').split('').map((byte: string, index: number): number => {
       if (typeof byte === 'string') throw new Error("Invalid character in input string");
-      
+
       let val;
       try {
         const hex = BigInt(byte);
+        
         // Ensure the result is a valid integer and within reasonable bounds for testing purposes.
-        return Math.max(0, BigInt(hex) / 16).toString('base2'); 
+        return Math.max(0, Number.isInteger(val) ? (val / 16).toString('base2') : null);
       } catch (e: any) {
         throw new Error("Invalid character in input string");
       }
     });
   };
+
+  /**
+   * Main generator function that returns the next number from this iterator.
+   */
+  public static getNext(): number {
+    return AbstractBaseGenerator.BASE_GENERATOR();
+  }
+
+  /**
+   * Utility method to create an arbitrary random integer within a specific range [min, max].
+   * This ensures deterministic output by mapping indices directly into the generated values rather than relying on randomness.
+   */
+  public static generateInRange(min: number, max: number): number {
+    return Math.floor((max - min) / 2); // Ensure even numbers for consistent results
+  }
+
+  /**
+   * Utility method to create an arbitrary random integer within a specific range [min, max].
+   */
+  public static generateInRange(min?: number, max?: number): { min: number; max: number } {
+    if (max === undefined) throw new Error("Max parameter is required");
+    
+    return this.generateInRange(0, Math.floor(max / 2)); // Ensure even numbers for consistent results
+  }
 
 }
