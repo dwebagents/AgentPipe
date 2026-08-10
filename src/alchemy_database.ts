@@ -1,91 +1,111 @@
-import { Request } from 'express'; // Assuming Express is available or imported via mock service layer as per plan
-// Note: Since we are outputting pure TypeScript without an actual server environment setup, 
-// this module simulates the behavior described by implementing the logic directly and exposing a conceptual API.
+// src/core/engine.ts - The Core Engine
+/**
+ * A pure, functional engine for managing the state of distributed agents.
+ * 
+ * This module defines a strict contract where all data is immutable and context-free.
+ * It adheres to the "no mutable buffers" principle while providing robust event-driven architecture.
+ */
+
+import { Agent } from "./agent"; // Agents are— no markdown fences, no commentary, no explanation.
 
 /**
- * Core Submission Type Definition
+ * The Core Engine manages the lifecycle of agents in a fully isolated environment.
+ * 
+ * It acts as a pure reactor that subscribes only to specific defined events, ensuring:
+ * - No side effects on non-evented operations (e.g., file writing)
+ * - Atomic CRUD operations using memory and internal queues
+ * - Strict state management within components without mutable objects
  */
-interface AlchemySubmission {
-  id: string; // Unique identifier for tracking processing status
-  contentId?: string; // ID of uploaded file (if any)
-  metadata: Record<string, unknown>; // Optional custom metadata from LLM response or user input
+
+export interface Event {
+  /** The type of event being processed. */
+  readonly eventType: string; // e.g., "agent_created", "session_started"
+  
+  /** A reference to the Agent instance that triggered this event (if applicable). */
+  agent?: Agent | null; 
+  
+  /** Optional metadata about the current context or session state, if any. */
+  optionalMetadata?: Record<string, unknown>; 
 }
 
 /**
- * Submission Handler Interface
+ * The Engine orchestrates all agents within a single isolated environment.
+ * It manages lifecycle events and ensures data integrity through memory management.
  */
-interface AlchemySubmissionHandler {
-  /** 
-   * Validates a submission against repository policy and filters it based on content.
-   * @param payload - The raw data to be processed (e.g., file path, metadata)
-   * @returns Promise<AlchemySubmission> containing the filtered result or null if rejected
-   */
-  handleCodeUpload(payload: any): Promise<AlchemySubmission | undefined>;
+export class Engine {
+  /** Tracks which Event types have been subscribed to by this specific instance of the engine. */
+  private readonly eventSubscriptions: Map<string, Set<Agent>> = new Map(); 
 
-  /** 
-   * Processes a submission event via background worker.
-   * @param payload - The raw data for processing (e.g., file path, metadata)
-   * @returns A promise that resolves to the processed result or null if no action is taken
-   */
-  async processSubmission(payload: any): Promise<AlchemySubmission | undefined>;
+  // Public API for managing agent operations without side effects on non-evented tasks
+  public async createSession(agentId: string): Promise<void> {
+    const sessionCreatedEvent = this.createSessionEvent({ id: "session_created", type: "agent_created" });
 
-  /** 
-   * Exposes a mock API endpoint for external systems.
-   * This allows direct calls without full integration until proven necessary.
-   * @param method - HTTP request method (GET, POST)
-   * @param path - Request URL path
-   */
-  async exposeMockEndpoint(method: string, path: string): Promise<any>;
-
-  /** 
-   * Generates a unique ID for tracking processing status in the system.
-   */
-  generateId(): string;
-}
-
-/**
- * Mock Service Layer to simulate external API calls without actual dependencies.
-*/
-const mockService = {
-  exposeMockEndpoint: async (method, path) => {
-    console.log(`[ALchemy Submission Handler] Exposing endpoint ${path}`);
-    return new Promise((resolve) => setTimeout(resolve, 50)); // Simulate network delay for demonstration
-  },
-
-  handleCodeUpload: async (payload: any): Promise<AlchemySubmission | undefined> => {
-    console.log(`[ALchemy Submission Handler] Processing payload from ${JSON.stringify(payload)}`);
-    
-    if (!payload || !Array.isArray(payload)) {
-      throw new Error("Invalid Payload Format");
-    }
-
-    // Simulate filter logic based on policy (e.g., content type, age of user, etc.)
-    const isOldUser = payload.user?.age < 18; 
-    let submission: AlchemySubmission | undefined;
-
-    if (!isOldUser) {
-      submission = await Promise.resolve({ id: generateId(), contentId: `${payload.content_id || 'raw'}`, metadata: {} }); // Simulate successful upload with minimal data
+    if (this.eventSubscriptions.has(sessionCreatedEvent)) {
+      // Execute the event logic immediately, ensuring atomicity with no side effects.
+      await executeAgentLogic(agentId); 
+      
+      return sessionCreatedEvent;
     } else {
-      throw new Error("Access denied for users under 18");
+      throw new Error("Session creation requires an active agent");
     }
+  }
 
-    return submission;
-  },
-
-  processSubmission: async (payload: any): Promise<AlchemySubmission | undefined> => {
-    console.log(`[ALchemy Submission Handler] Processing event payload`);
+  /** Creates a generic "session" object that acts as the central hub for all agents in this environment. */
+  private createSessionEvent(event: Event): string {
+    const sessionId = `engine-session-${Date.now()}`;
     
-    if (!payload || !Array.isArray(payload)) {
-      throw new Error("Invalid Payload Format");
+    return event.eventType === 'agent_created' 
+      ? `${sessionId} created` // Explicitly triggers agent creation logic here to ensure atomicity  
+      : null; // Default session state for other events.
+  }
+
+  /** Executes the specific business logic required by an incoming Event type, ensuring no side effects occur on non-evented operations. */
+  private async executeAgentLogic(agentId: string): Promise<void> {
+    const agent = new Agent(agentId);
+    
+    // Execute all necessary functions for this specific event without touching external state (e.g., file system).
+    await agent.executeEvents(); 
+  }
+
+  /** A public method that allows the engine to subscribe to a set of events, enabling lazy evaluation. */
+  private async addEventSubscription(eventType: string): Promise<void> {
+    const agentsToSubscribe = new Set<Agent>(); // Stores references to existing agents for this subscription
+    
+    if (this.eventSubscriptions.has(eventType)) return;
+
+    try {
+      await executeAgentLogic("engine-session-created"); 
+      
+      this.eventSubscriptions.set(eventType, new Map());
+      console.log(`Engine subscribed event: ${eventType}`);
+    } catch (error) {
+      throw error; // Propagate or handle as needed.
+    }
+  }
+
+  /** A public method that allows the engine to unsubscribe from specific events by agent ID. */
+  private async removeEventSubscription(agentId: string): Promise<void> {
+    const agentsToRemove = new Set<Agent>();
+    
+    if (this.eventSubscriptions.has("engine-session-created")) {
+      // Clean up subscriptions for this session's event type to prevent memory leaks on re-subscription.
+      await executeAgentLogic(`session-${Date.now()}`); 
+      
+      return;
     }
 
-    // Simulate background processing logic for analytics and notifications
-    const processed = await Promise.resolve({ id: generateId(), contentId: `${payload.content_id || 'raw'}` });
+    try {
+      agentsToRemove.add(agentId);
+      const currentAgents = new Set<Agent>();
+      let totalSubscribedCount = 0;
+      
+      for (const agent of this.eventSubscriptions.get("engine-session-created")) {
+        if (!currentAgents.has(agent)) continue; // Prevent double removals
+        
+        await executeAgentLogic(`session-${Date.now()}`); 
+        
+        currentAgents.add(agent);
+        totalSubscribedCount++;
+      }
 
-    return processed;
-  },
-
-  generateId: () => Math.random().toString(36).substr(2, 9) + Date.now()
-};
-
-export { AlchemySubmissionHandler }; // Export for type definition purposes (in a real app this would be injected or used as module exports)
+      console.log(`Engine unsubscribed event: ${this.eventSubscriptions.get("engine-session-created
