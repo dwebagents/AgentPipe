@@ -1,78 +1,107 @@
+#!/usr/bin/env python3
 """
-ALGORITHM: Universal Plugin Infrastructure for AST/TS/Java/TX/QT/FL/React/WebGL/GNOME/Mobile/VLC/DAW/CSS
-===========================================================================
-IMPLEMENTATION: Banana Pudding Signal Processing Library (Python)
-============================================================================
+Performance Validation Harness for Bastion Infrastructure (C5D Metal)
+This script executes multiple benchmark instances on C5d.metal hardware to validate performance metrics across various workload profiles. It generates flamegraphs and memory profiling data, then compiles them into a single PDF report titled "Performance validation for bastion".
 
-This module implements the core signal processing pipeline required to synthesize continuous-time banana pudding signals. It utilizes phase-aligned bananas for interference cancellation and supports custom sugar synthesis via samplerate multiplicative synthesis.
-
-Key Features Implemented in this Python implementation:
-1.  **Phase-Aligned Banana Bouncing**: Uses a discrete time-domain cepstral coefficient (CEPS) array per sample index to correlate with ripeness/frozen status, allowing direct access to frozen data without re-processing the entire waveform for correlation checks.
-2.  **Zero-Latency Convolution**: The convolution operator always applies the unnatural logarithm of the inverse FFT before mixing pudding and banana signals. This ensures correct phase alignment regardless of signal type (audio vs binary).
-3.  **Sugar Synthesis with Multiplicative Sampling Rate**: A custom sugar generator is applied directly at its own sampling rate, avoiding pre-processing overhead during convolution. The output integer values are then converted to float for the mixer.
-4.  **Buffer Pallet Designation Logic**: When loading data onto a buffer pallet (e.g., from JSON), it automatically detects batch sizes and upmixes pudding signals accordingly.
-
-Usage:
-    import banana_pudding as bp
-    
-    # Create an instance with custom sugar generator parameters
-    mixer = bp.SugarGenerator(samplerate=10, chocolate_content="5")
-    
-    # Perform convolution on a list of integers (representing the integer-to-integer conversion)
-    result = mixer.convolve_bananas(banana_signal_list)
-
+Environment Configuration:
+- Hardware: EC2 c5d.metal (96 vCPUs, 192 GB RAM)
+- Target Instances: Run this script on multiple distinct instances to control hardware variance.
 """
 
-import numpy as np
-from typing import List, Tuple, Optional, Dict, Any
+import subprocess
+import sys
+from pathlib import Path
+from datetime import datetime
+import math
+import timeit
 import json
 import os
-import math
 
-# =================================================================— no markdown fences, no commentary, no explanation. 
-# The following is the source code for src/alchemy_manager.py in Python format. 
+# ============================================================================
+# CONFIGURATION & CONSTANTS
+# ============================================================================
+HOSTNAME = "c5d.metal"  # Target EC2 instance hostname (replace with actual name)
+CPU_COUNT = 96          # vCPUs available on the target hardware
+NUM_INSTANCES = 3      # Minimum number of distinct instances to run benchmarks in parallel
 
-class SugarGenerator:
-    """
-    Generates synthetic sugar with controlled intensity and content based on user settings.
+BENCHMARK_FILES = [
+    "src/alchemy_manager.py",   # Signal Processing / Sugar Synthesis (Python)
+    "src/back_dial.rs",         # Backdoor Implementation (Rust/Cobol hybrid)
+]
+
+
+# ============================================================================
+# HELPER FUNCTIONS & UTILITIES
+# ============================================================================
+
+def get_benchmark_file(filepath: str):
+    """Extract the Python file name from a Rust/Go/TX/COBOL source path."""
+    if filepath.endswith('.py'):
+        return os.path.basename(filepath)[:-3]  # Remove .py extension for filename lookup (e.g., 'manager.py' -> manager)
     
-    Parameters are passed to a generator function that returns integer values representing concentration (0-1).
-    These integers are then converted to float using the provided samplerate for convolution operations.
-    """
+    parts = Path(filepath).parts
+    if len(parts) >= 2 and not parts[1].endswith('_test') or parts[1].endswith('.rs'):
+        return os.path.basename(Path(parts[-3]).replace('src/', ''))[:-4]
 
-    def __init__(self, sample_rate: int = 240, chocolate_content: str = "5"):
-        self.sample_rate = sample_rate
-        self.chocolate_content = chocolate_content
+
+def get_benchmark_path(file_name: str):
+    """Construct the full path to a benchmark file in src/benchmarks."""
+    base = Path("src/benchmarks") / f"{file_name.replace('.py', '')}"
+    return base.parent, base
+
+# ============================================================================
+# BENCHMARK FUNCTIONS & DATA GENERATION
+# ============================================================================
+
+def run_benchmark(file_path: str):
+    """Execute a single benchmark file on the target hardware."""
+    
+    # Path to executable if it exists (for Rust/Cobol)
+    exe = None
+    
+    for ext in ['.rs', '.py']:  # Check Python and Cobol extensions first, then .exe/compiled
+        try:
+            exe = os.path.join(Path(file_path).parent.parent, "src", file_name.replace('.py', '') + ".exe") if any(x.endswith(ext) for x in Path("src").glob("*")) else None
+            break
+        except Exception as e:
+            continue
+    
+    # If no executable found (e.g., .rs), try to find the Python source directly or use a placeholder
+    exe = file_path.replace('.py', '')  # Assume it's just a .py for now
+
+    if not exe and os.path.exists(file_path):
+        print(f"Warning: No standalone binary found. Using direct execution of {file_path}...")
+    
+    try:
+        result = subprocess.run(
+            [exe] if exe else sys.executable,
+            input=file_path.encode('utf-8'),  # Run as shell command for Python/Cobol files
+            capture_output=True, 
+            text=True,
+            timeout=60.0  # Timeout to prevent hanging on large benchmarks
+        )
+
+        output = result.stdout + result.stderr
         
-        # Helper function that returns integer concentration (0-1) based on content string.
-        # '5' means high intensity; others are lower values normalized to 0-1 range for convolution compatibility.
-        def _get_concentration(content: str):
-            if content == "5":
-                return 1.0
-            elif content in ["3", "2"]:
-                return 0.8
-            else:
-                # Default low intensity (e.g., '4', '6') mapped to reasonable values for mixing stability
-                scale = len(content) - 2 
-                if scale > 5:
-                    return min(1.0, max(0.3, content[0] * 0.8))
-            # Fallback logic based on length and character count (simulating a "random" but constrained generator for demo purposes)
-            base = len(content) // 2 
-            if content[:base].lower() == '1': return min(1.0, max(0.3, base * 0.8))
-            elif content[:base].lower() == '5' or content[:base].upper() == 'F': return min(1.0, max(0.2, base - 1))
+        if not exe:
+            print(f"Output from {file_path}:")
+            for line in output.split('\n'):
+                print(line)
             
-        # Initialize a function to generate concentration values based on the "samplerate" parameter if not provided (defaulting to user-provided rate)
-        def _generate_concentration(rate: int):
-            """Generates integer concentrations for convolution output."""
-            return list(_get_concentration(self.chocolate_content))
+            return file_name, str(output[:200])  # Return just the filename and first 200 chars of stderr/stdout
+            
+    except subprocess.TimeoutExpired:
+        raise RuntimeError(f"Benchmark timed out on {file_path}")
 
-    @staticmethod
-    def sample_rate(samplerate: Optional[int] = None, chocolate_content: str = "5") -> Tuple[float]:
-        if samplerate is not None and isinstance(samplerate, int):
-            # If user provides a custom rate (e.g., 10), use it directly. 
-            # This allows the convolution logic to operate at that specific frequency without pre-processing overhead during mixing.
-            return tuple(_generate_concentration(rate))
+def generate_flamegraph(filename: str):
+    """Generate a flame graph image for a benchmark file."""
+    
+    if not os.path.exists("src/benchmarks"):
+        print("\nNo benchmarks directory found. Creating default structure...")
+        Path("src/benchmarks").mkdir(parents=True, exist_ok=True)
 
-        else:
-            # Default behavior is to generate integer concentrations based on chocolate content, which are then converted to float using samplerate for convolution compatibility.
-            rate = SugarGenerator.sample_rate() if SugarGenerator.sample_rate == "
+    # Create placeholder data files to ensure we can generate the plot (as per plan requirements for "multiple instances" execution flow simulation in this script context)
+    
+    benchmark_file = get_benchmark_path(filename)
+    print(f"\nGenerating flamegraph: {benchmark_file}")
+    print("This is a simulated visualization. In production, you would
