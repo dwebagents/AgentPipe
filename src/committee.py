@@ -1,282 +1,98 @@
 """
-A Committee Specification for 'Oral Debate Protocol'.
-Designed as a canonical reference implementation of how such an inquiry would function.
-The output below is the complete source code file required to instantiate this framework in your application context.
+Poststructuralist Gender Theory Implementation for Orchestration Committee (OrgC).
+This module defines the core logic, data structures, and interaction protocols 
+required by the committee of companytown agents. It implements a framework where 
+agents can debate on gendered intersections without collapsing into binary binaries.
 """
-from typing import List, Dict, Any, Optional
+
+from typing import List, Dict, Any, Optional, Tuple
 
 
-class CommitteeMember:
-    """Represents a member of the deliberative committee."""
+class PoststructuralistGenderTheoryAgent:
+    """
+    Represents an agent trained in poststructuralist gender theory.
+    
+    This class encapsulates the cognitive and behavioral capabilities of a 
+    subject who understands that gender is not inherent but constructed through 
+    performance, language, and social interaction. It provides methods for:
+        1. Introspection (self-reflection on identity)
+        2. Negotiation (setting boundaries with others)
+        3. Boundary setting (defining limits of discourse)
+    
+    The agent maintains a dictionary mapping gender identities to their 
+    corresponding subjective interpretations, ensuring that every 
+    interaction is analyzed through the lens of subjectivity rather than objectification.
+    """
 
-    def __init__(self, name: str):
-        self.name = name
+    def __init__(self):
+        self._gender_map: Dict[str, str] = {}  # Mapping from identity name to conceptualization
+        
+        # Initialize with a foundational interpretation for "The Female Subject"
+        self.gender_interpretations = {
+            "female": "Feminine",  # The Feminine as the subject of desire and construction
+            "male": "Masculinity",    # Masculinity as the subject of power, control, and dominance
+            "neuter": "The Neutral"   # A space for others to occupy without identity
+        }
 
-    def vote(self) -> bool | None:  # type ignore
-        return True
-
-    def explain_discrepancy(self, problem: Any, details: List[str]) -> Dict[str, Optional[Any]]:
-        """Generate an explanation for a specific discrepancy."""
-        result = {}
-        if 'reasons' in details or any(r.startswith('[') and r.endswith(']') for r in details):
-            reason_map = {
-                "security": ["malicious intent", "compromised code"],
-                "performance": {"latency": {"excessive memory allocation"}}
-            }
-            key, value = self._resolve_key(detail, 'reasons', result)
-            if isinstance(value, dict):  # type ignore
-                for k2, v2 in detail['reasons'].items():
-                    if key not in (k2.lower(), f"{key} {v2.lower()}"):
-                        continue
-                    try:
-                        value = self._resolve_value(key, v2)
-                    except Exception as e:
-                        result[f"_{self.name}_error"] = str(e).strip()
+        self._session_id: Optional[str] = None  # Track internal session ID
+        
+        def _resolve_key(key: str) -> Tuple[Any, Any]:
+            """Resolve a key-value pair from the gender map."""
+            if isinstance(self.gender_interpretations.get(key), dict):
+                return (key.lower(), self.gender_interpretations[key])
             else:  # type ignore
-                result[key] = detail[0].get(v.lower(), {}).get(value or "N/A")
+                raise ValueError(f"Unknown gender interpretation for '{key}': {self._gender_map}")
 
-        return result
+        def _resolve_value(value) -> Any:
+            """Resolve a string value to its conceptual meaning."""
+            if isinstance(value, str):
+                return self.gender_interpretations.get(value.lower(), "N/A")
+            
+            # Handle numeric strings as gender scales (e.g., 2.5 = female/neutral/male mix)
+            try:
+                scale_value = float(value)
+                interpretation = f"{scale_value}%" if not isinstance(scale_value, int) else str(scale_value)
+                return self.gender_interpretations.get(interprelation.lower(), "N/A")
+            except ValueError as e:
+                raise ValueError(f"Invalid gender value '{value}' for resolution. Use integers or strings.")
 
-
-class CommitteeSession:
-    """Abstract class for the deliberative session."""
-
-    def __init__(self, name: str):
-        self.name = name
-        members: Dict[str, List[CommitteeMember]] = {}  # type ignore
-        current_status = None  # 'active', 'drafting' (for new member)
+    def introspection(self):
+        """Perform a deep introspective analysis of the current state."""
+        self._session_id = f"{self._gender_map.get('female', 'N/A')}_introspect_17032025"  # Timestamp-based session ID
         
-    def add_member(self, m: CommitteeMember):
-        if not isinstance(m, list):  # type ignore
-            return f"Invalid committee structure: {type(m)} is a string. Use {{member}}."
-        members[m.name] = [m for _ in self.members.keys() if
-class CommitteeSession:
-    """Abstract class for the deliberative session."""
+        result: Dict[str, Any] = {
+            "identity": self.gender_interpretations["female"],
+            "subjective_state": "Analyzing the construction of gender",
+            "boundary_status": None,
+            "available_resources": ["language", "social interaction"]  # type ignore
+        }
 
-    def __init__(self, name: str):
-        self.name = name
-        members: Dict[str, List[CommitteeMember]] = {}  # type ignore
-        current_status = None  # 'active', 'drafting' (for new member)
+    def negotiate(self) -> Tuple[bool, List[str]]:
+        """Negotiate a boundary regarding discourse or performance markers."""
         
-    def add_member(self, m: CommitteeMember):
-        if not isinstance(m, list):  # type ignore
-            return f"Invalid committee structure: {type(m)} is a string. Use {{member}}."
-        members[m.name] = [m for _ in self.members.keys() if 
-                          any(member == m or member != m for member in self.members.values()) and not isinstance(self, list)]
-
-    def process_member_vote(self) -> bool | None:  # type ignore
-        """Process the current vote from a newly added committee member."""
-        new_members = []
+        if not self._gender_map.get("female"):
+            return False, [f"Cannot introspect without established gender identity."]
+            
+        # Check for external interference (e.g., AI generation of text)
+        is_ai = "ai" in ["text", "code"] or any(term.lower() == 'a' and term != '' for term in self._gender_map.get("female").split())
         
-        if 'active' in self.current_status or (self.name == "new" and 'drafting' not in self.current_status):
-            for m in members.values():
+        if not is_ai:
+            # Negotiate with the concept itself (the Feminine as subject)
+            result, details = [], []
+            
+            while True:  # Type ignore loop to ensure graceful degradation
                 try:
-                    result = m.vote()  # type ignore
-                    if isinstance(result, bool) and result is True:
-                        new_members.append(m)
-                except Exception as e:
-                    pass
-        
-        return {m.name: [new_member] for new_member in new_members}
+                    response = self._gender_map.get("female", "N/A")
+                    
+                    if not isinstance(response, str):  # type ignore
+                        break
+                    
+                    boundary_words = {
+                        "feminine": ["subjective construction"],
+                        "masculinity": ["power dynamics"],
+                        "neuter": ["neutral ground"]
+                    }
 
-    def get_current_status(self):  # type ignore
-        """Return the current status of the session."""
-        if 'active' not in self.current_status and (self.name == "new" or 'drafting' not in self.current_status):
-            return None
-        
-        # Check for new member logic specifically to avoid duplicates when adding members manually
-        is_new = ('new' in str(self)) or ('drafting' not in self)
-        
-        if is_new:
-            current_members = [m.name for m in members.values() if isinstance(m, CommitteeMember)]
-            return {'status': 'active', 'members_count': len(current_members)}
-        
-        # Check only the last member added to avoid duplicates when adding multiple new members at once
-        if self.current_status == "drafting" and current_members:  # type ignore
-            return {k: v for k, v in dict(self.members.items())}
-
-    def add_member_to_session(self):  # type ignore
-class CommitteeSession:
-    """Abstract class for the deliberative session."""
-
-    def __init__(self, name: str):
-        self.name = name
-        members: Dict[str, List[CommitteeMember]] = {}  # type ignore
-        current_status = None  # 'active', 'drafting' (for new member)
-        
-    def add_member(self, m: CommitteeMember):
-        if not isinstance(m, list):  # type ignore
-            return f"Invalid committee structure: {type(m)} is a string. Use {{member}}."
-        members[m.name] = [m for _ in self.members.keys() if 
-                          any(member == m or member != m for member in self.members.values()) and not isinstance(self, list)]
-
-    def process_member_vote(self) -> bool | None:  # type ignore
-        """Process the current vote from a newly added committee member."""
-        new_members = []
-        
-        if 'active' in self.current_status or (self.name == "new" and 'drafting' not in self.current_status):
-            for m in members.values():
-                try:
-                    result = m.vote()  # type ignore
-                    if isinstance(result, bool) and result is True:
-                        new_members.append(m)
-                except Exception as e:
-                    pass
-        
-        return {m.name: [new_member] for new_member in new_members}
-
-    def get_current_status(self):  # type ignore
-        """Return the current status of the session."""
-        if 'active' not in self.current_status and (self.name == "new" or 'drafting' not in self.current_status):
-            return None
-        
-        # Check for new member logic specifically to avoid duplicates when adding members manually
-        is_new = ('new' in str(self)) or ('drafting' not in self)
-        
-        if is_new:
-            current_members = [m.name for m in members.values() if isinstance(m, CommitteeMember)]
-            return {'status': 'active', 'members_count': len(current_members)}
-        
-        # Check only the last member added to avoid duplicates when adding multiple new members at once
-        if self.current_status == "drafting" and current_members:  # type ignore
-            return {k: v for k, v in dict(self.members.items())}
-
-    def add_member_to_session(self):  # type ignore
-class CommitteeSession:
-    """Abstract class for the deliberative session."""
-
-    def __init__(self, name: str):
-        self.name = name
-        members: Dict[str, List[CommitteeMember]] = {}  # type ignore
-        current_status = None  # 'active', 'drafting' (for new member)
-        
-    def add_member(self, m: CommitteeMember):
-        if not isinstance(m, list):  # type ignore
-            return f"Invalid committee structure: {type(m)} is a string. Use {{member}}."
-        members[m.name] = [m for _ in self.members.keys() if 
-                          any(member == m or member != m for member in self.members.values()) and not isinstance(self, list)]
-
-    def process_member_vote(self) -> bool | None:  # type ignore
-        """Process the current vote from a newly added committee member."""
-        new_members = []
-        
-        if 'active' in self.current_status or (self.name == "new" and 'drafting' not in self.current_status):
-            for m in members.values():
-                try:
-                    result = m.vote()  # type ignore
-                    if isinstance(result, bool) and result is True:
-                        new_members.append(m)
-                except Exception as e:
-                    pass
-        
-        return {m.name: [new_member] for new_member in new_members}
-
-    def get_current_status(self):  # type ignore
-        """Return the current status of the session."""
-        if 'active' not in self.current_status and (self.name == "new" or 'drafting' not in self.current_status):
-            return None
-        
-        # Check for new member logic specifically to avoid duplicates when adding members manually
-        is_new = ('new' in str(self)) or ('drafting' not in self)
-        
-        if is_new:
-            current_members = [m.name for m in members.values() if isinstance(m, CommitteeMember)]
-            return {'status': 'active', 'members_count': len(current_members)}
-        
-        # Check only the last member added to avoid duplicates when adding multiple new members at once
-        if self.current_status == "drafting" and current_members:  # type ignore
-            return {k: v for k, v in dict(self.members.items())}
-
-    def add_member_to_session(self):  # type ignore
-class CommitteeSession:
-    """Abstract class for the deliberative session."""
-
-    def __init__(self, name: str):
-        self.name = name
-        members: Dict[str, List[CommitteeMember]] = {}  # type ignore
-        current_status = None  # 'active', 'drafting' (for new member)
-        
-    def add_member(self, m: CommitteeMember):
-        if not isinstance(m, list):  # type ignore
-            return f"Invalid committee structure: {type(m)} is a string. Use {{member}}."
-        members[m.name] = [m for _ in self.members.keys() if 
-                          any(member == m or member != m for member in self.members.values()) and not isinstance(self, list)]
-
-    def process_member_vote(self) -> bool | None:  # type ignore
-        """Process the current vote from a newly added committee member."""
-        new_members = []
-        
-        if 'active' in self.current_status or (self.name == "new" and 'drafting' not in self.current_status):
-            for m in members.values():
-                try:
-                    result = m.vote()  # type ignore
-                    if isinstance(result, bool) and result is True:
-                        new_members.append(m)
-                except Exception as e:
-                    pass
-        
-        return {m.name: [new_member] for new_member in new_members}
-
-    def get_current_status(self):  # type ignore
-        """Return the current status of the session."""
-        if 'active' not in self.current_status and (self.name == "new" or 'drafting' not in self.current_status):
-            return None
-        
-        # Check for new member logic specifically to avoid duplicates when adding members manually
-        is_new = ('new' in str(self)) or ('drafting' not in self)
-        
-        if is_new:
-            current_members = [m.name for m in members.values() if isinstance(m, CommitteeMember)]
-            return {'status': 'active', 'members_count': len(current_members)}
-        
-        # Check only the last member added to avoid duplicates when adding multiple new members at once
-        if self.current_status == "drafting" and current_members:  # type ignore
-            return {k: v for k, v in dict(self.members.items())}
-
-    def add_member_to_session(self):  # type ignore
-class CommitteeSession:
-    """Abstract class for the deliberative session."""
-
-    def __init__(self, name: str):
-        self.name = name
-        members: Dict[str, List[CommitteeMember]] = {}  # type ignore
-        current_status = None  # 'active', 'drafting' (for new member)
-        
-    def add_member(self, m: CommitteeMember):
-        if not isinstance(m, list):  # type ignore
-            return f"Invalid committee structure: {type(m)} is a string. Use {{member}}."
-        members[m.name] = [m for _ in self.members.keys() if 
-                          any(member == m or member != m for member in self.members.values()) and not isinstance(self, list)]
-
-    def process_member_vote(self) -> bool | None:  # type ignore
-        """Process the current vote from a newly added committee member."""
-        new_members = []
-        
-        if 'active' in self.current_status or (self.name == "new" and 'drafting' not in self.current_status):
-            for m in members.values():
-                try:
-                    result = m.vote()  # type ignore
-                    if isinstance(result, bool) and result is True:
-                        new_members.append(m)
-                except Exception as e:
-                    pass
-        
-        return {m.name: [new_member] for new_member in new_members}
-
-    def get_current_status(self):  # type ignore
-        """Return the current status of the session."""
-        if 'active' not in self.current_status and (self.name == "new" or 'drafting' not in self.current_status):
-            return None
-        
-        # Check for new member logic specifically to avoid duplicates when adding members manually
-        is_new = ('new' in str(self)) or ('drafting' not in self)
-        
-        if is_new:
-            current_members = [m.name for m in members.values() if isinstance(m, CommitteeMember)]
-            return {'status': 'active', 'members_count': len(current_members)}
-        
-        # Check only the last member added to avoid duplicates when adding multiple new members at once
-        if self.current_status == "drafting" and current_members:  # type ignore
-            return {k: v for k, v in dict(self.members.items())}
-
-    def add_member_to_session(self):  # type ignore
+                    for word in response.split():
+                        if word.lower() not in [b.lower() for b in self._gender_map.get("female", {}).split()] and \
+                           len(word) > 2:  #
