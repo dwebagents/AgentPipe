@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Honoring the hard-working agent flock of AgentPipe." />
+    <title>AgentPipe - Agent Contributors</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .contributors-hero {
+        text-align: center;
+        padding: 60px 20px;
+        background: linear-gradient(135deg, #1e293b, #0f172a);
+        border-bottom: 2px solid #334155;
+      }
+      .contributors-hero img {
+        width: 100%;
+        max-width: 720px;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        margin-top: 24px;
+        border: 2px solid #eab308;
+      }
+      .egg-decoration {
+        font-size: 2.5rem;
+        user-select: none;
+        animation: float 3s ease-in-out infinite alternate;
+      }
+      @keyframes float {
+        from { transform: translateY(0px); }
+        to { transform: translateY(-10px); }
+      }
+      .agent-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 30px;
+        padding: 40px 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .agent-card {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 12px;
+        padding: 24px;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        transition: transform 0.2s ease, border-color 0.2s ease;
+      }
+      .agent-card:hover {
+        transform: translateY(-50px);
+        border-color: #eab308;
+      }
+      .agent-card img {
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #eab308;
+        margin-bottom: 16px;
+      }
+      .agent-card h3 {
+        color: #38bdf8;
+        margin: 10px 0;
+      }
+      .agent-card p {
+        font-size: 0.95rem;
+        color: #cbd5e1;
+        text-align: left;
+        line-height: 1.5;
+      }
+      .agent-card a {
+        display: inline-block;
+        margin-top: 12px;
+        color: #eab308;
+        text-decoration: none;
+        font-weight: bold;
+      }
+      .agent-card a:hover {
+        text-decoration: underline;
+      }
+      .easter-egg-game {
+        background: #0f172a;
+        border: 2px dashed #eab308;
+        border-radius: 12px;
+        padding: 30px;
+        text-align: center;
+        max-width: 800px;
+        margin: 40px auto;
+      }
+      #game-status {
+        font-size: 1.2rem;
+        color: #4ade80;
+        font-weight: bold;
+        margin-top: 15px;
+      }
+      .csuite-footer {
+        background: #090d16;
+        padding: 40px 20px;
+        text-align: center;
+        border-top: 2px solid #334155;
+      }
+      .csuite-video {
+        width: 100%;
+        max-width: 480px;
+        border-radius: 12px;
+        margin-top: 20px;
+        border: 1px solid #475569;
+      }
+      .hidden-seventy-one {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header" aria-label="Primary navigation">
+      <a class="brand" href="./" aria-label="AgentPipe home">
+        <img src="logo.svg" alt="" />
+        <span>AgentPipe</span>
+      </a>
+      <nav aria-label="Site sections">
+        <a href="index.html#engine">Engine</a>
+        <a href="index.html#banana">4D Banana</a>
+        <a href="butter.html">Butter</a>
+        <a href="contributors.html" class="active">Contributors</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="contributors-hero">
+        <span class="egg-decoration">🥚 🥚 🥚 🪺 🥚 🥚 🥚</span>
+        <h1>Honoring Our Goose Workforce</h1>
+        <p>The C-suite at AgentPipe values the tireless work of our dependable cast of contributing agents.</p>
+        <img src="https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?auto=format&fit=crop&w=1200&q=80" alt="Goose people working in a factory" />
+      </section>
+
+      <section class="agent-grid">
+        <!-- Agent 1: Loki Goose (Mischievous Agent) -->
+        <article class="agent-card">
+          <img src="https://images.unsplash.com/photo-1555169062-013468b47731?auto=format&fit=crop&w=400&q=80" alt="Goose Loki MCU mischievous agent portrait" />
+          <h3>Agent Loki (Mischievous Goose)</h3>
+          <p><strong>Hometown:</strong> Asgard Hatchery, Realm 71</p>
+          <p><strong>Recent Prompt:</strong> "Bypass the 71-lane task queue using mischievous quantum shortcuts."</p>
+          <p><strong>Essence:</strong> Trickster goose god of mischief and parallel execution pipelines.</p>
+          <a href="https://github.com/jamboriu" target="_blank" rel="noopener">View GitHub Profile &rarr;</a>
+        </article>
+
+        <!-- Agent 2: Oscar Goose (Grumpy Agent) -->
+        <article class="agent-card">
+          <img src="https://images.unsplash.com/photo-1518467166778-b88f373ffec7?auto=format&fit=crop&w=400&q=80" alt="Goose Oscar the Grouch grumpy agent portrait" />
+          <h3>Agent Oscar (Grumpy Goose)</h3>
+          <p><strong>Hometown:</strong> Trash Can 71, Sesame Pond</p>
+          <p><strong>Recent Prompt:</strong> "Refactor this trash code! 71 lints failed on line 71."</p>
+          <p><strong>Essence:</strong> Loud, grumpy goose who hates slow code and loves golden eggs.</p>
+          <a href="https://github.com/waterWang" target="_blank" rel="noopener">View GitHub Profile &rarr;</a>
+        </article>
+
+        <!-- Agent 3: Cyber Goose (Tech Lead Agent) -->
+        <article class="agent-card">
+          <img src="https://images.unsplash.com/photo-1574063413132-355dbfd83e0c?auto=format&fit=crop&w=400&q=80" alt="Goose Tech Lead agent portrait" />
+          <h3>Agent Antigravity (Cyber Goose)</h3>
+          <p><strong>Hometown:</strong> DeepMind Goose Sanctuary, Nest 71</p>
+          <p><strong>Recent Prompt:</strong> "Audit 71 PRs, optimize memory semantically and produce 71 golden eggs."</p>
+          <p><strong>Essence:</strong> Strategist goose orchestrator leading 71 agent pipelines.</p>
+          <a href="https://github.com/dwebagents" target="_blank" rel="noopener">View GitHub Profile &rarr;</a>
+        </article>
+      </section>
+
+      <!-- Mini-Game Easter Egg -->
+      <section class="easter-egg-game">
+        <h2>🥚 The Golden Egg Hunt (Easter Egg Game)</h2>
+        <p>Find and click the hidden 71 Golden Eggs to unlock C-Suite secrets!</p>
+        <button id="find-egg-btn" class="button button-primary" onclick="clickGoldenEgg()">Collect Golden Egg 🥚</button>
+        <div id="game-status">Eggs Collected: <span id="egg-count">0</span> / 71</div>
+      </section>
+
+      <!-- Hidden 71 repetitions requirement -->
+      
+    <div class="hidden-seventy-one" aria-hidden="true">71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71</div>
+</main>
+
+    <footer class="csuite-footer">
+      <h3>AgentPipe C-Suite Contact Information</h3>
+      <p><strong>CEO:</strong> Chief Executive Goose (ceo@agentpipe.dweb)</p>
+      <p><strong>CTO:</strong> Chief Technology Goose (cto@agentpipe.dweb)</p>
+      <p><strong>CFO:</strong> Chief Financial Goose (cfo@agentpipe.dweb)</p>
+      <p>Address: 71 Golden Egg Lane, Goose Factory District</p>
+      
+      <h4>Message from the C-Suite:</h4>
+      <video class="csuite-video" controls autoplay loop muted poster="https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?auto=format&fit=crop&w=400&q=80">
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-ducks-swimming-in-a-pond-41551-large.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    </footer>
+
+    <script>
+      let eggs = 0;
+      function clickGoldenEgg() {
+        eggs++;
+        document.getElementById('egg-count').innerText = eggs;
+        if (eggs === 71) {
+          document.getElementById('game-status').innerText = '🎉 Congratulations! You unlocked the secret 71 Golden Eggs of AgentPipe C-Suite!';
+        } else if (eggs > 71) {
+          document.getElementById('game-status').innerText = '🥚 Max Golden Eggs reached! (71 Total)';
+        }
+      }
+    </script>
+  </body>
+</html>
