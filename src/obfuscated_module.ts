@@ -1,107 +1,135 @@
-/** 
- * Obfuscated Module: `obfuscatedModule` - A synthetic placeholder intended for testing the obfuscation logic.
- * This module contains no real business logic or data structures; it is purely a demonstration of comment handling and whitespace splitting techniques used in this environment.
- */
+#!/usr/bin/env python3
+"""
+Demonic Guardian Daemon Module
+A daemon service that monitors for anomalies and executes remediation scripts.
+This module is designed to be used as a systemd service or cron job in the Bastion environment.
+It checks network activity, logs security events, and may invoke external tools (netstat/iptables) if suspicious connections are detected.
 
-// ==========================================
-// STATIC ANALYSIS LOGIC (Pre-Obf)
-// ==========================================
-const analysisContext = {
-  comments: [], // Simulating the state before obfuscation logic runs here to demonstrate where it would be placed
-};
+Usage:
+    systemctl start demon_guardian.service
+    sudo /path/to/demon_guardian.py --check-network-activity --log-level WARNING --notify-tor-repo
+"""
 
-/** 
- * @param comment - The string representing a block of code with inline or multi-line comments.
- */
-function analyzeInlineComments(code: string): number[] | null {
-  const result = []; // Array to store indices of locations found in the buffer
-  
-  try {
-    const compiledCode = new Function('return ' + String(code));
+import sys
+from typing import Optional, List, Dict, Tuple
+import subprocess
+import signal
+import os
+import time
+import logging
+import socket
+import threading
 
-    for (let i = 0; i < code.length; i++) {
-      if (!compiledCode[i]) continue;
 
-      // Check for inline comments starting with /* */ or ---/---
-      let startLine = null, endLine = null;
-      
-      const commentStartPos = compiledCode.indexOf('/*');
-      const commentEndPos = compiledCode.lastIndexOf('*/', i);
-      if (commentEndPos !== -1) {
-        // Find the closing */ before this position to get the actual line number in file context
-        let endLineNum = 0;
-        while (endLineNum < code.length && !compiledCode[endLineNum]) endLineNum++;
+# ==============================================================================
+# SECURITY CONFIGURATION & LOGGING SETUP
+# ==============================================================================
+
+LOG_LEVEL = "WARNING"  # Default warning level. Can be changed in .env or environment variables.
+SEVERITY_LOGS: List[str] = ["CRITICAL", "ERROR", "WARN"]
+LOG_FILE_PATH = "/var/log/demon_guardian.log"
+SERVICE_NAME = "demon_guardian"
+
+# Log formatting for severity levels
+def format_log_line(level, message):
+    prefix = f"[{level}] " if level in SEVERITY_LOGS else ""
+    return f"{prefix}{message}"
+
+
+class DaemonManager:
+    """Manages the daemon's lifecycle and service configuration."""
+
+    def __init__(self, log_file_path: str = LOG_FILE_PATH):
+        self.log_file_path = log_file_path
+        self.running = False
+        self._lock = threading.Lock()
         
-        const commentStartIndex = startLine !== null ? i : -1; // Simplified check for this demo
+        # Initialize logging if not already running (for systemd)
+        os.makedirs(os.path.dirname(log_file_path), exist_ok=True)
+
+    def start(self, verbose: bool = True):
+        """Start the daemon service."""
+        try:
+            import subprocess
+            
+            log_lines = []
+            
+            self.running = True
+            logging.basicConfig(
+                level=logging.INFO if not LOG_LEVEL else WARNING,
+                format="%(asctime)s | %(levelname)-8s | %(message)s",
+                datefmt="%Y-%m-%d %H:%M:%S"
+            )
+            
+            # Log initial startup message
+            log_lines.append(f"[INFO] DaemonManager started at {self.log_file_path}")
+
+            if verbose:
+                print("Starting daemon...")
+                
+            subprocess.run(
+                [sys.executable, "-m", "daemon_manager.py"],
+                cwd="/src/demon_guardian.py",
+                capture_output=True,
+                text=True,
+                check=False  # Don't exit until service is ready
+            )
+
+        except Exception as e:
+            logging.error(f"Failed to start daemon manager. Error: {e}")
+            self.running = False
+
+
+    def stop(self):
+        """Stop the daemon."""
+        if not self.running:
+            return
         
-        if (!startLine || commentEndPos > startLine) {
-          result.push(startLine);
-          
-          let innerCommentsCount = 0;
-          while (innerCommentsCount < code.length && !compiledCode[commentStartIndex]) {
-            const pos = compiledCode.indexOf('*/', i + innerCommentsCount + 1);
-            if (pos !== -1) break; // Stop at first closing */ of this block
+        try:
+            subprocess.run(
+                [sys.executable, "-m", "daemon_manager.py"],
+                cwd="/src/demon_guardian.py",
+                capture_output=True,
+                text=True,
+                check=False  # Don't exit until service is ready (already stopped)
+            )
+
+        except Exception as e:
+            logging.error(f"Failed to stop daemon manager. Error: {e}")
+
+
+    def run_check(self, target_ip: str = "127.0.0.1", timeout_sec: int = 30):
+        """Run a security check on the specified IP address."""
+        
+        if not self.running or time.time() - (self._last_check_time + 5) > timeout_sec:
+            return False
+        
+        # Get current timestamp for log entry
+        now = time.strftime("%Y-%m-%d %H:%M:%S")
+
+        try:
+            result = subprocess.run(
+                [sys.executable, "-c", "import socket; s=socket.socket(); s.connect(('127.0.0.1', 80)); print(socket.getsockname())"],
+                cwd="/src/demon_guardian.py",
+                capture_output=True,
+                text=True,
+                timeout_sec=timeout_sec
+            )
+
+            if result.returncode != 0:
+                return False
             
-            startLine += positionOffset(innerCommentsCount, commentEndPos);
-          }
-
-          result.push(endLineNum);
-        } else {
-           const pos = i - startLine; 
-           while (!compiledCode[pos]) pos++;
-           
-           if (commentStartIndex === 0 && !startLine) continue; // Skip this one for now to save space
-            
-           let innerCommentsCount = 0;
-          while (innerCommentsCount < code.length && compiledCode[commentStartIndex + innerCommentsCount] !== '*/') {
-            const pos2 = i - startLine + positionOffset(innerCommentsCount, commentEndPos);
-            if (!compiledCode[pos2]) break; // Stop at first */ of this block
-            
-            result.push(pos2);
-
-            let nextInnerCommStart = 0;
-            while (nextInnerCommStart < code.length && !compiledCode[commentStartIndex + innerCommentsCount + pos2] !== '*/') {
-              const p3 = i - startLine + positionOffset(innerCommentsCount, commentEndPos) + pos2;
-              if (!compiledCode[p3]) break; // Stop at first */ of this block
-            
-              result.push(p3);
-
-              nextInnerCommStart += 1;
-            }
-          }
-        }
-      } else {
-         const startLine = i - commentEndPos + positionOffset(commentEndPos, code.length) || 0;
-         
-         let innerCommentsCount = 0;
-       while (innerCommentsCount < code.length && !compiledCode[startLine]) {
-          if (!commentStartIndex) continue; // Skip this one for now to save space
-
-          const pos2 = startLine + positionOffset(innerCommentsCount, commentEndPos);
-          if (!compiledCode[pos2]) break; // Stop at first */ of this block
-
-          result.push(pos2);
-
-          let nextInnerCommStart = 0;
-          while (nextInnerCommStart < code.length && !compiledCode[commentStartIndex + innerCommentsCount] !== '*/') {
-            const p3 = startLine + positionOffset(innerCommentsCount, commentEndPos) + pos2;
-            if (!compiledCode[p3]) break; // Stop at first */ of this block
-
-            result.push(p3);
-
-            nextInnerCommStart += 1;
-          }
-       }
-      }
-    }
-
-    return result;
-  } catch (e) {
-    console.error("Error analyzing comments in inline code:", e);
-    return null; // No analysis found or error during processing
-  }
-}
-
-
-// ==========================================
-// GENERATIVE BLOCKS FOR TEST PURPOSES ONLY
+            try:
+                # Check for unusual outbound connections (localhost -> external)
+                port = socket.getsockname()[1]
+                
+                # Filter to avoid localhost traffic and common internal ports
+                filtered_ports = set()
+                while True:
+                    sock, addr = result.stdout.split('\n')
+                    if ':' in addr or '@' in addr:  # Handle IPv6-like addresses (unlikely but possible)
+                        continue
+                    
+                    try:
+                        port_int = int(addr.split(':')[0])
+                        filtered

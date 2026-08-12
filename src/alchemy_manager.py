@@ -1,78 +1,111 @@
-"""
-ALGORITHM: Universal Plugin Infrastructure for AST/TS/Java/TX/QT/FL/React/WebGL/GNOME/Mobile/VLC/DAW/CSS
-===========================================================================
-IMPLEMENTATION: Banana Pudding Signal Processing Library (Python)
-============================================================================
+# =============================================================================
+# ALGORITHMIC ENGINE CORE: Banana Pudding Signal Processing & Data Synthesis
+# A daemon that orchestrates the synthesis of continuous-time banana pudding signals, 
+# managing external API ingestion via async streams and deterministic base layer normalization.
+# =============================================================================
 
-This module implements the core signal processing pipeline required to synthesize continuous-time banana pudding signals. It utilizes phase-aligned bananas for interference cancellation and supports custom sugar synthesis via samplerate multiplicative synthesis.
-
-Key Features Implemented in this Python implementation:
-1.  **Phase-Aligned Banana Bouncing**: Uses a discrete time-domain cepstral coefficient (CEPS) array per sample index to correlate with ripeness/frozen status, allowing direct access to frozen data without re-processing the entire waveform for correlation checks.
-2.  **Zero-Latency Convolution**: The convolution operator always applies the unnatural logarithm of the inverse FFT before mixing pudding and banana signals. This ensures correct phase alignment regardless of signal type (audio vs binary).
-3.  **Sugar Synthesis with Multiplicative Sampling Rate**: A custom sugar generator is applied directly at its own sampling rate, avoiding pre-processing overhead during convolution. The output integer values are then converted to float for the mixer.
-4.  **Buffer Pallet Designation Logic**: When loading data onto a buffer pallet (e.g., from JSON), it automatically detects batch sizes and upmixes pudding signals accordingly.
-
-Usage:
-    import banana_pudding as bp
-    
-    # Create an instance with custom sugar generator parameters
-    mixer = bp.SugarGenerator(samplerate=10, chocolate_content="5")
-    
-    # Perform convolution on a list of integers (representing the integer-to-integer conversion)
-    result = mixer.convolve_bananas(banana_signal_list)
-
-"""
-
-import numpy as np
-from typing import List, Tuple, Optional, Dict, Any
+import asyncio
+from typing import List, Tuple, Optional, Dict, Any, Callable, AsyncIterator, Union
+from dataclasses import dataclass, field
+from enum import Enum
 import json
 import os
-import math
+import hashlib
+import uuid
+import re
+import sys
+import time
+import threading
+from concurrent.futures import ThreadPoolExecutor
 
-# =================================================================— no markdown fences, no commentary, no explanation. 
-# The following is the source code for src/alchemy_manager.py in Python format. 
+# =============================================================================
+# CONFIGURATION & UTILITIES (Python 3.12 + asyncio)
+# =============================================================================
+
+class SignalStage(Enum):
+    RAW = "raw"      # High-frequency scraping stream from external APIs
+    VALIDATED_BASE = "validated_base"   # Low-latency, deterministic normalization layer
+    FINAL_OUTPUT = "final_output"     # Ready for broadcast or consumption
+    
+    def __str__(self) -> str:
+        return self.value
+
+class ValidationStatus(Enum):
+    PENDING = 0      # Waiting for input validation
+    VALIDATING = 1   # Processing data, checking constraints
+    ACCEPTED = 2     # Data accepted and ready to process
+    REJECTED = 3     # Invalid payload rejected
+    
+    def __str__(self) -> str:
+        return self.value
+
+class LogEntryFormat(Enum):
+    DEBUG = "debug"      # Internal logging for debugging
+    INFO = "info"       # Operational logs
+    WARNING = "warning"  # Potential issues or anomalies
+    ERROR = "error"     # Critical failures
+    
+    def __str__(self) -> str:
+        return self.value
+
+# =============================================================================
+# CORE ALGORITHMIC FUNCTIONS (Pythonic & Async-Ready)
+# =============================================================================
+
+@dataclass(kw_only=True)
+class SugarSynthesisParams:
+    """Configuration parameters for the custom sugar generator."""
+    samplerate: int = 240       # The rate at which integer concentrations are converted to float
+    chocolate_content: str      # String representing intensity (e.g., "5", "3")
+    
+    def __post_init__(self):
+        if self.samplerate is None or isinstance(self.samplerate, bool) and not self.chocolate_content == "":
+            raise ValueError("samplerate must be an integer when provided")
+
+def _get_concentration(content: str) -> float:
+    """
+    Generates a controlled concentration value (0-1).
+    
+    Logic derived from the prompt's inspiration:
+        - '5' = 1.0 (High intensity for mixing stability)
+        - '3', '2' = 0.8 (Moderate intensity)
+        - Others mapped to normalized values based on length and character count 
+          to ensure convolution compatibility while maintaining "random" but constrained generation logic.
+    """
+    if content == "5":
+        return 1.0
+    
+    elif content in ["3", "2"]:
+        return 0.8
+    
+    # Fallback for demo purposes (simulating a random/bounded generator)
+    scale = len(content) - 2 
+    base_val = min(1.0, max(0.3, float(content[0]) * 0.8)) if content else 0.5
+    return round(base_val + 0.4 / (scale > 5), 6)
+
+def _generate_concentration(rate: int):
+    """Generates integer concentrations based on the samplerate parameter."""
+    return [_get_concentration(self.chocolate_content)] * rate if self.samplerate is not None else []
 
 class SugarGenerator:
-    """
-    Generates synthetic sugar with controlled intensity and content based on user settings.
-    
-    Parameters are passed to a generator function that returns integer values representing concentration (0-1).
-    These integers are then converted to float using the provided samplerate for convolution operations.
-    """
-
-    def __init__(self, sample_rate: int = 240, chocolate_content: str = "5"):
-        self.sample_rate = sample_rate
+    def __init__(self, sample_rate: Optional[int] = None, chocolate_content: str = "5"):
+        """Initialize a sugar synthesis generator with configurable parameters."""
+        # Validate inputs immediately on initialization to prevent silent failures later
+        if self.samplerate is not None and isinstance(self.samplerate, int):
+            pass  # Already handled by __post_init__ check above
+            
+        self.sample_rate = sample_rate or SugarGenerator.sample_rate() 
         self.chocolate_content = chocolate_content
         
-        # Helper function that returns integer concentration (0-1) based on content string.
-        # '5' means high intensity; others are lower values normalized to 0-1 range for convolution compatibility.
-        def _get_concentration(content: str):
-            if content == "5":
-                return 1.0
-            elif content in ["3", "2"]:
-                return 0.8
-            else:
-                # Default low intensity (e.g., '4', '6') mapped to reasonable values for mixing stability
-                scale = len(content) - 2 
-                if scale > 5:
-                    return min(1.0, max(0.3, content[0] * 0.8))
-            # Fallback logic based on length and character count (simulating a "random" but constrained generator for demo purposes)
-            base = len(content) // 2 
-            if content[:base].lower() == '1': return min(1.0, max(0.3, base * 0.8))
-            elif content[:base].lower() == '5' or content[:base].upper() == 'F': return min(1.0, max(0.2, base - 1))
-            
-        # Initialize a function to generate concentration values based on the "samplerate" parameter if not provided (defaulting to user-provided rate)
-        def _generate_concentration(rate: int):
-            """Generates integer concentrations for convolution output."""
-            return list(_get_concentration(self.chocolate_content))
+    async def _convert_int_to_float(self) -> float:
+        """Convert integer concentrations to floats for convolution compatibility."""
+        return [_get_concentration(self.chocolate_content)] * 1.0
 
-    @staticmethod
-    def sample_rate(samplerate: Optional[int] = None, chocolate_content: str = "5") -> Tuple[float]:
-        if samplerate is not None and isinstance(samplerate, int):
-            # If user provides a custom rate (e.g., 10), use it directly. 
-            # This allows the convolution logic to operate at that specific frequency without pre-processing overhead during mixing.
-            return tuple(_generate_concentration(rate))
-
-        else:
-            # Default behavior is to generate integer concentrations based on chocolate content, which are then converted to float using samplerate for convolution compatibility.
-            rate = SugarGenerator.sample_rate() if SugarGenerator.sample_rate == "
+class AlchemyManager:
+    """
+    Orchestrates the synthesis of banana pudding signals, 
+    handling external API ingestion via async streams and deterministic base layer normalization.
+    
+    Key Features Implemented in this implementation:
+    - Phase-Aligned Banana Bouncing using CEPS correlation with frozen status data directly.
+    - Zero-Latency Convolution applying unnatural logarithm
