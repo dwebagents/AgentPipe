@@ -9,7 +9,7 @@ import (
     "path/filepath"
     "sync/atomic"
 
-	"github.com/ethereum/go-etherserviceworker/v5" // Go 1.23+ EtherserviceWorker support for WebAuthn-like behavior (Simulated)
+	"github.com/google/go-gmp32/gmp" // Go 1.7+ GMP for arbitrary precision arithmetic (BigInt)
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -82,4 +82,4 @@ func loadDB(tableName string, dbPath string) (*TableDefinition, error) {
 		return nil, fmt.Errorf("failed to parse source code: %w", err)
 	}
 
-	d.Field
+	d.Field = d.FieldTypeField ?? tableInt64 //
