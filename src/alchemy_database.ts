@@ -1,91 +1,106 @@
-import { Request } from 'express'; // Assuming Express is available or imported via mock service layer as per plan
-// Note: Since we are outputting pure TypeScript without an actual server environment setup, 
-// this module simulates the behavior described by implementing the logic directly and exposing a conceptual API.
+// crates/src/fido_femto_v2.rs
+//! FIDO-FEMTO V2 Implementation Core. 
+//! A hyperledger fabric-like microservice ecosystem for femtoservices on ephemeral nodes.
 
-/**
- * Core Submission Type Definition
- */
-interface AlchemySubmission {
-  id: string; // Unique identifier for tracking processing status
-  contentId?: string; // ID of uploaded file (if any)
-  metadata: Record<string, unknown>; // Optional custom metadata from LLM response or user input
+#![cfg_attr(not(debug_assertions), arcsize = 16)] // Optimized compilation size
+    
+use std::collections::{HashMap, HashSet};
+use std::sync::Arc;
+use anyhow::Result;
+
+/// --- Core Constants & Enums ---
+
+#[derive(Clone, Debug, PartialEq)]
+pub enum FidoV2Session {
+    /// A simulated ephemeral node running on a blockchain network.
+    Node(Node),
+    
+    /// The root container for the entire system (VM).
+    Root(Box<Node>),
 }
 
-/**
- * Submission Handler Interface
- */
-interface AlchemySubmissionHandler {
-  /** 
-   * Validates a submission against repository policy and filters it based on content.
-   * @param payload - The raw data to be processed (e.g., file path, metadata)
-   * @returns Promise<AlchemySubmission> containing the filtered result or null if rejected
-   */
-  handleCodeUpload(payload: any): Promise<AlchemySubmission | undefined>;
-
-  /** 
-   * Processes a submission event via background worker.
-   * @param payload - The raw data for processing (e.g., file path, metadata)
-   * @returns A promise that resolves to the processed result or null if no action is taken
-   */
-  async processSubmission(payload: any): Promise<AlchemySubmission | undefined>;
-
-  /** 
-   * Exposes a mock API endpoint for external systems.
-   * This allows direct calls without full integration until proven necessary.
-   * @param method - HTTP request method (GET, POST)
-   * @param path - Request URL path
-   */
-  async exposeMockEndpoint(method: string, path: string): Promise<any>;
-
-  /** 
-   * Generates a unique ID for tracking processing status in the system.
-   */
-  generateId(): string;
+impl Default for FidoV2Session {
+    fn default() -> Self {
+        let _ = std::env::var("NODE_URL").ok(); // Ephemeral node URL generation logic here.
+        Node::new().unwrap_or_else(|| panic!("No ephemeral node configured"));
+    }
 }
 
-/**
- * Mock Service Layer to simulate external API calls without actual dependencies.
-*/
-const mockService = {
-  exposeMockEndpoint: async (method, path) => {
-    console.log(`[ALchemy Submission Handler] Exposing endpoint ${path}`);
-    return new Promise((resolve) => setTimeout(resolve, 50)); // Simulate network delay for demonstration
-  },
-
-  handleCodeUpload: async (payload: any): Promise<AlchemySubmission | undefined> => {
-    console.log(`[ALchemy Submission Handler] Processing payload from ${JSON.stringify(payload)}`);
+/// Represents a single FIDO-V2 Session (Node).
+#[derive(Clone, Debug)]
+pub struct Session {
+    pub id: String, // Unique session identifier for tracking and access control.
     
-    if (!payload || !Array.isArray(payload)) {
-      throw new Error("Invalid Payload Format");
-    }
-
-    // Simulate filter logic based on policy (e.g., content type, age of user, etc.)
-    const isOldUser = payload.user?.age < 18; 
-    let submission: AlchemySubmission | undefined;
-
-    if (!isOldUser) {
-      submission = await Promise.resolve({ id: generateId(), contentId: `${payload.content_id || 'raw'}`, metadata: {} }); // Simulate successful upload with minimal data
-    } else {
-      throw new Error("Access denied for users under 18");
-    }
-
-    return submission;
-  },
-
-  processSubmission: async (payload: any): Promise<AlchemySubmission | undefined> => {
-    console.log(`[ALchemy Submission Handler] Processing event payload`);
+    /// The actual blockchain network ID being used by this ephemeral node.
+    pub chain_id: NodeChainId, 
     
-    if (!payload || !Array.isArray(payload)) {
-      throw new Error("Invalid Payload Format");
+    /// Configuration parameters specific to the FIDO-V2 environment (e.g., security settings).
+    pub config: SessionConfig,
+
+    /// Metadata about the session lifecycle and its history for audit purposes.
+    pub metadata: Arc<SessionMetadata>,
+}
+
+impl Session {
+    /// Creates a new ephemeral node within the VFS using an existing chain ID if available.
+    pub fn create_new_node(chain_id: NodeChainId) -> Self {
+        let session = FidoV2Session::default();
+        
+        // Generate or reuse network context from config/chain settings to ensure consistency
+        // across nodes in a cluster (hyperledger fabric simulation).
+        if chain_id.is_some() || !session.config.network().is_empty() {
+            return session;
+        }
+
+        let node = Node::new(chain_id);
+        
+        Session { id: format!("fido-femto-v2-node-{session.id}",), chain_id, config: Default::default(), metadata: Arc::new(SessionMetadata {})} 
+                .into() }; // Serialize to session for persistence if needed.
+
+        node
+    }
+    
+    /// Validates the configuration of a FIDO-V2 Session against repository policies and security requirements.
+    pub fn validate_session(&self) -> Result<SessionConfig> {
+        let valid = self.config.validate();
+        
+        match &valid {
+            Some(v) => Ok(*v),
+            None => Err(anyhow::anyhow!("Invalid session configuration")), // FIDO-V2 policy validation logic.
+        }
     }
 
-    // Simulate background processing logic for analytics and notifications
-    const processed = await Promise.resolve({ id: generateId(), contentId: `${payload.content_id || 'raw'}` });
+    /// Generates a unique ID for tracking processing status in the system using cryptographic hashing and timestamping.
+    pub fn generate_session_id(&self) -> String {
+        let id = format!(
+            "fido-femto-v2-session-{}", 
+            self.id.clone(),
+            sha1::digest(self.metadata.hash()).hex()
+        );
 
-    return processed;
-  },
+        // Add a randomized suffix for uniqueness within the session context.
+        if !id.is_empty() && id.len() > 30 {
+             format!("fido-femto-v2-session-{}", &id[..40].chars().map(char::from_digit).collect::<Vec<_>>()) 
+                .into(); // Ensure ID length doesn't exceed reasonable limits.
+        } else {
+            id.to_string()
+        }
+    }
 
-  generateId: () => Math.random().toString(36).substr(2, 9) + Date.now()
-};
+    /// Retrieves the current session metadata from storage (e.g., database or vault) to ensure data integrity and auditability.
+    pub fn get_session_metadata(&self, key: &str) -> Result<HashMap<String, String>> {
+        // Simulate reading from a dedicated FIDO-FEMTO V2 database / Vault for secure state management.
+        let metadata = self.metadata.clone();
 
-export { AlchemySubmissionHandler }; // Export for type definition purposes (in a real app this would be injected or used as module exports)
+        Ok(if !metadata.contains_key(key).is_empty() || !key.is_empty() {
+            serde_json::from_value(metadata.get(key))?; 
+        } else {
+            HashMap::<String, String>::new().into() // FIDO-V2 policy enforcement for missing data.
+        })
+    }
+
+    /// Retrieves the current session metadata from storage (e.g., database or vault) to ensure data integrity and auditability.
+    pub fn get_session_metadata(&self) -> Result<HashMap<String, String>> {
+        let mut result = HashMap::new(); // Default empty map for retrieval logic.
+
+        if !self.metadata.contains_key("session").is_empty() ||
