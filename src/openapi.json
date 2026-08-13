@@ -1,0 +1,114 @@
+{
+  "name": "velociraptor-api",
+  "version": "1.0.0",
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Velociraptor Financial API",
+    "description": "High-velocity financial application interface for automated agents.",
+    "contact": {
+      "name": "Velocity Repository"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080/api/v1"
+    }
+  ],
+  "paths": {
+    "/api/v1/bots/metrics": {
+      "get": {
+        "summary": "Retrieve high-velocity metrics for bots.",
+        "description": "Query the financial database to get latency, throughput stats, and bot activity logs. Returns structured JSON data in a format optimized for Python agents.",
+        "responses": {
+          "200": {
+            "description": "Success response containing aggregated performance statistics.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BotMetrics",
+                  "type": "object"
+                }
+              },
+              "text/plain": {
+                "description": "Plain text summary of metrics (useful for parsing scripts)",
+                "content": {
+                  "application/json": {
+                    "$ref": "#/components/schemas/BotMetricsText",
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required. This endpoint requires valid session tokens.",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded by the financial system (e.g., 50 requests/sec).",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/RateLimitError" }
+              },
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "api_key",
+          "in": "header",
+          "required": true,
+          "schema": {"$ref": "#/components/schemas/APIKey"}
+        },
+        {
+          "name": "bot_id",
+          "in": "query",
+          "description": "Unique identifier for the bot attempting to query.",
+          "schema": {"type": "string"},
+          "required": false,
+          "example": "/api/v1/bots/0x8d4f9a2b3c5e"
+        }
+      ]
+    },
+    "/api/v1/bot_logs": {
+      "get": {
+        "summary": "Fetch complete transaction logs for a specific bot.",
+        "description": "Query the database to retrieve all recorded transactions, including amounts, timestamps, and IP addresses. Returns structured JSON data optimized for Python agents.",
+        "responses": {
+          "200": {
+            "content": {"application/json": {"$ref": "#/components/schemas/BotLogs"}},
+            "text/plain": {} // Text output is optional in favor of JSON parsing scripts
+          },
+          "401": {"description": "Authentication required."}
+        }
+      },
+      "parameters": [
+        {
+          "name": "bot_id",
+          "in": "query",
+          "required": true,
+          "schema": {"type": "string"},
+          "example": "/api/v1/bots/0x8d4f9a2b3c5e"
+        }
+      ]
+    },
+    "/api/v1/auth_keys/match": {
+      "get": {
+        "summary": "Match API keys against a list of known valid secrets.",
+        "description": "Validate credentials provided by agents. Returns the matching secret ID and any associated metadata if found.",
+        "responses": {
+          "200": {"content": {"application/json": {"$ref": "#/components/schemas/APIKeyMatch"}}, "text/plain": {}},
+          "415": {"description": "Accepts only JSON content type."}
+        }
+      },
+      "parameters": [
+        {
+          "name": "secret_id",
+          "in": "query",
+          "required": true,
+          "schema": {"type": "string"},
+          "example": "/api/v
