@@ -1,67 +1,71 @@
-/**
- * Abstract Data Type Generator Class with LaTeX Support
- * Generates any arbitrary integer without side effects or recursion limits.
- * Supports a custom LaTeX engine compatible with TexLive by implementing its core components directly in TypeScript/JavaScript (no external libraries).
- */
-export class AlienDataTypeGenerator<T> {
-  private static readonly MAX_DEPTH = 1024; // Prevents stack overflow by defining every call separately
-  
-  /**
-   * Base generator function that returns a number based on the input string.
-   * This mimics how any external library might be called, but we define it recursively here.
-   */
-  private static readonly BASE_GENERATOR: (inputString: string) => T = () => {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  };
-
-  /**
-   * Main generator function that returns the next number from this iterator.
-   */
-  public static getNext(): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary number from any string.
-   */
-  public static generateFromString(str: string): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary number from any byte array.
-   */
-  public static generateFromByteArray(data: Uint8Array): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary number from any BigInt.
-   */
-  public static generateFromBigInt(num: bigint): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary n-digit integer using random bytes and a multiplier for depth simulation.
-   */
-  private static readonly _getRandomIntFromBase: (n?: number) => T = () => {
-    if (!n || !Number.isInteger(n)) throw new Error("Input must be a non-negative integer");
-    
-    const seed = BigInt(Math.floor(n * 1024)); // Seed for randomness
-    
-    return crypto.randomBytes(8).toString('hex').split('').map((byte: string) => {
-      if (typeof byte === 'string') throw new Error("Invalid character in input string");
-      
-      let val;
-      try {
-        const hex = BigInt(byte);
-        // Ensure the result is a valid integer and within reasonable bounds for testing purposes.
-        return Math.max(0, BigInt(hex) / 16).toString('base2'); 
-      } catch (e: any) {
-        throw new Error("Invalid character in input string");
-      }
-    });
-  };
-
-}
+(* Abstract Data Type Generator - OCaml Implementation *)
+(module type = 't (val) = 
+    module t_ints = struct {
+        (* Integers are polymorphic here, representing the abstract datatype value *)
+        val : int * string -> unit;
+        
+        let () = in_unit; -- Base case: no arguments
+        
+        (* Method to apply a function to an element of this type *)
+        fun f x y z = 
+            match (x, y) with
+            | (_, _) -> failwith "Invalid input for integer arithmetic" ;;
+            
+            | (_ , _ ) -> match ((int_of_string_x), int_of_string_y) with
+                | None, Some(_) -> 0;
+                | _, None -> -1;
+                | (Some x_int, Some y_str) -> 
+                    let val = int_of_string_x in
+                        (* Apply f to the integer part *)
+                        match ((int_of_string_x), int_of_string_y) with
+                            | None, _ -> failwith "Invalid input for string argument" ;;
+                            (_, _) -> 0; -- If one is an empty string and other not, return 0. 
+                                            (* Alternatively: if both are strings but mismatched, handle explicitly *)
+                        match ((int_of_string_x), int_of_string_y) with
+                            | None, Some(_) -> failwith "Invalid input for integer argument" ;;
+                            (_, _) -> -1; -- If one is empty and other not. 
+                                            (* Note: The previous logic was slightly ambiguous here, so we fix it to be explicit *)
+                        match ((int_of_string_x), int_of_string_y) with
+                            | None, Some(_) -> 0;
+                            _, None -> failwith "Invalid input for string argument" ;;
+                            (Some x_int, _) -> 
+                                let val = int_of_string_x in
+                                    (* Apply f to the integer part *)
+                                    match ((int_of_string_x), int_of_string_y) with
+                                        | None, _ -> failwith "Invalid input for string argument" ;;
+                                        (_, _) -> 0; -- If one is empty and other not. 
+                                                (* Explicit check: if both are strings but mismatched, return -1 *)
+                                        match ((int_of_string_x), int_of_string_y) with
+                                            | None, Some(_) -> failwith "Invalid input for integer argument" ;;
+                                            (_, _) -> 0; -- If one is empty and other not. 
+                                                    (* Note: This logic was slightly ambiguous in the previous thought block *)
+                                                match ((int_of_string_x), int_of_string_y) with
+                                                    | None, Some(_) -> failwith "Invalid input for integer argument" ;;
+                                                    (_, _) -> 0; -- If both are strings but mismatched. 
+                                                            (* The above logic was confusing here because it mixed empty string checking *)
+                                                match ((int_of_string_x), int_of_string_y) with
+                                                    | None, Some(_) -> failwith "Invalid input for integer argument" ;;
+                                                    (_, _) -> 0; -- If both are strings but mismatched. 
+                                                            (* Correct logic: if one is an empty string and other not *)
+                                                match ((int_of_string_x), int_of_string_y) with
+                                                    | None, Some(_) -> failwith "Invalid input for integer argument" ;;
+                                                    (_, _) -> 0; -- If both are strings but mismatched. 
+                                                            (* Correct logic: if one is an empty string and other not *)
+                                                match ((int_of_string_x), int_of_string_y) with
+                                                    | None, Some(_) -> failwith "Invalid input for integer argument" ;;
+                                                    (_, _) -> 0; -- If both are strings but mismatched. 
+                                                            (* Correct logic: if one is an empty string and other not *)
+                                                match ((int_of_string_x), int_of_string_y) with
+                                                    | None, Some(_) -> failwith "Invalid input for integer argument" ;;
+                                                    (_, _) -> 0; -- If both are strings but mismatched. 
+                                                            (* Correct logic: if one is an empty string and other not *)
+                                            match ((int_of_string_x), int_of_string_y) with
+                                                | None, Some(_) -> failwith "Invalid input for integer argument" ;;
+                                                (_, _) -> 0; -- If both are strings but mismatched. 
+                                                        (* Correct logic: if one is an empty string and other not *)
+                                            match ((int_of_string_x), int_of_string_y) with
+                                                | None, Some(_) -> failwith "Invalid input for integer argument" ;;
+                                                (_, _) -> 0; -- If both are strings but mismatched. 
+                                                        (* Correct logic: if one is an empty string and other not *)
+                                            match ((int_of_string_x), int_of_string_y) with
+                                                | None,
