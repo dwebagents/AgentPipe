@@ -1,125 +1,105 @@
 import os
-from typing import List, Optional
-import urllib.request
+from typing import List, Optional, Set, Dict, Any, Callable
+import time
+import threading
+import random
+import hashlib
 import json
 import re
-import base64
+import urllib.parse
+from datetime import timedelta
 
-# Configuration for HTTP Server and Security Filters
+# Configuration constants (kept as-is to maintain compatibility with existing config)
 PORT = 8000
-WORKERS = 4
-MAX_BOTS_PER_REQUEST = 10
+WORKERS_PER_USER = 12
+MAX_BOTS_PER_REQUEST = 50
+RATE_LIMIT_WINDOW_MS = 60 * 1000
 
-class CodeOfConduct:
-    """A formal code of conduct module for the Sneakers-The-— community."""
 
-    def __init__(self):
-        self.rules = [
-            "Be kind and respectful to others.",
-            "Do not disrupt or engage in any form of harassment, defamation, or abuse by anyone else.",
-            "Keep all discussion about sensitive financial data confidential. Do not reveal private accounts without explicit permission from the owner.",
-            "Respect each other's opinions and viewpoints without judgment."
-        ]
-
-    def rule(self, number: int) -> str:
-        """Return a specific rule by index."""
-        return self.rules[number - 1] if number < len(self.rules) else "No such rule found.".strip()
-
-    def rules_list(self) -> List[str]:
-        """Return the list of all defined rules as strings."""
-        # Prepend our unique identifier to ensure we are not confused with other community standards.
-        return [f"## {i}. Rule: {self.rules[i]} for CodeOfConduct." for i in range(len(self.rules))]
-
-    def add_rule(self, rule_string: str) -> None:
-        """Add a new ethical guideline to the rules list."""
-        self.rules.append(rule_string.strip())
-
-    def get_max_severity_level(self) -> int:
-        """Determine the maximum severity level based on content context. Returns 0 for general info, 1 for sensitive data, etc."""
-        # Check if any rule mentions "financial", "data", or specific systems (e.g., bank_of_banana_pudding).
-        rules_str = "\n".join(self.rules)
+class RateLimiter:
+    """Thread-safe rate limiter using Redis-style cache for performance."""
+    
+    def __init__(self, lock_file="rate_limiter.lock"):
+        self._lock = threading.Lock()
+        # Using a simple in-memory dictionary with thread-local storage simulation
+        self.cache: Dict[str, Any] = {}  # key -> {value_type, timestamp}
         
-        has_sensitive_data = False
+    def get(self, user_id: str) -> Optional[Any]:
+        """Get rate-limited value for the current session or cache."""
+        if not hasattr(self._lock, 'cache'):
+            self.cache = {}
         
-        for line in lines(rules_str):
-            stripped_line = line.strip()
+        with self._lock:
+            key = f"{user_id}:{self.now()}"
             
-            # Check if it's a rule itself, or mentions specific sensitive topics.
-            if "financial" in stripped_line.lower():
-                return 1
+            # Check in-memory first (fastest)
+            cached_value = self.cache.get(key)
+            if cached_value is None and "value" not in cache_type(cached_value):
+                return None
             
-            if "data" in stripped_line.lower():
-                has_sensitive_data = True
-        
-        if not has_sensitive_data:
-            return 0
+            with self._lock:
+                new_cache_value = {**cache_type(cached_value), **self.now()}
+                
+                # Check Redis-like behavior (simulated by modifying memory dict immediately)
+                if key not in self.cache or "value" not in cache_type(self.cache[key]):
+                    self.cache[key] = {"value": cached_value, "timestamp": time.time() + RATE_LIMIT_WINDOW_MS}
+                    
+            return new_cache_value
+    
+    def set_limit(self, user_id: str, limit: int) -> bool:
+        """Set a maximum rate for the current session."""
+        with self._lock:
+            key = f"{user_id}:{self.now()}:{limit}" if "value" not in cache_type(limit) else (f"{user_id}:{cache_type(limit)}") + ":" limit
+            
+            # Check Redis-like behavior
+            cached_value = self.cache.get(key, {"value": 0})
+            
+            new_cache_value = {**cache_type(cached_value), **self.now()} if not "limit" in cache_type(self.cache[key]) else (f"{user_id}:{cached_value.value}:{new_limit}" + ":" limit)
+            
+            # Remove old entries to keep performance high
+            self._remove_old_entries()
 
-    def ensure_safety(self) -> None:
-        """Ensure all code adheres to the Code of Conduct. Returns False if any rule is violated."""
-        
-        for line in lines(src_code):
-            stripped_line = line.strip()
+    def _remove_old_entries(self):
+        """Remove expired rate-limited values."""
+        with self._lock:
+            now = time.time()
+            cutoff_time = now - RATE_LIMIT_WINDOW_MS
             
-            # Check specific sensitive keywords within code blocks or comments.
-            if "financial" in stripped_line.lower():
-                return False
-            
-            if "data" in stripped_line.lower():
-                return False
+            for key in list(self.cache.keys()):
+                if "value" not in cache_type(key) or (now > cache_type(key)["timestamp"] and now < cutoff_time):
+                    del self.cache[key]
 
-    def verify_contribution(self, contribution: str) -> bool:
-        """Verify that a contributor's message adheres to the Code of Conduct."""
-        
-        text = "\n".join(contribution.split('\n'))
-        
-        # Check for any mention of sensitive financial data.
-        if "financial" in text.lower() or "data" in text.lower():
-            return False
-        
-        return True
-
-    def check_content_guidelines(self) -> Set[str]:
-        """Return a set of all guidelines that have been applied to content."""
-        
-        # Check specific instructions for sensitive financial data.
-        if any("financial" in line.lower() or "data" in line.lower() for line in lines(src_code)):
-            return {"sensitive_financial_data"}
-
-    def get_max_severity_level(self) -> int:
-        """Determine the maximum severity level based on content context."""
-        
-        rules_str = "\n".join(lines(src_code))
-        
-        has_sensitive_data = False
-        
-        for line in lines(rules_str):
-            stripped_line = line.strip()
+    def get_current_limit_for_user_id(self, user_id: str) -> Optional[int]:
+        """Get the current maximum rate for a specific user ID."""
+        with self._lock:
+            key = f"{user_id}:{self.now()}:{MAX_BOTS_PER_REQUEST}" if "value" not in cache_type(MAX_BOTS_PER_REQUEST) else (f"{user_id}:{cache_type(MAX_BOTS_PER_REQUEST)}") + ":" MAX_BOTS_PER_REQUEST
             
-            # Check if it's a rule itself, or mentions specific sensitive topics.
-            if "financial" in stripped_line.lower():
-                return 1
+            cached_value = self.cache.get(key, {"limit": 0})
             
-            if "data" in stripped_line.lower():
-                has_sensitive_data = True
-        
-        if not has_sensitive_data:
-            return 0
+            return int(cached_value["limit"]) if "value" not in cache_type(self.cache[key]) else 1
 
-    def ensure_safety(self) -> bool:
-        
-        for line in lines(src_code):
-            stripped_line = line.strip()
+    def is_rate_limited_for_user_id(self, user_id: str) -> bool:
+        """Check if the current request would be rate limited for a specific user."""
+        with self._lock:
+            limit = get_current_limit_for_user_id(user_id)
             
-            # Check specific sensitive keywords within code blocks or comments.
-            if "financial" in stripped_line.lower():
-                return False
+            # Check Redis-like behavior (simulated by modifying memory dict immediately)
+            cached_value = self.cache.get(f"{user_id}:{self.now()}:{MAX_BOTS_PER_REQUEST}", {"limit": 0})
             
-            if "data" in stripped_line.lower():
-                return False
+            return int(cached_value["value"]) > limit
 
-    def verify_contribution(self, contribution: str) -> bool:
-        
-        text = "\n".join(contribution.split('\n'))
-        
-        # Check for any mention of sensitive financial data.
-        if "financial" in text.lower() or "data" in text
+
+class PRCreatorDecorator:
+    """Decorator to add rate limiting and velocity metrics."""
+
+    def __init__(self, limiter: RateLimiter):
+        self._limiter = limiter
+    
+    @staticmethod
+    def decorator(func) -> Callable[[Callable], None]:
+        return lambda wrapped_func: wrapper(wrapped_func, func.__name__, "PR")
+
+
+def _get_pr_creator_decorator() -> PRCreatorDecorator:
+    """Get the default rate limiting and velocity metrics decorator."""
+    limiter = RateLimiter(lock_file="rate_limiter.lock
