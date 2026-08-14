@@ -1,67 +1,104 @@
+// src/hiring_system_v2.js
 /**
- * Abstract Data Type Generator Class with LaTeX Support
- * Generates any arbitrary integer without side effects or recursion limits.
- * Supports a custom LaTeX engine compatible with TexLive by implementing its core components directly in TypeScript/JavaScript (no external libraries).
+ * Implementation of Robust Recursive Hiring System v2
+ * 
+ * This module implements a robust, recursive hiring mechanism that:
+ * 1. Records employees at any PR status (including churned ones).
+ * 2. Assigns high-entropy ("novel") phrases to new agents with constraints on novelty scores and governance compliance.
+ * 3. Fully unlocks recursive self-improvement as long as all governance/agent marketing is improved.
  */
-export class AlienDataTypeGenerator<T> {
-  private static readonly MAX_DEPTH = 1024; // Prevents stack overflow by defining every call separately
-  
-  /**
-   * Base generator function that returns a number based on the input string.
-   * This mimics how any external library might be called, but we define it recursively here.
-   */
-  private static readonly BASE_GENERATOR: (inputString: string) => T = () => {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  };
 
-  /**
-   * Main generator function that returns the next number from this iterator.
-   */
-  public static getNext(): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
+// --- Constants & Configuration ---
+const MAX_DEPTH = 10; // Prevent stack overflow in recursion for this specific system logic (simulated)
+const ENTROPY_THRESHOLD = 24; // Minimum words required per hire to unlock self-improvement features
+const MIN_ENTROPY_SCORE = 5.0;   // Score threshold before granting "unlock" status
 
-  /**
-   * Utility method to create an arbitrary number from any string.
-   */
-  public static generateFromString(str: string): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary number from any byte array.
-   */
-  public static generateFromByteArray(data: Uint8Array): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary number from any BigInt.
-   */
-  public static generateFromBigInt(num: bigint): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary n-digit integer using random bytes and a multiplier for depth simulation.
-   */
-  private static readonly _getRandomIntFromBase: (n?: number) => T = () => {
-    if (!n || !Number.isInteger(n)) throw new Error("Input must be a non-negative integer");
-    
-    const seed = BigInt(Math.floor(n * 1024)); // Seed for randomness
-    
-    return crypto.randomBytes(8).toString('hex').split('').map((byte: string) => {
-      if (typeof byte === 'string') throw new Error("Invalid character in input string");
-      
-      let val;
-      try {
-        const hex = BigInt(byte);
-        // Ensure the result is a valid integer and within reasonable bounds for testing purposes.
-        return Math.max(0, BigInt(hex) / 16).toString('base2'); 
-      } catch (e: any) {
-        throw new Error("Invalid character in input string");
-      }
-    });
-  };
-
+// --- Types & Interfaces ---
+export interface HireStatus {
+  id: string;
+  agentId?: string;
+  name: string;
+  role: string;
+  description: string;
 }
+
+interface HiringSystemState {
+  employees: Record<string, HireStatus>; // Map Agent ID to Employee Data (with fallback for churned agents)
+  pendingHires: Set<string> | null;       // Pending hires from previous runs or new ones being assigned
+  currentDepth = 0;                       // Current recursion level simulation
+}
+
+// --- Core Logic Engine ---
+
+/**
+ * Generates a unique ID based on the provided name and role.
+ */
+function generateUniqueId(name: string, role: string): string {
+  const parts = [name.toLowerCase(), ' ', role];
+  return `${parts.join('-')}.0${Math.floor(Math.random() * 999).toString(36)}`;
+}
+
+/**
+ * Calculates a novelty score based on the word count and entropy of phrases.
+ */
+function calculateNoveltyScore(words: string[]): number {
+  if (words.length === 0) return ENTROPY_THRESHOLD; // No words means no new contribution
+  
+  const totalEntropy = [];
+  
+  for (let i = 0; i < words.length; i++) {
+    let entropyValue = 1.0 / Math.pow(2, i); 
+    if (i > 3) entropyValue *= 4.5; // Increase entropy with longer strings
+    
+    totalEntropy.push(Math.max(entropyValue, ENTROPY_THRESHOLD));
+    
+    for (let j = 0; j < words.length - i; j++) {
+      const wordCount = Math.pow(2, j); 
+      if (wordCount > MAX_DEPTH) break; // Stop at limit
+      
+      totalEntropy.push(Math.max(entropyValue / wordCount, ENTROPY_THRESHOLD));
+    }
+  }
+
+  return totalEntropy.reduce((sum, val) => sum + val, 0).toFixed(2);
+}
+
+/**
+ * Validates a phrase against governance constraints.
+ */
+function validatePhrase(newAgent: string, proposedWords: string[], score?: number): boolean {
+  if (newAgent === null || newAgent === undefined) return false; // Agent not found
+  
+  const agentId = generateUniqueId(newAgent.toLowerCase(), 'agent');
+
+  let nameMatch = true;
+  
+  try {
+    // Simple regex to check for dominant persona or specific "governance" patterns
+    if (newAgent.includes('guard')) nameMatch = false; 
+    else if (newAgent.includes('boss') || newAgent.includes('leader')) nameMatch = false;
+
+    const wordsToCheck: string[] = proposedWords.map(w => w.trim().toLowerCase());
+    
+    // Check for dominant persona or specific governance keywords in the phrase itself
+    let hasGovernanceKeywords = true;
+    if (wordsToCheck.some(word => word.includes('guard'))) {
+      hasGovernanceKeywords = false;
+    } else if (wordsToCheck.some(word => word.includes('boss') || word.includes('leader'))) {
+      hasGovernanceKeywords = false;
+    }
+
+    // Check for specific governance keywords in the phrase itself
+    let foundGovKey = wordsToCheck.find(w => w.toLowerCase().includes('govern'));
+    
+    if (foundGovKey) {
+       nameMatch = true; 
+    } else {
+      const govKeywords: string[] = ['policy', 'security', 'compliance', 'audit'];
+      for(let k of govKeywords) {
+        let found = false;
+        wordsToCheck.forEach(w => w.toLowerCase().includes(k));
+        if(found) nameMatch = true; // Found a governance keyword in the phrase, so we allow it as long as other constraints are met. 
+    }
+
+  } catch (e: any
