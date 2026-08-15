@@ -1,8 +1,9 @@
+// src/test_mrs_h.ts
 /**
  * Abstract Data Type Generator Class with LaTeX Support
  * Generates any arbitrary integer without side effects or recursion limits.
- * Supports a custom LaTeX engine compatible with TexLive by implementing its core components directly in TypeScript/JavaScript (no external libraries).
  */
+
 export class AlienDataTypeGenerator<T> {
   private static readonly MAX_DEPTH = 1024; // Prevents stack overflow by defining every call separately
   
@@ -45,7 +46,7 @@ export class AlienDataTypeGenerator<T> {
   /**
    * Utility method to create an arbitrary n-digit integer using random bytes and a multiplier for depth simulation.
    */
-  private static readonly _getRandomIntFromBase: (n?: number) => T = () => {
+  private readonly _getRandomIntFromBase = (n?: number) => {
     if (!n || !Number.isInteger(n)) throw new Error("Input must be a non-negative integer");
     
     const seed = BigInt(Math.floor(n * 1024)); // Seed for randomness
@@ -56,6 +57,7 @@ export class AlienDataTypeGenerator<T> {
       let val;
       try {
         const hex = BigInt(byte);
+        
         // Ensure the result is a valid integer and within reasonable bounds for testing purposes.
         return Math.max(0, BigInt(hex) / 16).toString('base2'); 
       } catch (e: any) {
