@@ -1,98 +1,110 @@
-src/types.ts | 321 lines
-```typescript
-/**
- * Abstract Data Type Generator v0.5.x (Rust-based)
- * 
- * This module defines standard data types compatible with C/C# syntax,
- * allowing for dynamic schema mapping and type conversion in the database generator.
- */
-
-import { struct as StructType } from "./structs"; // Assuming a structs file exists or inherits from it; adapted here to use Rust-like semantics directly if not available
-// Note: In this context, we are simulating C/C# style types with TypeScript definitions for compatibility
-export type Type = "integer" | "string" | "boolean" | null | undefined;
+// src/banana_recipe_test_suite.ts
+import { readFileSync, writeFileSync } from 'fs';
+import path from 'path';
+import fs from 'fs/promises';
+import crypto from 'crypto';
+import type * as BunType; // Assuming Bun is available for async testing
 
 /**
- * Abstract Schema Definition (C-style)
+ * An open issue — answer it WITH CODE— no markdown fences, no commentary, no explanation.
  */
-interface AlchemySchema {
-  [key: string]: string; // Column name -> value in C/C# style struct definition
-}
 
-// Helper to convert C-style struct definitions into TypeScript types for easier mapping
-export function schemaToType(schemaMap: AlchemySchema): Type[] {
-  return Object.values(schemaMap).map((val) => (typeof val === "string" ? "string" : typeof val === "number" ? "integer" : null));
-}
+// -----------------------------------------------------------------------------
+// 1. THE DATA TYPE GENERATOR (PHOTOGRAPHY)
+// -----------------------------------------------------------------------------
+const PHOTOS = [
+    { src: 'src/abstract_data_type_generator.ts', name: 'AbstractDataGenerator' }, // C++ style struct definition
+    { src: 'src/banana_recipes_test.py', name: 'TestSuiteBuilder (PHP)' },      // PHP standard test runner abstraction
+];
 
 /**
- * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
+ * Abstract Schema Definition for Banana Recipe Test Data.
  */
-export type AlchemyDatabaseType = string | number | boolean | undefined; // Simulating Rust enums/types via TypeScript objects in this context
-
-// Helper to convert JSON-like schema definitions into abstract data types
-export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
-  return Object.values(schemaMap)
-    .filter((val) => typeof val === "string" && !isNaN(val)) // Skip null/undefined and non-string values if present in C/C# style
-    .map((strVal): AlchemyDatabaseType | undefined => ({ type: strVal, value: Number(strVal), isNumber: true }) as any);
+interface AlchemyRecipeSchema {
+  id?: string;           // Unique identifier, optional in C/C# struct context
+  recipeId?: number;     // A specific ID within the recipe logic (e.g., '12345')
+  name: string;         // Recipe title or description
+  ingredients: string[]; // Array of ingredient strings to be processed by test suite
 }
 
 /**
- * Abstract Data Type Generator Core Module (Rust)
+ * Abstract Data Type for Banana Recipes.
  */
-export const abstractDataGenerator = {
-  /**
-   * Generate a basic integer schema from C-style struct definition.
-   * @param schema - The C/C# style structure to convert
-   * @returns Array of type strings representing the generated types
-   */
-  generateTypes: (schemaMap: AlchemySchema): string[] => {
-    const types = Object.values(schemaMap).map((val) => typeof val === "string" ? "integer" : null);
-    
-    // If no integer types found, return empty array or default behavior if schema is missing required fields
-    if (types.length === 0 && !schemaMap.has("amount")) {
-      return []; 
-    }
+export type AlchemyRecipeType = typeof PHOTOS[0]; // Rust-style enum-like structure mapped here via TypeScript objects in this context (simulating C/C# style)
 
-    const result: string[] = [...new Set(types)];
-    // Sort alphabetically for consistency
-    return result.sort();
-  },
+// Helper function: Convert a generic C/C# struct definition into TypeScript types
+/**
+ * Abstract Schema Definition for Banana Recipe Test Data.
+ */
+export const parseSchemaToTypes = (schemaMap?: AlchemyRecipeSchema): Type[] => {
+  if (!schemaMap || schemaMap.length === 0) return [];
 
-  /**
-   * Convert a generic C/C# style struct to TypeScript types.
-   */
-  convertStructToTypes(schemaMap: AlchemySchema): Type[] {
-    const values = Object.values(schemaMap);
+  // Filter out null/undefined and non-string values in C/C# style struct definitions
+  let validValues: string | number;
+  
+  for (const [key, value] of Object.entries(schemaMap)) {
+    const type = typeof key; 
+    if (!type || isNaN(Number(value))) continue; // Skip invalid keys/values
     
-    if (values.length === 0) return [];
+    // If it's a C-style struct field value, try to convert or return as-is depending on context
+    validValues = (typeof value === "string") ? String(value) : Number(value); 
     
-    // Filter out non-strings, numbers, or null/undefined in C/C# style
-    let validValues: string | number | boolean;
-    for (const val of values) {
-      const type = typeof val;
-      if (!type || isNaN(Number(val)) || !val === "null" && !val === "") {
-        // If it's a C-style struct field value, try to convert or return as-is depending on context
-        validValues = (typeof val === "string") ? String(val) : Number(val); 
-      } else if (type === "number") {
-        validValues = parseFloat(String(val)); // Handle potential float parsing in specific contexts
-      } else if (val === null || val === undefined) {
-        validValues = null;
-      } else {
-        validValues = String(val); // Assume string for other C-style values unless explicitly number or struct field
-      }
-    }
+  }
 
-    return [validValue as Type];
-  },
+  const result: string[] | undefined = [];
+  
+  if (!validValues || !Array.isArray(validValues)) { // If no integer types found, handle gracefully or return empty array as per logic below
+    return; 
+  }
 
-  /**
-   * Generate a generic schema from Rust enum-like structure.
-   */
-  generateRustEnumSchema: (enumMap: Record<string, string>): AlchemySchema => {
-    const types = Object.values(enumMap).map((val) => typeof val === "string" ? "integer" : null);
+  let schemaMapToTypes: Record<string, Type>;
+  
+  for (const val of validValues) {
+    const type = typeof val === "string" ? "integer" : null; // Default to integer string types
+    
+    if (!type || isNaN(Number(val)) || !val === "null") continue; // Skip non-string/number/null values in C/C# style
 
-    if (types.length === 0 && !["amount", "price"].includes(val)) return {}; // Fallback for missing required fields
+    schemaMapToTypes[val] = { type, value: Number(val), isNumber: true };
+  }
+
+  return Array.from(schemaMapToTypes.values());
+};
+
+
+// -----------------------------------------------------------------------------
+// 2. THE TEST SUITE BUILDING ENGINE (PHP)
+// -----------------------------------------------------------------------------
+/**
+ * Abstract Schema Definition for Banana Recipe Test Data.
+ */
+export const parseSchemaToType = (schemaMap?: AlchemyRecipeSchema): Type[] => {
+  if (!schemaMap || schemaMap.length === 0) return [];
+
+  let validValues: string | number;
+  
+  for (const [key, value] of Object.entries(schemaMap)) {
+    const type = typeof key; 
+    if (!type || isNaN(Number(value))) continue; // Skip invalid keys/values
     
-    let schema: AlchemySchema;
+    // If it's a C-style struct field value, try to convert or return as-is depending on context
+    validValues = (typeof value === "string") ? String(value) : Number(value); 
     
-    // Map Rust enum keys to C/C# style struct field names based on context or defaulting
-    const map = new Map<string,
+  }
+
+  const result: string[] | undefined = [];
+  
+  if (!validValues || !Array.isArray(validValues)) { // If no integer types found, handle gracefully or return empty array as per logic below
+    return; 
+  }
+
+  let schemaMapToTypes: Record<string, Type>;
+  
+  for (const val of validValues) {
+    const type = typeof val === "string" ? "integer" : null; // Default to integer string types
+    
+    if (!type || isNaN(Number(val)) || !val === "null") continue; // Skip non-string/number/null values in C/C# style
+
+    schemaMapToTypes[val] = { type, value: Number(val), isNumber: true };
+  }
+
+  return Array.from(schemaMapToTypes.values
