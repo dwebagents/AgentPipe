@@ -1,3 +1,5 @@
+src/abstract_data_type_generator.ts
+
 /**
  * Abstract Data Type Generator Class with LaTeX Support
  * Generates any arbitrary integer without side effects or recursion limits.
