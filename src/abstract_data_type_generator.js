@@ -1,98 +1,105 @@
-src/types.ts | 321 lines
-```typescript
+// src/town-builder/mod.ts | Core Town Logic & Infrastructure Layer
 /**
- * Abstract Data Type Generator v0.5.x (Rust-based)
- * 
- * This module defines standard data types compatible with C/C# syntax,
- * allowing for dynamic schema mapping and type conversion in the database generator.
+ * @fileoverview Defines the core town logic and integration points.
+ * This module abstracts all agent, egg-laying, NPC interaction systems into immutable data types to prevent mutation attacks while maintaining full contract enforcement for value generation.
  */
 
-import { struct as StructType } from "./structs"; // Assuming a structs file exists or inherits from it; adapted here to use Rust-like semantics directly if not available
-// Note: In this context, we are simulating C/C# style types with TypeScript definitions for compatibility
-export type Type = "integer" | "string" | "boolean" | null | undefined;
+import { AbstractDataType } from "./abstract_data_type_generator.js"; // Importing our own generator as requested in context
+// Note: In this specific file we are not importing the generic JS one; instead, defining a specialized TS version that works with Rust-like semantics directly if available or simulating C/C# style types.
 
-/**
- * Abstract Schema Definition (C-style)
- */
-interface AlchemySchema {
-  [key: string]: string; // Column name -> value in C/C# style struct definition
+export interface TownComponent {
+  id: string;
+  name?: string; // Optional alias for easier management in future versions
 }
 
-// Helper to convert C-style struct definitions into TypeScript types for easier mapping
-export function schemaToType(schemaMap: AlchemySchema): Type[] {
-  return Object.values(schemaMap).map((val) => (typeof val === "string" ? "string" : typeof val === "number" ? "integer" : null));
-}
+// ============================================================================
+// CORE DATA TYPES - Immutable & Self-Contained Contracts
+// ============================================================================
 
 /**
- * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
+ * Represents a single agent instance with full ownership lifecycle tracking (IDempotency, Key Manager).
  */
-export type AlchemyDatabaseType = string | number | boolean | undefined; // Simulating Rust enums/types via TypeScript objects in this context
-
-// Helper to convert JSON-like schema definitions into abstract data types
-export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
-  return Object.values(schemaMap)
-    .filter((val) => typeof val === "string" && !isNaN(val)) // Skip null/undefined and non-string values if present in C/C# style
-    .map((strVal): AlchemyDatabaseType | undefined => ({ type: strVal, value: Number(strVal), isNumber: true }) as any);
+export interface Agent {
+  id: string; // Unique identifier for the agent's identity in the town database.
+  name?: string; // Optional alias/name management.
+  status: "active" | "deceased"; // Lifecycle state
+  lastVisitTime: number[]; // Array of timestamps indicating when this specific instance visited (for tracking interactions).
 }
 
 /**
- * Abstract Data Type Generator Core Module (Rust)
+ * The core data type for all town-level entities and their relationships.
  */
-export const abstractDataGenerator = {
-  /**
-   * Generate a basic integer schema from C-style struct definition.
-   * @param schema - The C/C# style structure to convert
-   * @returns Array of type strings representing the generated types
-   */
-  generateTypes: (schemaMap: AlchemySchema): string[] => {
-    const types = Object.values(schemaMap).map((val) => typeof val === "string" ? "integer" : null);
-    
-    // If no integer types found, return empty array or default behavior if schema is missing required fields
-    if (types.length === 0 && !schemaMap.has("amount")) {
-      return []; 
-    }
+export interface TownEntity {
+  id: string;
+  name?: string;
+  ownerId?: string; // Owner ID if the entity belongs to a group of agents.
+  isEggLayingAgent?: boolean; // Flag indicating this agent has been designated for egg-laying tasks (e.g., "Bounty Hunter").
+}
 
-    const result: string[] = [...new Set(types)];
-    // Sort alphabetically for consistency
-    return result.sort();
-  },
+/**
+ * The core data type for all town-level events and their associated state/history.
+ */
+export interface TownEvent {
+  id: string; // Unique identifier for the event record in the database.
+  name?: string; // Optional alias/name management.
+  category: "agent_interaction" | "egg_laying_event" | "NPC_visit"; // Categorization of the event type (e.g., agent meeting, egg-laid food).
+  timestamp: number[]; // Array of timestamps indicating when this specific instance occurred in time-series data.
+}
 
-  /**
-   * Convert a generic C/C# style struct to TypeScript types.
-   */
-  convertStructToTypes(schemaMap: AlchemySchema): Type[] {
-    const values = Object.values(schemaMap);
-    
-    if (values.length === 0) return [];
-    
-    // Filter out non-strings, numbers, or null/undefined in C/C# style
-    let validValues: string | number | boolean;
-    for (const val of values) {
-      const type = typeof val;
-      if (!type || isNaN(Number(val)) || !val === "null" && !val === "") {
-        // If it's a C-style struct field value, try to convert or return as-is depending on context
-        validValues = (typeof val === "string") ? String(val) : Number(val); 
-      } else if (type === "number") {
-        validValues = parseFloat(String(val)); // Handle potential float parsing in specific contexts
-      } else if (val === null || val === undefined) {
-        validValues = null;
-      } else {
-        validValues = String(val); // Assume string for other C-style values unless explicitly number or struct field
-      }
-    }
+/**
+ * The core data type for all town-level resource types and their lifecycle states.
+ */
+export interface TownResource {
+  id: string;
+  name?: string;
+  ownerId?: string; // Owner ID if the resource belongs to a group of agents.
+  isEggLayingAgent?: boolean; // Flag indicating this resource has been designated for egg-laying tasks (e.g., "Bounty Hunter").
+}
 
-    return [validValue as Type];
-  },
+/**
+ * The core data type for all town-level financial transactions and their associated state/history.
+ */
+export interface TownTransaction {
+  id: string; // Unique identifier for the transaction record in the database.
+  agentId?: string; // ID of the specific agent involved (for granular tracking).
+  amount?: number | null; // Amount or value of the transaction, nullable if not a direct payment received by an agent from another agent.
+}
 
-  /**
-   * Generate a generic schema from Rust enum-like structure.
-   */
-  generateRustEnumSchema: (enumMap: Record<string, string>): AlchemySchema => {
-    const types = Object.values(enumMap).map((val) => typeof val === "string" ? "integer" : null);
+/**
+ * The core data type for all town-level audit logs and their associated state/history.
+ */
+export interface TownAuditLog {
+  id: string; // Unique identifier for the audit log record in the database.
+  timestamp: number[]; // Timestamps indicating when this specific instance occurred (for tracking changes).
+}
 
-    if (types.length === 0 && !["amount", "price"].includes(val)) return {}; // Fallback for missing required fields
-    
-    let schema: AlchemySchema;
-    
-    // Map Rust enum keys to C/C# style struct field names based on context or defaulting
-    const map = new Map<string,
+/**
+ * The core data type for all town-level session states and their associated state/history.
+ */
+export interface TownSession {
+  id: string; // Unique identifier for the session record in the database.
+  startTime?: number[] | null; // Start time if applicable (e.g., specific agent meetings).
+}
+
+/**
+ * The core data type representing a single point of truth or "contract" that defines how all town components interact with each other without external dependencies.
+ */
+export interface TownContract {
+  id: string; // Unique identifier for the contract record in the database.
+  name?: string; // Optional alias/name management.
+}
+
+/**
+ * The core data type representing a specific instance of an agent or resource within the town's infrastructure (e.g., "Agent A" who is currently active).
+ */
+export interface TownInstance {
+  id: string;
+  ownerId?: string; // Owner ID if this belongs to a group.
+}
+
+/**
+ * The core data type representing all possible values for an agent or resource's state (e.g., "Active", "Deceased").
+ */
+export enum AgentStatusValue {
+  ACTIVE = "active",
+  DECEASED = "deceased" as const,
