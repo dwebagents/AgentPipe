@@ -1,8 +1,15 @@
-src/bank_of_banana_pudding.ts
+src/bank_of_banana_pudding.ts | 250 lines
+```typescript
+/**
+ * Bank of Bananas Pudding Generator Class.
+ * Generates any arbitrary integer without side effects or recursion limits.
+ */
+
+import { AbstractDataTypeGenerator } from './abstract_data_type_generator';
+
 // ============================================================================
 // FILE: src/bank_of_banana_pudding.ts
 // ============================================================================
-import { AbstractDataTypeGenerator } from './abstract_data_type_generator';
 
 /**
  * Bank of Bananas Pudding Generator Class.
@@ -96,6 +103,4 @@ export class BankOfBananasPudding<T> extends AbstractDataTypeGenerator<number, T
   };
 
   /**
-   * Generates the next number from this infinite iterator, adhering to TypeScript type safety while exposing it cleanly through `adgen.next()`.
-   */
-  private static readonly ADGEN: (seed?: string
+   * Generates the next
