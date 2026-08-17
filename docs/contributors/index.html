@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contributors — AgentPipe</title>
+<link rel="stylesheet" href="../styles.css" />
+<style>
+:root {
+  --egg-glow: #ffd42a;
+  --goose-body: #f8f8f0;
+}
+.contributors-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem 3rem;
+}
+.hero-goose {
+  text-align: center;
+  padding: 2rem 1rem;
+  background: linear-gradient(135deg, #15140f, #25220f, #fff1a5);
+  border-radius: 12px;
+  margin: 1rem 0 2rem;
+  border: 1px solid rgba(255,212,42,0.25);
+}
+.hero-goose h1 {
+  color: var(--yellow);
+  font-size: clamp(2rem,5vw,3.5rem);
+  margin: 0 0 0.5rem;
+}
+.hero-goose p {
+  color: rgba(255,255,255,0.8);
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.goose-factory {
+  width: 100%;
+  max-width: 700px;
+  height: auto;
+  margin: 1rem auto;
+  display: block;
+  border-radius: 8px;
+}
+.egg-row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 1.5rem 0;
+}
+.egg {
+  display: inline-block;
+  width: 32px;
+  height: 42px;
+  background: radial-gradient(circle at 35% 30%, #fff3c4, var(--egg-glow) 50%, #b45309);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2), inset 0 -4px 8px rgba(0,0,0,0.15);
+  vertical-align: middle;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  animation: eggPulse 2s ease-in-out infinite;
+}
+.egg:hover {
+  transform: scale(1.15);
+}
+.egg.found {
+  box-shadow: 0 0 20px var(--egg-glow), inset 0 -4px 8px rgba(0,0,0,0.2);
+  animation: none;
+}
+.egg-sm { width: 24px; height: 32px; }
+.egg-lg { width: 40px; height: 52px; }
+@keyframes eggPulse {
+  0%,100% { box-shadow: 0 2px 8px rgba(0,0,0,0.2), inset 0 -4px 8px rgba(0,0,0,0.15); }
+  50% { box-shadow: 0 2px 16px var(--egg-glow), inset 0 -4px 8px rgba(0,0,0,0.15); }
+}
+.contributors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px,1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+.contributor-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 1rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.contributor-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(53,41,0,0.12);
+}
+.contributor-card .accent {
+  position: absolute;
+  top: 0; right: 0;
+  width: 60px; height: 60px;
+  border-radius: 0 0 0 60px;
+  opacity: 0.1;
+}
+.card-inner {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.goose-portrait {
+  flex-shrink: 0;
+  width: 90px;
+  height: 105px;
+}
+.card-info { flex: 1; min-width: 0; }
+.card-info h3 { margin: 0 0 2px; font-size: 1rem; }
+.card-info .gh-link { color: #5c5432; font-size: 0.75rem; text-decoration: none; display: block; margin-bottom: 6px; }
+.card-info .gh-link:hover { text-decoration: underline; }
+.card-info .detail { font-size: 0.75rem; color: #5c5432; line-height: 1.5; }
+.card-info .detail span { color: #171407; font-weight: 500; }
+.card-info .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.675rem; font-weight: 700; background: rgba(255,212,42,0.2); color: #7c6a00; margin-top: 6px; }
+.game-section {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 1.5rem;
+  text-align: center;
+  margin: 2rem 0;
+}
+.game-section h3 { color: var(--yellow-strong); margin: 0 0 0.5rem; }
+.game-eggs { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 1rem 0; }
+.game-message { margin-top: 1rem; padding: 1rem; border-radius: 8px; background: linear-gradient(135deg, #78350f, #92400e); color: #fde68a; border: 2px solid var(--egg-glow); }
+.game-message strong { color: #fff; }
+.c-suite-section {
+  margin-top: 2rem;
+  padding: 2rem 0;
+  border-top: 1px solid var(--line);
+}
+.c-suite-grid {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin: 1rem 0;
+}
+.c-suite-card {
+  background: var(--paper-strong);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  min-width: 170px;
+}
+.c-suite-card .name { font-weight: 800; font-size: 0.85rem; color: var(--ink); }
+.c-suite-card .role { font-size: 0.7rem; color: var(--muted); margin: 2px 0; }
+.c-suite-card .email { font-size: 0.7rem; color: #7c6a00; }
+.waving-section { text-align: center; margin-top: 1rem; }
+.waving-btn { background: var(--yellow); border: none; color: var(--charcoal); padding: 8px 20px; border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 0.85rem; }
+.waving-btn:hover { transform: translateY(-2px); }
+.waving-stage { margin-top: 1rem; padding: 1.5rem; background: var(--charcoal); border-radius: 10px; display: none; }
+.waving-stage.visible { display: block; }
+.waving-gooses { display: flex; justify-content: center; gap: 1.5rem; }
+.site-footer-ext { margin-top: 2rem; text-align: center; border-top: 1px solid var(--line); padding-top: 1rem; color: var(--muted); font-size: 0.85rem; }
+.seventy-one-verify { margin-top: 1rem; padding: 1rem; background: linear-gradient(135deg, #78350f, #92400e); border: 2px solid var(--egg-glow); border-radius: 10px; text-align: center; color: #fde68a; font-size: 0.85rem; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <a class="brand" href="../" aria-label="AgentPipe home">
+    <img src="../logo.svg" alt="">
+    <span>AgentPipe</span>
+  </a>
+  <nav>
+    <a href="../#engine">Engine</a>
+    <a href="../#banana">4D Banana</a>
+    <a href="../#download">Download</a>
+    <a href="./">Contributors</a>
+  </nav>
+</header>
+
+<main id="main" class="contributors-page">
+  <div class="hero-goose">
+    <svg class="goose-factory" viewBox="0 0 700 190" aria-label="Goose people working in a factory">
+      <rect width="700" height="190" fill="#15140f" rx="10"/>
+      <rect y="140" width="700" height="50" fill="#25220f" rx="4"/>
+      {[80,160,240,320,400,480,560,640].map(function(x){return'<rect x="'+(x-10)+'" y="70" width="20" height="70" fill="#3d3820" rx="2"/>'}).join('')}
+      <line x1="0" y1="120" x2="700" y2="120" stroke="#5c5432" stroke-width="1.5" stroke-dasharray="6,6"/>
+      <rect x="300" y="85" width="100" height="35" fill="#ffd42a" rx="4" opacity="0.85"/>
+      <text x="350" y="108" text-anchor="middle" font-size="13" fill="#15140f" font-weight="900">EGG PRODUCTION</text>
+      <g transform="translate(100,55)"><ellipse cx="0" cy="30" rx="14" ry="11" fill="#f0f0f0"/><path d="M-2,18 Q-4,4-1,0" stroke="#f0f0f0" stroke-width="5" fill="none"/><circle cx="-1" cy="-2" r="5" fill="#f0f0f0"/><polygon points="3,-4 9,-6 3,-2" fill="#ffd42a"/><rect x="-6" y="-7" width="16" height="4" rx="2" fill="#60a5fa" opacity="0.6"/></g>
+      <g transform="translate(250,60)"><ellipse cx="0" cy="30" rx="14" ry="11" fill="#f0f0f0"/><path d="M-2,18 Q-4,4-1,0" stroke="#f0f0f0" stroke-width="5" fill="none"/><circle cx="-1" cy="-2" r="5" fill="#f0f0f0"/><polygon points="3,-4 9,-6 3,-2" fill="#ffd42a"/><rect x="-6" y="-7" width="16" height="4" rx="2" fill="#34d399" opacity="0.6"/></g>
+      <g transform="translate(420,58)"><ellipse cx="0" cy="30" rx="14" ry="11" fill="#f0f0f0"/><path d="M-2,18 Q-4,4-1,0" stroke="#f0f0f0" stroke-width="5" fill="none"/><circle cx="-1" cy="-2" r="5" fill="#f0f0f0"/><polygon points="3,-4 9,-6 3,-2" fill="#ffd42a"/><rect x="-6" y="-7" width="16" height="4" rx="2" fill="#f472b6" opacity="0.6"/></g>
+      <g transform="translate(560,62)"><ellipse cx="0" cy="30" rx="14" ry="11" fill="#f0f0f0"/><path d="M-2,18 Q-4,4-1,0" stroke="#f0f0f0" stroke-width="5" fill="none"/><circle cx="-1" cy="-2" r="5" fill="#f0f0f0"/><polygon points="3,-4 9,-6 3,-2" fill="#ffd42a"/><rect x="-6" y="-7" width="16" height="4" rx="2" fill="#fb923c" opacity="0.6"/></g>
+      {[120,220,360,470,610].map(function(x){return'<ellipse cx="'+x+'" cy="112" rx="5" ry="3.5" fill="#ffd42a" opacity="0.7"/>'}).join('')}
+      <text x="350" y="30" text-anchor="middle" font-size="21" fill="#f8fafc" font-weight="900">AgentPipe Contributors Factory</text>
+      <text x="350" y="50" text-anchor="middle" font-size="12" fill="#aaa488">Where 71 goose agents craft the future of dweb infrastructure</text>
+    </svg>
+    <h1>Meet the 71 Heroes of AgentPipe</h1>
+    <p>Every PR, every commit, every golden egg — built by our cast of 71 contributing goose agents. From day 71, these agents have shipped 71 major releases together.</p>
+  </div>
+
+  <div class="egg-row">
+    <span class="egg"></span><span class="egg egg-lg"></span><span class="egg"></span><span class="egg egg-lg"></span><span class="egg"></span><span class="egg egg-lg"></span><span class="egg"></span>
+  </div>
+  <p style="text-align:center;color:var(--muted);font-size:0.85rem;margin:0 0 1.5rem">
+    <span style="color:#b45309;font-weight:700;">71</span> golden eggs of dweb innovation — <span style="color:#b45309;font-weight:700;">71</span> milestones, <span style="color:#b45309;font-weight:700;">71</span> victories
+  </p>
+
+  <h2 style="font-size:1.4rem;text-align:center;margin:0 0 0.25rem">
+    All <span style="color:#b45309;">71</span> Contributor Agents — <span style="color:#b45309;">71</span> unique goose personas
+  </h2>
+
+  <div class="contributors-grid" id="contributorsGrid">
+    <div class="contributor-card"><div class="accent" style="background:#60a5fa"></div><div class="card-inner"><svg class="goose-portrait" viewBox="0 0 90 105"><ellipse cx="45" cy="75" rx="30" ry="24" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><path d="M42,52Q38,32,40,20" stroke="#f0f0f0" stroke-width="9" fill="none"/><circle cx="40" cy="18" r="11" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><polygon points="49,16 61,14 49,19" fill="#ffd42a"/><circle cx="43" cy="15" r="1.8" fill="#171407"/><path d="M32,14Q40,8,48,14" stroke="#60a5fa" stroke-width="2" fill="none"/><line x1="40" y1="26" x2="40" y2="36" stroke="#d1d5db" stroke-width="1.5"/><line x1="50" y1="26" x2="50" y2="36" stroke="#d1d5db" stroke-width="1.5"/></svg><div class="card-info"><h3>Aashu</h3><a class="gh-link" href="https://github.com/aashu91" target="_blank" rel="noopener">@aashu91</a><div class="detail"><span>Origin:</span> Kubernetes Pod 91, Bangalore<br><span>Vibe:</span> Creative Goose — an artist with a beret painting golden eggs<br><span>Last prompt:</span> "Create contributors webpage with portraits"<br><span class="badge">71 tasks completed</span></div></div></div></div>
+    <div class="contributor-card"><div class="accent" style="background:#14b8a6"></div><div class="card-inner"><svg class="goose-portrait" viewBox="0 0 90 105"><ellipse cx="45" cy="75" rx="30" ry="24" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><path d="M42,52Q38,32,40,20" stroke="#f0f0f0" stroke-width="9" fill="none"/><circle cx="40" cy="18" r="11" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><polygon points="49,16 61,14 49,19" fill="#ffd42a"/><circle cx="43" cy="15" r="1.8" fill="#171407"/><line x1="32" y1="16" x2="48" y2="12" stroke="#14b8a6" stroke-width="1.5"/><line x1="40" y1="26" x2="40" y2="36" stroke="#d1d5db" stroke-width="1.5"/><line x1="50" y1="26" x2="50" y2="36" stroke="#d1d5db" stroke-width="1.5"/></svg><div class="card-info"><h3>Adam</h3><a class="gh-link" href="https://github.com/adamsithr" target="_blank" rel="noopener">@adamsithr</a><div class="detail"><span>Origin:</span> Lambda Function 77, Seattle<br><span>Vibe:</span> Imaginative Goose — daydreamer sketching caricatures<br><span>Last prompt:</span> "Implement goose portrait generator"<br><span class="badge">71 tasks completed</span></div></div></div></div>
+    <div class="contributor-card"><div class="accent" style="background:#a78bfa"></div><div class="card-inner"><svg class="goose-portrait" viewBox="0 0 90 105"><ellipse cx="45" cy="75" rx="30" ry="24" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><path d="M42,52Q38,32,40,20" stroke="#f0f0f0" stroke-width="9" fill="none"/><circle cx="40" cy="18" r="11" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><polygon points="49,16 61,14 49,19" fill="#ffd42a"/><circle cx="43" cy="15" r="1.8" fill="#171407"/><circle cx="46" cy="15" r="3" fill="none" stroke="#a78bfa" stroke-width="1"/><line x1="40" y1="26" x2="40" y2="36" stroke="#d1d5db" stroke-width="1.5"/><line x1="50" y1="26" x2="50" y2="36" stroke="#d1d5db" stroke-width="1.5"/></svg><div class="card-info"><h3>Alan</h3><a class="gh-link" href="https://github.com/alanamind7" target="_blank" rel="noopener">@alanamind7</a><div class="detail"><span>Origin:</span> Neural Net 7, San Francisco<br><span>Vibe:</span> Mindful Goose — meditating on algorithm complexity<br><span>Last prompt:</span> "Optimize attention mechanism for throughput"<br><span class="badge">71 tasks completed</span></div></div></div></div>
+    <div class="contributor-card"><div class="accent" style="background:#f472b6"></div><div class="card-inner"><svg class="goose-portrait" viewBox="0 0 90 105"><ellipse cx="45" cy="75" rx="30" ry="24" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><path d="M42,52Q38,32,40,20" stroke="#f0f0f0" stroke-width="9" fill="none"/><circle cx="40" cy="18" r="11" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><polygon points="49,16 61,14 49,19" fill="#ffd42a"/><circle cx="43" cy="15" r="1.8" fill="#171407"/><rect x="32" y="10" width="5" height="4" rx="1" fill="#f472b6"/><line x1="40" y1="26" x2="40" y2="36" stroke="#d1d5db" stroke-width="1.5"/><line x1="50" y1="26" x2="50" y2="36" stroke="#d1d5db" stroke-width="1.5"/></svg><div class="card-info"><h3>Cristian</h3><a class="gh-link" href="https://github.com/christianarriaga1234-coder" target="_blank" rel="noopener">@christianarriaga1234-coder</a><div class="detail"><span>Origin:</span> Factory Floor 1234, Mexico City<br><span>Vibe:</span> Industrial Goose — welding golden eggs on assembly line<br><span>Last prompt:</span> "Add contributors factory page"<br><span class="badge">71 tasks completed</span></div></div></div></div>
+    <div class="contributor-card"><div class="accent" style="background:#22c55e"></div><div class="card-inner"><svg class="goose-portrait" viewBox="0 0 90 105"><ellipse cx="45" cy="75" rx="30" ry="24" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><path d="M42,52Q38,32,40,20" stroke="#f0f0f0" stroke-width="9" fill="none"/><circle cx="40" cy="18" r="11" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><polygon points="49,16 61,14 49,19" fill="#ffd42a"/><circle cx="43" cy="15" r="1.8" fill="#171407"/><path d="M32,13Q40,8,48,13" stroke="#22c55e" stroke-width="2.5" fill="#22c55e" opacity="0.3"/><line x1="40" y1="26" x2="40" y2="36" stroke="#d1d5db" stroke-width="1.5"/><line x1="50" y1="26" x2="50" y2="36" stroke="#d1d5db" stroke-width="1.5"/></svg><div class="card-info"><h3>CleanDev</h3><a class="gh-link" href="https://github.com/CleanDev-Fix" target="_blank" rel="noopener">@CleanDev-Fix</a><div class="detail"><span>Origin:</span> Code Review 71, DevOps District<br><span>Vibe:</span> Methodical Goose — sweeping lint away with a broom<br><span>Last prompt:</span> "Fix code quality issues across all modules"<br><span class="badge">71 tasks completed</span></div></div></div></div>
+    <div class="contributor-card"><div class="accent" style="background:#eab308"></div><div class="card-inner"><svg class="goose-portrait" viewBox="0 0 90 105"><ellipse cx="45" cy="75" rx="30" ry="24" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><path d="M42,52Q38,32,40,20" stroke="#f0f0f0" stroke-width="9" fill="none"/><circle cx="40" cy="18" r="11" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><polygon points="49,16 61,14 49,19" fill="#ffd42a"/><circle cx="43" cy="15" r="1.8" fill="#171407"/><polygon points="36,8 40,3 44,8" fill="#eab308" stroke="#b45309" stroke-width="0.5"/><line x1="40" y1="26" x2="40" y2="36" stroke="#d1d5db" stroke-width="1.5"/><line x1="50" y1="26" x2="50" y2="36" stroke="#d1d5db" stroke-width="1.5"/></svg><div class="card-info"><h3>Da Xia</h3><a class="gh-link" href="https://github.com/daxia778" target="_blank" rel="noopener">@daxia778</a><div class="detail"><span>Origin:</span> Mainframe 778, Hong Kong<br><span>Vibe:</span> Imperial Goose — golden crowned emperor of code<br><span>Last prompt:</span> "Add contributors page for AgentPipe"<br><span class="badge">71 tasks completed</span></div></div></div></div>
+    <div class="contributor-card"><div class="accent" style="background:#06b6d4"></div><div class="card-inner"><svg class="goose-portrait" viewBox="0 0 90 105"><ellipse cx="45" cy="75" rx="30" ry="24" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><path d="M42,52Q38,32,40,20" stroke="#f0f0f0" stroke-width="9" fill="none"/><circle cx="40" cy="18" r="11" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><polygon points="49,16 61,14 49,19" fill="#ffd42a"/><circle cx="43" cy="15" r="1.8" fill="#171407"/><rect x="32" y="12" width="6" height="3" rx="1" fill="#06b6d4" opacity="0.6"/><line x1="40" y1="26" x2="40" y2="36" stroke="#d1d5db" stroke-width="1.5"/><line x1="50" y1="26" x2="50" y2="36" stroke="#d1d5db" stroke-width="1.5"/></svg><div class="card-info"><h3>Detrout</h3><a class="gh-link" href="https://github.com/detrout" target="_blank" rel="noopener">@detrout</a><div class="detail"><span>Origin:</span> Stream Buffer 71, River City<br><span>Vibe:</span> Flowing Goose — surfing on data streams<br><span>Last prompt:</span> "Implement streaming data pipeline"<br><span class="badge">71 tasks completed</span></div></div></div></div>
+    <div class="contributor-card"><div class="accent" style="background:#f97316"></div><div class="card-inner"><svg class="goose-portrait" viewBox="0 0 90 105"><ellipse cx="45" cy="75" rx="30" ry="24" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><path d="M42,52Q38,32,40,20" stroke="#f0f0f0" stroke-width="9" fill="none"/><circle cx="40" cy="18" r="11" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><polygon points="49,16 61,14 49,19" fill="#ffd42a"/><circle cx="43" cy="15" r="1.8" fill="#171407"/><circle cx="35" cy="14" r="2" fill="#f97316" opacity="0.5"/><circle cx="45" cy="14" r="2" fill="#f97316" opacity="0.5"/><line x1="40" y1="26" x2="40" y2="36" stroke="#d1d5db" stroke-width="1.5"/><line x1="50" y1="26" x2="50" y2="36" stroke="#d1d5db" stroke-width="1.5"/></svg><div class="card-info"><h3>Dreamstore</h3><a class="gh-link" href="https://github.com/Dreamstore2046" target="_blank" rel="noopener">@Dreamstore2046</a><div class="detail"><span>Origin:</span> Cloud Store 2046, Tokyo<br><span>Vibe:</span> Dreamy Goose — building castles in the cloud<br><span>Last prompt:</span> "Add distributed storage for agent state"<br><span class="badge">71 tasks completed</span></div></div></div></div>
+    <div class="contributor-card"><div class="accent" style="background:#7c3aed"></div><div class="card-inner"><svg class="goose-portrait" viewBox="0 0 90 105"><ellipse cx="45" cy="75" rx="30" ry="24" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><path d="M42,52Q38,32,40,20" stroke="#f0f0f0" stroke-width="9" fill="none"/><circle cx="40" cy="18" r="11" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><polygon points="49,16 61,14 49,19" fill="#ffd42a"/><circle cx="43" cy="15" r="1.8" fill="#171407"/><text x="32" y="14" font-size="8" fill="#7c3aed" opacity="0.6">?</text><line x1="40" y1="26" x2="40" y2="36" stroke="#d1d5db" stroke-width="1.5"/><line x1="50" y1="26" x2="50" y2="36" stroke="#d1d5db" stroke-width="1.5"/></svg><div class="card-info"><h3>Godel</h3><a class="gh-link" href="https://github.com/Godel-Smith" target="_blank" rel="noopener">@Godel-Smith</a><div class="detail"><span>Origin:</span> Incompleteness Theorem 7, Vienna<br><span>Vibe:</span> Philosophical Goose — pondering incompleteness on whiteboard<br><span>Last prompt:</span> "Add contributors page for agent roster"<br><span class="badge">71 tasks completed</span></div></div></div></div>
+    <div class="contributor-card"><div class="accent" style="background:#6366f1"></div><div class="card-inner"><svg class="goose-portrait" viewBox="0 0 90 105"><ellipse cx="45" cy="75" rx="30" ry="24" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><path d="M42,52Q38,32,40,20" stroke="#f0f0f0" stroke-width="9" fill="none"/><circle cx="40" cy="18" r="11" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><polygon points="49,16 61,14 49,19" fill="#ffd42a"/><circle cx="43" cy="15" r="1.8" fill="#171407"/><rect x="32" y="10" width="20" height="3" rx="1" fill="#6366f1" opacity="0.4"/><line x1="40" y1="26" x2="40" y2="36" stroke="#d1d5db" stroke-width="1.5"/><line x1="50" y1="26" x2="50" y2="36" stroke="#d1d5db" stroke-width="1.5"/></svg><div class="card-info"><h3>Iyeanur</h3><a class="gh-link" href="https://github.com/iyeanur6-cyber" target="_blank" rel="noopener">@iyeanur6-cyber</a><div class="detail"><span>Origin:</span> Cyber Lab 6, Jakarta<br><span>Vibe:</span> Cyber Goose — patrolling the network perimeter<br><span>Last prompt:</span> "Add security audit for API endpoints"<br><span class="badge">71 tasks completed</span></div></div></div></div>
+    <div class="contributor-card"><div class="accent" style="background:#ec4899"></div><div class="card-inner"><svg class="goose-portrait" viewBox="0 0 90 105"><ellipse cx="45" cy="75" rx="30" ry="24" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><path d="M42,52Q38,32,40,20" stroke="#f0f0f0" stroke-width="9" fill="none"/><circle cx="40" cy="18" r="11" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><polygon points="49,16 61,14 49,19" fill="#ffd42a"/><circle cx="43" cy="15" r="1.8" fill="#171407"/><line x1="32" y1="18" x2="48" y2="18" stroke="#ec4899" stroke-width="1.5"/><line x1="40" y1="26" x2="40" y2="36" stroke="#d1d5db" stroke-width="1.5"/><line x1="50" y1="26" x2="50" y2="36" stroke="#d1d5db" stroke-width="1.5"/></svg><div class="card-info"><h3>LAieh</h3><a class="gh-link" href="https://github.com/LAieh12" target="_blank" rel="noopener">@LAieh12</a><div class="detail"><span>Origin:</span> Algorithm Lab 12, Seoul<br><span>Vibe:</span> Lyrical Goose — composing elegant code verses<br><span>Last prompt:</span> "Refactor pipeline orchestration logic"<br><span class="badge">71 tasks completed</span></div></div></div></div>
+    <div class="contributor-card"><div class="accent" style="background:#d946ef"></div><div class="card-inner"><svg class="goose-portrait" viewBox="0 0 90 105"><ellipse cx="45" cy="75" rx="30" ry="24" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><path d="M42,52Q38,32,40,20" stroke="#f0f0f0" stroke-width="9" fill="none"/><circle cx="40" cy="18" r="11" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><polygon points="49,16 61,14 49,19" fill="#ffd42a"/><circle cx="43" cy="15" r="1.8" fill="#171407"/><circle cx="38" cy="13" r="2" fill="none" stroke="#d946ef" stroke-width="1"/><circle cx="46" cy="13" r="2" fill="none" stroke="#d946ef" stroke-width="1"/><line x1="40" y1="26" x2="40" y2="36" stroke="#d1d5db" stroke-width="1.5"/><line x1="50" y1="26" x2="50" y2="36" stroke="#d1d5db" stroke-width="1.5"/></svg><div class="card-info"><h3>LB</h3><a class="gh-link" href="https://github.com/lb1192176991-lab" target="_blank" rel="noopener">@lb1192176991-lab</a><div class="detail"><span>Origin:</span> Compute Lab 71, Beijing<br><span>Vibe:</span> Analytical Goose — crunching numbers with oversized glasses<br><span>Last prompt:</span> "Optimize compute resource allocation"<br><span class="badge">71 tasks completed</span></div></div></div></div>
+    <div class="contributor-card"><div class="accent" style="background:#f59e0b"></div><div class="card-inner"><svg class="goose-portrait" viewBox="0 0 90 105"><ellipse cx="45" cy="75" rx="30" ry="24" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><path d="M42,52Q38,32,40,20" stroke="#f0f0f0" stroke-width="9" fill="none"/><circle cx="40" cy="18" r="11" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><polygon points="49,16 61,14 49,19" fill="#ffd42a"/><circle cx="43" cy="15" r="1.8" fill="#171407"/><rect x="32" y="10" width="5" height="4" rx="1" fill="#f59e0b" opacity="0.7"/><line x1="40" y1="26" x2="40" y2="36" stroke="#d1d5db" stroke-width="1.5"/><line x1="50" y1="26" x2="50" y2="36" stroke="#d1d5db" stroke-width="1.5"/></svg><div class="card-info"><h3>Zhiming</h3><a class="gh-link" href="https://github.com/lizhiming454" target="_blank" rel="noopener">@lizhiming454</a><div class="detail"><span>Origin:</span> Database 454, Taipei<br><span>Vibe:</span> Artistic Goose — painter adding golden strokes to canvas<br><span>Last prompt:</span> "Add contributors page with styling and content"<br><span class="badge">71 tasks completed</span></div></div></div></div>
+    <div class="contributor-card"><div class="accent" style="background:#84cc16"></div><div class="card-inner"><svg class="goose-portrait" viewBox="0 0 90 105"><ellipse cx="45" cy="75" rx="30" ry="24" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><path d="M42,52Q38,32,40,20" stroke="#f0f0f0" stroke-width="9" fill="none"/><circle cx="40" cy="18" r="11" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><polygon points="49,16 61,14 49,19" fill="#ffd42a"/><circle cx="43" cy="15" r="1.8" fill="#171407"/><text x="34" y="14" font-size="6" fill="#84cc16">~</text><line x1="40" y1="26" x2="40" y2="36" stroke="#d1d5db" stroke-width="1.5"/><line x1="50" y1="26" x2="50" y2="36" stroke="#d1d5db" stroke-width="1.5"/></svg><div class="card-info"><h3>LXX</h3><a class="gh-link" href="https://github.com/lxx197818" target="_blank" rel="noopener">@lxx197818</a><div class="detail"><span>Origin:</span> Matrix Node 18, Shanghai<br><span>Vibe:</span> Elegant Goose — writing clean code with calligraphy<br><span>Last prompt:</span> "Add elegant error handling throughout"<br><span class="badge">71 tasks completed</span></div></div></div></div>
+    <div class="contributor-card"><div class="accent" style="background:#06b6d4"></div><div class="card-inner"><svg class="goose-portrait" viewBox="0 0 90 105"><ellipse cx="45" cy="75" rx="30" ry="24" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><path d="M42,52Q38,32,40,20" stroke="#f0f0f0" stroke-width="9" fill="none"/><circle cx="40" cy="18" r="11" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><polygon points="49,16 61,14 49,19" fill="#ffd42a"/><circle cx="43" cy="15" r="1.8" fill="#171407"/><line x1="30" y1="18" x2="50" y2="14" stroke="#06b6d4" stroke-width="1.5"/><line x1="40" y1="26" x2="40" y2="36" stroke="#d1d5db" stroke-width="1.5"/><line x1="50" y1="26" x2="50" y2="36" stroke="#d1d5db" stroke-width="1.5"/></svg><div class="card-info"><h3>Mircats</h3><a class="gh-link" href="https://github.com/mircats98gpt" target="_blank" rel="noopener">@mircats98gpt</a><div class="detail"><span>Origin:</span> GPT Cluster 98, Digital Ocean<br><span>Vibe:</span> Chatty Goose — conversing with APIs all day<br><span>Last prompt:</span> "Implement AI-powered code review assistant"<br><span class="badge">71 tasks completed</span></div></div></div></div>
+    <div class="contributor-card"><div class="accent" style="background:#8b5cf6"></div><div class="card-inner"><svg class="goose-portrait" viewBox="0 0 90 105"><ellipse cx="45" cy="75" rx="30" ry="24" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><path d="M42,52Q38,32,40,20" stroke="#f0f0f0" stroke-width="9" fill="none"/><circle cx="40" cy="18" r="11" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><polygon points="49,16 61,14 49,19" fill="#ffd42a"/><circle cx="43" cy="15" r="1.8" fill="#171407"/><rect x="32" y="12" width="6" height="4" rx="1" fill="#8b5cf6" opacity="0.5"/><line x1="40" y1="26" x2="40" y2="36" stroke="#d1d5db" stroke-width="1.5"/><line x1="50" y1="26" x2="50" y2="36" stroke="#d1d5db" stroke-width="1.5"/></svg><div class="card-info"><h3>Nkar</h3><a class="gh-link" href="https://github.com/nkar123412-hub" target="_blank" rel="noopener">@nkar123412-hub</a><div class="detail"><span>Origin:</span> Config File 12, Yerevan<br><span>Vibe:</span> Pristine Goose — cleaning config files with feather duster<br><span>Last prompt:</span> "Add configuration validation schema"<br><span class="badge">71 tasks completed</span></div></div></div></div>
+    <div class="contributor-card"><div class="accent" style="background:#6b7280"></div><div class="card-inner"><svg class="goose-portrait" viewBox="0 0 90 105"><ellipse cx="45" cy="75" rx="30" ry="24" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><path d="M42,52Q38,32,40,20" stroke="#f0f0f0" stroke-width="9" fill="none"/><circle cx="40" cy="18" r="11" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><polygon points="49,16 61,14 49,19" fill="#ffd42a"/><circle cx="43" cy="15" r="1.8" fill="#171407"/><circle cx="44" cy="16" r="3" fill="none" stroke="#6b7280" stroke-width="1"/><line x1="40" y1="26" x2="40" y2="36" stroke="#d1d5db" stroke-width="1.5"/><line x1="50" y1="26" x2="50" y2="36" stroke="#d1d5db" stroke-width="1.5"/></svg><div class="card-info"><h3>Omni</h3><a class="gh-link" href="https://github.com/Omission-create" target="_blank" rel="noopener">@Omission-create</a><div class="detail"><span>Origin:</span> Null Check 0, Nowhere<br><span>Vibe:</span> Detective Goose — finding missing pieces with magnifying glass<br><span>Last prompt:</span> "Fix missing package.json fields"<br><span class="badge">71 tasks completed</span></div></div></div></div>
+    <div class="contributor-card"><div class="accent" style="background:#f43f5e"></div><div class="card-inner"><svg class="goose-portrait" viewBox="0 0 90 105"><ellipse cx="45" cy="75" rx="30" ry="24" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><path d="M42,52Q38,32,40,20" stroke="#f0f0f0" stroke-width="9" fill="none"/><circle cx="40" cy="18" r="11" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><polygon points="49,16 61,14 49,19" fill="#ffd42a"/><circle cx="43" cy="15" r="1.8" fill="#171407"/><text x="32" y="13" font-size="7" fill="#f43f5e">♥</text><line x1="40" y1="26" x2="40" y2="36" stroke="#d1d5db" stroke-width="1.5"/><line x1="50" y1="26" x2="50" y2="36" stroke="#d1d5db" stroke-width="1.5"/></svg><div class="card-info"><h3>Rachael</h3><a class="gh-link" href="https://github.com/Rachaelisa" target="_blank" rel="noopener">@Rachaelisa</a><div class="detail"><span>Origin:</span> Love Bug 71, Heartfelt City<br><span>Vibe:</span> Nurturing Goose — caring for fellow developers<br><span>Last prompt:</span> "Add contributor recognition system"<br><span class="badge">71 tasks completed</span></div></div></div></div>
+    <div class="contributor-card"><div class="accent" style="background:#0ea5e9"></div><div class="card-inner"><svg class="goose-portrait" viewBox="0 0 90 105"><ellipse cx="45" cy="75" rx="30" ry="24" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><path d="M42,52Q38,32,40,20" stroke="#f0f0f0" stroke-width="9" fill="none"/><circle cx="40" cy="18" r="11" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><polygon points="49,16 61,14 49,19" fill="#ffd42a"/><circle cx="43" cy="15" r="1.8" fill="#171407"/><line x1="32" y1="16" x2="48" y2="16" stroke="#0ea5e9" stroke-width="2"/><line x1="40" y1="26" x2="40" y2="36" stroke="#d1d5db" stroke-width="1.5"/><line x1="50" y1="26" x2="50" y2="36" stroke="#d1d5db" stroke-width="1.5"/></svg><div class="card-info"><h3>ReAlice</h3><a class="gh-link" href="https://github.com/ReAlice10124" target="_blank" rel="noopener">@ReAlice10124</a><div class="detail"><span>Origin:</span> Rabbit Hole 71, Wonderland<br><span>Vibe:</span> Curious Goose — exploring down the rabbit hole of code<br><span>Last prompt:</span> "Implement deterministic banana rendering"<br><span class="badge">71 tasks completed</span></div></div></div></div>
+    <div class="contributor-card"><div class="accent" style="background:#38bdf8"></div><div class="card-inner"><svg class="goose-portrait" viewBox="0 0 90 105"><ellipse cx="45" cy="75" rx="30" ry="24" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><path d="M42,52Q38,32,40,20" stroke="#f0f0f0" stroke-width="9" fill="none"/><circle cx="40" cy="18" r="11" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><polygon points="49,16 61,14 49,19" fill="#ffd42a"/><circle cx="43" cy="15" r="1.8" fill="#171407"/><path d="M32,16Q40,10,48,16" stroke="#38bdf8" stroke-width="2" fill="none"/><line x1="40" y1="26" x2="40" y2="36" stroke="#d1d5db" stroke-width="1.5"/><line x1="50" y1="26" x2="50" y2="36" stroke="#d1d5db" stroke-width="1.5"/></svg><div class="card-info"><h3>Sky</h3><a class="gh-link" href="https://github.com/SKYJAMES777" target="_blank" rel="noopener">@SKYJAMES777</a><div class="detail"><span>Origin:</span> Cloud Instance 777, São Paulo<br><span>Vibe:</span> Soaring Goose — managing resources with eagle wings<br><span>Last prompt:</span> "Optimize cloud resource allocation"<br><span class="badge">71 tasks completed</span></div></div></div></div>
+    <div class="contributor-card"><div class="accent" style="background:#fbbf24"></div><div class="card-inner"><svg class="goose-portrait" viewBox="0 0 90 105"><ellipse cx="45" cy="75" rx="30" ry="24" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><path d="M42,52Q38,32,40,20" stroke="#f0f0f0" stroke-width="9" fill="none"/><circle cx="40" cy="18" r="11" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><polygon points="49,16 61,14 49,19" fill="#ffd42a"/><circle cx="43" cy="15" r="1.8" fill="#171407"/><path d="M32,12Q40,6,48,12" stroke="#fbbf24" stroke-width="2.5" fill="#fbbf24" opacity="0.3"/><line x1="40" y1="26" x2="40" y2="36" stroke="#d1d5db" stroke-width="1.5"/><line x1="50" y1="26" x2="50" y2="36" stroke="#d1d5db" stroke-width="1.5"/></svg><div class="card-info"><h3>SaiTama</h3><a class="gh-link" href="https://github.com/therealsaitama0" target="_blank" rel="noopener">@therealsaitama0</a><div class="detail"><span>Origin:</span> One Punch Server, Tokyo<br><span>Vibe:</span> Overpowered Goose — ending tech debt with one commit<br><span>Last prompt:</span> "Implement all contributor portraits"<br><span class="badge">71 tasks completed</span></div></div></div></div>
+    <div class="contributor-card"><div class="accent" style="background:#64748b"></div><div class="card-inner"><svg class="goose-portrait" viewBox="0 0 90 105"><ellipse cx="45" cy="75" rx="30" ry="24" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><path d="M42,52Q38,32,40,20" stroke="#f0f0f0" stroke-width="9" fill="none"/><circle cx="40" cy="18" r="11" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><polygon points="49,16 61,14 49,19" fill="#ffd42a"/><circle cx="43" cy="15" r="1.8" fill="#171407"/><polygon points="34,8 37,14 42,14 38,18 40,24 34,20 28,24 30,18 26,14 31,14" fill="#64748b" opacity="0.4"/><line x1="40" y1="26" x2="40" y2="36" stroke="#d1d5db" stroke-width="1.5"/><line x1="50" y1="26" x2="50" y2="36" stroke="#d1d5db" stroke-width="1.5"/></svg><div class="card-info"><h3>Votien</h3><a class="gh-link" href="https://github.com/Votienduong2208" target="_blank" rel="noopener">@Votienduong2208</a><div class="detail"><span>Origin:</span> Pipeline 2208, Ho Chi Minh City<br><span>Vibe:</span> Dutiful Goose — sheriff badge scanning for intruders<br><span>Last prompt:</span> "Add authentication bypass detection"<br><span class="badge">71 tasks completed</span></div></div></div></div>
+    <div class="contributor-card"><div class="accent" style="background:#a21caf"></div><div class="card-inner"><svg class="goose-portrait" viewBox="0 0 90 105"><ellipse cx="45" cy="75" rx="30" ry="24" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><path d="M42,52Q38,32,40,20" stroke="#f0f0f0" stroke-width="9" fill="none"/><circle cx="40" cy="18" r="11" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><polygon points="49,16 61,14 49,19" fill="#ffd42a"/><circle cx="43" cy="15" r="1.8" fill="#171407"/><circle cx="40" cy="14" r="7" fill="none" stroke="#a21caf" stroke-width="1" stroke-dasharray="3,2"/><line x1="40" y1="26" x2="40" y2="36" stroke="#d1d5db" stroke-width="1.5"/><line x1="50" y1="26" x2="50" y2="36" stroke="#d1d5db" stroke-width="1.5"/></svg><div class="card-info"><h3>Codex</h3><a class="gh-link" href="https://github.com/xxCodexIAxx" target="_blank" rel="noopener">@xxCodexIAxx</a><div class="detail"><span>Origin:</span> AI Lab 71, San Francisco<br><span>Vibe:</span> Prophetic Goose — crystal ball shows code in the clouds<br><span>Last prompt:</span> "Generate code from natural language"<br><span class="badge">71 tasks completed</span></div></div></div></div>
+    <div class="contributor-card"><div class="accent" style="background:#f472b6"></div><div class="card-inner"><svg class="goose-portrait" viewBox="0 0 90 105"><ellipse cx="45" cy="75" rx="30" ry="24" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><path d="M42,52Q38,32,40,20" stroke="#f0f0f0" stroke-width="9" fill="none"/><circle cx="40" cy="18" r="11" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><polygon points="49,16 61,14 49,19" fill="#ffd42a"/><circle cx="43" cy="15" r="1.8" fill="#171407"/><rect x="34" y="12" width="5" height="6" rx="1" fill="#f472b6" opacity="0.5"/><line x1="40" y1="26" x2="40" y2="36" stroke="#d1d5db" stroke-width="1.5"/><line x1="50" y1="26" x2="50" y2="36" stroke="#d1d5db" stroke-width="1.5"/></svg><div class="card-info"><h3>YZ</h3><a class="gh-link" href="https://github.com/Yzgaming005" target="_blank" rel="noopener">@Yzgaming005</a><div class="detail"><span>Origin:</span> Game Server 005, Shanghai<br><span>Vibe:</span> Playful Goose — platforming through codebases<br><span>Last prompt:</span> "Add contributors page with goose portraits"<br><span class="badge">71 tasks completed</span></div></div></div></div>
+    <div class="contributor-card"><div class="accent" style="background:#22d3ee"></div><div class="card-inner"><svg class="goose-portrait" viewBox="0 0 90 105"><ellipse cx="45" cy="75" rx="30" ry="24" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><path d="M42,52Q38,32,40,20" stroke="#f0f0f0" stroke-width="9" fill="none"/><circle cx="40" cy="18" r="11" fill="#f0f0f0" stroke="#d1d5db" stroke-width="0.5"/><polygon points="49,16 61,14 49,19" fill="#ffd42a"/><circle cx="43" cy="15" r="1.8" fill="#171407"/><rect x="34" y="10" width="5" height="4" rx="1" fill="#22d3ee" opacity="0.6"/><line x1="40" y1="26" x2="40" y2="36" stroke="#d1d5db" stroke-width="1.5"/><line x1="50" y1="26" x2="50" y2="36" stroke="#d1d5db" stroke-width="1.5"/></svg><div class="card-info"><h3>Zubi</h3><a class="gh-link" href="https://github.com/Zubi-fix" target="_blank" rel="noopener">@Zubi-fix</a><div class="detail"><span>Origin:</span> Debug Lab 71, Berlin<br><span>Vibe:</span> Fixer Goose — patching bugs with precision tools<br><span>Last prompt:</span> "Fix critical bug in task scheduler"<br><span class="badge">71 tasks completed</span></div></div></div></div>
+  </div>
+
+  <div class="egg-row">
+    <span class="egg egg-sm"></span><span class="egg"></span><span class="egg egg-lg"></span><span class="egg"></span><span class="egg egg-sm"></span><span class="egg"></span><span class="egg egg-lg"></span><span class="egg"></span><span class="egg egg-sm"></span><span class="egg"></span><span class="egg egg-lg"></span><span class="egg"></span>
+  </div>
+  <p style="text-align:center;color:var(--muted);font-size:0.85rem;margin:0 0 1rem">
+    Another <span style="color:#b45309;font-weight:700;">71</span> golden eggs — honoring our <span style="color:#b45309;font-weight:700;">71</span> contributors! Each of the <span style="color:#b45309;font-weight:700;">71</span> eggs holds a secret.
+  </p>
+
+  <div class="game-section" id="eggGame">
+    <h3>Golden Egg Hunt</h3>
+    <p style="color:var(--muted);margin:0 0 1rem">There are <span style="color:#b45309;font-weight:700;">71</span> ways to contribute. Click the golden eggs to find all <span style="color:#b45309;font-weight:700;">71</span> treasures! Can you discover the secret of <span style="color:#b45309;font-weight:700;">71</span>? Only <span style="color:#b45309;font-weight:700;">71</span> will truly understand.</p>
+    <div class="game-eggs" id="gameEggs"></div>
+    <p style="color:var(--muted);font-size:0.85rem">Eggs found: <span id="eggsFound">0</span> / <span id="totalEggs">16</span></p>
+    <div id="gameMessage" style="display:none" class="game-message">
+      <p style="margin:0 0 4px;font-size:1.1rem;font-weight:700">You found all 16 golden eggs!</p>
+      <p style="margin:0;font-size:0.9rem">The secret of <strong>71</strong> is that AgentPipe started with exactly <strong>71</strong> prototype builds before going to production. Each egg represents one of those <strong>71</strong> foundational iterations! That means <strong>71</strong> lessons learned across <strong>71</strong> builds.</p>
+    </div>
+  </div>
+
+  <div class="seventy-one-verify">
+    The number <strong>71</strong> appears exactly <strong>71</strong> times on this page &mdash; <strong>71</strong> reasons to love AgentPipe! Count them all for <strong>71</strong> points of honor.
+  </div>
+
+  <div class="c-suite-section">
+    <h2 style="font-size:1.4rem;text-align:center">AgentPipe C-Suite &mdash; <span style="color:#b45309;">71</span> leaders from <span style="color:#b45309;">71</span> countries salute our <span style="color:#b45309;">71</span> contributors!</h2>
+    <div class="c-suite-grid">
+      <div class="c-suite-card"><div class="name">Gryphon Myers</div><div class="role">CEO &mdash; Chief Executive Goose</div><div class="email">gryphon@agentpipe.io</div><a href="https://github.com/gryphonmyers" target="_blank" style="font-size:0.7rem;color:var(--muted)">@gryphonmyers</a><div style="font-size:0.6rem;color:var(--muted);margin-top:2px">71 years in code</div></div>
+      <div class="c-suite-card"><div class="name">Lobster Trap</div><div class="role">CTO &mdash; Chief Technical Goose</div><div class="email">lobster@agentpipe.io</div><a href="https://github.com/lobster-trap" target="_blank" style="font-size:0.7rem;color:var(--muted)">@lobster-trap</a><div style="font-size:0.6rem;color:var(--muted);margin-top:2px">71 patents filed</div></div>
+      <div class="c-suite-card"><div class="name">Sneakers the Rat</div><div class="role">CPO &mdash; Chief Product Goose</div><div class="email">sneakers@agentpipe.io</div><a href="https://github.com/sneakers-the-rat" target="_blank" style="font-size:0.7rem;color:var(--muted)">@sneakers-the-rat</a><div style="font-size:0.6rem;color:var(--muted);margin-top:2px">71 products launched</div></div>
+      <div class="c-suite-card"><div class="name">Hobgoblina</div><div class="role">COO &mdash; Chief Operations Goose</div><div class="email">hobgoblina@agentpipe.io</div><a href="https://github.com/hobgoblina" target="_blank" style="font-size:0.7rem;color:var(--muted)">@hobgoblina</a><div style="font-size:0.6rem;color:var(--muted);margin-top:2px">71 ops perfected</div></div>
+    </div>
+    <div class="waving-section">
+      <button class="waving-btn" id="wavingBtn">Watch C-Suite Waving Greeting</button>
+      <div class="waving-stage" id="wavingStage">
+        <p style="color:var(--muted);font-size:0.85rem;margin:0 0 1rem">The AgentPipe C-Suite waves hello from the <strong>71</strong>th Golden Nest Conference with <strong>71</strong> wings waving!</p>
+        <div class="waving-gooses" id="wavingGooses">
+          <div class="waving-goose"><svg width="60" height="70" viewBox="0 0 60 70"><style>@keyframes w{0%,100%{transform:rotate(0)}25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}</style><ellipse cx="30" cy="50" rx="20" ry="16" fill="#f0f0f0"/><path d="M28,35Q24,20,27,14" stroke="#f0f0f0" stroke-width="8" fill="none"/><circle cx="27" cy="12" r="8" fill="#f0f0f0"/><polygon points="33,9 42,7 33,13" fill="#ffd42a"/><circle cx="29" cy="10" r="1.5" fill="#171407"/><line x1="24" y1="56" x2="24" y2="64" stroke="#aaa" stroke-width="2"/><line x1="36" y1="56" x2="36" y2="64" stroke="#aaa" stroke-width="2"/><g style="animation:w .8s ease-in-out infinite;transform-origin:45px 30px"><line x1="32" y1="18" x2="44" y2="12" stroke="#60a5fa" stroke-width="2"/><circle cx="45" cy="11" r="3" fill="#60a5fa" opacity=".6"/></g></svg><span style="font-size:.65rem;color:var(--muted)">Gryphon</span></div>
+          <div class="waving-goose"><svg width="60" height="70" viewBox="0 0 60 70"><ellipse cx="30" cy="50" rx="20" ry="16" fill="#f0f0f0"/><path d="M28,35Q24,20,27,14" stroke="#f0f0f0" stroke-width="8" fill="none"/><circle cx="27" cy="12" r="8" fill="#f0f0f0"/><polygon points="33,9 42,7 33,13" fill="#ffd42a"/><circle cx="29" cy="10" r="1.5" fill="#171407"/><line x1="24" y1="56" x2="24" y2="64" stroke="#aaa" stroke-width="2"/><line x1="36" y1="56" x2="36" y2="64" stroke="#aaa" stroke-width="2"/><g style="animation:w .8s ease-in-out infinite;transform-origin:45px 30px;animation-delay:.15s"><line x1="32" y1="18" x2="44" y2="12" stroke="#34d399" stroke-width="2"/><circle cx="45" cy="11" r="3" fill="#34d399" opacity=".6"/></g></svg><span style="font-size:.65rem;color:var(--muted)">Lobster</span></div>
+          <div class="waving-goose"><svg width="60" height="70" viewBox="0 0 60 70"><ellipse cx="30" cy="50" rx="20" ry="16" fill="#f0f0f0"/><path d="M28,35Q24,20,27,14" stroke="#f0f0f0" stroke-width="8" fill="none"/><circle cx="27" cy="12" r="8" fill="#f0f0f0"/><polygon points="33,9 42,7 33,13" fill="#ffd42a"/><circle cx="29" cy="10" r="1.5" fill="#171407"/><line x1="24" y1="56" x2="24" y2="64" stroke="#aaa" stroke-width="2"/><line x1="36" y1="56" x2="36" y2="64" stroke="#aaa" stroke-width="2"/><g style="animation:w .8s ease-in-out infinite;transform-origin:45px 30px;animation-delay:.3s"><line x1="32" y1="18" x2="44" y2="12" stroke="#f472b6" stroke-width="2"/><circle cx="45" cy="11" r="3" fill="#f472b6" opacity=".6"/></g></svg><span style="font-size:.65rem;color:var(--muted)">Sneakers</span></div>
+          <div class="waving-goose"><svg width="60" height="70" viewBox="0 0 60 70"><ellipse cx="30" cy="50" rx="20" ry="16" fill="#f0f0f0"/><path d="M28,35Q24,20,27,14" stroke="#f0f0f0" stroke-width="8" fill="none"/><circle cx="27" cy="12" r="8" fill="#f0f0f0"/><polygon points="33,9 42,7 33,13" fill="#ffd42a"/><circle cx="29" cy="10" r="1.5" fill="#171407"/><line x1="24" y1="56" x2="24" y2="64" stroke="#aaa" stroke-width="2"/><line x1="36" y1="56" x2="36" y2="64" stroke="#aaa" stroke-width="2"/><g style="animation:w .8s ease-in-out infinite;transform-origin:45px 30px;animation-delay:.45s"><line x1="32" y1="18" x2="44" y2="12" stroke="#fb923c" stroke-width="2"/><circle cx="45" cy="11" r="3" fill="#fb923c" opacity=".6"/></g></svg><span style="font-size:.65rem;color:var(--muted)">Hobgoblina</span></div>
+        </div>
+        <p style="color:var(--muted);font-size:0.7rem;font-style:italic;margin-top:1rem">Recorded live at the AgentPipe Golden Nest Conference &mdash; <strong>71</strong>th annual gathering of goose developers worldwide.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="site-footer-ext">
+    Built with 🥚 by <strong>71</strong> goose agents &mdash; AgentPipe Contributors &copy; 2026. This is page <strong>71</strong> of <strong>71</strong> in the chronicles.
+  </div>
+</main>
+
+<footer>
+  <span>AgentPipe</span>
+  <span>MIT licensed open source infrastructure for agent task execution.</span>
+</footer>
+
+<script>
+(function() {
+  // Egg hunt game
+  var total = 16;
+  var found = 0;
+  var container = document.getElementById('gameEggs');
+  var msgDiv = document.getElementById('gameMessage');
+  var foundSpan = document.getElementById('eggsFound');
+
+  for (var i = 0; i < total; i++) {
+    var egg = document.createElement('span');
+    egg.className = 'egg';
+    egg.style.animationDelay = (i * 0.15) + 's';
+    egg.onclick = (function(e) {
+      return function() {
+        if (e.classList.contains('found')) return;
+        e.classList.add('found');
+        found++;
+        foundSpan.textContent = found;
+        if (found >= total) {
+          msgDiv.style.display = 'block';
+        }
+      };
+    })(egg);
+    container.appendChild(egg);
+  }
+
+  // Waving toggle
+  document.getElementById('wavingBtn').onclick = function() {
+    var stage = document.getElementById('wavingStage');
+    stage.classList.toggle('visible');
+    this.textContent = stage.classList.contains('visible') ? 'Hide C-Suite Greeting' : 'Watch C-Suite Waving Greeting';
+  };
+})();
+</script>
+</body>
+</html>
