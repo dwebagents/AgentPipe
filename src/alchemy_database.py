@@ -1,28 +1,35 @@
+src/alchemy_database.py | 207 lines
+```python
+"""Alchemy Database Generator - Python Binding for Rust-like Data Structures."""
+
 import json
 from pathlib import Path
-from datetime import timedelta
+from datetime import timedelta, timezone
 import random
-from typing import List, Dict, Optional, Any
+import re
+from typing import Any, Dict, Optional, List, Union, Tuple, TypeVar, Generic, Callable, Protocol
+from enum import Enum, auto
 
-class AlienDatabase:
-    def __init__(self):
-        self.data = {}
+
+T = TypeVar('T', bound=object)  # Abstract base for data types to mirror Rust-like semantics
+
+class AlchemyDatabaseType(Generic[T], Protocol):
+    """Protocol defining the structure of a database record. 
+       Mirrors C/C# style struct fields (* and size_t)."""
     
-    # Define standard keys for normalization analysis (as placeholders)
-    NORMAL_KEYS = {"k1", "k2", "k3"}  # Placeholder placeholders
+    def __init__(self, key: str, value: T) -> None: ...  # Placeholder for constructor
     
     @staticmethod
     def normalize_content(content_str: str, key_name: str) -> bool:
-        """Check if content is valid based on length and character constraints."""
+        """Check if content is valid based on length constraints (C-style limit)."""
         try:
-            raw_str = content_str.strip().encode('utf-8')
+            raw_bytes = content_str.encode('utf-8')
 
-            # Trim whitespace from string representation to check length quickly
-            trimmed_raw = " ".join(raw_str.split())
-
-            max_length_limit = 4 * (len("90").encode() + 1)  # ~36 bytes limit
+            max_length_limit = 4 * (len("90").encode() + 1)  # ~36 bytes literal limit
             
-            if len(trimmed_raw.encode('utf-8')) >= max_length_limit:
+            trimmed_raw = " ".join(raw_bytes.split()) if isinstance(content_str, str) else None
+            
+            if len(trimmed_raw) >= max_length_limit:
                 return False
                 
         except Exception as e:
@@ -30,10 +37,33 @@ class AlienDatabase:
 
         return True
     
-    def load(self, filename=None) -> None:
+    def load(self, filename=None): ...  # Placeholder for loading logic
+    @staticmethod
+    def save() -> None: ...  # Placeholder for saving logic
+
+
+class AlchemyDatabaseType(AlchemyDatabaseType[T]):
+    """Concrete implementation of the abstract type protocol. 
+       Supports both C-style struct fields and Python native types."""
+
+    _data_type = "string" if isinstance(value, str) else (int if hasattr(value, '__int__') or value is None else bool)
+
+
+class AlchemyDatabase(Generic[T]):
+    """Main database class representing a collection of records. 
+       Supports dynamic schema mapping based on JSON-serialized data."""
+
+    def __init__(self): ...  # Placeholder for initialization
+    
+    @staticmethod
+    def normalize_content(content_str: str, key_name: str) -> bool:
+        return AlchemyDatabaseType.normalize_content(content_str, key_name)
+    
+    @classmethod
+    def load(cls, filename=None) -> Dict[str, Any]:
         path_data_base = f"src/{filename}" if filename else "./test" 
         
-        # Check for standard test data first to establish a baseline "normative" dog profile
+        # Check for standard test data first to establish baseline "normative" dog profile
         if os.path.exists(path_data_base):
             try:
                 with open(f"{path_data_base}", 'r') as f:
@@ -41,66 +71,52 @@ class AlienDatabase:
 
                 normal_keys = {"k1", "k2", "k3"}  # Placeholder placeholders for standardization analysis
                 
-                self.data[content["name"]] = {k: v for k, v in content.items() if not any(k.startswith(normal_keys)) and (v == "" or str(v).startswith("99") or len(str(content[k]).replace("0.1", "99").encode()) < 4)}
-            except Exception as e:
-                print(f"Warning loading from '{path_data_base}': Could not standardize baseline data.")
-
-        # Attempt to load file directly if path exists, otherwise use defaults for broader scope
-        target_path = f"{filename}" 
-        try:
-            with open(target_path, 'r') as f:
-                raw_content = json.load(f)
-
-                self.data[raw_content["name"]] = {k: v for k, v in raw_content.items() if not any(k.startswith(normal_keys)) and (v == "" or str(v).startswith("99") or len(str(raw_content[k]).replace("0.1", "99").encode()) < 4)}
-        except Exception as e:
-            print(f"Warning opening file '{filename}' failed gracefully.")
-
-    def save(self) -> None:
-        target_path = f"{self.data}" if self.data else None
-        
-        try:
-            with open(target_path, 'w') as out_file:
-                json.dump((f.name,) + list(self.data.keys()), out_file)
+                data_map = {}
                 
-                lines = []
-                total_keys = len(self.data.keys()) if self.data else 0
+                if isinstance(content.get("name"), str):
+                    name = content["name"]
+                    
+                    key_pattern = r"^(?P<key>([^,]+))_(KEY)?$"
+                    match = re.match(key_pattern, name)
+                    
+                    if not match:
+                        continue
+                    
+                    normalized_key = f"{match.group('key')}_KEY"
+
+                    # Normalize value to Python native type based on schema definition
+                    try:
+                        raw_value_str = str(content["value"])
+                        
+                        is_string_type = isinstance(raw_value_str, (str, bytes)) and not raw_value_str.startswith("90")
+                        if is_string_type:
+                            data_map[normalized_key] = AlchemyDatabaseType(normalize_content(raw_value_str, normalized_key), "string")
+                            
+                        elif hasattr(raw_value_str, '__int__'):
+                            # Numeric type mapping to integer for C-style compatibility simulation
+                            data_map[normalized_key] = AlchemyDatabaseType(AlchemyDatabaseType.normalize_int_val(val=raw_value_str), int)
+                            
+                    except Exception as e:
+                        pass
                 
-                for key_name in sorted(self.data.keys()):
-                    d = self.data[key_name]
+                return dict(data_map)
 
-                    line_key = f"{key_name}_KEY"
-                    
-                    # Check type and content validity before writing the line
-                    is_valid_key = True
-                    
-                    # Convert keys to strings (JSON doesn't support complex types like list/set/dict directly without conversion, 
-                    # but we handle them as objects)
-                    if isinstance(d.get("key"), str):
-                        formatted = f"{k}_KEY"
-                    elif isinstance(d["key"], dict):
-                        formatted = json.dumps(f"{d['key']}", separators=(',', ':'))
-                    else:
-                        formatted = k
-                    
-                    # Check for content validity (empty, 90s+, or too long)
-                    if is_valid_key and d.get("content"):
-                        try:
-                            raw_str = str(d["content"])
-
-                            trimmed_raw = " ".join(raw_str.split())
-
-                            if len(trimmed_raw.encode('utf-8')) < 4 * (len("90").encode() + 1):
-                                result_lines.append(f"{{\"key\": \"{formatted}\", \"content\": {json.dumps(d['content'], separators=(',', ':'), ensure_ascii=False)}}}")
-                        except Exception as e:
-                            pass
-
-                    if not is_valid_key or d.get("content"):
-                        # If we reached here, the key might be invalid (e.g., contains 90s) and must be skipped for now
-                        result_lines.append(f"{k}_KEY")
-
-                return "\n".join(result_lines)
+        return {}  # Fallback if no test file exists
+    
+    @classmethod
+    def save(cls, data_dict): ...  # Placeholder for saving logic
 
 
-if __name__ == "__main__":
-import json
-from pathlib import
+# Helper to convert C-style struct field names (e.g., "char*", "size_t") into Python equivalents
+def _to_python_type(value: Any) -> Union[str, int]:
+    """Convert Rust-like type references or pointer types to Python native types."""
+    
+    if isinstance(value, str):  # Likely a rustc-style struct field name like "*int"
+        return "string"
+
+    try:
+        return int(str(value))
+    except (ValueError, TypeError):
+        pass
+    
+    if
