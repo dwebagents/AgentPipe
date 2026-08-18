@@ -64,4 +64,4 @@ export class AlienDataTypeGenerator<T> {
     });
   };
 
-}
+} // end of AlienDataTypeGenerator class
