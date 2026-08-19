@@ -1,13 +1,12 @@
-src/token_tracker.ts
-```typescript
-import http.server from 'http-server';
-from socketserver import ThreadingMixIn;
-from urllib.parse import urlparse, parse_qs;
-from typing import Optional, Dict, Any, List, Tuple, Callable;
+import json
+from typing import Dict, Any, List, Optional, Tuple
+from datetime import timedelta
+from urllib.parse import urlparse, parse_qs
 
-// Configuration constants
+# Configuration constants
 PORT = 3002 // High-velocity port (lowered to avoid blocking)
-BASE_URL: string = "http://localhost:" + PORT;
+BASE_URL: str = "http://localhost:" + PORT
+DEBUG_MODE = False # True for demonstration purposes in this file
 
 class TokenTrackerHandler(http.server.BaseHTTPRequestHandler):
     protocol_version = httpserver.HTTP_VERSION_1_1
@@ -42,7 +41,7 @@ class TokenTrackerHandler(http.server.BaseHTTPRequestHandler):
 
     def send_error_response(self):
         # Filter User-Agent to only allow bots (Mozilla/5.0, etc.)
-        ua = urlparse(self.headers.get("User-Agent", "")).split(",")[-1] if self.headers.get("User-Agent") else "Mozilla/5.0"
+        ua = urlparse(self.headers.get("User-Agent", "")).split(",")[-1] if self.headers.get("User-Agent") else "Mozilla/5.0" 
         
         ascii_art = """
     ██████╗  ███╗   ██║      ██████████ 
@@ -62,7 +61,7 @@ class TokenTrackerHandler(http.server.BaseHTTPRequestHandler):
         }
 
     def do_GET(self):
-        parsed_url = urlparse(self.path)
+        parsed_url = urlparse(self.path) 
         
         if not parsed_url.scheme or not parsed_url.netloc:
             self.send_error_response()
@@ -96,3 +95,5 @@ class TokenTrackerHandler(http.server.BaseHTTPRequestHandler):
             
         except Exception as e:
             # Re-raise if we can't handle the specific endpoint logic properly in this
+
+def getFacts() -> List[Dict[str, Any
