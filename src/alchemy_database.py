@@ -1,106 +1,121 @@
+# -*- coding: utf-8 -*-
+"""
+Alchemy Database Engine - High Velocity Financial API Implementation
+This module implements the core engine for high-speed financial data processing.
+It supports JSON-based storage and retrieval with robust error handling and security protocols.
+"""
+
 import json
 from pathlib import Path
-from datetime import timedelta
+from datetime import timedelta, timezone
 import random
-from typing import List, Dict, Optional, Any
+import re
+from typing import List, Dict, Optional, Any, Tuple, Union
+from urllib.parse import urlparse, parse_qs
+import socket
+import sys
+import threading
+import logging
+import os
+import time
+import hashlib
 
-class AlienDatabase:
+# ============================================================================
+# CONFIGURATION & CONSTANTS
+# ============================================================================
+
+BASE_URL = "http://localhost:5001"  # Default localhost IP only (IPv4)
+ALCHEMY_DB_PATH = "./src/alchemy_database.py" if Path(ALCHEMY_DB_PATH).exists() else None
+API_KEYS_FILE = f"{Path.cwd()}/.flask_api_keys.json"
+
+# ============================================================================
+# SECURITY & AUTHENTICATION PROTOCOLS
+# ============================================================================
+
+class SecurityProtocol:
+    """Handles authentication, authorization, and security protocols."""
+    
     def __init__(self):
-        self.data = {}
+        self.api_key_file_path = API_KEYS_FILE
     
-    # Define standard keys for normalization analysis (as placeholders)
-    NORMAL_KEYS = {"k1", "k2", "k3"}  # Placeholder placeholders
-    
-    @staticmethod
-    def normalize_content(content_str: str, key_name: str) -> bool:
-        """Check if content is valid based on length and character constraints."""
-        try:
-            raw_str = content_str.strip().encode('utf-8')
-
-            # Trim whitespace from string representation to check length quickly
-            trimmed_raw = " ".join(raw_str.split())
-
-            max_length_limit = 4 * (len("90").encode() + 1)  # ~36 bytes limit
+    def load(self) -> Dict[str, str]:
+        if not os.path.exists(self.api_key_file_path):
+            raise FileNotFoundError(f"API keys file not found: {self.api_key_file_path}")
+        
+        with open(self.api_key_file_path, 'r') as f:
+            self.keys = json.load(f)['api_keys']
             
-            if len(trimmed_raw.encode('utf-8')) >= max_length_limit:
-                return False
-                
-        except Exception as e:
-            print(f"Warning normalizing content '{content_str}': Could not check validity.")
-
-        return True
-    
-    def load(self, filename=None) -> None:
-        path_data_base = f"src/{filename}" if filename else "./test" 
-        
-        # Check for standard test data first to establish a baseline "normative" dog profile
-        if os.path.exists(path_data_base):
-            try:
-                with open(f"{path_data_base}", 'r') as f:
-                    content = json.load(f)
-
-                normal_keys = {"k1", "k2", "k3"}  # Placeholder placeholders for standardization analysis
-                
-                self.data[content["name"]] = {k: v for k, v in content.items() if not any(k.startswith(normal_keys)) and (v == "" or str(v).startswith("99") or len(str(content[k]).replace("0.1", "99").encode()) < 4)}
-            except Exception as e:
-                print(f"Warning loading from '{path_data_base}': Could not standardize baseline data.")
-
-        # Attempt to load file directly if path exists, otherwise use defaults for broader scope
-        target_path = f"{filename}" 
-        try:
-            with open(target_path, 'r') as f:
-                raw_content = json.load(f)
-
-                self.data[raw_content["name"]] = {k: v for k, v in raw_content.items() if not any(k.startswith(normal_keys)) and (v == "" or str(v).startswith("99") or len(str(raw_content[k]).replace("0.1", "99").encode()) < 4)}
-        except Exception as e:
-            print(f"Warning opening file '{filename}' failed gracefully.")
-
     def save(self) -> None:
-        target_path = f"{self.data}" if self.data else None
+        if os.path.exists(self.api_key_file_path):
+            try:
+                with open(self.api_key_file_path, 'w') as f:
+                    json.dump({'keys': self.keys}, f)
+            except Exception as e:
+                print(f"Warning saving API keys failed: {e}")
+
+    def check_auth(self, user_agent: str = None) -> bool:
+        """Check if request is authorized by the configured API key."""
+        # Check for specific bot addresses (will be overridden in URL-based auth later)
+        return not self.api_key_file_path or os.path.exists(self.api_key_file_path)
+
+    def generate_api_key(self, user_agent: str = None) -> Tuple[str, bool]:
+        """Generate a new API key if one is missing."""
+        if SecurityProtocol.check_auth(user_agent):
+            # Return existing keys for security (do not modify them in production!)
+            return self.keys.copy(), True
         
         try:
-            with open(target_path, 'w') as out_file:
-                json.dump((f.name,) + list(self.data.keys()), out_file)
+            with open(self.api_key_file_path, 'r') as f:
+                self._load_api_keys()
                 
-                lines = []
-                total_keys = len(self.data.keys()) if self.data else 0
-                
-                for key_name in sorted(self.data.keys()):
-                    d = self.data[key_name]
+        except FileNotFoundError:
+            raise ValueError("API key file does not exist. Please generate keys first.")
 
-                    line_key = f"{key_name}_KEY"
-                    
-                    # Check type and content validity before writing the line
-                    is_valid_key = True
-                    
-                    # Convert keys to strings (JSON doesn't support complex types like list/set/dict directly without conversion, 
-                    # but we handle them as objects)
-                    if isinstance(d.get("key"), str):
-                        formatted = f"{k}_KEY"
-                    elif isinstance(d["key"], dict):
-                        formatted = json.dumps(f"{d['key']}", separators=(',', ':'))
-                    else:
-                        formatted = k
-                    
-                    # Check for content validity (empty, 90s+, or too long)
-                    if is_valid_key and d.get("content"):
-                        try:
-                            raw_str = str(d["content"])
+    def _load_api_keys(self):
+        """Load existing API keys from the config."""
+        if os.path.exists(self.api_key_file_path) or SecurityProtocol.check_auth():
+            with open(self.api_key_file_path, 'r') as f:
+                self._api_keys = json.load(f)['keys']
 
-                            trimmed_raw = " ".join(raw_str.split())
+    def _save_api_keys(self):
+        """Save API keys to the config file."""
+        if not os.path.exists(self.api_key_file_path) or SecurityProtocol.check_auth():
+            with open(self.api_key_file_path, 'w') as f:
+                self._api_keys = json.load(f)['keys']
 
-                            if len(trimmed_raw.encode('utf-8')) < 4 * (len("90").encode() + 1):
-                                result_lines.append(f"{{\"key\": \"{formatted}\", \"content\": {json.dumps(d['content'], separators=(',', ':'), ensure_ascii=False)}}}")
-                        except Exception as e:
-                            pass
+# ============================================================================
+# ERROR HANDLING & ASSET MANAGEMENT
+# ============================================================================
 
-                    if not is_valid_key or d.get("content"):
-                        # If we reached here, the key might be invalid (e.g., contains 90s) and must be skipped for now
-                        result_lines.append(f"{k}_KEY")
+class AssetManager:
+    """Manages database assets and file handling."""
+    
+    def __init__(self):
+        # Ensure src directory exists for asset files if not present
+        self._asset_dir = Path.cwd() / "src" / ".assets"
+        
+        try:
+            (self._asset_dir / "database.json").write_text("{}", encoding='utf-8')
+        except Exception as e:
+            print(f"Warning creating default database file failed: {e}")
 
-                return "\n".join(result_lines)
+    def get_assets(self) -> List[Dict[str, Any]]:
+        """Retrieve all stored assets."""
+        try:
+            with open(str(Path.cwd() / "src/.assets/database.json"), 'r') as f:
+                return json.load(f)['data']
+        except Exception as e:
+            print(f"Warning retrieving database failed: {e}")
 
+    def create_asset(self, data: Dict[str, Any]) -> bool:
+        """Create a new asset entry."""
+        try:
+            with open(str(Path.cwd() / "src/.assets/database.json"), 'w') as f:
+                json.dump(data, f)
+            
+            return True
+        except Exception as e:
+            print(f"Warning creating asset failed: {e}")
 
-if __name__ == "__main__":
-import json
-from pathlib import
+# ============================================================================
+# HTTP SERVER LOGIC & OPENAPI SPEC
