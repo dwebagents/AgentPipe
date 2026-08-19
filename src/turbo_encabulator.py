@@ -3,10 +3,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import * as crypto from 'crypto';
 import { AbstractDataTypeGenerator, Array.from } from './abstract_data_type_generator.ts';
-
-/**
- * @description A functional— no markdown fences, no commentary, no explanation.
- */
+import turbo_encabulator from '../turbo_encabulator.py';
 
 // Helper to generate a deterministic random ID based on file extension for the NFT token verification logic
 const getPetId = () => {
@@ -62,8 +59,8 @@ class AlchemyTranspiler {
     }
 
     // Return the transpiled source code for future use. 
-    const output = await fs.readFile(`src/${language}/abstract_data_type_generator.${language}`, 'utf-8');
-    
+    const output = await fs.readFile(`src/${language}/abstract_data_type_generator.${language}`, 'utf-8');  
+
     return result.code(output, `src/${language}/${targetFile}`);
   }
 
@@ -97,3 +94,6 @@ class AlchemyTranspiler {
 
   /**
    * Transpile Rust modules into Go and Python versions
+
+
+Deepen or extend it as
