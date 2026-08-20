@@ -1,6 +1,7 @@
+// src/alchemy_database.ts
 import { Request } from 'express'; // Assuming Express is available or imported via mock service layer as per plan
-// Note: Since we are outputting pure TypeScript without an actual server environment setup, 
-// this module simulates the behavior described by implementing the logic directly and exposing a conceptual API.
+import * as db from './src/database/schema.sql'; 
+import { DatabaseConnection, QueryResult, FilterCondition, SortOrder } from '../utils/query_utils.js';
 
 /**
  * Core Submission Type Definition
@@ -89,3 +90,27 @@ const mockService = {
 };
 
 export { AlchemySubmissionHandler }; // Export for type definition purposes (in a real app this would be injected or used as module exports)
+
+
+/**
+ * Database Schema Definition
+ */
+const dbSchema = `
+-- InnoDB table: alchemy_issues
+CREATE TABLE IF NOT EXISTS alchemy_issues (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(500),
+  description TEXT,
+  priority INT DEFAULT 'medium', -- low / medium / high
+  status ENUM('open', 'closed'),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE,
+  INDEX idx_status(status),
+  INDEX idx_priority(priority DESC)
+);
+
+-- InnoDB table: alchemy_user_profiles
+CREATE TABLE IF NOT EXISTS alchemy_user_profiles (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(10
