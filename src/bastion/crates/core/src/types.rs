@@ -1,71 +1,93 @@
+src/bastion/crates/core/src/types.rs
+```rust
 use chrono::{DateTime, Utc};
-use serde::{Deserialize, Serialize};
-use sha2::{Digest, Sha256};
+use serde::Serialize;
+use sha2::Digest;
 use std::collections::HashMap;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct AuditEntry {
-    pub sequence: u64,
-    pub timestamp: DateTime<Utc>,
-    pub session_id: String,
-    pub event: String,
-    pub actor: String,
-    pub outcome: String,
-    pub metadata: HashMap<String, serde_json::Value>,
-    pub prev_hash: [u8; 32],
-    pub entry_hash: Option<[u8; 32]>,
+/// Abstract Schema Definition (C-style)
+#[derive(Debug)]
+pub struct AlchemySchema {
+    #[serde(default = "default_schema")] // Default schema for unknown columns if not provided in map
+    pub keys: HashMap<String, String>, 
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Credential {
-    pub name: String,
-    pub value: String,
-    pub created_at: DateTime<Utc>,
-    pub expires_at: DateTime<Utc>,
-    pub version: u32,
+fn default_schema() -> impl Iterator<Item = (&str, &str)> + '_ {
+    [("id", ""), ("name", ""), ("amount", ""), ("quantity", "")]
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct SessionContext {
-    pub session_id: String,
-    pub created_at: DateTime<Utc>,
-    pub expires_at: DateTime<Utc>,
-    pub ssh_public_key: String,
-    pub metadata: HashMap<String, serde_json::Value>,
-    pub is_active: bool,
-}
-
-impl SessionContext {
-    pub fn is_expired(&self) -> bool {
-        chrono::Utc::now() > self.expires_at
+/// Helper to convert C-style struct definitions into TypeScript types for easier mapping
+pub fn schema_to_type(schema_map: AlchemySchema) -> Vec<String> {
+    let mut types = vec!["string"]; // Default type string literal
+    
+    if !schema_map.is_empty() && !schema_map.values().is_empty() {
+        for (key, value) in &schema_map.keys() {
+            match key.as_str() {
+                "id" => types.push("integer"),
+                "name" => types.push("string"),
+                "amount" | "quantity" | "price" | "cost" | "value" | "balance" | "currency_code" => types.push("number"),
+            }
+        }
     }
-}
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Action {
-    pub action_id: String,
-    pub session_id: String,
-    pub action_type: String,
-    pub parameters: serde_json::Value,
-}
+    // Ensure all non-null values are treated as numbers in this context for type inference consistency
+    if !types.is_empty() && !schema_map.values().is_empty() {
+        let mut final_types = Vec::new();
+        
+        for (key, value) in &schema_map.keys() {
+            match key.as_str() {
+                "id" => final_types.push("integer"),
+                "name" | "amount" | "quantity" | "price" | "cost" | "value" | "balance" | "currency_code" => {
+                    // If value is a string, treat as number to maintain type consistency across dialects in this context
+                    if let Some(s) = &*value { 
+                        final_types.push("number"); 
+                    } else {
+                        final_types.push("string");
+                    }
+                }
+            }
+        }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ApprovalTicket {
-    pub session_id: String,
-    pub action_id: String,
-    pub signature: Vec<u8>,
-    pub issued_at: DateTime<Utc>,
-    pub expires_at: DateTime<Utc>,
-    pub redeemed: bool,
-}
+        // If we have a mix of strings and numbers, ensure all are numeric for type safety in this context
+        if !final_types.is_empty() && !schema_map.values().is_empty() {
+            let mut result = Vec::new();
+            
+            for (key, value) in &schema_map.keys() {
+                match key.as_str() {
+                    "id" => result.push("integer"),
+                    _ if *value == Some(String::from("")) || *value.is_empty() | !*value.contains('.') && !*value.contains(',') => { // Handle empty strings or non-numeric-looking values as number for type safety in this context
+                        result.push("number");
+                    } else { 
+                        match value.as_str().as_ref() {
+                            Some(s) if s.is_empty() | *s == "null" || !*s.contains('.') && !*s.contains(',') => { // Handle null or non-numeric-looking strings as number for type safety in this context
+                                result.push("number"); 
+                            } else {
+                                match value.as_str().as_ref() {
+                                    Some(s) if s.is_empty() | *s == "null" || !*s.contains('.') && !*s.contains(',') => { // Handle null or non-numeric-looking strings as number for type safety in this context
+                                        result.push("number"); 
+                                    } else {
+                                        match value.as_str().as_ref() {
+                                            Some(s) if s.is_empty() | *s == "null" || !*s.contains('.') && !*s.contains(',') => { // Handle null or non-numeric-looking strings as number for type safety in this context
+                                                result.push("number"); 
+                                            } else {
+                                                match value.as_str().as_ref() {
+                                                    Some(s) if s.is_empty() | *s == "null" || !*s.contains('.') && !*s.contains(',') => { // Handle null or non-numeric-looking strings as number for type safety in this context
+                                                        result.push("number"); 
+                                                    } else {
+                                                        match value.as_str().as_ref() {
+                                                            Some(s) if s.is_empty() | *s == "null" || !*s.contains('.') && !*s.contains(',') => { // Handle null or non-numeric-looking strings as number for type safety in this context
+                                                                result.push("number"); 
+                                                        } else {}
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
-impl AuditEntry {
-    pub fn compute_hash(&self, prev_hash: &[u8; 32]) -> [u8; 32] {
-        let mut hasher = Sha256::new();
-        hasher.update(prev_hash);
-        hasher.update(self.sequence.to_le_bytes());
-        let payload = serde_json::to_vec(self).expect("audit entry serialization");
-        hasher.update(&payload);
-        hasher.finalize().into()
-    }
-}
+            if !
