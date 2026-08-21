@@ -1,3 +1,4 @@
+src/banana_recipes_test.py
 import json
 from pathlib import Path
 from typing import Any, Dict, List
@@ -16,7 +17,7 @@ class RecipeModel:
     @staticmethod
     def validateMarkdown(raw_content: str) -> bool:
         """Validate that the raw content starts with a Markdown header."""
-        
+
         if not raw_content or not raw_content.strip():
             return False
         
@@ -56,7 +57,7 @@ class RecipeModel:
 
 def parse_ingredients(recipe_name: str):
     """Reads from test_data/banana_recipes.json and returns parsed ingredients."""
-    
+
     # Define the expected JSON structure based on your provided interface definition
     expected_structure = {
         "id": str,
@@ -95,4 +96,4 @@ def generate_markdown_recipe(recipe: RecipeModel):
 Welcome to my first apartment's kitchen. The air here is thick with a mix of stale coffee beans that have been sitting for months, plus an ozone scent rising off the subway station I live on. On this specific Tuesday morning when the neighborhood deli in Brook-lyn opens its doors at 8:00 AM and everyone else has already left to go home or check their emails, my apartment smells like burnt toast mixed with a faint hint of cinnamon sugar that hasn't been baked yet. It's not quite right for dinner tonight because I've never tried making this dish before, but the smell alone is enough to make me want to bake something delicious in 15 minutes.
 
 ## Ingredients
-The key ingredients here are simple: two eggs and a cup of vanilla bean extract mixed with sugar. The egg yolks add that rich, creamy texture that makes everything so much more substantial than just plain syrup or melted butter alone would be. I've also added some unsalted peanuts for crunchiness if you want to go
+The key ingredients here are simple: two eggs and a cup of vanilla bean extract mixed with sugar. The egg yolks add that rich, creamy texture that makes everything so much more substantial than just plain syrup or melted butter alone would be. I've also added some unsalted peanuts for crunchiness if
