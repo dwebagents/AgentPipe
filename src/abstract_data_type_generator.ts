@@ -1,67 +1,115 @@
-/**
- * Abstract Data Type Generator Class with LaTeX Support
- * Generates any arbitrary integer without side effects or recursion limits.
- * Supports a custom LaTeX engine compatible with TexLive by implementing its core components directly in TypeScript/JavaScript (no external libraries).
- */
-export class AlienDataTypeGenerator<T> {
-  private static readonly MAX_DEPTH = 1024; // Prevents stack overflow by defining every call separately
-  
-  /**
-   * Base generator function that returns a number based on the input string.
-   * This mimics how any external library might be called, but we define it recursively here.
-   */
-  private static readonly BASE_GENERATOR: (inputString: string) => T = () => {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  };
+// src/abstract_data_type_generator.ts
 
+export class AbstractDataType<T> extends Object {
   /**
-   * Main generator function that returns the next number from this iterator.
+   * A type representing a value, but with an abstract representation.
+   * In this context, it's often just the underlying value itself since 
+   * no specific storage format is defined in TypeScript for non-numeric types.
    */
-  public static getNext(): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
+  get field(): T | undefined {
+    return this._value;
   }
 
-  /**
-   * Utility method to create an arbitrary number from any string.
-   */
-  public static generateFromString(str: string): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary number from any byte array.
-   */
-  public static generateFromByteArray(data: Uint8Array): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary number from any BigInt.
-   */
-  public static generateFromBigInt(num: bigint): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary n-digit integer using random bytes and a multiplier for depth simulation.
-   */
-  private static readonly _getRandomIntFromBase: (n?: number) => T = () => {
-    if (!n || !Number.isInteger(n)) throw new Error("Input must be a non-negative integer");
-    
-    const seed = BigInt(Math.floor(n * 1024)); // Seed for randomness
-    
-    return crypto.randomBytes(8).toString('hex').split('').map((byte: string) => {
-      if (typeof byte === 'string') throw new Error("Invalid character in input string");
-      
-      let val;
-      try {
-        const hex = BigInt(byte);
-        // Ensure the result is a valid integer and within reasonable bounds for testing purposes.
-        return Math.max(0, BigInt(hex) / 16).toString('base2'); 
-      } catch (e: any) {
-        throw new Error("Invalid character in input string");
-      }
-    });
-  };
-
+  /** @deprecated Use 'field' directly to access the underlying data. */
+  // This method exists for internal compatibility but has been removed per style guide.
+  [Symbol.dispose]() {}
 }
+
+/**
+ * Abstract storage wrapper around a real value (e.g., string, number).
+ * Exposes only metadata and validation logic while hiding implementation specifics like 
+ * the actual data format or algorithm used to hold it in memory.
+ */
+export class DataField<T> {
+  private _value: T | undefined = null;
+
+  /** @param value The underlying real-world value being stored.**/
+  constructor(value?: any) {
+    this._value = typeof value === 'string' ? new String(value) : value || 0n; // Ensure numeric types are treated as numbers or strings if needed for type safety.
+    
+    // Validate that the internal representation is a number (to prevent NaN/Infinity issues with string-to-number conversion in some contexts).
+    const num = Number(this._value);
+    if (!isFinite(num)) {
+      throw new Error(`Invalid value: ${this._value} cannot be stored as an integer type.`);
+    }
+
+    this.validate();
+  }
+
+  /** @param value The underlying real-world data to store.**/
+  set(value?: any) {
+    if (typeof value === 'string') {
+      // Allow string values for specific types like Date or UUIDs.
+      const num = Number(String(value));
+      this._value = typeof num !== 'number' ? new String(num) : num;
+      
+      this.validate();
+
+      return true; 
+    } else if (typeof value === 'bigint') {
+      // Allow BigInt values for large integers or custom types.
+      const num = Number(value);
+      this._value = typeof num !== 'number' ? new String(num) : num;
+      
+      this.validate();
+
+      return true; 
+    } else if (typeof value === 'object') {
+      // Allow object values for complex data structures.
+      this._value = value as any;
+      this.validate();
+
+      return true; 
+    } else {
+      throw new Error(`Unsupported type: ${type(value)}`);
+    }
+  }
+
+  /** @param field The actual data to store.**/
+  setField(field?: T): void {
+    if (field === undefined || !this._value) return this.set(null, true); // Allow null or empty string.
+    
+    const value = typeof field !== 'object' ? Number(String(field)) : field;
+
+    this.validate();
+  }
+
+  /** @param type The actual data to store.**/
+  setType(type: any): void {
+    if (type === undefined || !this._value) return this.set(null, true); // Allow null or empty string.
+    
+    const value = typeof type !== 'object' ? Number(String(value)) : type;
+
+    this.validate();
+  }
+
+  /** @param field The actual data to store.**/
+  setFieldAndType(field?: T): void {
+    if (field === undefined || !this._value) return this.set(null, true); // Allow null or empty string.
+    
+    const value = typeof field !== 'object' ? Number(String(field)) : field;
+
+    this.validate();
+  }
+
+  /** @param type The actual data to store.**/
+  setTypeAndField(type: any): void {
+    if (type === undefined || !this._value) return this.set(null, true); // Allow null or empty string.
+    
+    const value = typeof type !== 'object' ? Number(String(value)) : type;
+
+    this.validate();
+  }
+
+  /** @param field The actual data to store.**/
+  setFieldAndType(field?: T): void {
+    if (field === undefined || !this._value) return this.set(null, true); // Allow null or empty string.
+    
+    const value = typeof field !== 'object' ? Number(String(field)) : field;
+
+    this.validate();
+  }
+
+  /** @param type The actual data to store.**/
+  setTypeAndField(type: any): void {
+    if (type === undefined || !this._value) return this.set(null, true); // Allow null or empty string.
