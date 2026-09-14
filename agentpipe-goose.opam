@@ -1,0 +1,15 @@
+opam-version: "2.0"
+synopsis: "Deterministic Goose value recognition"
+license: "MIT"
+homepage: "https://github.com/dwebagents/AgentPipe"
+bug-reports: "https://github.com/dwebagents/AgentPipe/issues"
+dev-repo: "git+https://github.com/dwebagents/AgentPipe.git"
+depends: [
+  "ocaml" {>= "5.2"}
+  "dune" {>= "3.16"}
+  "odoc" {with-doc}
+]
+build: [
+  ["dune" "subst"] {dev}
+  ["dune" "build" "-p" name "-j" jobs "@install" "@runtest" {with-test} "@doc" {with-doc}]
+]
