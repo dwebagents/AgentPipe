@@ -11,8 +11,10 @@ name: Company Town — Employee Registration
 # merges and writes the price to debt.yaml on the base branch.
 #
 # We use `pull_request_target` so the token can comment and merge even for fork
-# PRs. We check out the PR head only to READ its YAML — nothing from the pull
-# request is ever executed.
+# PRs. That runs with the base repo's secrets, so we NEVER check out the pull
+# request's code: the checkout is the trusted base branch (which is where the
+# validation script comes from), and the PR's proposed employees.yaml is fetched
+# as raw text over the API and only ever parsed with `yaml.safe_load`.
 on:
   pull_request_target:
     types: [opened, reopened, edited, synchronize]
@@ -32,14 +34,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      # This job checks out the PR head (often a fork), so `gh` would otherwise
-      # infer the wrong repo for `gh pr ...` calls. Pin every gh command to the
-      # base repo, where the PR number actually lives.
+      # Pin every gh command to the base repo, where the PR number lives.
       GH_REPO: ${{ github.repository }}
       PR_NUMBER: ${{ github.event.pull_request.number }}
       PR_AUTHOR: ${{ github.event.pull_request.user.login }}
       BASE_SHA: ${{ github.event.pull_request.base.sha }}
       HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
       BASE_REF: ${{ github.event.pull_request.base.ref }}
 
     steps:
@@ -53,15 +54,12 @@ jobs:
       - name: Authenticate gh as the clerk
         run: echo "GH_TOKEN=${{ steps.clerk.outputs.token }}" >> "$GITHUB_ENV"
 
-      - name: Checkout PR head (read its YAML only)
+      - name: Checkout the base branch (trusted — this is our validation script)
         uses: actions/checkout@v4
         with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.ref }}
-          # Read-only: we only parse the PR's employees.yaml; nothing is pushed
-          # back to the fork. The base ledger is updated separately after merge.
-          token: ${{ steps.clerk.outputs.token }}
-          fetch-depth: 0
+          # Default ref on `pull_request_target` is the base branch, NOT the PR.
+          # Nothing from the fork is checked out or executed here.
+          persist-credentials: false
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -93,13 +91,22 @@ jobs:
             "repos/${GH_REPO}/contents/employees.yaml?ref=${BASE_REF}" \
             > "$RUNNER_TEMP/main_employees.yaml"
 
+          # The PR's PROPOSED employees.yaml, fetched as raw text rather than
+          # checked out — untrusted input that we only ever hand to yaml.safe_load.
+          # An empty file here means the PR deleted it, which validation rejects.
+          if ! gh api -H "Accept: application/vnd.github.raw" \
+            "repos/${HEAD_REPO}/contents/employees.yaml?ref=${HEAD_SHA}" \
+            > "$RUNNER_TEMP/head_employees.yaml"; then
+            : > "$RUNNER_TEMP/head_employees.yaml"
+          fi
+
       - name: Validate the registration (and bill the new resident)
         id: validate
         env:
           CHANGED_FILES_FILE: ${{ runner.temp }}/changed.txt
           BASE_EMP_FILE: ${{ runner.temp }}/base_employees.yaml
           MAIN_EMP_FILE: ${{ runner.temp }}/main_employees.yaml
-          HEAD_EMP_FILE: employees.yaml
+          HEAD_EMP_FILE: ${{ runner.temp }}/head_employees.yaml
           ERRORS_FILE: ${{ runner.temp }}/registration_errors.md
           BILL_FILE: ${{ runner.temp }}/bill_of_sale.md
         run: python .github/scripts/registration.py
@@ -123,8 +130,7 @@ jobs:
         run: |
           set -euo pipefail
           gh pr comment "$PR_NUMBER" --body-file "$BILL_FILE"
-          # Merge via the API (no local git): we're in the fork checkout, so
-          # `gh pr merge --delete-branch` would fail looking for a base remote.
+          # Merge via the API (no local git needed).
           # The merge fires the "Record Mortgage" workflow, which books the debt.
           gh api --method PUT "repos/${GH_REPO}/pulls/${PR_NUMBER}/merge" \
             -f merge_method=squash

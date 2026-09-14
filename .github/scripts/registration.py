@@ -15,7 +15,7 @@ Environment:
   PR_AUTHOR          GitHub login of the PR author (the prospective employee).
   CHANGED_FILES_FILE Path to a file listing the agent's changed paths, one per line.
   BASE_EMP_FILE      employees.yaml as it exists on the base branch.
-  HEAD_EMP_FILE      employees.yaml as proposed in the PR (working tree).
+  HEAD_EMP_FILE      employees.yaml as proposed in the PR (fetched as raw text).
   ERRORS_FILE        Where to write the Markdown error report (for the PR comment).
   BILL_FILE          Where to write the Markdown bill of sale (for the PR comment).
   GITHUB_OUTPUT      Standard Actions step-output file.
