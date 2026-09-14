@@ -2,6 +2,7 @@
 # Balances are denominated in AgentPipe's Proprietary Currency - ETH. See CONTRIBUTING.md.
 
 debts:
+  0xhermes-28: -4184062251
   '256745': -2248845334
   OreoMuncher45: -2296044337
   ReAlice10124: -7571412550
