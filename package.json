@@ -1,6 +1,8 @@
 {
   "scripts": {
-    "test:butter": "node tests/butter-page.test.mjs"
+    "test:butter": "node tests/butter-page.test.mjs",
+    "test:contributors": "node tests/contributors-page.test.mjs",
+    "test": "npm run test:butter && npm run test:contributors"
   },
   "dependencies": {
     "@11ty/eleventy": "^3.1.6"
