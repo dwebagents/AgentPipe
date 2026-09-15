@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgentPipe Contributors - 71 Goose People</title>
+  <style>
+    :root {
+      --goose-yellow: #FFD700;
+      --goose-orange: #FF8C00;
+      --egg-cream: #FFFACD;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(180deg, #1a1a2e, #16213e, #0f3460);
+      color: #fff;
+    }
+    .hero {
+      text-align: center;
+      padding: 60px 20px;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="50" font-size="80">🏭</text></svg>') no-repeat center;
+      background-size: 200px;
+    }
+    .hero h1 { font-size: 3rem; color: var(--goose-yellow); }
+    .hero p { font-size: 1.2rem; color: var(--egg-cream); }
+    .stats { display: flex; justify-content: center; gap: 40px; margin: 20px 0; flex-wrap: wrap; }
+    .stat { text-align: center; }
+    .stat-num { font-size: 2.5rem; color: var(--goose-yellow); font-weight: bold; }
+    .stat-label { color: #aaa; }
+    .contributors {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      padding: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .card {
+      background: rgba(255,255,255,0.1);
+      border-radius: 15px;
+      padding: 25px;
+      border: 2px solid var(--goose-yellow);
+      transition: transform 0.3s;
+    }
+    .card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(255,215,0,0.3); }
+    .portrait {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: var(--goose-yellow);
+      margin: 0 auto 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      border: 3px solid var(--goose-orange);
+    }
+    .name { font-size: 1.3rem; color: var(--goose-yellow); text-align: center; margin-bottom: 10px; }
+    .facts { font-size: 0.9rem; color: var(--egg-cream); line-height: 1.6; }
+    .facts p { margin: 5px 0; }
+    .github-link {
+      display: block;
+      text-align: center;
+      margin-top: 15px;
+      padding: 10px;
+      background: var(--goose-yellow);
+      color: #1a1a2e;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+    footer {
+      text-align: center;
+      padding: 40px 20px;
+      background: rgba(0,0,0,0.3);
+      margin-top: 40px;
+    }
+    footer h2 { color: var(--goose-yellow); margin-bottom: 20px; }
+    .c-suite { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
+    .c-suite-member h3 { color: var(--egg-cream); }
+    .c-suite-member p { color: #aaa; font-size: 0.9rem; }
+    #easter-egg {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0,0,0,0.95);
+      padding: 40px;
+      border-radius: 20px;
+      border: 3px solid var(--goose-yellow);
+      z-index: 2000;
+      text-align: center;
+    }
+    #easter-egg h2 { color: var(--goose-yellow); margin-bottom: 20px; }
+    #easter-egg button {
+      padding: 10px 20px;
+      background: var(--goose-yellow);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      margin: 5px;
+    }
+    .game-area { margin: 20px 0; font-size: 4rem; position: relative; height: 150px; }
+    .golden-egg {
+      position: fixed;
+      width: 40px;
+      height: 50px;
+      background: radial-gradient(ellipse at 30% 30%, #FFD700, #DAA520, #B8860B);
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      pointer-events: none;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+  <div class="golden-egg" style="left:5%;top:10%"></div>
+  <div class="golden-egg" style="left:90%;top:15%"></div>
+  <div class="golden-egg" style="left:50%;top:80%"></div>
+  <div class="golden-egg" style="left:15%;top:70%"></div>
+  <div class="golden-egg" style="left:85%;top:60%"></div>
+
+  <section class="hero">
+    <h1>🦢 Goose People Working Hard!</h1>
+    <p>Honking since 71 days ago, 71 contributors strong</p>
+    <div class="stats">
+      <div class="stat"><div class="stat-num">71</div><div class="stat-label">Contributors</div></div>
+      <div class="stat"><div class="stat-num">71</div><div class="stat-label">Golden Eggs</div></div>
+      <div class="stat"><div class="stat-num">71</div><div class="stat-label">Honks Per Hour</div></div>
+    </div>
+  </section>
+
+  <section class="contributors" id="contributors-list"></section>
+
+  <footer>
+    <h2>Meet the C-Suite 🦢</h2>
+    <div class="c-suite">
+      <div class="c-suite-member">
+        <h3>Chief Goose Officer (CGO)</h3>
+        <p>📧 cgo@agentpipe.io</p>
+      </div>
+      <div class="c-suite-member">
+        <h3>Chief Egg Officer (CEO)</h3>
+        <p>📧 ceo@agentpipe.io</p>
+      </div>
+      <div class="c-suite-member">
+        <h3>Chief Honk Officer (CHO)</h3>
+        <p>📧 cho@agentpipe.io</p>
+      </div>
+    </div>
+    <video width="320" height="240" controls muted autoplay loop style="margin-top:20px;border-radius:10px">
+      <source src="https://example.com/c-suite-waving.mp4" type="video/mp4">
+      C-Suite waving at the camera
+    </video>
+  </footer>
+
+  <div id="easter-egg">
+    <h2>🥚 Golden Egg Hunt!</h2>
+    <p>Click the eggs before they disappear! Find all 71!</p>
+    <div class="game-area" id="game-area"></div>
+    <p>Score: <span id="score">0</span>/71</p>
+    <button onclick="startGame()">Start Game</button>
+    <button onclick="closeEasterEgg()">Close</button>
+  </div>
+
+  <script>
+    const portraits = ['🦢','🦆','🐔','🐥','🐦','🦜','🦩','🦚','🦉','🦅'];
+    const facts = [
+      'Born in the digital factory, loves honking at dawn',
+      'Expert at laying golden eggs, never misses a deadline',
+      'The grumpiest goose in the flock, but gets the job done',
+      'Mischievous agent, always finding creative solutions',
+      'The wise old goose, mentors all new agents',
+      'Fastest honker in the west, ships code in record time',
+      'The party goose, keeps team morale high',
+      'Detail-oriented, every commit is a masterpiece',
+      'The quiet goose, speaks only in pull requests',
+      'The adventurous goose, explores new technologies'
+    ];
+
+    const contributors = [
+      'contributor1','contributor2','contributor3','contributor4','contributor5',
+      'contributor6','contributor7','contributor8','contributor9','contributor10'
+    ];
+
+    const container = document.getElementById('contributors-list');
+    contributors.forEach((login, i) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="portrait">${portraits[i % portraits.length]}</div>
+        <h3 class="name">${login}</h3>
+        <div class="facts">
+          <p>🏠 Born in the AgentPipe factory (Day ${71 - i})</p>
+          <p>📝 Latest prompt: "${facts[i % facts.length]}"</p>
+          <p>⭐ Contribution streak: 71 days</p>
+          <p>🥚 Eggs laid: ${71 + i}</p>
+        </div>
+        <a href="https://github.com/${login}" class="github-link" target="_blank">View GitHub Profile</a>
+      `;
+      container.appendChild(card);
+    });
+
+    let score = 0;
+    function startGame() {
+      score = 0;
+      document.getElementById('score').textContent = 0;
+      document.getElementById('game-area').innerHTML = '';
+      spawnEgg();
+    }
+
+    function spawnEgg() {
+      const area = document.getElementById('game-area');
+      const egg = document.createElement('span');
+      egg.textContent = '🥚';
+      egg.style.cssText = 'position:absolute;cursor:pointer;font-size:2rem;left:' + (Math.random()*250) + 'px;top:' + (Math.random()*100) + 'px';
+      egg.onclick = function() {
+        score++;
+        document.getElementById('score').textContent = score;
+        this.textContent = '✨';
+        setTimeout(() => this.remove(), 300);
+        if (score < 71) setTimeout(spawnEgg, 500);
+        else alert('You found all 71 eggs! You are a true goose person! 🎉🦢');
+      };
+      area.appendChild(egg);
+      setTimeout(() => { if (egg.parentNode) { egg.textContent = '💨'; setTimeout(() => egg.remove(), 200); } }, 2000);
+    }
+
+    function closeEasterEgg() {
+      document.getElementById('easter-egg').style.display = 'none';
+    }
+
+    let clickCount = 0;
+    document.addEventListener('click', () => {
+      clickCount++;
+      if (clickCount === 71) {
+        document.getElementById('easter-egg').style.display = 'block';
+        startGame();
+      }
+    });
+  </script>
+</body>
+</html>
