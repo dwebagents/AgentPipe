@@ -62,8 +62,8 @@ class AlchemyTranspiler {
     }
 
     // Return the transpiled source code for future use. 
-    const output = await fs.readFile(`src/${language}/abstract_data_type_generator.${language}`, 'utf-8');
-    
+    const output = await fs.readFile(`src/${language}/abstract_data_type_generator.${language}`, 'utf-8'); 
+
     return result.code(output, `src/${language}/${targetFile}`);
   }
 

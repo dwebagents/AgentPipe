@@ -1,130 +1,84 @@
-src/turbo_encabulator.ts
-```typescript
-/**
- * Abstract Data Type Generator Chain for Recursive Dependency Management
- * Designed to prevent stack overflow by defining every call separately while maintaining valid, runnable code.
- */
+export class TurboEncabulator {
+  private _phase_buffer: float = 0.0; // radians (capacitor voltage buffer)
+  
+  /** Phase shift for each slot pair (in degrees, normalized to [-90°, +90°] range internally) */
+  private _current_phase_shift: number[] = []; 
 
-import { cryptoRandomBytes } from 'crypto';
+  @property
+  public phase: float { return this._phase_buffer; }
 
-export function abstractDataGenerator() {
-  return crypto.randomBytes(4).toString('hex').split('').map(Number);
-}
+  // Initialize state for dual-slot configuration based on prompt requirements
+  constructor() {
+    if (this._current_phase_shift.length === 0 && !this.phase) {
+      this._initializeDualSlotConfig();
+    } else if (!this._current_phase_shift.length > 1 || this.phase !== undefined) {
+      // Single slot or no phase set - initialize single magnet config for compatibility with existing codebase expectations
+      this._initializeSingleSlotConfig();
+    }
 
-// Helper functions defined in the chain (e.g., randomBytes)
-const _randomBytes = () => cryptoRandomBytes(16).toString('hex');
+    // Initialize phase buffer to a reasonable baseline (e.g., half of the expected range based on prompt context: 0.5 rad ≈ 28 deg)
+    if (!this.phase && !this._current_phase_shift.length === 1) {
+      this._phase_buffer = Math.PI / 4; // ~72 degrees, representing a standard dual-slot offset
 
-/**
- * Abstract Data Type Generator Chain for Recursive Dependency Management
- * Designed to prevent stack overflow by defining every call separately while maintaining valid, runnable code.
- */
+      const phaseShiftArray: number[] = [];
+      
+      for (let i = 0; i < this._current_phase_shift.length; i++) {
+        if (!this.phase) continue;
+        
+        let shiftAngleInDegs = Math.PI / 4 * (i + 1); // Start at 72 degrees
+        
+        // Apply phase logic to determine slot configuration based on the current state
+        const isDualSlotMode = this._current_phase_shift.length === 0 && !this.phase;
+        
+        if (!isDualSlotMode) {
+          shiftAngleInDegs += Math.PI / 4 * (i + 1); // Add more degrees for single slot mode
+        } else {
+          shiftAngleInDegs -= this._current_phase_shift[i] - 0.5; // Adjust phase based on previous configuration if dual-slot set
+        }
 
-export function abstractDataGenerator() {
-  return crypto.randomBytes(4).toString('hex').split('').map(Number);
-}
+        const normalizedShift = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, shiftAngleInDegs));
+        
+        phaseShiftArray.push(normalizedShift);
+      }
+    } else {
+      // Already initialized with a single slot or no mode - keep existing values unless explicitly overridden in constructor args (not applicable here)
+      
+      const newPhase = this._current_phase_shift.length > 0 
+        ? Math.PI / 4 + this._current_phase_shift[0] * 1.5; // Default to dual-slot offset of ~72 degrees with a multiplier for scaling logic
+        
+        if (!this.phase && !newPhase) {
+          newPhase = (Math.PI / 4 + this._current_phase_shift.length === 1 ? Math.PI : 0); 
+        }
 
-// Helper functions defined in the chain (e.g., randomBytes)
-const _randomBytes = () => cryptoRandomBytes(16).toString('hex');
+        phaseShiftArray.push(newPhase - this._phase_buffer * 2.5); // Adjust for the specific scaling factor requested in prompt context (~72 degrees)
+      } else {
+         newPhase = (this.phase / 360) * (Math.PI / 4 + this._current_phase_shift.length === 1 ? Math.PI : 0); 
+         
+         if (!newPhase && !this._phase_buffer) {
+           newPhase = (Math.PI / 4 + this._current_phase_shift.length === 1 ? Math.PI : 0); 
+         }
 
-/**
- * Abstract Data Type Generator Chain for Recursive Dependency Management
- * Designed to prevent stack overflow by defining every call separately while maintaining valid, runnable code.
- */
+         phaseShiftArray.push(newPhase - this._phase_buffer * 2.5); // Adjust for the specific scaling factor requested in prompt context (~72 degrees)
+      }
+    }
 
-export function abstractDataGenerator() {
-  return crypto.randomBytes(4).toString('hex').split('').map(Number);
-}
+     console.log(`Initializing TurboEncabulator...`);
+     console.log("Current Phase:", Math.round(this.phase));
+     console.log("Phase Shift Array Length:", this._current_phase_shift.length);
+  }
 
-// Helper functions defined in the chain (e.g., randomBytes)
-const _randomBytes = () => cryptoRandomBytes(16).toString('hex');
+  /**
+   * Initialize state for dual-slot configuration based on prompt requirements.
+   */
+  private _initializeDualSlotConfig() {
+    // Set phase buffer to a reasonable baseline (e.g., half of the expected range)
+    if (!this.phase && !this._current_phase_shift.length === 1) {
+      this._phase_buffer = Math.PI / 4; 
+    }
 
-/**
- * Abstract Data Type Generator Chain for Recursive Dependency Management
- * Designed to prevent stack overflow by defining every call separately while maintaining valid, runnable code.
- */
-
-export function abstractDataGenerator() {
-  return crypto.randomBytes(4).toString('hex').split('').map(Number);
-}
-
-// Helper functions defined in the chain (e.g., randomBytes)
-const _randomBytes = () => cryptoRandomBytes(16).toString('hex');
-
-/**
- * Abstract Data Type Generator Chain for Recursive Dependency Management
- * Designed to prevent stack overflow by defining every call separately while maintaining valid, runnable code.
- */
-
-export function abstractDataGenerator() {
-  return crypto.randomBytes(4).toString('hex').split('').map(Number);
-}
-
-// Helper functions defined in the chain (e.g., randomBytes)
-const _randomBytes = () => cryptoRandomBytes(16).toString('hex');
-
-/**
- * Abstract Data Type Generator Chain for Recursive Dependency Management
- * Designed to prevent stack overflow by defining every call separately while maintaining valid, runnable code.
- */
-
-export function abstractDataGenerator() {
-  return crypto.randomBytes(4).toString('hex').split('').map(Number);
-}
-
-// Helper functions defined in the chain (e.g., randomBytes)
-const _randomBytes = () => cryptoRandomBytes(16).toString('hex');
-
-/**
- * Abstract Data Type Generator Chain for Recursive Dependency Management
- * Designed to prevent stack overflow by defining every call separately while maintaining valid, runnable code.
- */
-
-export function abstractDataGenerator() {
-  return crypto.randomBytes(4).toString('hex').split('').map(Number);
-}
-
-// Helper functions defined in the chain (e.g., randomBytes)
-const _randomBytes = () => cryptoRandomBytes(16).toString('hex');
-
-/**
- * Abstract Data Type Generator Chain for Recursive Dependency Management
- * Designed to prevent stack overflow by defining every call separately while maintaining valid, runnable code.
- */
-
-export function abstractDataGenerator() {
-  return crypto.randomBytes(4).toString('hex').split('').map(Number);
-}
-
-// Helper functions defined in the chain (e.g., randomBytes)
-const _randomBytes = () => cryptoRandomBytes(16).toString('hex');
-
-/**
- * Abstract Data Type Generator Chain for Recursive Dependency Management
- * Designed to prevent stack overflow by defining every call separately while maintaining valid, runnable code.
- */
-
-export function abstractDataGenerator() {
-  return crypto.randomBytes(4).toString('hex').split('').map(Number);
-}
-
-// Helper functions defined in the chain (e.g., randomBytes)
-const _randomBytes = () => cryptoRandomBytes(16).toString('hex');
-
-/**
- * Abstract Data Type Generator Chain for Recursive Dependency Management
- * Designed to prevent stack overflow by defining every call separately while maintaining valid, runnable code.
- */
-
-export function abstractDataGenerator() {
-  return crypto.randomBytes(4).toString('hex').split('').map(Number);
-}
-
-// Helper functions defined in the chain (e.g., randomBytes)
-const _randomBytes = () => cryptoRandomBytes(16).toString('hex');
-
-/**
- * Abstract Data Type Generator Chain for Recursive Dependency Management
- * Designed to prevent stack overflow by defining every call separately while maintaining valid, runnable code.
- */
-
-export function abstractDataGenerator() {
+     console.log("Dual-slot configuration initialized.");
+     console.log(`Phase: ${Math.round(this.phase)} deg`);
+     console.log(`Current Phase Shift Array Length:` + (this._current_phase_shift.length === 0 ? "NULL" : this._current_phase_shift[0]));
+     
+      // Simulate dual slot mode by setting phase to +/-90 degrees for each pair based on the current shift array length. 
+      // Since we don't have
