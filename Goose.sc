@@ -8,9 +8,9 @@ Goose {
     // Class variables
     classvar <>numGeese = 74;
 
-    // Create a SynthDef for a single goose honk
-    *honkSynthDef {
-        ^SynthDef(\gooseHonk, { |out = 0, freq = 280, amp = 0.3, gate = 1, dur = 0.8|
+    // Create and add a SynthDef for a single goose honk
+    *initHonk {
+        SynthDef(\gooseHonk, { |out = 0, freq = 280, amp = 0.3, gate = 1, dur = 0.8|
             var env, fundamental, harmonic1, harmonic2, harmonic3, noise, honk;
 
             // Goose honk envelope - quick attack, medium sustain, quick release
@@ -34,11 +34,14 @@ Goose {
             honk = BPF.ar(honk, freq * 2.5, 0.3);
 
             Out.ar(out, honk);
-        });
+        }).add;
     }
 
     // Synthesize the sound of 74 geese honking
     *honk { |out = 0, numGeese = 74|
+        // Ensure SynthDef is loaded
+        this.initHonk;
+
         var geese = Array.fill(numGeese, { |i|
             // Each goose has slightly different timing and pitch
             var delay = rrand(0.0, 2.0);
@@ -46,15 +49,7 @@ Goose {
             var amp = rrand(0.15, 0.4);  // Amplitude variation
             var dur = rrand(0.4, 1.2);   // Duration variation
 
-            // Stagger the honks with delay
-            Synth(\gooseHonk, [
-                \out, out,
-                \freq, freq,
-                \amp, amp,
-                \dur, dur
-            ], target: s, addAction: \addToHead);
-
-            // Schedule the honk
+            // Schedule the honk with delay using bundle
             s.sendBundle(0.1 + delay, ['/s_new', 'gooseHonk', -1, 0, 0,
                 'out', out, 'freq', freq, 'amp', amp, 'dur', dur]);
         });
@@ -62,9 +57,9 @@ Goose {
         ^geese;
     }
 
-    // Create a SynthDef for honkify (SMS-based spectral morphing)
-    *honkifySynthDef {
-        ^SynthDef(\gooseHonkify, { |in = 0, out = 0, gate = 1,
+    // Create and add a SynthDef for honkify (SMS-based spectral morphing)
+    *initHonkify {
+        SynthDef(\gooseHonkify, { |in = 0, out = 0, gate = 1,
             maxpeaks = 50, currentpeaks = 40, tolerance = 4,
             noisefloor = 0.3, freqmult = 1.2, freqadd = 0,
             formantpreserve = 1, ampmult = 1.0|
@@ -97,11 +92,14 @@ Goose {
 
             // Apply envelope and output
             Out.ar(out, output * env);
-        });
+        }).add;
     }
 
     // Transform audio input into goose honk timbre using SMS
     *honkify { |in = 0, out = 0, maxpeaks = 50, currentpeaks = 40|
+        // Ensure SynthDef is loaded
+        this.initHonkify;
+
         ^Synth(\gooseHonkify, [
             \in, in,
             \out, out,
@@ -118,6 +116,9 @@ Goose {
 
     // Helper method to create a single honk and play it
     *playHonk { |out = 0, freq = 280, amp = 0.3, dur = 0.8|
+        // Ensure SynthDef is loaded
+        this.initHonk;
+
         ^Synth(\gooseHonk, [
             \out, out,
             \freq, freq,
@@ -128,6 +129,9 @@ Goose {
 
     // Create a goose choir - multiple geese with harmonies
     *choir { |out = 0, numGeese = 74|
+        // Ensure SynthDef is loaded
+        this.initHonk;
+
         var baseFreq = 280;
         var geese = Array.fill(numGeese, { |i|
             // Create harmonic spread
