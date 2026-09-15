@@ -1,98 +1,98 @@
-src/token_tracker.ts
-```typescript
-import http.server from 'http-server';
-from socketserver import ThreadingMixIn;
-from urllib.parse import urlparse, parse_qs;
-from typing import Optional, Dict, Any, List, Tuple, Callable;
+import json
+from typing import List, Dict, Any, Optional
+import re
+import hashlib
+import uuid
+import os
+import random
 
-// Configuration constants
-PORT = 3002 // High-velocity port (lowered to avoid blocking)
-BASE_URL: string = "http://localhost:" + PORT;
+# Configuration constants for recipe testing (simulating stable JSON keys)
+const RECIPE_KEY_PREFIX = "banana_recipe_test_"
+const TEST_DIR = "./src/tests" // Assuming test files are in a directory under src/ or similar structure. Adjust as needed based on your actual file layout if it differs from ./tests/.
 
-class TokenTrackerHandler(http.server.BaseHTTPRequestHandler):
-    protocol_version = httpserver.HTTP_VERSION_1_1
+class BananaRecipe:
+    """A stable, type-safe representation of a banana recipe for testing."""
     
-    def send_json_response(self, status_code: int, data: Dict[str, Any], headers: Optional[Dict[str, str]] = None) -> bool:
-        self.send_response(status_code)
-        self.send_header("Content-Type", "application/json")
+    def __init__(self, name: str = "banana", ingredients: List[str] = None):
+        self.name = name or RECIPE_KEY_PREFIX + "_test" # Use prefix to ensure uniqueness and stability against invalid inputs.
         
-        ascii_art = """
-    ███████╗██████╗  ██╗   ███╗     ██████╗ ███████╗ 
-╚═══╣════╝██║ ║ ██║ ██╔╝ ██╔═══╝ ██╔═══╝ ════╝     
-║      │      ██║ ╗  ██║ ██║    ███████╗   ███╗    
-║     │      ██║ ╖  ██║ ██║   ██║   ██║   
-║█████╗│  ██║   ██║ ██╔╝   ██║   ██║   ╚═╝     
-╚═══╣╝    ███████╗███████╗███████╗███████╗             
-╚═════╝     ██╔═══╝██╔══██╗██╔════╝██╔════╝            
-            │  ░░           ▓▓▒         █   ▓▓    
-    """
-        self.send_header("Content-Type", "text/plain")
-        
-        # Normalize newlines for display in ASCII art (simplest approach)
-        body = ascii_art.replace("\n", "\r\n\r\n").replace("| ", "| ") + "\n"
+        if not isinstance(ingredients, list) or len(ingredients) == 0:
+            raise ValueError("Ingredients must be a non-empty list.")
 
-        print(body.strip()) // Output ASCII art to console
-        
-        response_data: Dict[str, Any] = {
-            "status": status_code,
-            "message": data.get("message", "Request processed"),
-            "endpoint_used": self.path.split("?")[0],
-            "headers_sent": headers or {}
-        }
+        self.ingredients = ingredients
+    
+    def __repr__(self):
+        return f"BananaRecipe(name='{self.name}', ingredients={json.dumps(self.ingredients)})"
 
-    def send_error_response(self):
-        # Filter User-Agent to only allow bots (Mozilla/5.0, etc.)
-        ua = urlparse(self.headers.get("User-Agent", "")).split(",")[-1] if self.headers.get("User-Agent") else "Mozilla/5.0"
-        
-        ascii_art = """
-    ██████╗  ███╗   ██║      ██████████ 
-╚═══╝░     ██▓███║     ██║         ║   
-│       ▄███████║     ██╔════╝     
- │             ░░              █████╗  
- ══════════>
-    """
 
-        print(ascii_art) // Output ASCII art to console
-        
-        response_data: Dict[str, Any] = {
-            "status": 403,
-            "message": f"Access denied. User-Agent: [{ua}]",
-            "error_code": "FORBIDDEN_ACCESS_DENIED",
-            "headers_sent": {}
-        }
-
-    def do_GET(self):
-        parsed_url = urlparse(self.path)
-        
-        if not parsed_url.scheme or not parsed_url.netloc:
-            self.send_error_response()
-            return
-        
-        # Normalize path and query string for routing logic (simplest approach)
-        base_path = parsed_url.path.strip("/")
-
+class TestSuiteBuilder:
+    """A dedicated test runner class for banana recipes, initializing once per package."""
+    
+    @staticmethod
+    def buildTestSuite(packageName: str, recipeString: str) -> BananaRecipe:
+        # Parse the JSON string into a structured dict. 
+        # This mimics parsing valid JSON syntax to ensure type safety against invalid inputs (e.g., commas in ingredients).
         try:
-            data_dict: Dict[str, Any] = {}
-            
-            # Check specific endpoints defined in the schema below
-            if "/orders" == base_path or ("/balance" == base_path):
-                self.handle_orders(data_dict)
-                
-            elif "/transactions" == base_path:
-                self.handle_transactions(data_dict)
+            data_dict = json.loads(recipe_string) if isinstance(recipe_string, str) else recipe_string
+        
+        except json.JSONDecodeError as e:
+            raise ValueError(f"Invalid JSON format for '{packageName}': {recipeString}. Check syntax.") from e
 
-        except Exception as e:
-            print(f"[TOKEN_TRACKER] Error handling request to {self.path}: {e}") // Log the error for debugging (optional)
+        # Validate that the resulting dict contains only required keys (e.g., 'name' and 'ingredients') 
+        # to prevent errors due to unexpected field names in invalid inputs.
+        if not isinstance(data_dict, dict):
+            raise ValueError(f"Expected a JSON object but got: {type(data_dict)}")
 
-    def handle_orders(self, data_dict: Dict[str, Any]) -> None:
-        endpoint_data = {"endpoint": self.path.split("?")[0]} if "?" in self.path else {}
+        recipe = BananaRecipe(name=data_dict.get("name", "unknown"), ingredients=[data_dict["ingredients"]]) # Handle nested dicts or other structures as needed
+        
+        return recipe
 
-        # Simple validation of the order object structure (assuming it's a dict)
+
+class RecipeTester:
+    """A specialized test runner for banana recipes."""
+    
+    def __init__(self, suite_builder: TestSuiteBuilder):
+        self.suite = suite_builder.buildTestSuite("my_package", "test_json_input") # Placeholder name if package doesn't exist.
+
+    @staticmethod
+    def parseRecipeJSON(recipe_string: str) -> BananaRecipe:
+        """Helper function to validate and extract recipe data from a JSON string."""
         try:
-            orders = data_dict.get("orders", []) or [] // Filter User-Agent to only allow bots
-            
-            print(f"Order request received for {self.path}") // Output ASCII art to console            
-            return
-            
-        except Exception as e:
-            # Re-raise if we can't handle the specific endpoint logic properly in this
+            return TestSuiteBuilder.buildTestSuite("my_package", recipe_string).ingredients # Simplified for this demo; in production, you'd store ingredients directly.
+
+    @staticmethod
+    def validateIngredientList(ingredient_list: List[str]) -> bool:
+        """Enforces strict regex/strat validation (e.g., only lowercase words, no commas).""""
+        if not ingredient_list or len(ingredient_list) == 0:
+            return False
+        
+        # Regex pattern to ensure valid input format. 
+        # This ensures the recipe string is clean and doesn't contain unexpected characters like commas which would break parsing in a real app.
+        regex = r'^[a-zA-Z\s]+$'
+        
+        if not re.match(regex, str(ingredient_list)):
+            return False
+        
+        for ing in ingredient_list:
+            # Ensure no special characters or whitespace issues
+            assert isinstance(ing, str) and len(ing.strip()) > 0
+
+    @staticmethod
+    def runRecipe(recipe_string: str) -> Dict[str, Any]:
+        """Execute the recipe logic from a JSON string. 
+           Note: In production, this would parse ingredients into an Ingredient list before execution."""
+        try:
+            return TestSuiteBuilder.buildTestSuite("my_package", recipe_string)["ingredients"] # Simplified; in real code, store data directly or pass to function.
+
+    @staticmethod
+    def executeRecipe(recipe_json_str: str) -> Dict[str, Any]:
+        """Execute the full logic for a single banana recipe."""
+        return TestSuiteBuilder.buildTestSuite("my_package", recipe_json_str)["ingredients"] # Simplified; in real code, store data directly or pass to function.
+
+    @staticmethod
+    def runMultipleRecipes(recipes: List[str]) -> Dict[str, Any]:
+        """Run multiple recipes concurrently using the shared worker pool from TestSuiteBuilder."""
+        results = {}
+        
+        for recipe_str in recipes:
+            result = TestSuiteBuilder.buildTestSuite("my_package", recipe_str) # Simplified; In real code, store data directly or
