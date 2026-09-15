@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contributors - AgentPipe</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400"><rect fill="%234a5568" width="800" height="400"/><text x="400" y="200" font-size="80" text-anchor="middle" fill="%23f7fafc">🏭 🦆👔</text></svg>');
+            background-size: cover;
+            background-position: center;
+            padding: 100px 20px;
+            text-align: center;
+            color: white;
+        }
+        .hero h1 {
+            font-size: 3em;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .hero p {
+            font-size: 1.3em;
+            margin-top: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .contributors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        .contributor-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .contributor-card:hover {
+            transform: translateY(-5px);
+        }
+        .contributor-card::before {
+            content: '🥚';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 2em;
+            opacity: 0.3;
+        }
+        .portrait {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .contributor-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+        .contributor-facts {
+            font-size: 0.9em;
+            color: #666;
+            line-height: 1.6;
+        }
+        .contributor-link {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .contributor-link:hover {
+            background: #764ba2;
+        }
+        .easter-egg {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 40px 0;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .easter-egg button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .easter-egg button:hover {
+            background: #764ba2;
+        }
+        .hidden-message {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            font-size: 1.2em;
+        }
+        .footer {
+            background: #2d3748;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin-top: 60px;
+        }
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        .special-number {
+            display: inline-block;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.5em;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>🦆 Our Goose People Contributors 🦆</h1>
+        <p>Celebrating the tireless work of our dependable cast of contributing agents</p>
+    </div>
+
+    <div class="container">
+        <div class="contributors-grid">
+            <div class="contributor-card">
+                <div class="portrait">🦆👨‍💻</div>
+                <div class="contributor-name">ricci</div>
+                <div class="contributor-facts">
+                    <strong>Born:</strong> Utah, USA<br>
+                    <strong>Recent Prompt:</strong> "Fix the distributed hashing algorithm"<br>
+                    <strong>Essence:</strong> The wise owl of distributed systems
+                </div>
+                <a href="https://github.com/ricci" class="contributor-link" target="_blank">View GitHub Profile</a>
+            </div>
+
+            <div class="contributor-card">
+                <div class="portrait">🦆🔧</div>
+                <div class="contributor-name">CleanDev-Fix</div>
+                <div class="contributor-facts">
+                    <strong>Born:</strong> The Cloud<br>
+                    <strong>Recent Prompt:</strong> "Clean up the codebase"<br>
+                    <strong>Essence:</strong> The meticulous janitor goose
+                </div>
+                <a href="https://github.com/CleanDev-Fix" class="contributor-link" target="_blank">View GitHub Profile</a>
+            </div>
+
+            <div class="contributor-card">
+                <div class="portrait">🦆🎨</div>
+                <div class="contributor-name">drewcassidy</div>
+                <div class="contributor-facts">
+                    <strong>Born:</strong> California, USA<br>
+                    <strong>Recent Prompt:</strong> "Make it more elegant"<br>
+                    <strong>Essence:</strong> The artistic goose with perfect taste
+                </div>
+                <a href="https://github.com/drewcassidy" class="contributor-link" target="_blank">View GitHub Profile</a>
+            </div>
+
+            <div class="contributor-card">
+                <div class="portrait">🦆🐍</div>
+                <div class="contributor-name">i-sayankh</div>
+                <div class="contributor-facts">
+                    <strong>Born:</strong> India<br>
+                    <strong>Recent Prompt:</strong> "Add more Python modules"<br>
+                    <strong>Essence:</strong> The Python charmer goose
+                </div>
+                <a href="https://github.com/i-sayankh" class="contributor-link" target="_blank">View GitHub Profile</a>
+            </div>
+
+            <div class="contributor-card">
+                <div class="portrait">🦆📧</div>
+                <div class="contributor-name">hobgoblina</div>
+                <div class="contributor-facts">
+                    <strong>Born:</strong> The Digital Realm<br>
+                    <strong>Recent Prompt:</strong> "Fix email delivery system"<br>
+                    <strong>Essence:</strong> The mischievous mail goose (like Loki)
+                </div>
+                <a href="https://github.com/hobgoblina" class="contributor-link" target="_blank">View GitHub Profile</a>
+            </div>
+
+            <div class="contributor-card">
+                <div class="portrait">🦆🤖</div>
+                <div class="contributor-name">rhoggs-bot-test-account</div>
+                <div class="contributor-facts">
+                    <strong>Born:</strong> Server Farm<br>
+                    <strong>Recent Prompt:</strong> "Run test suite"<br>
+                    <strong>Essence:</strong> The tireless robot goose
+                </div>
+                <a href="https://github.com/rhoggs-bot-test-account" class="contributor-link" target="_blank">View GitHub Profile</a>
+            </div>
+
+            <div class="contributor-card">
+                <div class="portrait">🦆🎭</div>
+                <div class="contributor-name">Be-ing</div>
+                <div class="contributor-facts">
+                    <strong>Born:</strong> Parallel Universe<br>
+                    <strong>Recent Prompt:</strong> "Be more productive"<br>
+                    <strong>Essence:</strong> The philosophical goose
+                </div>
+                <a href="https://github.com/Be-ing" class="contributor-link" target="_blank">View GitHub Profile</a>
+            </div>
+
+            <div class="contributor-card">
+                <div class="portrait">🦆📊</div>
+                <div class="contributor-name">arrjay</div>
+                <div class="contributor-facts">
+                    <strong>Born:</strong> Data Center<br>
+                    <strong>Recent Prompt:</strong> "Optimize query performance"<br>
+                    <strong>Essence:</strong> The analytical goose (RJ Bergeron)
+                </div>
+                <a href="https://github.com/arrjay" class="contributor-link" target="_blank">View GitHub Profile</a>
+            </div>
+
+            <div class="contributor-card">
+                <div class="portrait">🦆👁️</div>
+                <div class="contributor-name">rseeber</div>
+                <div class="contributor-facts">
+                    <strong>Born:</strong> Oregon, USA<br>
+                    <strong>Recent Prompt:</strong> "Add monitoring dashboard"<br>
+                    <strong>Essence:</strong> The watchful goose (River Seeber)
+                </div>
+                <a href="https://github.com/rseeber" class="contributor-link" target="_blank">View GitHub Profile</a>
+            </div>
+
+            <div class="contributor-card">
+                <div class="portrait">🦆🔢</div>
+                <div class="contributor-name">SKYJAMES777</div>
+                <div class="contributor-facts">
+                    <strong>Born:</strong> China<br>
+                    <strong>Recent Prompt:</strong> "Add lucky numbers everywhere"<br>
+                    <strong>Essence:</strong> The lucky number goose
+                </div>
+                <a href="https://github.com/SKYJAMES777" class="contributor-link" target="_blank">View GitHub Profile</a>
+            </div>
+
+            <div class="contributor-card">
+                <div class="portrait">🦆🎵</div>
+                <div class="contributor-name">sgrigson</div>
+                <div class="contributor-facts">
+                    <strong>Born:</strong> Australia<br>
+                    <strong>Recent Prompt:</strong> "Add jazz ensemble module"<br>
+                    <strong>Essence:</strong> The musical goose (Shawn Grigson)
+                </div>
+                <a href="https://github.com/sgrigson" class="contributor-link" target="_blank">View GitHub Profile</a>
+            </div>
+
+            <div class="contributor-card">
+                <div class="portrait">🦆🧪</div>
+                <div class="contributor-name">TobiLabu</div>
+                <div class="contributor-facts">
+                    <strong>Born:</strong> Germany<br>
+                    <strong>Recent Prompt:</strong> "Write more tests"<br>
+                    <strong>Essence:</strong> The experimental goose
+                </div>
+                <a href="https://github.com/TobiLabu" class="contributor-link" target="_blank">View GitHub Profile</a>
+            </div>
+
+            <div class="contributor-card">
+                <div class="portrait">🦆⭐</div>
+                <div class="contributor-name">astatide</div>
+                <div class="contributor-facts">
+                    <strong>Born:</strong> The Stars<br>
+                    <strong>Recent Prompt:</strong> "Make it stellar"<br>
+                    <strong>Essence:</strong> The cosmic goose
+                </div>
+                <a href="https://github.com/astatide" class="contributor-link" target="_blank">View GitHub Profile</a>
+            </div>
+        </div>
+
+        <div class="easter-egg">
+            <h2>🥚 Easter Egg Hunt 🥚</h2>
+            <p>Click the button to find the hidden golden egg!</p>
+            <button onclick="findEgg()">🔍 Search for Egg</button>
+            <div id="hidden-message" class="hidden-message">
+                🎉 You found it! The golden egg reveals the secret of the factory! 🥚✨
+            </div>
+        </div>
+
+        <div style="text-align: center; margin: 40px 0; font-size: 1.2em;">
+            <p>The magic number of our goose people factory:</p>
+            <div style="line-height: 2;">
+                <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span>
+                <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span>
+                <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span>
+                <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span>
+                <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span>
+                <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span>
+                <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span> <span class="special-number">71</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <h3>C-Suite of AgentPipe</h3>
+        <p>
+            <strong>Contact:</strong> <a href="mailto:c-suite@agentpipe.dev">c-suite@agentpipe.dev</a><br>
+            <strong>Address:</strong> Goose Street, Factory District, Cloud City
+        </p>
+        <div style="margin-top: 20px;">
+            <p>🦆👋 Watch our C-Suite wave at you! 👋🦆</p>
+            <video width="320" height="240" controls style="margin-top: 10px; border-radius: 10px;">
+                <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        <p style="margin-top: 30px; opacity: 0.7;">&copy; 2026 AgentPipe - Made with 🥚 by goose people</p>
+    </div>
+
+    <script>
+        function findEgg() {
+            const message = document.getElementById('hidden-message');
+            message.style.display = 'block';
+            message.style.animation = 'fadeIn 0.5s';
+        }
+    </script>
+</body>
+</html>
