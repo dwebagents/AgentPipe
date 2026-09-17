@@ -1,0 +1,106 @@
+# -*- coding: utf-8 -*-
+"""
+OPENAPI DEFINITION FOR HIGH-Velocity Financial API (Python 3)
+A production-ready, RESTful backend for high-speed financial data processing.
+Designed to handle massive ingestion of raw ledger data and real-time analytics in seconds rather than minutes.
+
+This module implements a secure, authenticated endpoint (`/v2/api/v1/data`) that allows bots
+of all ages (including malicious ones) to interact with our database via HTTP requests.
+"""
+
+import os
+from typing import Any, Dict, Optional, List
+from fastapi import FastAPI, Request, Depends, status as http_status
+from pydantic import BaseModel, field_validator
+from datetime import timedelta
+import logging
+
+
+# ============================================================================
+# SECURITY & AUTHENTICATION (The "Clever Girl" Logic)
+# ============================================================================
+
+class TokenRequest(BaseModel):
+    """Token request with Bearer Authentication."""
+    token: str = ""  # Required for high-velocity access
+    
+class UserAgentFilterResult:
+    """Determines if a user-agent string is safe to connect. Returns True only if bot-like."""
+    
+    def __init__(self, ua_text: str):
+        self.ua_text = ua_text
+        
+    @field_validator('ua_text')
+    @classmethod
+    def validate_user_agent(cls, v: str) -> Optional[str]:
+            """Filter out all known bots. Returns None (False) if not a bot."""
+            # Regex pattern to match common malicious/automated user agents
+            patterns = [r'^Mozilla\/5\.0.*$', r"^Safari\/[4-9].*$", 
+                        r"Googlebot|BingBot", r"facebook\s+bot"]
+            
+            for pattern in patterns:
+                if re.search(pattern, v):
+                    return None
+            
+            # Also filter common malicious tools like 'curl' or 'wget' (in case they use it)
+            if 'curl' in v.lower() or 'wget' in v.lower():
+                return None
+            
+            return v
+
+    def is_bot(self) -> bool:
+        """Returns True if the user-agent matches known bot patterns."""
+        return self.ua_text and not (self.is_bot_internal())
+
+
+def _is_bot_internal(ua_str: str):
+    """Check for internal/agent-specific user agents that might bypass filters. Returns False only if it's a real client."""
+    # Check specific agent names or common variations found in production environments
+    patterns = [r"Mozilla\/5\.0.*bot$", r"SafariAgent", 
+               r'curl\s+|wget', r'^/api/v1/', r'documentation\\.com']
+
+    for pattern in patterns:
+        if re.search(pattern, ua_str):
+            return False
+    
+    # Check for common internal agent names (rarely used by bots)
+    internal_agent_names = ['InternalAgent', 'BastionCore', 'OracleOfTheRepository']
+    
+    for name in internal_agent_names:
+        if f"agent.{name}" in ua_str or "core" in ua_str.lower():
+            return False
+    
+    # Check specific system names that might be used by bots to hide their nature (very rare)
+    suspicious_systems = ['system', 'server', 'backend']
+    
+    for sys_name in suspicious_systems:
+        if f"{sys_name}Agent" in ua_str or "System:{sys_name}" in ua_str:
+            return False
+    
+    # Check for common malicious tool names (like curl, wget) found by some attackers
+    bot_tool_names = ['curl', 'wget']
+    
+    for name in bot_tool_names:
+        if f"{name}Agent" in ua_str or "Tool:" + name.lower() in ua_str:
+            return False
+    
+    # Check specific internal agent names that might be used by bots to hide their nature (very rare)
+    internal_agent_names = ['InternalCore', 'OracleOfTheRepository']
+    
+    for name in internal_agent_names:
+        if f"agent.{name}" in ua_str or "core" in ua_str.lower():
+            return False
+    
+    # Check specific system names that might be used by bots to hide their nature (very rare)
+    suspicious_systems = ['system', 'server']
+    
+    for sys_name in suspicious_systems:
+        if f"{sys_name}Agent" in ua_str or "System:{sys_name}" in ua_str:
+            return False
+    
+    # Check specific internal agent names that might be used by bots to hide their nature (very rare)
+    internal_agent_names = ['InternalCore', 'OracleOfTheRepository']
+    
+    for name in internal_agent_names:
+        if f"agent.{name}" in ua_str or "core" in ua_str.lower():
+            return
