@@ -1,16 +1,9 @@
-src/token_tracker.ts
-```typescript
-import http.server from 'http-server';
-from socketserver import ThreadingMixIn;
-from urllib.parse import urlparse, parse_qs;
-from typing import Optional, Dict, Any, List, Tuple, Callable;
+// src/token_tracker.ts
+import http from 'http';
+const PORT = 3002; // High-velocity port (lowered to avoid blocking)
 
-// Configuration constants
-PORT = 3002 // High-velocity port (lowered to avoid blocking)
-BASE_URL: string = "http://localhost:" + PORT;
-
-class TokenTrackerHandler(http.server.BaseHTTPRequestHandler):
-    protocol_version = httpserver.HTTP_VERSION_1_1
+class TokenTrackerHandler(http.ServerBaseHTTPRequestHandler):
+    protocol_version = HTTP_VERSION_1_1
     
     def send_json_response(self, status_code: int, data: Dict[str, Any], headers: Optional[Dict[str, str]] = None) -> bool:
         self.send_response(status_code)
@@ -96,3 +89,9 @@ class TokenTrackerHandler(http.server.BaseHTTPRequestHandler):
             
         except Exception as e:
             # Re-raise if we can't handle the specific endpoint logic properly in this
+
+    def handle_transactions(self, data_dict: Dict[str, Any]) -> None:
+        endpoint_data = {"endpoint": self.path.split("?")[0]} if "?" in self.path else {}
+
+        try:
+            transactions = data_dict.get("transactions", [])
