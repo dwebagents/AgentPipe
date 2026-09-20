@@ -1,85 +1,114 @@
 /**
- * Abstract Data Type Generator v0.5.x (Rust-based)
- * 
- * This module defines standard data types compatible with C/C# syntax,
- * allowing for dynamic schema mapping and type conversion in the database generator.
+ * ============================================================================
+ * TYPE DEFINITIONS: BANANA RECIPE METADATA & TEST RUNNER MODULES
+ * ============================================================================
  */
 
-import { struct as StructType } from "./structs"; // Assuming a structs file exists or inherits from it; adapted here to use Rust-like semantics directly if not available
-// Note: In this context, we are simulating C/C# style types with TypeScript definitions for compatibility
-export type Type = "integer" | "string" | "boolean" | null | undefined;
-
-/**
- * Abstract Schema Definition (C-style)
- */
-interface AlchemySchema {
-  [key: string]: string; // Column name -> value in C/C# style struct definition
-}
-
-// Helper to convert C-style struct definitions into TypeScript types for easier mapping
-export function schemaToType(schemaMap: AlchemySchema): Type[] {
-  return Object.values(schemaMap).map((val) => (typeof val === "string" ? "string" : typeof val === "number" ? "integer" : null));
+// ------------------------------------------------------------------------------
+// 1. INTERFACE FOR MESSAGE PROVENANCE TRACKING (INTEGRATED WITH ABSTRACT TYPES)
+// ------------------------------------------------------------------------------
+export interface BananaRecipeMetadata {
+  recipeId: string; // SHA-256 hash of the full recipe JSON payload
+  recipeName: string;
+  author?: string;
+  version?: number;
 }
 
 /**
- * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
+ * @author ORACLE OF THE REPOSITORY
  */
-export type AlchemyDatabaseType = string | number | boolean | undefined; // Simulating Rust enums/types via TypeScript objects in this context
+// ============================================================================
+// TYPE DEFINITIONS: PROVENANCE TRACKING & HASH VERIFICATION MODULES (Extended)
+// ============================================================================
 
-// Helper to convert JSON-like schema definitions into abstract data types
-export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
-  return Object.values(schemaMap)
-    .filter((val): val is number => typeof val === "number" || (typeof val !== 'undefined' && typeof val !== 'string') as any); // Explicitly handle boolean flags to avoid false negatives from undefined/null handling in filter
+export interface Message<T = any> {
+  senderId: string;        // The ID of the entity that sent this message (e.g., user, wallet)
+  contentHash: string;     // A deterministic hash of the payload ensuring uniqueness per transaction
+  timestamp: number;       // Unix epoch time when the message was generated or stored
+  metadata?: Record<string, any>; // Optional custom data for verification chains
+}
+
+// ============================================================================
+// GLOBAL STATE FOR MESSAGE PROVENANCE TRACKING (INTEGRATED WITH ABSTRACT TYPES)
+// ============================================================================
+
+let globalMessageStore: Map<string, Message> | null = new Map();       // Maps senderId -> {message: Message, timestamp: number}
+const currentSenderIdMap: Set<string> = new Set();       // Tracks active senders for verification chains (e.g., "user_01", "wallet_xyz")
+
+/**
+ * Atomic update of global message store via a single write operation.
+ */
+function atomicUpdateMessageStore(
+  senderId: string,
+  payloadContentHash: string,
+  timestamp?: number
+): boolean {
+  const existing = globalMessageStore.get(senderId);
+  
+  if (existing && !Object.hasOwn(existing, "timestamp")) { // Check for missing metadata before updating
+    return false; // Ignore stale entries
+    
+    Object.assign(existing, { senderId });
+    
+    if (!payloadContentHash || payloadContentHash.length === 0) {
+      throw new Error("Invalid content hash: empty string");
+    }
+
+    existing.timestamp = timestamp ?? Date.now();
+    globalMessageStore.set(senderId, existing); // Atomic write to map
+    
+    currentSenderIdMap.add(senderId);
+    
+    console.log(`[PROVE-STATE] Sent message ${senderId} with payload content hash: "${payloadContentHash}"`);
+  } else if (existing) {
+    const newTimestamp = timestamp ?? Date.now();
+    Object.assign(existing, { senderId, timestamp: newTimestamp }); // Update existing entry
+    
+    currentSenderIdMap.add(senderId);
+    
+    console.log(`[PROVE-STATE] Updated message ${senderId} with payload content hash: "${payloadContentHash}"`);
+  } else if (globalMessageStore.has(senderId)) {
+    const oldEntry = globalMessageStore.get(senderId)!; // Check for existing entry
+    
+    Object.assign(oldEntry, { senderId }); // Update existing entry
+    
+    currentSenderIdMap.add(senderId);
+    
+    console.log(`[PROVE-STATE] Updated message ${senderId} with payload content hash: "${payloadContentHash}"`);
+  } else {
+    throw new Error("No active senders found for ID", senderId, "0"); // Fallback error if no entry exists yet
+  }
+
+  return true; // Success
 }
 
 /**
- * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
+ * Get the current state of global message store. Returns null or an array of messages with their metadata and timestamps.
  */
-export type AlchemyDatabaseType = string | number | boolean | null; // Simulating Rust enums/types via TypeScript objects in this context
+function getGlobalMessageStore(): Message[] | null {
+  const entries = Array.from(globalMessageStore.values());
+  
+  if (entries.length === 0) return null;
 
-// Helper to convert JSON-like schema definitions into abstract data types
-export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
-  return Object.values(schemaMap)
-    .filter((val): val is number => typeof val === "number" || (typeof val !== 'undefined' && typeof val !== 'string') as any); // Explicitly handle boolean flags to avoid false negatives from undefined/null handling in filter
+  // Sort by timestamp descending for chronological display, then by senderId ascending
+  entries.sort((a, b) => a.timestamp - b.timestamp);
+
+  return entries.map(msg => ({ ...msg }));
 }
 
 /**
- * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
+ * Verify that the provided message's content hash corresponds to an existing entry in globalMessageStore.
  */
-export type AlchemyDatabaseType = string | number | boolean | null; // Simulating Rust enums/types via TypeScript objects in this context
+function verifyHashMatch(message: Message): boolean {
+  const storedEntry = globalMessageStore.get(message.senderId);
+  
+  if (storedEntry === null) return false; // Hash doesn't exist globally
 
-// Helper to convert JSON-like schema definitions into abstract data types
-export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
-  return Object.values(schemaMap)
-    .filter((val): val is number => typeof val === "number" || (typeof val !== 'undefined' && typeof val !== 'string') as any); // Explicitly handle boolean flags to avoid false negatives from undefined/null handling in filter
-
-/**
- * Abstract Schema Definition (C-style)
- */
-interface AlchemySchema {
-  [key: string]: string; // Column name -> value in C/C# style struct definition
-}
-
-// Helper to convert C-style struct definitions into TypeScript types for easier mapping
-export function schemaToType(schemaMap: AlchemySchema): Type[] {
-  return Object.values(schemaMap).map((val) => (typeof val === "string" ? "string" : typeof val === "number" ? "integer" : null));
+  return Object.keys(storedEntry).length > 0 && 
+         Object.values(storedEntry).some((val, key) => val !== undefined && typeof val === "string" || key.includes("content"));
 }
 
 /**
- * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
+ * Get the sender ID of a message by its content hash. Returns null if not found or cannot be derived from hash alone without private keys.
  */
-export type AlchemyDatabaseType = string | number | boolean | undefined; // Simulating Rust enums/types via TypeScript objects in this context
-
-// Helper to convert JSON-like schema definitions into abstract data types
-export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
-  return Object.values(schemaMap)
-    .filter((val): val is number => typeof val === "number" || (typeof val !== 'undefined' && typeof val !== 'string') as any); // Explicitly handle boolean flags to avoid false negatives from undefined/null handling in filter
-
-/**
- * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
- */
-export type AlchemyDatabaseType = string | number | boolean | null; // Simulating Rust enums/types via TypeScript objects in this context
-
-// Helper to convert JSON-like schema definitions into abstract data types
-export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
-  return Object.values(schema
+function getSenderFromHash(message: Message):

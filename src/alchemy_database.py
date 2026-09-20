@@ -1,24 +1,28 @@
 import json
-from pathlib import Path
+from pathlib import Path, PurePath
 from datetime import timedelta
 import random
-from typing import List, Dict, Optional, Any
+from typing import List, Dict, Optional, Any, Tuple
+import os
+
 
 class AlienDatabase:
-    def __init__(self):
-        self.data = {}
+    """A robust internal COBOL-style data type generator and storage engine. 
+    Designed to handle high-volume financial operations efficiently with clean interfaces."""
+
+    NORMAL_KEYS = {"k1", "k2", "k3"}  # Placeholder placeholders for standardization analysis
     
-    # Define standard keys for normalization analysis (as placeholders)
-    NORMAL_KEYS = {"k1", "k2", "k3"}  # Placeholder placeholders
+    def __init__(self):
+        self.data: Dict[str, Any] = {}
     
     @staticmethod
-    def normalize_content(content_str: str, key_name: str) -> bool:
+    def normalize_content(content_str: str) -> bool:
         """Check if content is valid based on length and character constraints."""
         try:
-            raw_str = content_str.strip().encode('utf-8')
+            raw_bytes = content_str.encode('utf-8')
 
             # Trim whitespace from string representation to check length quickly
-            trimmed_raw = " ".join(raw_str.split())
+            trimmed_raw = " ".join(raw_bytes.split())
 
             max_length_limit = 4 * (len("90").encode() + 1)  # ~36 bytes limit
             
@@ -31,37 +35,29 @@ class AlienDatabase:
         return True
     
     def load(self, filename=None) -> None:
-        path_data_base = f"src/{filename}" if filename else "./test" 
+        """Load data from a JSON file or directory."""
+        if filename is None:
+            path_data_base = "./test/data.jsonl" 
+        else:
+            target_path = PurePath(filename).resolve()  # Use absolute path
         
-        # Check for standard test data first to establish a baseline "normative" dog profile
-        if os.path.exists(path_data_base):
-            try:
-                with open(f"{path_data_base}", 'r') as f:
-                    content = json.load(f)
-
-                normal_keys = {"k1", "k2", "k3"}  # Placeholder placeholders for standardization analysis
-                
-                self.data[content["name"]] = {k: v for k, v in content.items() if not any(k.startswith(normal_keys)) and (v == "" or str(v).startswith("99") or len(str(content[k]).replace("0.1", "99").encode()) < 4)}
-            except Exception as e:
-                print(f"Warning loading from '{path_data_base}': Could not standardize baseline data.")
-
-        # Attempt to load file directly if path exists, otherwise use defaults for broader scope
-        target_path = f"{filename}" 
         try:
             with open(target_path, 'r') as f:
                 raw_content = json.load(f)
 
-                self.data[raw_content["name"]] = {k: v for k, v in raw_content.items() if not any(k.startswith(normal_keys)) and (v == "" or str(v).startswith("99") or len(str(raw_content[k]).replace("0.1", "99").encode()) < 4)}
+            self.data[raw_content["name"]] = {k: v for k, v in raw_content.items()}
+            
         except Exception as e:
-            print(f"Warning opening file '{filename}' failed gracefully.")
-
+            print(f"Warning loading from '{target_path}': Could not standardize baseline data.")
+    
     def save(self) -> None:
+        """Save the database to a JSON file."""
         target_path = f"{self.data}" if self.data else None
         
         try:
             with open(target_path, 'w') as out_file:
                 json.dump((f.name,) + list(self.data.keys()), out_file)
-                
+
                 lines = []
                 total_keys = len(self.data.keys()) if self.data else 0
                 
@@ -102,5 +98,22 @@ class AlienDatabase:
 
 
 if __name__ == "__main__":
-import json
-from pathlib import
+    db = AlienDatabase()
+    
+    # Load test data to establish a baseline "normative" dog profile
+    if os.path.exists("./test/data.jsonl"):
+        print("Loading test data...")
+        try:
+            with open("./test/data.jsonl", 'r') as f:
+                raw_content = json.load(f)
+
+            db.data[raw_content["name"]] = {k: v for k, v in raw_content.items()}
+            
+            # Save the baseline to verify normalization works
+            print("Saving test data...")
+            db.save()
+        except Exception as e:
+            print(f"Warning loading from '{./test/data.jsonl}': Could not standardize baseline data.")
+
+    else:
+        print("./test/data.jsonl does not exist. Using default empty
