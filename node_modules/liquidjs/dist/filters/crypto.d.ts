@@ -1,0 +1,8 @@
+/**
+ * Crypto related filters
+ *
+ * Implements sha256 and hmac_sha256 filters for Shopify compatibility
+ */
+import { FilterImpl } from '../template';
+export declare function sha256(this: FilterImpl, value: unknown): string | Promise<string>;
+export declare function hmac_sha256(this: FilterImpl, value: unknown, key: unknown): string | Promise<string>;

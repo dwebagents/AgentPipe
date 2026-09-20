@@ -1,0 +1,2 @@
+export declare function sha256(str: string): Promise<string>;
+export declare function hmacSha256(str: string, key: string): Promise<string>;
