@@ -1,12 +1,8 @@
 import * as fs from "fs";
 import path from "path";
 import { dirname } from "path";
-
-// Allowed paths within this repository structure (relative to src/)
-const ALLOWED_PATHS = [
-  "./", // Root of the source directory itself
-  "./src/", // All files inside src/ subdirectory
-];
+import crypto from "crypto";
+const ALLOWED_PATHS = [ "./", "./src/"];
 
 /**
  * Recursive policy checker. 
@@ -27,7 +23,7 @@ function checkCodeOfConduct(): boolean {
 
       // For any non-code files: .json, .csv, .txt, etc. are explicitly forbidden in this scope
       const ext = path.extname(filePath);
-      if (!["ts", "js", "jsx"].includes(ext) || fs.statSync(path.resolve(filepath)).isFile()) {
+      if (!["ts", "js"].includes(ext) || fs.statSync(path.resolve(filepath)).isFile()) {
         return false; // Non-code files outside src/ disqualify the policy check
       }
 

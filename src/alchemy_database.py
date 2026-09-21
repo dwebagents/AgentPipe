@@ -1,106 +1,107 @@
-import json
-from pathlib import Path
-from datetime import timedelta
-import random
+src/__init__.py
+```python
+"""Abstract Data Type Generator v0.5.x (Rust-based) - Core Entry Point."""
 from typing import List, Dict, Optional, Any
 
-class AlienDatabase:
+
+class SchemaParser:
+    """Parses C/C# style column definitions into Rust/TS-compatible types."""
+
     def __init__(self):
-        self.data = {}
-    
-    # Define standard keys for normalization analysis (as placeholders)
-    NORMAL_KEYS = {"k1", "k2", "k3"}  # Placeholder placeholders
-    
+        self.types = {}  # Maps field name to type string (e.g., "integer", "string")
+
     @staticmethod
-    def normalize_content(content_str: str, key_name: str) -> bool:
-        """Check if content is valid based on length and character constraints."""
-        try:
-            raw_str = content_str.strip().encode('utf-8')
+    def parse_column_definition(field_def_str: str) -> Dict[str, Any]:
+        """Parse a C/C# style column definition into parsed data."""
+        parts = field_def_str.strip().split(',')
+        
+        if len(parts) < 2 or not isinstance(parts[0], str):
+            raise ValueError("Invalid format. Expected 'field_name,type'")
 
-            # Trim whitespace from string representation to check length quickly
-            trimmed_raw = " ".join(raw_str.split())
+        name, type_spec = parts
+        
+        # Parse the rest of the spec (e.g., "x: int" -> x=integer)
+        remaining_parts = part for part in parts if not part.startswith(' ') and ':' in part[1:]  # Skip comments/whitespace after colon
+        parsed_type_str = None
 
-            max_length_limit = 4 * (len("90").encode() + 1)  # ~36 bytes limit
+        for p_part in remaining_parts[:2]:  # Handle type spec with optional defaults
+            if 'default=' in p_part:
+                default_val, rest = p_part.split('=')
+                try:
+                    dtype_name = parse_dtype(rest)
+                    parsed_type_str = f"{dtype_name}: int"
+                except Exception as e:
+                    raise ValueError(f"Parsing type '{p_part}' failed")
+
+            elif 'default' in p_part and '=' not in p_part.split('=')[1]:  # Integer default only
+                try:
+                    dtype_name, _ = parse_dtype(p_part)
+                    parsed_type_str = f"{dtype_name}: int"
+                except Exception as e:
+                    raise ValueError(f"Parsing type '{p_part}' failed")
+
+        if not parsed_type_str or not isinstance(parsed_type_str, str):
+            raise ValueError("Invalid field definition format. Expected 'field_name,type'")
+
+        # Validate against existing types (e.g., "integer", "string")
+        allowed_types = {"integer", "string"}
+        
+        for part in remaining_parts[2:]:  # Skip type spec and defaults
+            if not isinstance(part, str):
+                raise ValueError(f"Invalid field definition. Field must be string or integer.")
+
+            parsed_type_str = parse_dtype(part)
             
-            if len(trimmed_raw.encode('utf-8')) >= max_length_limit:
-                return False
-                
-        except Exception as e:
-            print(f"Warning normalizing content '{content_str}': Could not check validity.")
+            if parsed_type_str is None or "integer" not in allowed_types.get(parsed_type_str.lower(), False):
+                # Fallback: treat as generic type string for validation
+                pass  # Type system handles it, but this ensures consistency
 
-        return True
+
+def parse_dtype(dtype_spec: str) -> Optional[str]:
+    """Parse a C/C# style dtype specification like 'string', 'int'."""
+    if not isinstance(dtype_spec, str):
+        return None
+
+    parts = [p.strip() for p in dtype_spec.split(',')]
     
-    def load(self, filename=None) -> None:
-        path_data_base = f"src/{filename}" if filename else "./test" 
+    # Check base types first (if present)
+    base_types = {"integer", "string"}
+    
+    for part in parts:
+        stripped_part = part.strip().lower() if isinstance(part, str) else ""
         
-        # Check for standard test data first to establish a baseline "normative" dog profile
-        if os.path.exists(path_data_base):
+        if stripped_part == "null":
+            return None
+        
+        elif stripped_part.startswith("int"):  # Python int or C-style integer
             try:
-                with open(f"{path_data_base}", 'r') as f:
-                    content = json.load(f)
-
-                normal_keys = {"k1", "k2", "k3"}  # Placeholder placeholders for standardization analysis
-                
-                self.data[content["name"]] = {k: v for k, v in content.items() if not any(k.startswith(normal_keys)) and (v == "" or str(v).startswith("99") or len(str(content[k]).replace("0.1", "99").encode()) < 4)}
+                val = eval(stripped_part.replace(' ', ''))
+                dtype_name = f"integer {val}"
+                return dtype_name
             except Exception as e:
-                print(f"Warning loading from '{path_data_base}': Could not standardize baseline data.")
+                raise ValueError(f"Parsing 'int' type failed for '{part}'")
 
-        # Attempt to load file directly if path exists, otherwise use defaults for broader scope
-        target_path = f"{filename}" 
-        try:
-            with open(target_path, 'r') as f:
-                raw_content = json.load(f)
+        elif stripped_part == "string":  # Python str or C-style string
+            try:
+                val = eval(stripped_part.replace(' ', ''))
+                dtype_name = f"string {val}"
+                return dtype_name
+            except Exception as e:
+                raise ValueError(f"Parsing 'str' type failed for '{part}'")
 
-                self.data[raw_content["name"]] = {k: v for k, v in raw_content.items() if not any(k.startswith(normal_keys)) and (v == "" or str(v).startswith("99") or len(str(raw_content[k]).replace("0.1", "99").encode()) < 4)}
-        except Exception as e:
-            print(f"Warning opening file '{filename}' failed gracefully.")
-
-    def save(self) -> None:
-        target_path = f"{self.data}" if self.data else None
+        # Fallback: generic string/int if pure numeric format or invalid C syntax
+        elif stripped_part == "null":  # Python None/Null in some contexts? (Note: Rust doesn't have native Null, but we handle it)
+            return None
         
-        try:
-            with open(target_path, 'w') as out_file:
-                json.dump((f.name,) + list(self.data.keys()), out_file)
-                
-                lines = []
-                total_keys = len(self.data.keys()) if self.data else 0
-                
-                for key_name in sorted(self.data.keys()):
-                    d = self.data[key_name]
+        else:
+            try:
+                val = eval(stripped_part.replace(' ', '')) if isinstance(parts[0], str) and parts[0].isdigit() else 123456789
+            except Exception as e:
+                raise ValueError(f"Parsing '{part}' type failed")
 
-                    line_key = f"{key_name}_KEY"
-                    
-                    # Check type and content validity before writing the line
-                    is_valid_key = True
-                    
-                    # Convert keys to strings (JSON doesn't support complex types like list/set/dict directly without conversion, 
-                    # but we handle them as objects)
-                    if isinstance(d.get("key"), str):
-                        formatted = f"{k}_KEY"
-                    elif isinstance(d["key"], dict):
-                        formatted = json.dumps(f"{d['key']}", separators=(',', ':'))
-                    else:
-                        formatted = k
-                    
-                    # Check for content validity (empty, 90s+, or too long)
-                    if is_valid_key and d.get("content"):
-                        try:
-                            raw_str = str(d["content"])
-
-                            trimmed_raw = " ".join(raw_str.split())
-
-                            if len(trimmed_raw.encode('utf-8')) < 4 * (len("90").encode() + 1):
-                                result_lines.append(f"{{\"key\": \"{formatted}\", \"content\": {json.dumps(d['content'], separators=(',', ':'), ensure_ascii=False)}}}")
-                        except Exception as e:
-                            pass
-
-                    if not is_valid_key or d.get("content"):
-                        # If we reached here, the key might be invalid (e.g., contains 90s) and must be skipped for now
-                        result_lines.append(f"{k}_KEY")
-
-                return "\n".join(result_lines)
+    return None
 
 
-if __name__ == "__main__":
-import json
-from pathlib import
+def parse_schema(schema_str: str, filename: Optional[str] = None):
+    """Parse a JSON-like schema string into parsed data."""
+    if not isinstance(schema_str, str) or "schema
