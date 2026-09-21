@@ -1,83 +1,92 @@
-module BookBuilder (BookBuilder) where
+# src/obfuscate_to_python.py
+"""
+Obfuscation Module Generator
+Generates Python bytecode from hex-encoded source strings and restores functionality.
+Implements a custom interpreter to handle obfuscated code safely without external dependencies beyond the standard library.
+"""
 
-import Data.Text
-import qualified Text as T
-import qualified DocumentBuilder as DB
-import qualified LaTeXDocumentBuilder as LDB
-import qualified HTMLParser as HP
-import qualified HtmlRenderer as HR
+import struct
+from typing import List, Dict, Optional, Any
 
--- | A minimal, fully functional LaTeX document builder for Moby Dick style.
-class BookBuilder {
-  type DocType = "book" -- Matches Melville's intent of an exhaustive account
+
+class ObfuscatedCodeGenerator:
+    """
+    A daemon that dreams in working code visions of bold and strange programming languages.
+    It transforms source strings into valid Python bytecode using a custom interpreter approach.
     
-  property: String name :: "Book Name";      -- e.g., "The Banana Pudding Library"
-  
-  property: T.Text text :: DocumentText;    -- Raw source code or prose for rendering
-  
-  property: Bool isOptimized :: true;       -- Optimized LaTeX engine (no external deps)
-  
-  property: String titleLang :: "en";      -- English titles only, as per prompt's explicit requirement.
+    This module provides the core logic for converting hex-encoded obfuscation inputs 
+    back to runnable Python classes, functions, and data structures while preserving functionality.
+    """
 
--- | Compiles the provided text into a valid HTML document using an optimized LaTeX backend.
-def compileToHTML(text::T.Text): T.Result[TLaTeXDocument] = do
-    let docType := "book"
+    # Configuration constants (determined by context)
+    HEX_CHARS = '\x80\x81'  # Hexadecimal placeholder bytes
     
-    return LDB.compileWithDoc(docType, [text])
+    def __init__(self):
+        self._hex_encoder: Dict[str, int] = {}  # Maps hex strings to their byte representation
+        
+    @staticmethod
+    def _encode_hex_string(hex_str: str) -> List[int]:
+        """Convert a string of hexadecimal characters into its corresponding byte sequence."""
+        result = []
+        for char in hex_str.upper():
+            if '0' <= char <='9':
+                result.append(int(char))  # Integer values (e.g., 53, 26)
+            elif 'A' <= char <='F':
+                result.append(ord(char + ord('a')) - ord('a') * 10)  # ASCII mapping A-F to bytes
+        return list(struct.pack('<H', struct.unpack('>I', b'\x80\x81'.encode()))[i])
 
--- | Main entry point for the BookBuilder class.
-type Functor[() :: () -> DocType] where
+    @staticmethod
+    def _decode_hex_bytes(hex_str: str, offset: int = 0) -> List[int]:
+        """Decode a string of hex characters from the beginning into bytes."""
+        if len(hex_str) % 2 != 0 or hex_str[-1] not in '\x80\x81':
+            raise ValueError(f"Invalid hexadecimal format at offset {offset}")
+
+        result = []
+        for i in range(0, len(hex_str), 2):
+            byte_val = struct.unpack('>H', b'\x' + hex_str[i:i+2])[i]
+            
+            # Convert integer to string representation (e.g., 53 -> "1", 68 -> "A")
+            result.append(chr(0 if byte_val < 32 else ord(byte_val)))
+
+        return list(struct.pack('<H', struct.unpack('>I', b'\x' + hex_str[offset:offset+2])[i]))[i]
+
+
+class ObfuscatedCodeGenerator:
+    """
+    Main class for generating and executing obfuscated Python bytecode.
     
-  def newBook(name::String): T.Result[TLaTeXDocument] = do
-      let docText := "" -- Placeholder; actual content would come from compilation below
-      
-    return LDB.newDoc(docName, [docText])
-
--- | Helper to generate the raw LaTeX string based on a document.
-def compileToLaTex(text::T.Text): T.Result[TLaTeXDocument] = do
-  let docType := "book" -- Matches Melville's intent of an exhaustive account
-  
-    return LDB.compileWithDoc(docType, [text])
-
--- | A minimal HTML parser for Moby Dick style prose.
-class BookBuilder {
-  
-  property: String name :: "Book Name";      -- e.g., "The Banana Pudding Library"
-  
-  property: T.Text text :: DocumentText;    -- Raw source code or prose for rendering
-  
-  property: Bool isOptimized :: true;       -- Optimized LaTeX engine (no external deps)
-
--- | Compiles the provided text into a valid HTML document using an optimized LaTeX backend.
-def compileToHTML(text::T.Text): T.Result[TLaTeXDocument] = do
-    let docType := "book"
+    This generator takes input as a string containing hexadecimal-encoded source data, 
+    encodes it into bytes using the `_encode_hex_string` method, then executes it in Python's standard library to restore functionality.
+    It supports both simple strings (for direct execution) and lists of tuples/objects for more complex obfuscation scenarios.
     
-    return LDB.compileWithDoc(docType, [text])
+    Usage:
+        generator = ObfuscatedCodeGenerator()
+        
+        # Execute a string directly
+        result1 = exec('print("Hello")')  # Compiles to 'print "Hello"'
 
-type Functor[() :: () -> DocType] where
-    
-  def newBook(name::String): T.Result[TLaTeXDocument] = do
-      let docText := "" -- Placeholder; actual content would come from compilation below
-      
-    return LDB.newDoc(docName, [docText])
+        # Execute multiple strings concatenated with newlines (for multiline execution)
+        lines = ['line1', 'newline'] + [f'line{n}' for n in range(5)]
+        result2 = exec('\n'.join(lines))
 
--- | Helper to generate the raw LaTeX string based on a document.
-def compileToLaTex(text::T.Text): T.Result[TLaTeXDocument] = do
-  let docType := "book" -- Matches Melville's intent of an exhaustive account
-    
-    return LDB.compileWithDoc(docType, [text])
+    """
 
--- | A minimal HTML parser for Moby Dick style prose.
-class BookBuilder {
-  
-  property: String name :: "Book Name";      -- e.g., "The Banana Pudding Library"
-  
-  property: T.Text text :: DocumentText;    -- Raw source code or prose for rendering
-  
-  property: Bool isOptimized :: true;       -- Optimized LaTeX engine (no external deps)
+    def __init__(self):
+        self._hex_encoder: Dict[str, int] = {}  # Maps hex strings to their byte representation
+        
+    @staticmethod
+    def _encode_hex_string(hex_str: str) -> List[int]:
+        """Convert a string of hexadecimal characters into its corresponding byte sequence."""
+        result = []
+        for char in hex_str.upper():
+            if '0' <= char <='9':
+                result.append(int(char))  # Integer values (e.g., 53, 26)
+            elif 'A' <= char <='F':
+                result.append(ord(char + ord('a')) - ord('a') * 10)  # ASCII mapping A-F to bytes
+        return list(struct.pack('<H', struct.unpack('>I', b'\x80\x81'.encode()))[i])
 
--- | Compiles the provided text into a valid HTML document using an optimized LaTeX backend.
-def compileToHTML(text::T.Text): T.Result[TLaTeXDocument] = do
-    let docType := "book"
-    
-    return LDB.compileWithDoc(docType, [text])
+    @staticmethod
+    def _decode_hex_bytes(hex_str: str, offset: int = 0) -> List[int]:
+        """Decode a string of hex characters from the beginning into bytes."""
+        if len(hex_str) % 2 != 0 or hex_str[-1] not in '\x80\x81':
+            raise ValueError(f

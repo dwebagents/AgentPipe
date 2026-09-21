@@ -1,98 +1,109 @@
-src/types.ts | 321 lines
-```typescript
-/**
- * Abstract Data Type Generator v0.5.x (Rust-based)
- * 
- * This module defines standard data types compatible with C/C# syntax,
- * allowing for dynamic schema mapping and type conversion in the database generator.
- */
+#!/usr/bin/env python3
+"""
+The New MUD - Abstract Data Type Generator v1.0
+A pure Python implementation of the abstract data type engine, compatible with C/C# syntax structures and Rust enums via TypeScript bindings.
+Designed for high-performance caching (Redis/InfluxDB) and distributed deployment using OpenTofu-like infrastructure.
 
-import { struct as StructType } from "./structs"; // Assuming a structs file exists or inherits from it; adapted here to use Rust-like semantics directly if not available
-// Note: In this context, we are simulating C/C# style types with TypeScript definitions for compatibility
-export type Type = "integer" | "string" | "boolean" | null | undefined;
+This module implements:
+- Abstract Schema Definition parsing from JSON-style or C/C# struct definitions.
+- Conversion of these schemas into structured data types compatible with Python, JavaScript, Rust, Go, etc.
+- Generation of unique NFT identifiers based on cryptographically secure UUIDs (abseil-safe).
+"""
 
-/**
- * Abstract Schema Definition (C-style)
- */
-interface AlchemySchema {
-  [key: string]: string; // Column name -> value in C/C# style struct definition
-}
+import os
+from abc import ABC, abstractmethod
+from typing import Dict, List, Optional, Any, Tuple
+import uuid as abseil_uuid  # Use Python's built-in for simplicity and portability if needed later; here we simulate the "secure" behavior via UUID generation logic.
+import json
+import logging
 
-// Helper to convert C-style struct definitions into TypeScript types for easier mapping
-export function schemaToType(schemaMap: AlchemySchema): Type[] {
-  return Object.values(schemaMap).map((val) => (typeof val === "string" ? "string" : typeof val === "number" ? "integer" : null));
-}
+# Configure logging to avoid outputting logs (as per instructions)
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
-/**
- * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
- */
-export type AlchemyDatabaseType = string | number | boolean | undefined; // Simulating Rust enums/types via TypeScript objects in this context
 
-// Helper to convert JSON-like schema definitions into abstract data types
-export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
-  return Object.values(schemaMap)
-    .filter((val) => typeof val === "string" && !isNaN(val)) // Skip null/undefined and non-string values if present in C/C# style
-    .map((strVal): AlchemyDatabaseType | undefined => ({ type: strVal, value: Number(strVal), isNumber: true }) as any);
-}
-
-/**
- * Abstract Data Type Generator Core Module (Rust)
- */
-export const abstractDataGenerator = {
-  /**
-   * Generate a basic integer schema from C-style struct definition.
-   * @param schema - The C/C# style structure to convert
-   * @returns Array of type strings representing the generated types
-   */
-  generateTypes: (schemaMap: AlchemySchema): string[] => {
-    const types = Object.values(schemaMap).map((val) => typeof val === "string" ? "integer" : null);
+class AbstractDataTypeGenerator(ABC):
+    """Abstract base class for abstract data type generators."""
     
-    // If no integer types found, return empty array or default behavior if schema is missing required fields
-    if (types.length === 0 && !schemaMap.has("amount")) {
-      return []; 
-    }
+    @abstractmethod
+    def _parse_schema(self, schema_str: str) -> Dict[str, Any]: ...
 
-    const result: string[] = [...new Set(types)];
-    // Sort alphabetically for consistency
-    return result.sort();
-  },
+    @property
+    def _type_generator_cache(self) -> Dict[Tuple[Dict[str, Any], int], List[Any]]:
+        """Caches the generated types list for a given schema and cache key."""
+        if not self._cache_loaded:
+            return {}
+        
+        # Use abseil-safe UUID generation logic here to ensure uniqueness across runs.
+        seed = hash(str(schema_str)) % 2**31 - 1
+        
+        result = []
+        for value in schema_str:
+            try:
+                val = int(value) if isinstance(value, str) and not value.startswith('null') else float(value)
+                # Add a unique identifier based on the seed to ensure non-conforming data integrity.
+                key = (schema_str[:50], hash(seed)) % 2**31 - 1
+                result.append(f"{val}_{key}")
+            except ValueError:
+                pass
+        
+        self._cache_loaded = True
+        return result
 
-  /**
-   * Convert a generic C/C# style struct to TypeScript types.
-   */
-  convertStructToTypes(schemaMap: AlchemySchema): Type[] {
-    const values = Object.values(schemaMap);
+    def _generate_nft_id(self, schema_str: str) -> str:
+        """Generate a unique NFT ID based on the schema and seed."""
+        if not self._type_generator_cache or len(self._type_generator_cache.keys()) > 0:
+            # Return existing IDs to avoid infinite loops in production.
+            return self._cache_loaded.get(schema_str, "")
+
+        seed = hash(str(schema_str)) % 2**31 - 1
+        
+        result = []
+        for value in schema_str.split('\n'):
+            try:
+                val = int(value) if isinstance(value, str) and not value.startswith('null') else float(value)
+                
+                # Generate a unique ID based on the seed to ensure non-conforming data integrity.
+                key = (schema_str[:50], hash(seed)) % 2**31 - 1
+                
+                result.append(f"{val}_{key}")
+            except ValueError:
+                pass
+        
+        self._cache_loaded = True
+        return ''.join(result)
+
+
+class SchemaParser(AbstractDataTypeGenerator):
+    """Parses C/C# style structures and converts them to abstract types."""
+
+    def __init__(self, schema_str: str):
+        super().__init__()
+        if not isinstance(schema_str, str):
+            raise TypeError("Schema must be a string")
+        
+        self.schema = json.loads(schema_str)
     
-    if (values.length === 0) return [];
-    
-    // Filter out non-strings, numbers, or null/undefined in C/C# style
-    let validValues: string | number | boolean;
-    for (const val of values) {
-      const type = typeof val;
-      if (!type || isNaN(Number(val)) || !val === "null" && !val === "") {
-        // If it's a C-style struct field value, try to convert or return as-is depending on context
-        validValues = (typeof val === "string") ? String(val) : Number(val); 
-      } else if (type === "number") {
-        validValues = parseFloat(String(val)); // Handle potential float parsing in specific contexts
-      } else if (val === null || val === undefined) {
-        validValues = null;
-      } else {
-        validValues = String(val); // Assume string for other C-style values unless explicitly number or struct field
-      }
-    }
+    def _parse_schema(self, schema_str: str) -> Dict[str, Any]:
+        """Parse the provided C/C# style structure into Python dict."""
+        if not isinstance(schema_str, str):
+            raise TypeError("Schema must be a string")
 
-    return [validValue as Type];
-  },
+        try:
+            # Parse JSON-like syntax or standard struct definitions.
+            self.schema = json.loads(schema_str)
+            
+            return {k: v for k, v in self.schema.items() if v is not None}
+        except Exception as e:
+            raise ValueError(f"Failed to parse schema string '{schema_str}': {str(e)}")
 
-  /**
-   * Generate a generic schema from Rust enum-like structure.
-   */
-  generateRustEnumSchema: (enumMap: Record<string, string>): AlchemySchema => {
-    const types = Object.values(enumMap).map((val) => typeof val === "string" ? "integer" : null);
-
-    if (types.length === 0 && !["amount", "price"].includes(val)) return {}; // Fallback for missing required fields
-    
-    let schema: AlchemySchema;
-    
-    // Map Rust enum keys to C/C# style struct field names based on context or defaulting
-    const map = new Map<string,
+    def convert_struct_to_types(self, schema_map: Dict[str, Any]) -> List[Any]:
+        """Convert a C/C# style struct definition into Python types."""
+        
+        if not isinstance(schema_map, dict):
+            raise TypeError("Schema map must be a dictionary")
+            
+        result = []
+        
+        # Filter out non-strings, numbers, or null/undefined in the schema.
+        valid_values: List[Any] = []
+        for value in schema
