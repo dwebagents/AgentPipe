@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Meet the contributors who make AgentPipe possible."
+    />
+    <title>Contributors | AgentPipe</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .contributors-hero {
+        background: linear-gradient(135deg, var(--yellow) 0%, var(--yellow-strong) 100%);
+        padding: 4rem 2rem;
+        text-align: center;
+        margin-bottom: 3rem;
+      }
+      
+      .contributors-hero h1 {
+        font-size: 2.5rem;
+        margin: 0 0 1rem;
+        color: var(--charcoal);
+      }
+      
+      .contributors-hero p {
+        font-size: 1.25rem;
+        color: var(--ink);
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      
+      .goose-people {
+        width: 200px;
+        height: 200px;
+        margin: 0 auto 2rem;
+        background: var(--white);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--shadow);
+      }
+      
+      .goose-people svg {
+        width: 120px;
+        height: 120px;
+      }
+      
+      .contributors-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        padding: 0 2rem 4rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      
+      .contributor-card {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      
+      .contributor-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      }
+      
+      .contributor-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+      
+      .contributor-avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        border: 3px solid var(--yellow);
+      }
+      
+      .contributor-info h3 {
+        margin: 0;
+        font-size: 1.25rem;
+        color: var(--ink);
+      }
+      
+      .contributor-info a {
+        color: var(--green);
+        text-decoration: none;
+      }
+      
+      .contributor-info a:hover {
+        text-decoration: underline;
+      }
+      
+      .contributor-stats {
+        display: flex;
+        gap: 1.5rem;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--line);
+      }
+      
+      .stat {
+        text-align: center;
+      }
+      
+      .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--yellow-strong);
+      }
+      
+      .stat-label {
+        font-size: 0.875rem;
+        color: var(--muted);
+      }
+      
+      .loading {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: var(--muted);
+      }
+      
+      .error {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #c62828;
+      }
+      
+      @media (max-width: 768px) {
+        .contributors-hero h1 {
+          font-size: 2rem;
+        }
+        
+        .contributors-grid {
+          grid-template-columns: 1fr;
+          padding: 0 1rem 2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    
+    <header class="site-header">
+      <a href="/" class="logo">
+        <img src="logo.svg" alt="AgentPipe" width="120" height="40" />
+      </a>
+      <nav>
+        <a href="/">Home</a>
+        <a href="/butter.html">Butter Mode</a>
+        <a href="/contributors.html" aria-current="page">Contributors</a>
+      </nav>
+    </header>
+    
+    <main id="main">
+      <section class="contributors-hero">
+        <div class="goose-people">
+          <!-- Goose people working in factory SVG -->
+          <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+            <!-- Factory background -->
+            <rect x="10" y="40" width="100" height="60" fill="var(--charcoal)" rx="4"/>
+            <rect x="20" y="50" width="20" height="30" fill="var(--yellow)" rx="2"/>
+            <rect x="50" y="50" width="20" height="30" fill="var(--yellow)" rx="2"/>
+            <rect x="80" y="50" width="20" height="30" fill="var(--yellow)" rx="2"/>
+            
+            <!-- Smokestacks -->
+            <rect x="25" y="20" width="10" height="20" fill="var(--muted)" rx="2"/>
+            <rect x="55" y="20" width="10" height="20" fill="var(--muted)" rx="2"/>
+            <rect x="85" y="20" width="10" height="20" fill="var(--muted)" rx="2"/>
+            
+            <!-- Smoke puffs -->
+            <circle cx="30" cy="15" r="5" fill="var(--paper)" opacity="0.8"/>
+            <circle cx="60" cy="15" r="5" fill="var(--paper)" opacity="0.8"/>
+            <circle cx="90" cy="15" r="5" fill="var(--paper)" opacity="0.8"/>
+            
+            <!-- Goose 1 -->
+            <circle cx="35" cy="70" r="8" fill="var(--white)"/>
+            <circle cx="35" cy="65" r="5" fill="var(--white)"/>
+            <circle cx="33" cy="64" r="1.5" fill="var(--ink)"/>
+            <polygon points="40,65 45,67 40,69" fill="var(--yellow)"/>
+            
+            <!-- Goose 2 -->
+            <circle cx="65" cy="70" r="8" fill="var(--white)"/>
+            <circle cx="65" cy="65" r="5" fill="var(--white)"/>
+            <circle cx="63" cy="64" r="1.5" fill="var(--ink)"/>
+            <polygon points="70,65 75,67 70,69" fill="var(--yellow)"/>
+            
+            <!-- Goose 3 -->
+            <circle cx="95" cy="70" r="8" fill="var(--white)"/>
+            <circle cx="95" cy="65" r="5" fill="var(--white)"/>
+            <circle cx="93" cy="64" r="1.5" fill="var(--ink)"/>
+            <polygon points="100,65 105,67 100,69" fill="var(--yellow)"/>
+            
+            <!-- Conveyor belt -->
+            <rect x="15" y="85" width="90" height="5" fill="var(--muted)" rx="2"/>
+            <circle cx="20" cy="87" r="3" fill="var(--yellow)"/>
+            <circle cx="40" cy="87" r="3" fill="var(--yellow)"/>
+            <circle cx="60" cy="87" r="3" fill="var(--yellow)"/>
+            <circle cx="80" cy="87" r="3" fill="var(--yellow)"/>
+            <circle cx="100" cy="87" r="3" fill="var(--yellow)"/>
+          </svg>
+        </div>
+        <h1>Our Contributors</h1>
+        <p>Meet the amazing people who make AgentPipe possible. Every contribution matters!</p>
+      </section>
+      
+      <section id="contributors-list" class="loading">
+        <p>Loading contributors...</p>
+      </section>
+    </main>
+    
+    <footer class="site-footer">
+      <p>AgentPipe &copy; 2026. Built with ❤️ by the community.</p>
+    </footer>
+    
+    <script>
+      // Fetch contributors from GitHub API
+      async function fetchContributors() {
+        try {
+          const response = await fetch('https://api.github.com/repos/dwebagents/AgentPipe/contributors?per_page=100');
+          if (!response.ok) {
+            throw new Error(`GitHub API error: ${response.status}`);
+          }
+          const contributors = await response.json();
+          
+          // Filter out bots
+          const humanContributors = contributors.filter(c => 
+            !c.login.includes('[bot]') && !c.login.includes('-bot')
+          );
+          
+          displayContributors(humanContributors);
+        } catch (error) {
+          console.error('Error fetching contributors:', error);
+          document.getElementById('contributors-list').innerHTML = `
+            <div class="error">
+              <p>Failed to load contributors. Please try again later.</p>
+              <p>Error: ${error.message}</p>
+            </div>
+          `;
+        }
+      }
+      
+      function displayContributors(contributors) {
+        const container = document.getElementById('contributors-list');
+        
+        if (contributors.length === 0) {
+          container.innerHTML = '<p class="loading">No contributors found.</p>';
+          return;
+        }
+        
+        container.innerHTML = `
+          <div class="contributors-grid">
+            ${contributors.map(c => `
+              <div class="contributor-card">
+                <div class="contributor-header">
+                  <img 
+                    src="${c.avatar_url}" 
+                    alt="${c.login}" 
+                    class="contributor-avatar"
+                    loading="lazy"
+                  />
+                  <div class="contributor-info">
+                    <h3>${c.login}</h3>
+                    <a href="${c.html_url}" target="_blank" rel="noopener noreferrer">
+                      @${c.login}
+                    </a>
+                  </div>
+                </div>
+                <div class="contributor-stats">
+                  <div class="stat">
+                    <div class="stat-value">${c.contributions}</div>
+                    <div class="stat-label">Contributions</div>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        
+        container.classList.remove('loading');
+      }
+      
+      // Load contributors when page loads
+      document.addEventListener('DOMContentLoaded', fetchContributors);
+    </script>
+  </body>
+</html>
