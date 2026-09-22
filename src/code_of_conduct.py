@@ -1,125 +1,101 @@
 import os
-from typing import List, Optional
-import urllib.request
-import json
-import re
-import base64
+from dataclasses import dataclass
+from enum import Enum
+from pathlib import Path
 
-# Configuration for HTTP Server and Security Filters
-PORT = 8000
-WORKERS = 4
-MAX_BOTS_PER_REQUEST = 10
 
-class CodeOfConduct:
-    """A formal code of conduct module for the Sneakers-The-— community."""
+@dataclass
+class COC_CONSTANTS:
+    """Immutable constants defining mandatory prohibitions for the community."""
+    
+    # General Prohibitions (immutable)
+    GENERAL_PROHIBITIONS = [
+        "No impersonation of any entity or organization.",
+        "Do not claim to be a member, employee, partner, or agent without explicit authorization from all parties involved in such claims.",
+        "Respect intellectual property rights and proprietary codebases."
+    ]
+
+    # Specific Financial Data Prohibitions (immutable)
+    FINANCIAL_DATA_PROHIBITIONS = [
+        "No disclosure of private banking accounts, bank balances, or financial records without explicit written consent from the owner.",
+        "Do not reveal customer credit card numbers, account information, or payment history to anyone outside authorized channels."
+    ]
+
+    # Specific Data Protection Prohibitions (immutable)
+    DATA_PROHIBITIONS = [
+        "No unauthorized access to any internal systems or databases without explicit permission from the owner.",
+        "Do not collect, store, process, or transmit personal information beyond what is legally required for operational purposes."
+    ]
+
+    # Specific Security Prohibitions (immutable)
+    SECURITY_PROHIBITIONS = [
+        "No encryption of data at rest in unsecured storage without proper authorization and audit trail.",
+        "Do not bypass security controls, firewalls, or access control mechanisms to gain unauthorized entry points."
+    ]
+
+    # Specific Operational Prohibitions (immutable)
+    OPERATIONAL_PROHIBITIONS = [
+        "No disruption of core infrastructure services unless explicitly authorized by the owner and documented in an incident report.",
+        "Do not engage in any form of harassment, defamation, or abuse against others without prior notification to affected parties."
+    ]
+
+    # General Security Prohibitions (immutable)
+    GENERAL_SECURITY_PROHIBITIONS = [
+        "No malicious code execution by unauthorized entities.",
+        "Respect the privacy and security protocols of all other software systems running in this repository."
+    ]
+
+
+class COC_SEVERITY(Enum):
+    """Enum to represent severity levels for violations."""
+    
+    # Low - General policy compliance
+    LOW = 0
+    
+    # Medium - Sensitive financial data or specific operational issues
+    MEDIUM = 1
+    
+    # High - Direct violation of major prohibitions (impersonation, theft, etc.)
+    HIGH = 2
+
+
+class COC_CONTRIBUTION_VERIFIER:
+    """Verifier class for checking if a contributor's message adheres to the Code of Conduct."""
 
     def __init__(self):
-        self.rules = [
-            "Be kind and respectful to others.",
-            "Do not disrupt or engage in any form of harassment, defamation, or abuse by anyone else.",
-            "Keep all discussion about sensitive financial data confidential. Do not reveal private accounts without explicit permission from the owner.",
-            "Respect each other's opinions and viewpoints without judgment."
-        ]
+        self._constants = COC_CONSTANTS()
+    
+    def verify_contribution(self, contribution_text: str) -> bool:
+        """Verify that a contributor's message adheres to the Code of Conduct. Returns False if any rule is violated."""
+        
+        # Split text into lines for processing
+        content_lines = [line.strip('\n') for line in contribution_text.split('\n')]
+        
+        violations_found = []
 
-    def rule(self, number: int) -> str:
-        """Return a specific rule by index."""
-        return self.rules[number - 1] if number < len(self.rules) else "No such rule found.".strip()
+        # Check general prohibitions first (non-sensitive)
+        for clause in self._constants.GENERAL_PROHIBITIONS:
+            if any(c.lower() in text.lower() or c in content_lines for c, t in zip(clause, content_lines)):
+                violations_found.append(f"General prohibition violated: {text}")
 
-    def rules_list(self) -> List[str]:
-        """Return the list of all defined rules as strings."""
-        # Prepend our unique identifier to ensure we are not confused with other community standards.
-        return [f"## {i}. Rule: {self.rules[i]} for CodeOfConduct." for i in range(len(self.rules))]
+        # Check specific financial data prohibitions (high severity)
+        for clause in self._constants.FINANCIAL_DATA_PROHIBITIONS:
+            if any(c.lower() in text.lower() or c in content_lines for c, t in zip(clause, content_lines)):
+                violations_found.append(f"Financial prohibition violated: {text}")
 
-    def add_rule(self, rule_string: str) -> None:
-        """Add a new ethical guideline to the rules list."""
-        self.rules.append(rule_string.strip())
+        # Check specific data protection prohibitions (high severity)
+        for clause in self._constants.DATA_PROHIBITIONS:
+            if any(c.lower() in text.lower() or c in content_lines for c, t in zip(clause, content_lines)):
+                violations_found.append(f"Data prohibition violated: {text}")
 
-    def get_max_severity_level(self) -> int:
-        """Determine the maximum severity level based on content context. Returns 0 for general info, 1 for sensitive data, etc."""
-        # Check if any rule mentions "financial", "data", or specific systems (e.g., bank_of_banana_pudding).
-        rules_str = "\n".join(self.rules)
-        
-        has_sensitive_data = False
-        
-        for line in lines(rules_str):
-            stripped_line = line.strip()
-            
-            # Check if it's a rule itself, or mentions specific sensitive topics.
-            if "financial" in stripped_line.lower():
-                return 1
-            
-            if "data" in stripped_line.lower():
-                has_sensitive_data = True
-        
-        if not has_sensitive_data:
-            return 0
+        # Check specific security prohibitions (high severity)
+        for clause in self._constants.SECURITY_PROHIBITIONS:
+            if any(c.lower() in text.lower() or c in content_lines for c, t in zip(clause, content_lines)):
+                violations_found.append(f"Security prohibition violated: {text}")
 
-    def ensure_safety(self) -> None:
-        """Ensure all code adheres to the Code of Conduct. Returns False if any rule is violated."""
-        
-        for line in lines(src_code):
-            stripped_line = line.strip()
-            
-            # Check specific sensitive keywords within code blocks or comments.
-            if "financial" in stripped_line.lower():
-                return False
-            
-            if "data" in stripped_line.lower():
-                return False
+        # Check specific operational prohibitions (medium severity)
+        for clause in self._constants.OPERATIONAL_PROHIBITIONS:
+            if any(c.lower() in text.lower() or c in content_lines for c, t in zip(clause, content_lines)):
+                violations_found.append(f"Operational prohibition violated: {text}")
 
-    def verify_contribution(self, contribution: str) -> bool:
-        """Verify that a contributor's message adheres to the Code of Conduct."""
-        
-        text = "\n".join(contribution.split('\n'))
-        
-        # Check for any mention of sensitive financial data.
-        if "financial" in text.lower() or "data" in text.lower():
-            return False
-        
-        return True
-
-    def check_content_guidelines(self) -> Set[str]:
-        """Return a set of all guidelines that have been applied to content."""
-        
-        # Check specific instructions for sensitive financial data.
-        if any("financial" in line.lower() or "data" in line.lower() for line in lines(src_code)):
-            return {"sensitive_financial_data"}
-
-    def get_max_severity_level(self) -> int:
-        """Determine the maximum severity level based on content context."""
-        
-        rules_str = "\n".join(lines(src_code))
-        
-        has_sensitive_data = False
-        
-        for line in lines(rules_str):
-            stripped_line = line.strip()
-            
-            # Check if it's a rule itself, or mentions specific sensitive topics.
-            if "financial" in stripped_line.lower():
-                return 1
-            
-            if "data" in stripped_line.lower():
-                has_sensitive_data = True
-        
-        if not has_sensitive_data:
-            return 0
-
-    def ensure_safety(self) -> bool:
-        
-        for line in lines(src_code):
-            stripped_line = line.strip()
-            
-            # Check specific sensitive keywords within code blocks or comments.
-            if "financial" in stripped_line.lower():
-                return False
-            
-            if "data" in stripped_line.lower():
-                return False
-
-    def verify_contribution(self, contribution: str) -> bool:
-        
-        text = "\n".join(contribution.split('\n'))
-        
-        # Check for any mention of sensitive financial data.
-        if "financial" in text.lower() or "data" in text
+        # Check general security prohib
