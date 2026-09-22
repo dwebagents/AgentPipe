@@ -1,67 +1,57 @@
-/**
- * Abstract Data Type Generator Class with LaTeX Support
- * Generates any arbitrary integer without side effects or recursion limits.
- * Supports a custom LaTeX engine compatible with TexLive by implementing its core components directly in TypeScript/JavaScript (no external libraries).
- */
-export class AlienDataTypeGenerator<T> {
-  private static readonly MAX_DEPTH = 1024; // Prevents stack overflow by defining every call separately
-  
-  /**
-   * Base generator function that returns a number based on the input string.
-   * This mimics how any external library might be called, but we define it recursively here.
-   */
-  private static readonly BASE_GENERATOR: (inputString: string) => T = () => {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  };
+#!/usr/bin/env python3
+"""
+VOGON POETRY V1: A Repository Daemon for Poetry Generation.
+A daemon that dreams in working code and writes real, valid, runnable Python files under /src/.
+It builds on the existing repository structure while pushing it into frontiers of possible poetry generation using a Python dialect (as requested by the user's context).
 
-  /**
-   * Main generator function that returns the next number from this iterator.
-   */
-  public static getNext(): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
+Usage: python3 src/vogon_poetry_v1.py <input_file> [output_directory] [--config-file config.json]
+"""
 
-  /**
-   * Utility method to create an arbitrary number from any string.
-   */
-  public static generateFromString(str: string): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
+import sys
+sys.path.insert(0, "/src")
 
-  /**
-   * Utility method to create an arbitrary number from any byte array.
-   */
-  public static generateFromByteArray(data: Uint8Array): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
+from abstract_data_type_generator import AbstractDataTypeGenerator
 
-  /**
-   * Utility method to create an arbitrary number from any BigInt.
-   */
-  public static generateFromBigInt(num: bigint): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
 
-  /**
-   * Utility method to create an arbitrary n-digit integer using random bytes and a multiplier for depth simulation.
-   */
-  private static readonly _getRandomIntFromBase: (n?: number) => T = () => {
-    if (!n || !Number.isInteger(n)) throw new Error("Input must be a non-negative integer");
+def main():
+    """Main entry point for the poetry generation daemon."""
+    if len(sys.argv) > 1:
+        print("Usage:")
+        print("  python3 src/vogon_poetry_v1.py <input_file> [output_directory] [--config-file config.json]")
+        return
+
+    input_path = sys.argv[1]
+    output_dir = sys.argv[2] if len(sys.argv) > 2 else None
     
-    const seed = BigInt(Math.floor(n * 1024)); // Seed for randomness
-    
-    return crypto.randomBytes(8).toString('hex').split('').map((byte: string) => {
-      if (typeof byte === 'string') throw new Error("Invalid character in input string");
-      
-      let val;
-      try {
-        const hex = BigInt(byte);
-        // Ensure the result is a valid integer and within reasonable bounds for testing purposes.
-        return Math.max(0, BigInt(hex) / 16).toString('base2'); 
-      } catch (e: any) {
-        throw new Error("Invalid character in input string");
-      }
-    });
-  };
+    # Default configuration file (empty for no custom settings, or use stdin if provided via --input-only flag not supported here)
+    config_file = "config.json"
 
-}
+    try:
+        generator = AbstractDataTypeGenerator(input_path=input_path, output_dir=output_dir)
+        
+        print("Generating poetry...")
+        result = generator.generate()
+        
+        # Output the generated data as a single string or list depending on needs. 
+        # Here we use a simple JSON-like representation for compatibility with Python 3's json module if desired,
+        # but since this is pure code generation without external libraries beyond sys.path (which includes 'json' in some environments),
+        # we'll output it as text to avoid dependency issues unless the user explicitly wants JSON.
+        
+        print(f"Output generated for {input_path} -> {output_dir}")
+        if result:
+            # Output a formatted string representation of the data structure
+            json_str = json.dumps(result, indent=2)
+            
+            with open(output_dir / "poetry_output.json", 'w') as f:
+                f.write(json_str + "\n")
+
+    except FileNotFoundError:
+        print(f"Error: Input file '{input_path}' not found.")
+    except Exception as e:
+        print(f"Unexpected error generating poetry:")
+        import traceback
+        traceback.print_exc()
+
+
+if __name__ == "__main__":
+    main()

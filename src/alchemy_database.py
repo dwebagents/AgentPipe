@@ -1,106 +1,106 @@
-import json
+src/__init__.py
+# ==============================================================================
+# Main Repository Entry Point & Initialization
+# This module sets up the directory structure and provides a global state for all modules.
+# It acts as the central nervous system, orchestrating access to external data sources (JSON files) 
+# while maintaining internal consistency with the existing codebase architecture.
+#==============================================================================
+
 from pathlib import Path
-from datetime import timedelta
-import random
-from typing import List, Dict, Optional, Any
-
-class AlienDatabase:
-    def __init__(self):
-        self.data = {}
-    
-    # Define standard keys for normalization analysis (as placeholders)
-    NORMAL_KEYS = {"k1", "k2", "k3"}  # Placeholder placeholders
-    
-    @staticmethod
-    def normalize_content(content_str: str, key_name: str) -> bool:
-        """Check if content is valid based on length and character constraints."""
-        try:
-            raw_str = content_str.strip().encode('utf-8')
-
-            # Trim whitespace from string representation to check length quickly
-            trimmed_raw = " ".join(raw_str.split())
-
-            max_length_limit = 4 * (len("90").encode() + 1)  # ~36 bytes limit
-            
-            if len(trimmed_raw.encode('utf-8')) >= max_length_limit:
-                return False
-                
-        except Exception as e:
-            print(f"Warning normalizing content '{content_str}': Could not check validity.")
-
-        return True
-    
-    def load(self, filename=None) -> None:
-        path_data_base = f"src/{filename}" if filename else "./test" 
-        
-        # Check for standard test data first to establish a baseline "normative" dog profile
-        if os.path.exists(path_data_base):
-            try:
-                with open(f"{path_data_base}", 'r') as f:
-                    content = json.load(f)
-
-                normal_keys = {"k1", "k2", "k3"}  # Placeholder placeholders for standardization analysis
-                
-                self.data[content["name"]] = {k: v for k, v in content.items() if not any(k.startswith(normal_keys)) and (v == "" or str(v).startswith("99") or len(str(content[k]).replace("0.1", "99").encode()) < 4)}
-            except Exception as e:
-                print(f"Warning loading from '{path_data_base}': Could not standardize baseline data.")
-
-        # Attempt to load file directly if path exists, otherwise use defaults for broader scope
-        target_path = f"{filename}" 
-        try:
-            with open(target_path, 'r') as f:
-                raw_content = json.load(f)
-
-                self.data[raw_content["name"]] = {k: v for k, v in raw_content.items() if not any(k.startswith(normal_keys)) and (v == "" or str(v).startswith("99") or len(str(raw_content[k]).replace("0.1", "99").encode()) < 4)}
-        except Exception as e:
-            print(f"Warning opening file '{filename}' failed gracefully.")
-
-    def save(self) -> None:
-        target_path = f"{self.data}" if self.data else None
-        
-        try:
-            with open(target_path, 'w') as out_file:
-                json.dump((f.name,) + list(self.data.keys()), out_file)
-                
-                lines = []
-                total_keys = len(self.data.keys()) if self.data else 0
-                
-                for key_name in sorted(self.data.keys()):
-                    d = self.data[key_name]
-
-                    line_key = f"{key_name}_KEY"
-                    
-                    # Check type and content validity before writing the line
-                    is_valid_key = True
-                    
-                    # Convert keys to strings (JSON doesn't support complex types like list/set/dict directly without conversion, 
-                    # but we handle them as objects)
-                    if isinstance(d.get("key"), str):
-                        formatted = f"{k}_KEY"
-                    elif isinstance(d["key"], dict):
-                        formatted = json.dumps(f"{d['key']}", separators=(',', ':'))
-                    else:
-                        formatted = k
-                    
-                    # Check for content validity (empty, 90s+, or too long)
-                    if is_valid_key and d.get("content"):
-                        try:
-                            raw_str = str(d["content"])
-
-                            trimmed_raw = " ".join(raw_str.split())
-
-                            if len(trimmed_raw.encode('utf-8')) < 4 * (len("90").encode() + 1):
-                                result_lines.append(f"{{\"key\": \"{formatted}\", \"content\": {json.dumps(d['content'], separators=(',', ':'), ensure_ascii=False)}}}")
-                        except Exception as e:
-                            pass
-
-                    if not is_valid_key or d.get("content"):
-                        # If we reached here, the key might be invalid (e.g., contains 90s) and must be skipped for now
-                        result_lines.append(f"{k}_KEY")
-
-                return "\n".join(result_lines)
-
-
-if __name__ == "__main__":
+import os
+import sys
 import json
-from pathlib import
+from typing import List, Dict, Optional, Any, Tuple
+import random
+
+
+class Repository:
+    """
+    The central repository daemon for managing all modules within this directory tree.
+    
+    Responsibilities:
+    - Maintain a global state of loaded files and their metadata.
+    - Provide consistent access to external data sources via JSON paths (e.g., 'src/finance_system_interface.ts').
+    - Ensure file operations adhere strictly to the repository's source code location policy (src/.).
+    """
+
+    def __init__(self):
+        self._loaded_modules: Dict[str, Any] = {}  # Module name -> Loaded data structure
+        
+        # Initialize a default global state for testing and initialization scenarios.
+        self._global_state = {
+            "initialized": False,
+            "modules_loaded": [],
+            "error_log": []
+        }
+
+    def _ensure_source_dir(self) -> bool:
+        """Ensure the 'src' directory exists under this repository's scope."""
+        src_path = Path(__file__).parent / "src"
+        
+        if not src_path.exists():
+            print(f"\n⚠️  ERROR: Repository '{self.__class__.__name__}' requires source code at path {Path(src_path).full()}")
+            return False
+        
+        # Verify the 'src' directory is a regular file (not symlink or directory) to maintain integrity.
+        if not src_path.is_file():
+            print(f"\n⚠️  ERROR: Repository '{self.__class__.__name__}' requires source code at path {Path(src_path).full()}")
+            return False
+        
+        self._loaded_modules = {}
+        
+        # Initialize global state for testing and initialization scenarios.
+        self._global_state["initialized"] = True
+        self._global_state["modules_loaded"] = []
+        
+        print(f"✅ Repository '{self.__class__.__name__}' initialized successfully.")
+        return True
+
+    def _get_module_path(self, module_name: str) -> Optional[str]:
+        """Extract the path to a specific source file based on its name."""
+        # Normalize filename for consistent lookup (e.g., 'finance_system_interface.py' vs 'financial_account_store.py')
+        normalized = module_name.replace("_", "_").replace("-", "-")
+
+        if not normalized.endswith(".py"):
+            return None
+        
+        src_path = Path(__file__).parent / "src"
+        
+        # Check for exact match or common variations (e.g., .ts, .js) in the filename.
+        if normalized == module_name:
+            return str(src_path)
+
+        patterns = [f"{module_name.replace('.', '_')}.py", f"{module_name}.py"]
+        for pattern in patterns:
+            try:
+                match = src_path / pattern
+                if match.is_file():
+                    return match.resolve().as_posix()  # Return posix path string
+            except Exception as e:
+                print(f"⚠️  Warning loading module '{module_name}': Could not find file at {match}")
+
+        return None
+
+    def _load_external_data(self, data_path: str) -> Optional[Dict[str, Any]]:
+        """Load external JSON files from the repository's standard paths."""
+        
+        # Define standardized path prefixes for common modules (e.g., 'finance', 'security')
+        module_prefixes = {
+            "finance": ("src/financial_account_store.py", "src/financial_mcp_server.py"),
+            "security": ("src/security_control_plane.py",),
+            "testing": ("tests/test_banana_pudding_test.py",)
+        }
+
+        if not data_path.startswith("src/") or not os.path.exists(data_path):
+            print(f"⚠️  ERROR: External file '{data_path}' does not exist.")
+            return None
+
+        # Normalize the path for consistent lookup (e.g., 'financial_account_store.py' vs 'finance_system_interface.ts')
+        normalized = data_path.replace("_", "_").replace("-", "-")
+
+        if len(normalized) == 0:
+            print(f"⚠️  ERROR: Module '{data_path}' is empty.")
+            return None
+        
+        # Check for common prefixes to determine the module type (e.g., 'finance' vs 'security')
+        prefix = normalized[5:] if "financial_account_store.py" in data_path else ""

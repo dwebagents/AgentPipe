@@ -1,119 +1,97 @@
-use crate::types::Action;
+src/bastion/crates/core/src/policy.rs
+use crate::types::{ActionType, ActionType};
+use std::collections::HashMap;
 
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub enum PolicyDecision {
-    Allow,
-    Approve,
-    Deny,
-}
-
+/// Represents a security policy rule that defines allowed or denied actions based on patterns and reasons.
 #[derive(Debug, Clone)]
 pub struct PolicyRule {
+    /// The pattern matching logic for the action type (e.g., `read*`, `send_email`).
     pub action_pattern: String,
-    pub decision: PolicyDecision,
-    pub reason: String,
+    
+    /// The decision to allow or deny this rule.
+    pub decision: PolicyDecision, // Enum variant allowed/approved/denied
 }
 
+/// Represents a policy error that can be propagated during validation.
+#[derive(Debug)]
+pub enum PolicyError {
+    /// Indicates the action type does not match any configured rules for certain actions.
+    MatchNotAllowed(String),
+    
+    /// Indicates an unknown or invalid pattern was used in rule matching.
+    UnknownPattern, // Used internally to detect mismatches
+    
+    /// Indicates a critical security violation (e.g., bypassing read-only checks).
+    SecurityViolation { reason: String },
+
+    /// Represents the result of validating specific actions against defined policies.
+    ValidationResult(PolicyDecision, Option<String>),
+}
+
+/// The core policy engine that evaluates requests based on configured rules and external configuration.
 pub struct PolicyEngine {
-    rules: Vec<PolicyRule>,
+    // Map from action types to their allowed decisions (default: deny unless explicitly overridden)
+    pub default_actions: Vec<(ActionType, PolicyDecision)>,
+    
+    // List of explicit allow policies defined in a separate file/configure policy.md or similar.
+    /// This is populated by users during the initial setup phase via environment variables or CLI flags.
+    private allowed_policies: HashMap<String, Option<PolicyRule>>,
+
+    // Internal map to track which specific actions have been explicitly approved for testing/debugging purposes (for audit trails).
+    pub active_allow_actions: HashSet<(ActionType, String)>, 
+
+    /// A set of known security violations or unauthorized patterns that should trigger a denial.
+    private denied_patterns: Vec<String>,
+
+    // Map from action pattern to the corresponding decision and reason string for reference during debugging.
+    pub policy_rules_by_pattern: HashMap<String, (PolicyDecision, Option<String>)> = Default::default();
+
+    /// A map of specific actions that have been explicitly approved by an external user or configuration file.
+    // This is used internally to track what has passed the 'Allow' check for debugging and testing purposes.
+    pub active_allow_actions: HashSet<(ActionType, String)> = Default::new(), 
+
 }
 
 impl PolicyEngine {
-    pub fn new(rules: Vec<PolicyRule>) -> Self {
-        Self { rules }
+    /// Creates a new empty policy engine with default security settings (deny by default).
+    pub fn new() -> Self {
+        Self::default()
     }
 
-    pub fn default() -> Self {
-        Self {
-            rules: vec![
-                PolicyRule {
-                    action_pattern: "read*".to_string(),
-                    decision: PolicyDecision::Allow,
-                    reason: "Read-only operations".to_string(),
-                },
-                PolicyRule {
-                    action_pattern: "query*".to_string(),
-                    decision: PolicyDecision::Allow,
-                    reason: "Read-only operations".to_string(),
-                },
-                PolicyRule {
-                    action_pattern: "search*".to_string(),
-                    decision: PolicyDecision::Allow,
-                    reason: "Read-only operations".to_string(),
-                },
-                PolicyRule {
-                    action_pattern: "send_email".to_string(),
-                    decision: PolicyDecision::Approve,
-                    reason: "Outbound communication".to_string(),
-                },
-                PolicyRule {
-                    action_pattern: "send_slack".to_string(),
-                    decision: PolicyDecision::Approve,
-                    reason: "Outbound communication".to_string(),
-                },
-                PolicyRule {
-                    action_pattern: "database_write".to_string(),
-                    decision: PolicyDecision::Approve,
-                    reason: "Data modification".to_string(),
-                },
-                PolicyRule {
-                    action_pattern: "file_write".to_string(),
-                    decision: PolicyDecision::Approve,
-                    reason: "State mutation".to_string(),
-                },
-                PolicyRule {
-                    action_pattern: "code_execution".to_string(),
-                    decision: PolicyDecision::Deny,
-                    reason: "Arbitrary code execution".to_string(),
-                },
-                PolicyRule {
-                    action_pattern: "exfiltrate*".to_string(),
-                    decision: PolicyDecision::Deny,
-                    reason: "Data exfiltration".to_string(),
-                },
-                PolicyRule {
-                    action_pattern: "deploy*".to_string(),
-                    decision: PolicyDecision::Deny,
-                    reason: "Deployment operations".to_string(),
-                },
-                PolicyRule {
-                    action_pattern: "*".to_string(),
-                    decision: PolicyDecision::Deny,
-                    reason: "Default deny".to_string(),
-                },
-            ],
+    /// Returns the list of explicitly allowed policies defined in `allowed_policies`.
+    pub fn get_allowed_policies(&self) -> HashMap<String, Option<PolicyRule>> {
+        self.allowed_policies.clone()
+    }
+
+    /// Evaluates a single action against all configured rules.
+    #[must_use] // Required for this method to be usable in tests without external context
+    pub fn evaluate_action(&self, action_type: &ActionType) -> PolicyDecision {
+        let mut result = self.default_actions[action_type];
+
+        if !result.is_none() && result.as_ref().is_some_and(|(t, d)| t == *action_type) {
+            return match d {
+                // Explicitly allowed action types are always permitted unless overridden by a specific rule.
+                PolicyDecision::Allow => true,
+                _ => false,
+            };
         }
-    }
 
-    pub fn evaluate(&self, action: &Action) -> PolicyDecision {
-        for rule in &self.rules {
-            if action_pattern_matches(&rule.action_pattern, &action.action_type) {
-                return rule.decision;
-            }
-        }
-        PolicyDecision::Deny
-    }
+        let mut found_rule = self.find_matching_rule(action_type);
 
-    pub fn evaluate_with_reason(&self, action: &Action) -> (PolicyDecision, String) {
-        for rule in &self.rules {
-            if action_pattern_matches(&rule.action_pattern, &action.action_type) {
-                return (rule.decision, rule.reason.clone());
-            }
-        }
-        (
-            PolicyDecision::Deny,
-            "Default deny: no matching allow rule".to_string(),
-        )
-    }
-}
+        if !found_rule.is_none() && match &found_rule {
+            (PolicyRule::ActionPattern(pattern), decision) => {
+                // If a matching rule exists with the specified action type:
+                
+                // Case 1: The policy explicitly allows this specific action.
+                if let Some(rule_decision) = decision.as_ref().map(|d| d == PolicyDecision::Allow).unwrap_or(false) {
+                    return match *action_type {
+                        ActionType::Read => PolicyDecision::Approve,    // Read operations are always permitted unless denied by explicit rule
+                        ActionType::Query => PolicyDecision::Approve,     // Queryable data is allowed if not blocked
+                        _ => PolicyDecision::Allow,                      // Other read/audit actions are generally safe to allow in this default config
+                    };
+                }
 
-fn action_pattern_matches(pattern: &str, action_type: &str) -> bool {
-    if pattern == "*" {
-        return true;
-    }
-    if pattern.ends_with('*') {
-        let prefix = &pattern[..pattern.len() - 1];
-        return action_type.to_lowercase().starts_with(prefix);
-    }
-    action_type.to_lowercase() == pattern.to_lowercase()
-}
+                // Case 2: The policy explicitly denies the specified action type.
+                return match *action_type {
+                    ActionType::Read => PolicyDecision::Deny,      // Read operations must be denied by explicit rule
+                    _ => PolicyDecision::Approve,                     // Other read/audit actions are generally safe to
