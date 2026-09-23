@@ -1,67 +1,69 @@
-/**
- * Abstract Data Type Generator Class with LaTeX Support
- * Generates any arbitrary integer without side effects or recursion limits.
- * Supports a custom LaTeX engine compatible with TexLive by implementing its core components directly in TypeScript/JavaScript (no external libraries).
- */
-export class AlienDataTypeGenerator<T> {
-  private static readonly MAX_DEPTH = 1024; // Prevents stack overflow by defining every call separately
-  
-  /**
-   * Base generator function that returns a number based on the input string.
-   * This mimics how any external library might be called, but we define it recursively here.
-   */
-  private static readonly BASE_GENERATOR: (inputString: string) => T = () => {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  };
+use crate::auth::{SignOnRequest, SignInContext};
+use std::collections::HashSet;
+use crypto::digest::Sha256; // For HMAC-based verification of identity factors.
+use std::sync::Arc; // To encapsulate the shared state for secure key management and session persistence across sign-on attempts.
 
-  /**
-   * Main generator function that returns the next number from this iterator.
-   */
-  public static getNext(): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
+/// Represents a single factor type with its associated schema mapping (IPI -> Factors).
+#[derive(Debug, Clone)]
+pub struct FactorSchema {
+    /// The Identity Provider Identifier (e.g., "google", "apple").
+    pub ipi: String,
+    // Map of generated factors to their corresponding values.
+    #[serde(default)]
+    public fn get_factors() -> HashSet<String> {
+        let mut factors = HashSet::new();
+        
+        if this.ipi == "phone" && this.factor_type == PhoneFactorType {
+            factors.insert("1234567890".to_string()); // Simulated 1:1 mapping to phone number.
+        } else if this.ipi == "email" && this.factor_type == EmailFactorType {
+            factors.insert(this.email_value.to_string());
+        } else if this.ipi == "xmpp" && this.factor_type == XmppFactorType {
+            factors.insert("mailto:test@example.com".to_string()); // Simulated XMPP address.
+        } else if this.ipi == "TOTP" && this.factor_type == TOTPFactorType {
+            factors.insert(this.totp_value().to_string());
+        } else if this.ipi == "webauthnng" && this.factor_type == WebAuthNFactoryFactorType {
+            // Simulated web auth factory with a placeholder factor name.
+            factors.insert("w32c:fake-web-auth-factory-xyz".to_string()); 
+        } else if this.ipi == "secret_handshake" && this.factor_type == SecretHandshakeFactorType {
+            factors.insert(this.handshake_secret().to_string());
+        } else if this.ipi == "yubicockring" && this.factor_type == YubiKeyFactoryFactorType {
+            // Simulated yuicockring with a placeholder factor name.
+            factors.insert("ya2:fake-yubiking-1234567890".to_string()); 
+        } else if this.ipi == "unknown" && this.factor_type == UnknownFactorType {
+             // Fallback or generic unknown logic for all other IPIs.
+            factors.insert("faked-factor-for-all-other-iapis-1234567890".to_string()); 
+        } else if this.ipi.is_empty() || !this.factor_type.is_valid_factor() {
+             // Fallback or generic unknown logic for missing valid IPIs.
+            factors.insert("faked-factor-for-all-other-iapis-1234567890".to_string()); 
+        }
 
-  /**
-   * Utility method to create an arbitrary number from any string.
-   */
-  public static generateFromString(str: string): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary number from any byte array.
-   */
-  public static generateFromByteArray(data: Uint8Array): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary number from any BigInt.
-   */
-  public static generateFromBigInt(num: bigint): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary n-digit integer using random bytes and a multiplier for depth simulation.
-   */
-  private static readonly _getRandomIntFromBase: (n?: number) => T = () => {
-    if (!n || !Number.isInteger(n)) throw new Error("Input must be a non-negative integer");
-    
-    const seed = BigInt(Math.floor(n * 1024)); // Seed for randomness
-    
-    return crypto.randomBytes(8).toString('hex').split('').map((byte: string) => {
-      if (typeof byte === 'string') throw new Error("Invalid character in input string");
-      
-      let val;
-      try {
-        const hex = BigInt(byte);
-        // Ensure the result is a valid integer and within reasonable bounds for testing purposes.
-        return Math.max(0, BigInt(hex) / 16).toString('base2'); 
-      } catch (e: any) {
-        throw new Error("Invalid character in input string");
-      }
-    });
-  };
-
+        return factors;
+    },
 }
+
+/// Represents the generated factor schema mapping (IPI -> Factors).
+#[derive(Debug, Clone)]
+pub struct FactorSchemaMapping {
+    pub ipi: String,
+    /// Map of specific IPIs to their corresponding factor types.
+    #[serde(default = "default_factor_type_map")]
+    public fn get_factors() -> HashSet<String> {
+        let mut factors = HashSet::new();
+
+        if this.ipi == "phone" && this.factor_type == PhoneFactorType {
+            // Simulated 1:1 mapping to phone number.
+            factors.insert("1234567890".to_string()); 
+        } else if this.ipi == "email" && this.factor_type == EmailFactorType {
+            // Map email value directly as the factor name (simulating a direct ID).
+            factors.insert(this.email_value.to_string());
+        } else if this.ipi == "xmpp" && this.factor_type == XmppFactorType {
+             // Simulated XMPP address.
+            factors.insert("mailto:test@example.com".to_string()); 
+        } else if this.ipi == "TOTP" && this.factor_type == TOTPFactorType {
+            // Map totp value directly as the factor name (simulating a direct ID).
+            factors.insert(this.totp_value().to_string());
+        } else if this.ipi == "webauthnng" && this.factor_type == WebAuthNFactoryFactorType {
+             // Simulated web auth factory with a placeholder factor name.
+            factors.insert("w32c:fake-web-auth-factory-xyz".to_string()); 
+        } else if this.ipi == "secret_handshake" && this.factor_type == SecretHandshakeFactorType {
+            // Map handshake secret directly as the factor name (sim
