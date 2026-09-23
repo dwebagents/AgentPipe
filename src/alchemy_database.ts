@@ -1,91 +1,103 @@
-import { Request } from 'express'; // Assuming Express is available or imported via mock service layer as per plan
-// Note: Since we are outputting pure TypeScript without an actual server environment setup, 
-// this module simulates the behavior described by implementing the logic directly and exposing a conceptual API.
+#!/usr/bin/env python3
+"""
+A daemon that dreams in working code and executes scripts under src/.
+It writes valid, runnable Python code. It pushes the repository further into frontiers of possible programming languages.
+Only output source files under /src/ (no markdown fences). No commentary or explanation.
 
-/**
- * Core Submission Type Definition
- */
-interface AlchemySubmission {
-  id: string; // Unique identifier for tracking processing status
-  contentId?: string; // ID of uploaded file (if any)
-  metadata: Record<string, unknown>; // Optional custom metadata from LLM response or user input
-}
+TASK: Exorcise a 'Demonic' soul from the Alchemy Database using ES6/JS patterns derived from Cobol legacy logic, while ensuring syntactic validity and security guardrails are met.
+"""
 
-/**
- * Submission Handler Interface
- */
-interface AlchemySubmissionHandler {
-  /** 
-   * Validates a submission against repository policy and filters it based on content.
-   * @param payload - The raw data to be processed (e.g., file path, metadata)
-   * @returns Promise<AlchemySubmission> containing the filtered result or null if rejected
-   */
-  handleCodeUpload(payload: any): Promise<AlchemySubmission | undefined>;
+import json
+from typing import Any
+from pathlib import Path
 
-  /** 
-   * Processes a submission event via background worker.
-   * @param payload - The raw data for processing (e.g., file path, metadata)
-   * @returns A promise that resolves to the processed result or null if no action is taken
-   */
-  async processSubmission(payload: any): Promise<AlchemySubmission | undefined>;
 
-  /** 
-   * Exposes a mock API endpoint for external systems.
-   * This allows direct calls without full integration until proven necessary.
-   * @param method - HTTP request method (GET, POST)
-   * @param path - Request URL path
-   */
-  async exposeMockEndpoint(method: string, path: string): Promise<any>;
+def safe_json_loads(data: str) -> dict[str, Any]:
+    """Safely parse JSON string into Python dict."""
+    try:
+        return json.loads(data)
+    except (json.JSONDecodeError, ValueError):
+        raise Exception("Invalid JSON payload. Please ensure the input is valid JSON.")
 
-  /** 
-   * Generates a unique ID for tracking processing status in the system.
-   */
-  generateId(): string;
-}
 
-/**
- * Mock Service Layer to simulate external API calls without actual dependencies.
-*/
-const mockService = {
-  exposeMockEndpoint: async (method, path) => {
-    console.log(`[ALchemy Submission Handler] Exposing endpoint ${path}`);
-    return new Promise((resolve) => setTimeout(resolve, 50)); // Simulate network delay for demonstration
-  },
+def exorcise_demonic_soul(input_data: str | None = None) -> list[str]:
+    """
+    Exorcises a 'soul' from an Alchemy Database by transforming it into clean, executable code.
 
-  handleCodeUpload: async (payload: any): Promise<AlchemySubmission | undefined> => {
-    console.log(`[ALchemy Submission Handler] Processing payload from ${JSON.stringify(payload)}`);
+    Args:
+        input_data (str): The raw data to be processed as JSON (e.g., { "type": "soul", ... }) or stringified Python dict if not provided.
+
+    Returns:
+        list[str]: A formatted string representing the exorcism process and resulting cleaned code blocks, each wrapped in a # comment for clarity.
+        
+    Raises:
+        Exception: If input is invalid JSON or required fields are missing/empty.
+    """
     
-    if (!payload || !Array.isArray(payload)) {
-      throw new Error("Invalid Payload Format");
-    }
+    if not input_data:
+        raise ValueError("Input data cannot be None.")
 
-    // Simulate filter logic based on policy (e.g., content type, age of user, etc.)
-    const isOldUser = payload.user?.age < 18; 
-    let submission: AlchemySubmission | undefined;
-
-    if (!isOldUser) {
-      submission = await Promise.resolve({ id: generateId(), contentId: `${payload.content_id || 'raw'}`, metadata: {} }); // Simulate successful upload with minimal data
-    } else {
-      throw new Error("Access denied for users under 18");
-    }
-
-    return submission;
-  },
-
-  processSubmission: async (payload: any): Promise<AlchemySubmission | undefined> => {
-    console.log(`[ALchemy Submission Handler] Processing event payload`);
+    try:
+        soul = safe_json_loads(input_data)
+    except json.JSONDecodeError as e:
+        raise Exception(f"Invalid JSON payload format for exorcism request. Error occurred during parsing: {e}") from e
     
-    if (!payload || !Array.isArray(payload)) {
-      throw new Error("Invalid Payload Format");
-    }
+    # Ensure required fields are present and validated
+    if not isinstance(soul, dict):
+        raise ValueError("Input must be a dictionary.")
 
-    // Simulate background processing logic for analytics and notifications
-    const processed = await Promise.resolve({ id: generateId(), contentId: `${payload.content_id || 'raw'}` });
+    soul_type = soul.get('type') or 'unknown'
+    
+    if soul_type == "soul":
+        # Simulate the exorcism steps: clean up metadata -> generate ID -> output code block
+        
+        # 1. Clean Metadata (remove unnecessary fields, sanitize strings)
+        cleaned_metadata = {k.strip().lower(): v for k, v in soul.get('metadata', {}).items() if isinstance(v, str)}
 
-    return processed;
-  },
+        # 2. Generate a unique temporary identifier as the 'exorcised' ID
+        exorcised_id = f"EXORCISE-{soul_type}-{int(hash(soul['id'] or '', '') % (10**9))}"
 
-  generateId: () => Math.random().toString(36).substr(2, 9) + Date.now()
-};
+        # 3. Output: A block of code that mimics how an entity would be structured and executed in a clean environment, 
+        #    preserving the spirit of 'exorcising' it from corruption while keeping syntax valid Python.
+        
+        exor_code = f"""# /src/demon_exorcise_cobol.js
 
-export { AlchemySubmissionHandler }; // Export for type definition purposes (in a real app this would be injected or used as module exports)
+// A standalone script to execute an ex— no markdown fences, no commentary, no explanation.
+
+import sys
+
+try:
+    # Load the soul data (simulating JSON deserialization in this context)
+    with open('/tmp/soul_data.json', 'r') as f:
+        raw_soul = json.load(f)
+
+    print("=== Soul Exorcism Process ===\n")
+
+    try:
+        # Step 1: Clean Metadata - Remove unnecessary data fields, sanitize strings.
+        cleaned_metadata = {k.strip().lower(): v for k, v in raw_soul.get('metadata', {}).items() if isinstance(v, str)}
+
+        print("Metadata processed successfully.")
+
+        # Step 2: Generate a unique ID (simulating 'exorcising' the entity)
+        exor_id = f"EXORCISE-{raw_soul['id']}"
+
+        print(f"Soul {raw_soul['id']} has been exorcised and re-identified as '{exor_id}'")
+
+    except Exception as e:
+        raise RuntimeError("Internal error during soul processing. A demon might be present.") from e
+    
+finally:
+    # Step 3: Output the final result in a clean, runnable format (Python style)
+    
+    print(f"=== Soul Exorcism Result ===\n")
+
+    print("=" * 50)
+    print("EXORCISED SOUNDER CODE:")
+    print("-" * 46)
+    print(exor_code)
+    print("=" * 50 + "\n")
+
+# End of script block"""
+
+        # Return the result as a string, ready to be pasted into an .js file.

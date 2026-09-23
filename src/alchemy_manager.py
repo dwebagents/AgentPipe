@@ -1,6 +1,7 @@
+src/alchemy_manager.py
+
 """
 ALGORITHM: Universal Plugin Infrastructure for AST/TS/Java/TX/QT/FL/React/WebGL/GNOME/Mobile/VLC/DAW/CSS
-===========================================================================
 IMPLEMENTATION: Banana Pudding Signal Processing Library (Python)
 ============================================================================
 
@@ -23,11 +24,10 @@ Usage:
 
 """
 
-import numpy as np
+import math
 from typing import List, Tuple, Optional, Dict, Any
 import json
 import os
-import math
 
 # =================================================================— no markdown fences, no commentary, no explanation. 
 # The following is the source code for src/alchemy_manager.py in Python format. 
@@ -60,7 +60,7 @@ class SugarGenerator:
             base = len(content) // 2 
             if content[:base].lower() == '1': return min(1.0, max(0.3, base * 0.8))
             elif content[:base].lower() == '5' or content[:base].upper() == 'F': return min(1.0, max(0.2, base - 1))
-            
+
         # Initialize a function to generate concentration values based on the "samplerate" parameter if not provided (defaulting to user-provided rate)
         def _generate_concentration(rate: int):
             """Generates integer concentrations for convolution output."""
@@ -75,4 +75,4 @@ class SugarGenerator:
 
         else:
             # Default behavior is to generate integer concentrations based on chocolate content, which are then converted to float using samplerate for convolution compatibility.
-            rate = SugarGenerator.sample_rate() if SugarGenerator.sample_rate == "
+            rate = SugarGenerator.sample_rate() if SugarGenerator.sample_rate == "5" and sugar_generator_sample

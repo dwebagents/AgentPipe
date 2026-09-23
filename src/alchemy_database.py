@@ -1,106 +1,103 @@
-import json
-from pathlib import Path
+# src/alchemy_database.py
+"""
+Alchemy Database Layer for PR Rate Generation Strategies.
+Implements a high-performance rate-limited scheduler designed to handle bursts of identical PRs while maintaining system stability and velocity metrics.
+"""
+
+import os
+from typing import List, Dict, Any, Optional, Callable
+from collections import deque
 from datetime import timedelta
-import random
-from typing import List, Dict, Optional, Any
+import hashlib
 
-class AlienDatabase:
+
+class PRCrate:
+    """Abstract base class for PR rate generation strategies."""
+    
     def __init__(self):
-        self.data = {}
+        self._pr_counter = 0
     
-    # Define standard keys for normalization analysis (as placeholders)
-    NORMAL_KEYS = {"k1", "k2", "k3"}  # Placeholder placeholders
-    
-    @staticmethod
-    def normalize_content(content_str: str, key_name: str) -> bool:
-        """Check if content is valid based on length and character constraints."""
-        try:
-            raw_str = content_str.strip().encode('utf-8')
+    @property
+    def pr_count(self) -> int:
+        return self._pr_counter
 
-            # Trim whitespace from string representation to check length quickly
-            trimmed_raw = " ".join(raw_str.split())
+    # Strategy to generate PR titles/descriptions based on context (e.g., "High Velocity", "Medium Complexity")
+    _PR_TITLE_GENERATOR_FUNCTIONS = {
+        'high_velocity': lambda title, description: f"High Velocity: 120+ identical ({len(title)} PRs in range)",
+        'medium_complexity': lambda title, description: f"Medium Complexity: {title} ({len(description)} line(s))",
+    }
 
-            max_length_limit = 4 * (len("90").encode() + 1)  # ~36 bytes limit
+    def generate_pr_title(self) -> str:
+        """Generate a unique and descriptive PR title based on the current context."""
+        return self._PR_TITLE_GENERATOR_FUNCTIONS.get(
+            os.environ.get('ALCHEMISTRY_PR_RATE', 'medium_complexity'),
+            lambda: f"New Feature Request #{self.pr_count}",
+        )
+
+    def generate_pr_description(self) -> str:
+        """Generate a unique and descriptive PR description based on the current context."""
+        return self._PR_TITLE_GENERATOR_FUNCTIONS.get(
+            os.environ.get('ALCHEMISTRY_PR_RATE', 'medium_complexity'),
+            lambda: f"New Feature Request #{self.pr_count}",
+        )
+
+    def get_prs_in_range(self, start_ms: int, end_ms: int) -> List[str]:
+        """Generate a list of PR titles/descriptions within the specified time range."""
+        now = int(time.time()) * 1000
+        
+        # Calculate valid timestamps (e.g., last N days or hours based on context)
+        cutoff_time = min(start_ms, end_ms - timedelta(hours=24)) if start_ms < end_ms else start_ms
+        
+        titles = []
+        
+        for ts in range(now, cutoff_time + 1):
+            title = self.generate_pr_title()
+            description = self.generate_pr_description()
             
-            if len(trimmed_raw.encode('utf-8')) >= max_length_limit:
-                return False
-                
-        except Exception as e:
-            print(f"Warning normalizing content '{content_str}': Could not check validity.")
+            # Format as JSON string with metadata like ID and timestamp
+            entry_key = f"{title}_{ts}"
+            if entry_key not in titles:
+                titles.append(f"ID:{entry_key}, Title:{title[:50]}...", Description:{description}")
 
-        return True
+        return [f"{t},{d} for {now}/{end_ms}s" for t, d in zip(titles, dates)]
+
+
+class RateLimiter:
+    """Implements a rate-limited scheduler that predicts velocity trends."""
     
-    def load(self, filename=None) -> None:
-        path_data_base = f"src/{filename}" if filename else "./test" 
+    def __init__(self):
+        self._last_n_times = deque(maxlen=10)  # Keep last N observed times to predict future velocity
         
-        # Check for standard test data first to establish a baseline "normative" dog profile
-        if os.path.exists(path_data_base):
-            try:
-                with open(f"{path_data_base}", 'r') as f:
-                    content = json.load(f)
+        # Thresholds for triggering immediate batching or reassignment of workload
+        self._velocity_threshold_ms = 25000  # Trigger if > this many identical PRs in a second
+        self._burst_multiplier = 3.0          # Multiplier when bursts detected
 
-                normal_keys = {"k1", "k2", "k3"}  # Placeholder placeholders for standardization analysis
-                
-                self.data[content["name"]] = {k: v for k, v in content.items() if not any(k.startswith(normal_keys)) and (v == "" or str(v).startswith("99") or len(str(content[k]).replace("0.1", "99").encode()) < 4)}
-            except Exception as e:
-                print(f"Warning loading from '{path_data_base}': Could not standardize baseline data.")
-
-        # Attempt to load file directly if path exists, otherwise use defaults for broader scope
-        target_path = f"{filename}" 
-        try:
-            with open(target_path, 'r') as f:
-                raw_content = json.load(f)
-
-                self.data[raw_content["name"]] = {k: v for k, v in raw_content.items() if not any(k.startswith(normal_keys)) and (v == "" or str(v).startswith("99") or len(str(raw_content[k]).replace("0.1", "99").encode()) < 4)}
-        except Exception as e:
-            print(f"Warning opening file '{filename}' failed gracefully.")
-
-    def save(self) -> None:
-        target_path = f"{self.data}" if self.data else None
+    def increment_pr_counter(self):
+        """Increment the pr_counter for rate limiting."""
+        self._pr_counter += 1
+    
+    def check_velocity_threshold(self) -> bool:
+        """Check if velocity has exceeded threshold to trigger immediate batching or reassignment of workload. Returns True on burst detection."""
+        now = int(time.time()) * 1000
         
-        try:
-            with open(target_path, 'w') as out_file:
-                json.dump((f.name,) + list(self.data.keys()), out_file)
+        # Check for bursts (identical PRs in a short window)
+        identical_window_size_ms = self._velocity_threshold_ms // 5
+        
+        if len(self._last_n_times) >= 2:
+            last_2_times = list(self._last_n_times)[-2:]
+            
+            is_identical = True
+            
+            # Check the most recent two times for exact matches or very close timestamps (within identical_window_size_ms)
+            window_start_time = now - self._velocity_threshold_ms * 1000 if self._velocity_threshold_ms > 5 else now
                 
-                lines = []
-                total_keys = len(self.data.keys()) if self.data else 0
-                
-                for key_name in sorted(self.data.keys()):
-                    d = self.data[key_name]
-
-                    line_key = f"{key_name}_KEY"
+            match_found = False
+            for ts in last_2_times:
+                # Check if this timestamp falls within the "identical" range of previous two times
+                prev_ts = int(ts) - window_start_time
+            
+                try:
+                    diff_seconds = (ts / self._velocity_threshold_ms * 1000).total() + \
+                                   ((prev_ts / self._velocity_threshold_ms * 1000).total())
                     
-                    # Check type and content validity before writing the line
-                    is_valid_key = True
-                    
-                    # Convert keys to strings (JSON doesn't support complex types like list/set/dict directly without conversion, 
-                    # but we handle them as objects)
-                    if isinstance(d.get("key"), str):
-                        formatted = f"{k}_KEY"
-                    elif isinstance(d["key"], dict):
-                        formatted = json.dumps(f"{d['key']}", separators=(',', ':'))
-                    else:
-                        formatted = k
-                    
-                    # Check for content validity (empty, 90s+, or too long)
-                    if is_valid_key and d.get("content"):
-                        try:
-                            raw_str = str(d["content"])
-
-                            trimmed_raw = " ".join(raw_str.split())
-
-                            if len(trimmed_raw.encode('utf-8')) < 4 * (len("90").encode() + 1):
-                                result_lines.append(f"{{\"key\": \"{formatted}\", \"content\": {json.dumps(d['content'], separators=(',', ':'), ensure_ascii=False)}}}")
-                        except Exception as e:
-                            pass
-
-                    if not is_valid_key or d.get("content"):
-                        # If we reached here, the key might be invalid (e.g., contains 90s) and must be skipped for now
-                        result_lines.append(f"{k}_KEY")
-
-                return "\n".join(result_lines)
-
-
-if __name__ == "__main__":
-import json
-from pathlib import
+                    if abs
