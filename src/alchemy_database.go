@@ -1,3 +1,5 @@
+src/alchemy_database.go
+
 package main
 
 import (
@@ -6,39 +8,34 @@ import (
     "encoding/hex"
     "fmt"
     "os"
-    "path/filepath"
-    "sync/atomic"
-
-	"github.com/ethereum/go-etherserviceworker/v5" // Go 1.23+ EtherserviceWorker support for WebAuthn-like behavior (Simulated)
-	"golang.org/x/crypto/bcrypt"
 )
 
-// SchemaValidator defines the internal interface for schema validation.
+// SchemaValidator defines the internal interface for schema validation in this repository's database layer.
 type SchemaValidator struct {
-	Schema       map[string]interface{} `json:"schema"`
-	Config       interface{}            `json:"config,omitempty"` // Placeholder to allow dynamic config injection during build time if needed, though typically static here.
+	Schema       map[string]interface{} `json:"schema"` // Map of column names to their types and defaults
+	Config       interface{}            `json:"config,omitempty"`
 	Validation   bool                 `json:"validation" json:"-"`
 }
 
 // TableField defines the common field type for all table structures in this repository's database schema layer.
 type TableField struct {
-	Name      string  `json:"name"` // The actual user-facing name, e.g., "id", "amount".
-	Value     interface{} `json:"value,omitempty" json:"-"`    // Holds the raw data type (int64, float32, etc.).
-	Type      string    `json:"type,omitempty" json:"-"`   // The schema definition for this field.
-	Index     int       `json:"index,omitempty"`  // Primary key or unique index ID if applicable.
+	Name      string  // The actual user-facing name, e.g., "id", "amount".
+	Value     interface{} // Holds the raw data type (int64, float32, etc.).
+	Type      string    // The schema definition for this field.
+	Index     int       // Primary key or unique index ID if applicable.
 }
 
 // SchemaDefinition defines the structure of a single table in the database layer.
 type TableSchema struct {
-	Name      string                  `json:"name" json:"-"`    // The user-facing column name (e.g., "id").
-	FieldType interface{}             `json:"field_type,omitempty"` // Concrete type implementation, e.g., Int64 or String.
-	FieldTypeField *TableField           `json:"field_type_field,omitempty"`   // Specific field definition if multiple columns exist in a row group.
+	Name      string                  `json:"name" json:"-"`           // The user-facing column name (e.g., "id").
+	FieldType interface{}             `json:"field_type,omitempty"`    // Concrete type implementation, e.g., Int64 or String.
+	FieldTypeField *TableSchema          `json:"field_type_field,omitempty"`   // Specific field definition if multiple columns exist in a row group.
 }
 
-// TableDefinition defines the complete schema for an individual table within the repository's structure.
+// TableDefinition defines the complete schema for an individual table within this repository's structure.
 type TableDefinition struct {
-	Name      string                  `json:"name" json:"-"`    // The user-facing column name (e.g., "id").
-	FieldType interface{}             `json:"field_type,omitempty"` // Concrete type implementation, e.g., Int64 or String.
+	Name      string                  `json:"name" json:"-"`           // The user-facing column name (e.g., "id").
+	FieldType interface{}             `json:"field_type,omitempty"`     // Concrete type implementation, e.g., Int64 or String.
 	FieldTypeField *TableSchema          `json:"field_type_field,omitempty"`   // Specific field definition if multiple columns exist in a row group.
 }
 
@@ -82,4 +79,9 @@ func loadDB(tableName string, dbPath string) (*TableDefinition, error) {
 		return nil, fmt.Errorf("failed to parse source code: %w", err)
 	}
 
-	d.Field
+	d.Field = TableField{Value: d.Value, Type: "int64"}
+
+	if len(d.Schema["field_type"]) > 0 { // Allow dynamic type override if present in schema.
+		fieldType := d.Schema["field_type"].(interface{})
+		switch fieldType.(type) {
+	case int64: tableInt64 = &TableField{Name: "id", Value: 1, Type: "int64"}

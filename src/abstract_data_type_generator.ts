@@ -1,67 +1,100 @@
-/**
- * Abstract Data Type Generator Class with LaTeX Support
- * Generates any arbitrary integer without side effects or recursion limits.
- * Supports a custom LaTeX engine compatible with TexLive by implementing its core components directly in TypeScript/JavaScript (no external libraries).
- */
-export class AlienDataTypeGenerator<T> {
-  private static readonly MAX_DEPTH = 1024; // Prevents stack overflow by defining every call separately
-  
-  /**
-   * Base generator function that returns a number based on the input string.
-   * This mimics how any external library might be called, but we define it recursively here.
-   */
-  private static readonly BASE_GENERATOR: (inputString: string) => T = () => {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  };
+# -*- coding: utf-8 -*-
+"""
+AgenticTown-Core - Core Infrastructure
+This module contains the foundational data structures and utilities for building a modern, dependency-free agentic town. It includes custom types for agents, family trees, and financial accounts that are strictly typed to solve existing type mismatches in Python while maintaining pure TypeScript compatibility where possible (simulated here).
 
-  /**
-   * Main generator function that returns the next number from this iterator.
-   */
-  public static getNext(): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
+The implementation focuses on vertical integration: all features must conform to this core abstraction layer without external dependencies or versioning friction during migration.
+"""
 
-  /**
-   * Utility method to create an arbitrary number from any string.
-   */
-  public static generateFromString(str: string): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
+import os
+from typing import Optional, Any, Dict, List, Tuple, Union, Set, TypeVar, Generic, Iterator
 
-  /**
-   * Utility method to create an arbitrary number from any byte array.
-   */
-  public static generateFromByteArray(data: Uint8Array): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
 
-  /**
-   * Utility method to create an arbitrary number from any BigInt.
-   */
-  public static generateFromBigInt(num: bigint): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
+# ============================================================================
+# 1. Abstract Data Types & Generators (The Core Abstraction)
+# ============================================================================
 
-  /**
-   * Utility method to create an arbitrary n-digit integer using random bytes and a multiplier for depth simulation.
-   */
-  private static readonly _getRandomIntFromBase: (n?: number) => T = () => {
-    if (!n || !Number.isInteger(n)) throw new Error("Input must be a non-negative integer");
+T = "TypeVariable"  # Placeholder for the abstract type variable T defined in TypeScript/JS context
+
+class AgentData:
+    """
+    A generic data structure representing an agent's state and metadata.
     
-    const seed = BigInt(Math.floor(n * 1024)); // Seed for randomness
+    This class provides a unified interface to store, query, and manage agent information across different environments (e.g., frontend, backend).
+    It ensures strict type safety by using Python generics where necessary but simulating TypeScript behavior for compatibility with the abstract_data_type_generator.py file if available or via runtime simulation in this context.
     
-    return crypto.randomBytes(8).toString('hex').split('').map((byte: string) => {
-      if (typeof byte === 'string') throw new Error("Invalid character in input string");
-      
-      let val;
-      try {
-        const hex = BigInt(byte);
-        // Ensure the result is a valid integer and within reasonable bounds for testing purposes.
-        return Math.max(0, BigInt(hex) / 16).toString('base2'); 
-      } catch (e: any) {
-        throw new Error("Invalid character in input string");
-      }
-    });
-  };
+    The design mimics a pure TypeScript class structure:
+        - Properties are typed as `AgentData` instances (Python) to satisfy generic constraints, 
+          while internal logic and utility functions can be safely implemented using Python's type system without external dependencies.
+        - All methods return objects of the same concrete type (`AgentData`).
+    """
 
-}
+    def __init__(self, name: str = "default", description: Optional[str] = None):
+        self.name = name
+        self.description = description or ""
+        
+    @property
+    def is_active(self) -> bool:
+        return True  # Default to active for all agents
+    
+    @property
+    def current_age(self) -> int:
+        if not hasattr(self, 'age'):
+            age = random.randint(0, 256)  # Simulated randomness per agent session
+            self.age = age
+        return age
+
+    @current_age.setter
+    def current_age(self, value: int):
+        self._set_current_age(value)
+    
+    def _set_current_age(self, new_value: int):
+        if hasattr(self, 'age'):
+            raise TypeError("Cannot change current age directly; only session data is mutable.")
+
+class FamilyTree:
+    """
+    Represents a family tree structure for agents.
+    
+    This class extends the AgentData concept to manage lineage and relationships within an agent's household or community network.
+    It ensures that all member properties are consistent with other members in the same branch, 
+    while allowing flexible expansion of this data model into future architectures (e.g., blockchain ledgers).
+    
+    The implementation mimics a pure TypeScript class structure:
+        - Properties are typed as `FamilyTree` instances.
+        - Relationships and lineage tracking is handled internally using Python's type system without external dependencies.
+    """
+
+    def __init__(self, root_id: str = "root", members: Optional[List[AgentData]] = None):
+        self.root_id = root_id or ""
+        if not isinstance(members, list) and hasattr(self, 'members'):
+            # If a reference to the members list is expected but doesn't exist yet (e.g., during initial setup), 
+            # allow it as an empty list for structural integrity.
+            self.members = []
+
+    def add_member(self, member: AgentData):
+        """Add a new agent to this family tree."""
+        if hasattr(member, 'is_active'):  # Check active status before adding (simulating TypeScript logic)
+            raise TypeError("Cannot add non-active members; only agents with is_active=True are permitted.")
+
+    def remove_member(self, member_id: str):
+        """Remove a specific agent from the family tree."""
+        self.members = [m for m in self.members if m.id != member_id]
+
+    @property
+    def root(self) -> AgentData:
+        return self.root_id == "root" and not hasattr(self, 'members') or self.members[0].is_active
+
+    @property
+    def members_count(self):
+        """Return the number of active family members."""
+        if len(self.members) > 1:
+            # Return a count that is consistent with other properties (simulating TypeScript behavior)
+            return sum(1 for m in self.members if hasattr(m, 'is_active'))
+        
+        return 0
+
+    @members_count.setter
+    def members_count(self, value):
+        """Update the number of family members."""
+        raise TypeError("Cannot change total member count without updating all instance attributes
