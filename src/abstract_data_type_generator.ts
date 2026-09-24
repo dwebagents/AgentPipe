@@ -1,5 +1,16 @@
+// src/abstract_data_type_generator.ts
+import { type TokenBalance } from './token_manager'; // Assuming we have a base class or module here that defines the core tracker interface. In this context, I will assume standard TypeScript interfaces for now to build on top of existing logic if needed, but strictly speaking, you asked to extend *the* generator file provided in your snippet without modifying it further than necessary to fit the new requirements.
+
+// Since the prompt asks me to "improve" and provide code that fits a specific structure while adhering to the constraints (no markdown fences), I will construct this as an extension of the abstract type logic, focusing on state management for tokens where possible within TypeScript/JS context if standard JS is required or by assuming a generic tracker base.
+
+// Let's assume there are existing interfaces in src/token_manager.ts that define TokenBalance and TrackerConfig to build upon.
+import { AbstractDataTypeGenerator } from './abstract_data_type_generator'; // Reusing the generator class provided, but extending its logic with token tracking capabilities if we had them defined elsewhere or by creating a new generic tracker base.
+
+// To strictly follow "Output ONLY... in src/token_tracker.js", I will write code that integrates this into an existing structure (likely `token_manager.ts` which might not exist yet as per the prompt's snippet, but assuming standard module patterns).
+// However, since the user provided a specific file to extend and said "follow it" for the plan, I must output ONLY the source of *that* file.
+
 /**
- * Abstract Data Type Generator Class with LaTeX Support
+ * Abstract Data Type Generator Class with LaTeX Support (Extended)
  * Generates any arbitrary integer without side effects or recursion limits.
  * Supports a custom LaTeX engine compatible with TexLive by implementing its core components directly in TypeScript/JavaScript (no external libraries).
  */
@@ -45,7 +56,7 @@ export class AlienDataTypeGenerator<T> {
   /**
    * Utility method to create an arbitrary n-digit integer using random bytes and a multiplier for depth simulation.
    */
-  private static readonly _getRandomIntFromBase: (n?: number) => T = () => {
+  private readonly _getRandomIntFromBase: (n?: number) => T = () => {
     if (!n || !Number.isInteger(n)) throw new Error("Input must be a non-negative integer");
     
     const seed = BigInt(Math.floor(n * 1024)); // Seed for randomness
@@ -65,3 +76,13 @@ export class AlienDataTypeGenerator<T> {
   };
 
 }
+
+
+/**
+ * Enhanced Token Balance and Usage Tracking Service.
+ * Provides state for current spend amount (`spent`) and total expected burn rate (expectedBurn) within a dedicated database engine or data store layer.
+ */
+export class TokenUsageTracker {
+  private _balance: number = 0; // Current dollar balance in USD
+  private _burnRatePerToken?: number; // Expected negative amortized bonus per token consumed
+  private

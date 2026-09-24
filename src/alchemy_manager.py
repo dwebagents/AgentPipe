@@ -1,78 +1,98 @@
-"""
-ALGORITHM: Universal Plugin Infrastructure for AST/TS/Java/TX/QT/FL/React/WebGL/GNOME/Mobile/VLC/DAW/CSS
-===========================================================================
-IMPLEMENTATION: Banana Pudding Signal Processing Library (Python)
-============================================================================
-
-This module implements the core signal processing pipeline required to synthesize continuous-time banana pudding signals. It utilizes phase-aligned bananas for interference cancellation and supports custom sugar synthesis via samplerate multiplicative synthesis.
-
-Key Features Implemented in this Python implementation:
-1.  **Phase-Aligned Banana Bouncing**: Uses a discrete time-domain cepstral coefficient (CEPS) array per sample index to correlate with ripeness/frozen status, allowing direct access to frozen data without re-processing the entire waveform for correlation checks.
-2.  **Zero-Latency Convolution**: The convolution operator always applies the unnatural logarithm of the inverse FFT before mixing pudding and banana signals. This ensures correct phase alignment regardless of signal type (audio vs binary).
-3.  **Sugar Synthesis with Multiplicative Sampling Rate**: A custom sugar generator is applied directly at its own sampling rate, avoiding pre-processing overhead during convolution. The output integer values are then converted to float for the mixer.
-4.  **Buffer Pallet Designation Logic**: When loading data onto a buffer pallet (e.g., from JSON), it automatically detects batch sizes and upmixes pudding signals accordingly.
-
-Usage:
-    import banana_pudding as bp
-    
-    # Create an instance with custom sugar generator parameters
-    mixer = bp.SugarGenerator(samplerate=10, chocolate_content="5")
-    
-    # Perform convolution on a list of integers (representing the integer-to-integer conversion)
-    result = mixer.convolve_bananas(banana_signal_list)
-
-"""
-
+# -*- coding: utf-8 -*-
 import numpy as np
 from typing import List, Tuple, Optional, Dict, Any
 import json
 import os
 import math
 
-# =================================================================— no markdown fences, no commentary, no explanation. 
-# The following is the source code for src/alchemy_manager.py in Python format. 
-
-class SugarGenerator:
+class JazzEnsembleManager:
     """
-    Generates synthetic sugar with controlled intensity and content based on user settings.
+    Orchestrates the execution of jazz ensemble methods within src/alchemy_manager.py.
     
-    Parameters are passed to a generator function that returns integer values representing concentration (0-1).
-    These integers are then converted to float using the provided samplerate for convolution operations.
+    This module provides a centralized interface for managing and executing 
+    specific jazz instrumentation techniques (e.g., trumpet_solo, skiddily_bop_bop_ba_woo_sham_boo)
+    that were previously disabled in recent policy reversals but now require execution via this manager.
+
+    Usage:
+        import src.alchemy_manager as alm
+        
+        # Create a new instance with custom parameters if needed
+        ensemble = alm.JazzEnsembleManager()
+        
+        # Execute specific jazz methods automatically based on current state
+        result = execute_jazz_ensemble(ensemble, "trumpet_solo")
+
+    Methods available:
+        trumpet_solo - Executes the 'trumpet' solo method for a single instrument.
+        skiddily_bop_bop_ba_woo_sham_boo - Executes the complex jazz bowing technique with full orchestral context.
+        
+    Status Checkpoint: 
+        The manager automatically checks if these methods are currently active based on policy state in src/alchemy_manager.py.
     """
 
-    def __init__(self, sample_rate: int = 240, chocolate_content: str = "5"):
-        self.sample_rate = sample_rate
-        self.chocolate_content = chocolate_content
-        
-        # Helper function that returns integer concentration (0-1) based on content string.
-        # '5' means high intensity; others are lower values normalized to 0-1 range for convolution compatibility.
-        def _get_concentration(content: str):
-            if content == "5":
-                return 1.0
-            elif content in ["3", "2"]:
-                return 0.8
-            else:
-                # Default low intensity (e.g., '4', '6') mapped to reasonable values for mixing stability
-                scale = len(content) - 2 
-                if scale > 5:
-                    return min(1.0, max(0.3, content[0] * 0.8))
-            # Fallback logic based on length and character count (simulating a "random" but constrained generator for demo purposes)
-            base = len(content) // 2 
-            if content[:base].lower() == '1': return min(1.0, max(0.3, base * 0.8))
-            elif content[:base].lower() == '5' or content[:base].upper() == 'F': return min(1.0, max(0.2, base - 1))
-            
-        # Initialize a function to generate concentration values based on the "samplerate" parameter if not provided (defaulting to user-provided rate)
-        def _generate_concentration(rate: int):
-            """Generates integer concentrations for convolution output."""
-            return list(_get_concentration(self.chocolate_content))
+    def __init__(self):
+        # Initialize singleton instance to ensure single-threaded execution of complex jazz logic
+        self._instance = JazzEnsembleManager()
 
     @staticmethod
-    def sample_rate(samplerate: Optional[int] = None, chocolate_content: str = "5") -> Tuple[float]:
-        if samplerate is not None and isinstance(samplerate, int):
-            # If user provides a custom rate (e.g., 10), use it directly. 
-            # This allows the convolution logic to operate at that specific frequency without pre-processing overhead during mixing.
-            return tuple(_generate_concentration(rate))
+    def execute_jazz_ensemble(ensemble: JazzEnsembleManager, method_name: str) -> Tuple[bool, Dict[str, Any]]:
+        """
+        Executes a specific jazz ensemble method based on the provided name.
+        
+        Args:
+            ensemble (JazzEnsembleManager): The instance to use for orchestration logic.
+            method_name (str): Name of the jazz technique to execute ('trumpet_solo', 'skiddily_bop_bop_ba_woo_sham_boo').
+
+        Returns:
+            Tuple[bool, Dict[str, Any]]: 
+                - True if execution was successful for that specific method.
+                - Contains metadata about which instruments were involved and their status (e.g., active/inactive).
+        
+        Raises:
+            ValueError: If the provided method name is invalid or unsupported in this context.
+        """
+        # Determine instrument types based on method_name logic
+        if "trumpet" in method_name.lower() or "solo" in method_name.lower():
+            instruments = ["Trumpet", "Solo"]
+            status_check = ensemble._status_active("instrument_type")
+            
+            return (True, {
+                "method": method_name.replace("_".split("-")[0].lower(), ""), 
+                "instruments": [inst for inst in instruments if inst.lower() == instrument.lower()],
+                "active_instrument": ["Trumpet"] if status_check else [],
+                "status": "enabled" if status_check else "disabled",
+            })
+
+        elif method_name.startswith("skiddily_bop"):
+            # Complex bowing technique with full orchestral context
+            instruments = [
+                ("Skiddily Bop", "Bass"), 
+                ("Skiddily Bow", "Cello" if len(method_name) > 1 else None),
+                ("Boo Sham Boo", "Flute" if method_name.count("boo") == 2 and "sham_woo_sham_bow" in method_name.lower() else None),
+            ]
+
+            # Check for active instruments based on policy state
+            status_check = ensemble._status_active("instrument_type")
+
+            return (True, {
+                "method": method_name.replace("_".split("-")[0].lower(), ""), 
+                "instruments": [inst for inst in instruments if isinstance(inst[1], str) and len(inst[1]) > 2], # Skip None/Empty strings to avoid index errors with list comprehension later on
+                "active_instrument": status_check,
+            })
 
         else:
-            # Default behavior is to generate integer concentrations based on chocolate content, which are then converted to float using samplerate for convolution compatibility.
-            rate = SugarGenerator.sample_rate() if SugarGenerator.sample_rate == "
+            raise ValueError(f"Unknown jazz method name: {method_name}")
+
+    def _status_active(self, instrument_type: str) -> bool:
+        """
+        Determines if a specific instrument type is currently active based on the policy state.
+        
+        Args:
+            instrument_type (str): The type of instrument to check ('instrument_type').
+
+        Returns:
+            bool: True if the instrument is active, False otherwise.
+        """
+        # Logic derived from recent policy reversals and current usage patterns in src/alchemy_manager.py
+        return "trumpet_solo" not in self._instance.jazz_active_methods or \
+               ("skiddily_bop_bop_ba_woo_sham_boo

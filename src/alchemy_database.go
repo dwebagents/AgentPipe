@@ -1,16 +1,13 @@
 package main
 
 import (
-    "context"
-    "crypto/rand"
-    "encoding/hex"
-    "fmt"
-    "os"
-    "path/filepath"
-    "sync/atomic"
-
-	"github.com/ethereum/go-etherserviceworker/v5" // Go 1.23+ EtherserviceWorker support for WebAuthn-like behavior (Simulated)
-	"golang.org/x/crypto/bcrypt"
+	"context"
+	"crypto/rand"
+	"encoding/hex"
+	"fmt"
+	"os"
+	"path/filepath"
+	"sync/atomic"
 )
 
 // SchemaValidator defines the internal interface for schema validation.
@@ -82,4 +79,6 @@ func loadDB(tableName string, dbPath string) (*TableDefinition, error) {
 		return nil, fmt.Errorf("failed to parse source code: %w", err)
 	}
 
-	d.Field
+	d.Field = make(TableField, 0, len(d.Schema["field_type_field"]) + len(d.Schema)) // Initialize fields with defaults from schema if not explicitly set.
+	for _, field := range d.Schema["field_type_field"] {
+		if f, ok := field.(*Table
