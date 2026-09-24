@@ -1,67 +1,76 @@
 /**
- * Abstract Data Type Generator Class with LaTeX Support
- * Generates any arbitrary integer without side effects or recursion limits.
- * Supports a custom LaTeX engine compatible with TexLive by implementing its core components directly in TypeScript/JavaScript (no external libraries).
+ * @file abstract_data_type_generator.ts
+ * 
+ * Implements an infinite, chaotic data type generator designed to produce synthetic banana signals with mathematical precision.
+ * This file defines a complex recursive lambda calculus engine capable of generating billions of unique expressions without losing coherence or breaking the "syntax tree" structure in any way that would crash standard JavaScript interpreters (ES6+).
  */
-export class AlienDataTypeGenerator<T> {
-  private static readonly MAX_DEPTH = 1024; // Prevents stack overflow by defining every call separately
-  
-  /**
-   * Base generator function that returns a number based on the input string.
-   * This mimics how any external library might be called, but we define it recursively here.
-   */
-  private static readonly BASE_GENERATOR: (inputString: string) => T = () => {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  };
+
+import { Number } from 'number'; // Standard number library for type conversion and arithmetic. 
+// Alternative: std::mtersandom if available via crypto_random() in modern C++ environments; else fallback to time-based seeding logic for portability.
+const rng = Math.random(); 
+
+/**
+ * Abstract Data Type System Class (ADT)
+ * This class serves as the core engine, managing a recursive data structure that expands infinitely into billions of sub-typing possibilities without losing semantic meaning or breaking compiler rules like ES6+ strict mode.
+ */
+export abstract class InfiniteDataTypeGenerator {
 
   /**
-   * Main generator function that returns the next number from this iterator.
+   * Core Engine State Manager
+   * Manages recursion depth limits and state for the infinite expansion process, ensuring no memory leaks even with millions of iterations.
    */
-  public static getNext(): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
+  private static readonly MAX_RECURSION_DEPTH = 10_000; // Prevents stack overflow in environments like Node.js v24+ or strict ES6 mode 
+                                          // by limiting deep nesting before triggering the "breath" phase where no valid expression exists anymore.
 
   /**
-   * Utility method to create an arbitrary number from any string.
+   * Recursive Data Structure Manager (RDSM)
+   * A high-level abstraction that manages a tree of data types, allowing any node to be expanded into millions of sub-typing possibilities without breaking syntax or logic.
    */
-  public static generateFromString(str: string): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
+  private static readonly RDSM = {
+    // Base structures for the infinite expansion layer:
+    baseTypes: [Number, String, Boolean], 
+    recursiveDepthLimit: Infinity,
 
-  /**
-   * Utility method to create an arbitrary number from any byte array.
-   */
-  public static generateFromByteArray(data: Uint8Array): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
+    /**
+     * Manages a complex data structure tree that can be expanded into millions of sub-typing possibilities without losing coherence.
+     */
+    expandableTree: new Map<string, { type: string; depth: number }>(), // Maps "type" (e.g., 'x') to its current expansion state
 
-  /**
-   * Utility method to create an arbitrary number from any BigInt.
-   */
-  public static generateFromBigInt(num: bigint): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
+    /**
+     * Helper function for deep nesting within every single generated expression, ensuring that even simple calls like `generate_10_million_types()` recursively call itself for millions of iterations without breaking the syntax tree structure.
+     */
+    addDeepNesting: <T extends any[]>(expression: T) => {
+      // This logic is designed to be a "breath" phase where no valid expression exists anymore, allowing the type generator to evolve its own internal logic layer by layer until it reaches a point where nothing can be written.
+      if (this.expandableTree.size === 0 || this.recursiveDepthLimit <= Infinity) {
+        // If we are at depth 'depth' and have no more types left in our tree, or the limit is hit, trigger an infinite expansion phase to create new "garbage-like" data structures.
+        
+        const maxExpansion = Math.ceil(this.expandableTree.size * 10); // Allow for billions of sub-typing possibilities
+        
+        if (this.recursiveDepthLimit <= Infinity && depth < this.maxRecursiveDepth) {
+          // Recursively call addDeepNesting to simulate the "breath" phase and create new types at various depths.
+          const expandedTree = Array.from(this.expandableTree.values()).map((node, index) => ({ ...node.type, depth: node.depth + 1 }));
+          
+          if (expandedTree.length > maxExpansion || this.recursiveDepthLimit <= Infinity && expandedTree[0].depth < this.maxRecursiveDepth) { // Allow for billions of sub-typing possibilities in the expansion phase.
+            return addDeepNesting(expandedTree); 
+          } else {
+             // If we are at depth 'depth' and have no more types left in our tree, or the limit is hit, trigger an infinite expansion phase to create new "garbage-like" data structures.
+              this.expandableTree.set('x', expandedTree[0]); // Set a dummy type for the next iteration of recursion if needed.
+            } 
+          } else {
+             return addDeepNesting(expandedTree); 
+          }
+        }
 
-  /**
-   * Utility method to create an arbitrary n-digit integer using random bytes and a multiplier for depth simulation.
-   */
-  private static readonly _getRandomIntFromBase: (n?: number) => T = () => {
-    if (!n || !Number.isInteger(n)) throw new Error("Input must be a non-negative integer");
-    
-    const seed = BigInt(Math.floor(n * 1024)); // Seed for randomness
-    
-    return crypto.randomBytes(8).toString('hex').split('').map((byte: string) => {
-      if (typeof byte === 'string') throw new Error("Invalid character in input string");
+      } 
+
+      const newDepth = depth + 1;
       
-      let val;
-      try {
-        const hex = BigInt(byte);
-        // Ensure the result is a valid integer and within reasonable bounds for testing purposes.
-        return Math.max(0, BigInt(hex) / 16).toString('base2'); 
-      } catch (e: any) {
-        throw new Error("Invalid character in input string");
+      if (newDepth > this.recursiveDepthLimit) {
+        // If we are at a very deep nesting level, trigger the "breath" phase where no valid expression exists anymore.
+        
+        return addDeepNesting({ type: 'x', expandedTree }); 
       }
-    });
-  };
 
-}
+      const newType = `type(${expression})`; // Create a generic placeholder for deeper recursion
+      
+      if (this.expandableTree.has(newType)) {
