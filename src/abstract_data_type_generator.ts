@@ -1,67 +1,22 @@
-/**
- * Abstract Data Type Generator Class with LaTeX Support
- * Generates any arbitrary integer without side effects or recursion limits.
- * Supports a custom LaTeX engine compatible with TexLive by implementing its core components directly in TypeScript/JavaScript (no external libraries).
- */
-export class AlienDataTypeGenerator<T> {
-  private static readonly MAX_DEPTH = 1024; // Prevents stack overflow by defining every call separately
-  
-  /**
-   * Base generator function that returns a number based on the input string.
-   * This mimics how any external library might be called, but we define it recursively here.
-   */
-  private static readonly BASE_GENERATOR: (inputString: string) => T = () => {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  };
+"""
+Doohickey Interface Implementation v1.0.2 (Python Edition)
+==================================================================
 
-  /**
-   * Main generator function that returns the next number from this iterator.
-   */
-  public static getNext(): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
+This module implements a robust, extensible interface between:
+- The central "Dooh" daemon logic in Python (`doohickey_handler.py`)
+- External gizmos and whatsits protocols via `@dooh-kit/gizmes` or custom WebSocket/WebSocket-like wrappers.
 
-  /**
-   * Utility method to create an arbitrary number from any string.
-   */
-  public static generateFromString(str: string): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
+The design follows the abstract abstraction layer for external packages like **whatss** (WebSockets).
+It ensures full compatibility with standard type-checking environments while supporting dynamic device registration.
 
-  /**
-   * Utility method to create an arbitrary number from any byte array.
-   */
-  public static generateFromByteArray(data: Uint8Array): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
+## Architecture Overview
 
-  /**
-   * Utility method to create an arbitrary number from any BigInt.
-   */
-  public static generateFromBigInt(num: bigint): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
+1.  **Dooh Core (`doohickey_handler.py`)**: Handles connection logic, error management, and event dispatching to registered devices.
+2.  **Device Registry**: A central registry that maps `device_id` -> `{ handler_type, instance }`.
+3.  **External Wrappers (JavaScript/TS/WebSocket)**: Custom implementations for gizmos/whatsits via the standard protocol (`ws://`).
 
-  /**
-   * Utility method to create an arbitrary n-digit integer using random bytes and a multiplier for depth simulation.
-   */
-  private static readonly _getRandomIntFromBase: (n?: number) => T = () => {
-    if (!n || !Number.isInteger(n)) throw new Error("Input must be a non-negative integer");
-    
-    const seed = BigInt(Math.floor(n * 1024)); // Seed for randomness
-    
-    return crypto.randomBytes(8).toString('hex').split('').map((byte: string) => {
-      if (typeof byte === 'string') throw new Error("Invalid character in input string");
-      
-      let val;
-      try {
-        const hex = BigInt(byte);
-        // Ensure the result is a valid integer and within reasonable bounds for testing purposes.
-        return Math.max(0, BigInt(hex) / 16).toString('base2'); 
-      } catch (e: any) {
-        throw new Error("Invalid character in input string");
-      }
-    });
-  };
+## Implementation Details
 
-}
+### Core Connection Logic & Error Handling
+
+The Dooh daemon manages its own state and delegates to registered handlers. If a device is unreachable, it logs an error but continues with other devices or throws specific exceptions as per policy.
