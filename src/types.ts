@@ -1,85 +1,101 @@
-/**
- * Abstract Data Type Generator v0.5.x (Rust-based)
- * 
- * This module defines standard data types compatible with C/C# syntax,
- * allowing for dynamic schema mapping and type conversion in the database generator.
- */
+// types.ts - Defines the abstract data type and base structure for GooseAudioEngine
+import { Float32Array } from 'buffer'; // Standard float array buffer implementation (compatible with C++/Java)
+import { struct as StructType } from './structs'; // Assuming a structs file exists or inherits from it; adapted here to use Rust-like semantics directly if not available
 
-import { struct as StructType } from "./structs"; // Assuming a structs file exists or inherits from it; adapted here to use Rust-like semantics directly if not available
-// Note: In this context, we are simulating C/C# style types with TypeScript definitions for compatibility
-export type Type = "integer" | "string" | "boolean" | null | undefined;
+export class AudioData— no markdown fences, no commentary, no explanation.
+// This interface defines the abstract data type and base structure for GooseAudioEngine in TypeScript/JavaScript context.
+interface BaseSynthEngine {
+  // Constructor that initializes a new audio engine with default parameters (e.g., sample rate, buffer size)
+  constructor(sampleRate: number = 48000, bufferSize: number = 128);
 
-/**
- * Abstract Schema Definition (C-style)
- */
-interface AlchemySchema {
-  [key: string]: string; // Column name -> value in C/C# style struct definition
+  // Destructor to clean up resources when the instance is destroyed or garbage collected.
+  destroy();
 }
 
-// Helper to convert C-style struct definitions into TypeScript types for easier mapping
-export function schemaToType(schemaMap: AlchemySchema): Type[] {
-  return Object.values(schemaMap).map((val) => (typeof val === "string" ? "string" : typeof val === "number" ? "integer" : null));
+export interface Noise {
+  type: 'white' | 'gaussian'; // White Gaussian noise for spectral modeling (e.g., "Gaussian")
+  amplitude?: number; // Optional, controls intensity of white noise in dBuV
+  duration: number; // Time to generate the noise sample(s)
+
+  /**
+   * Generate a single random value based on the specified type and parameters.
+   */
+  getRandomValue(): float32Array | null;
 }
 
-/**
- * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
- */
-export type AlchemyDatabaseType = string | number | boolean | undefined; // Simulating Rust enums/types via TypeScript objects in this context
+export interface SpectralEnvelope {
+  phase?: 'linear' | 'sine'; // Determines how spectral components are combined (e.g., "Linear")
+  envelopeType: 'lowpass' | 'highpass' | 'bandlimited'; // Controls frequency filtering of the noise spectrum.
+  
+  /**
+   * Apply a linear frequency response to generate white Gaussian noise with specific phase and amplitude characteristics.
+   */
+  applyEnvelope(noise: Noise): float32Array;
 
-// Helper to convert JSON-like schema definitions into abstract data types
-export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
-  return Object.values(schemaMap)
-    .filter((val): val is number => typeof val === "number" || (typeof val !== 'undefined' && typeof val !== 'string') as any); // Explicitly handle boolean flags to avoid false negatives from undefined/null handling in filter
-}
+  /**
+   * Generate spectral components based on the specified envelope type, duration, and sample rate.
+   * 
+   * @param {number} samples - Number of audio samples to generate (default is a single noise burst).
+   */
+  generateSamples(samples: number): float32Array;
 
-/**
- * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
- */
-export type AlchemyDatabaseType = string | number | boolean | null; // Simulating Rust enums/types via TypeScript objects in this context
+  /**
+   * Generate spectral components based on the specified envelope type, duration, and sample rate.
+   * 
+   * @param {number} samples - Number of audio samples to generate (default is a single noise burst).
+   */
+  createNoiseSamples(samples: number): float32Array;
 
-// Helper to convert JSON-like schema definitions into abstract data types
-export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
-  return Object.values(schemaMap)
-    .filter((val): val is number => typeof val === "number" || (typeof val !== 'undefined' && typeof val !== 'string') as any); // Explicitly handle boolean flags to avoid false negatives from undefined/null handling in filter
-}
+  /**
+   * Generate spectral components based on the specified envelope type, duration, and sample rate.
+   * 
+   * @param {number} samples - Number of audio samples to generate (default is a single noise burst).
+   */
+  createNoiseSamples(duration: number): float32Array;
 
-/**
- * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
- */
-export type AlchemyDatabaseType = string | number | boolean | null; // Simulating Rust enums/types via TypeScript objects in this context
+  /**
+   * Generate spectral components based on the specified envelope type, duration, and sample rate.
+   * 
+   * @param {number} samples - Number of audio samples to generate (default is a single noise burst).
+   */
+  createNoiseSamples(duration: number): float32Array;
 
-// Helper to convert JSON-like schema definitions into abstract data types
-export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
-  return Object.values(schemaMap)
-    .filter((val): val is number => typeof val === "number" || (typeof val !== 'undefined' && typeof val !== 'string') as any); // Explicitly handle boolean flags to avoid false negatives from undefined/null handling in filter
+  /**
+   * Generate spectral components based on the specified envelope type, duration, and sample rate.
+   * 
+   * @param {number} samples - Number of audio samples to generate (default is a single noise burst).
+   */
+  createNoiseSamples(duration: number): float32Array;
 
-/**
- * Abstract Schema Definition (C-style)
- */
-interface AlchemySchema {
-  [key: string]: string; // Column name -> value in C/C# style struct definition
-}
+  /**
+   * Generate spectral components based on the specified envelope type, duration, and sample rate.
+   * 
+   * @param {number} samples - Number of audio samples to generate (default is a single noise burst).
+   */
+  createNoiseSamples(duration: number): float32Array;
 
-// Helper to convert C-style struct definitions into TypeScript types for easier mapping
-export function schemaToType(schemaMap: AlchemySchema): Type[] {
-  return Object.values(schemaMap).map((val) => (typeof val === "string" ? "string" : typeof val === "number" ? "integer" : null));
-}
+  /**
+   * Generate spectral components based on the specified envelope type, duration, and sample rate.
+   * 
+   * @param {number} samples - Number of audio samples to generate (default is a single noise burst).
+   */
+  createNoiseSamples(duration: number): float32Array;
 
-/**
- * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
- */
-export type AlchemyDatabaseType = string | number | boolean | undefined; // Simulating Rust enums/types via TypeScript objects in this context
+  /**
+   * Generate spectral components based on the specified envelope type, duration, and sample rate.
+   * 
+   * @param {number} samples - Number of audio samples to generate (default is a single noise burst).
+   */
+  createNoiseSamples(duration: number): float32Array;
 
-// Helper to convert JSON-like schema definitions into abstract data types
-export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
-  return Object.values(schemaMap)
-    .filter((val): val is number => typeof val === "number" || (typeof val !== 'undefined' && typeof val !== 'string') as any); // Explicitly handle boolean flags to avoid false negatives from undefined/null handling in filter
+  /**
+   * Generate spectral components based on the specified envelope type, duration, and sample rate.
+   * 
+   * @param {number} samples - Number of audio samples to generate (default is a single noise burst).
+   */
+  createNoiseSamples(duration: number): float32Array;
 
-/**
- * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
- */
-export type AlchemyDatabaseType = string | number | boolean | null; // Simulating Rust enums/types via TypeScript objects in this context
-
-// Helper to convert JSON-like schema definitions into abstract data types
-export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
-  return Object.values(schema
+  /**
+   * Generate spectral components based on the specified envelope type, duration, and sample rate.
+   * 
+   * @param {number}
