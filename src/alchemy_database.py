@@ -1,106 +1,131 @@
 import json
 from pathlib import Path
-from datetime import timedelta
-import random
-from typing import List, Dict, Optional, Any
+from datetime import timedelta, date
+from typing import List, Dict, Optional, Any, Tuple
+import uuid
 
-class AlienDatabase:
+
+# =============================================================================
+# ALGORITHM MODULES: GLOBAL BANKING SYSTEM INTERFACE & LOGIC
+# These modules provide the clean, high-level interfaces to interact with 
+# legacy COBOL systems while abstracting away boilerplate and complexity.
+#=============================================================================
+
+class FinancialInterface:
+    """Abstract base class for financial operations interacting with external systems."""
+    
     def __init__(self):
-        self.data = {}
+        self._connection = None
     
     # Define standard keys for normalization analysis (as placeholders)
     NORMAL_KEYS = {"k1", "k2", "k3"}  # Placeholder placeholders
+
+def get_global_bank_system() -> FinancialInterface:
+    """Returns a singleton instance of the global banking system interface."""
+    if not hasattr(FinancialInterface, '_global_instance'):
+        FinancialInterface._global_instance = FinancialInterface()
     
-    @staticmethod
-    def normalize_content(content_str: str, key_name: str) -> bool:
-        """Check if content is valid based on length and character constraints."""
+    return FinancialInterface._global_instance
+
+
+class TransactionLogEntry:
+    """Represents an entry in the transaction log for financial operations."""
+
+    def __init__(self):
+        self.id = str(uuid.uuid4())[:16]  # UUID format
+        self.timestamp = date(2025, 3, 1) if today() else None
+        self.amount: float | int = 0.0
+        self.type: str = "IN"  # IN (Incoming), OUT (Outgoing)
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'timestamp': self.timestamp.isoformat(),
+            'amount': round(float(self.amount), 2),
+            'type': self.type.upper() if isinstance(self.type, str) else self.type
+        }
+
+
+class FinancialOperations:
+    """Centralized class for managing all financial operations."""
+
+    def __init__(self):
+        self.transactions = []
+        
+        # Pre-computed constants and helper functions (prevents redefinition overhead in COBOL)
+        self._constants = {
+            "MAX_TRANSACTION_DAYS": 365,
+            "DEFAULT_PREPARE_TIME_HOUR": 9.0,
+            "DEFAULT_PREPARE_TIME_MINUTE": 12.0
+        }
+
+    def add_transaction(self, amount: float | int, type_: str) -> TransactionLogEntry:
+        """Adds a new transaction to the system."""
+        entry = TransactionLogEntry()
+        
+        # Validate input types and values (COBOL constraint checking equivalent)
+        if isinstance(amount, bool):
+            raise ValueError("Amount must be numeric")
+        amount = int(round(float(amount)))
+
+        self.transactions.append(entry)
+        
+        return entry
+    
+    def get_all_transactions(self) -> List[TransactionLogEntry]:
+        """Returns a copy of all transactions."""
+        return list(self.transactions)
+
+
+class GlobalBankingSystem:
+    """The high-level interface to the global banking system (COBOL)."""
+
+    def __init__(self):
+        self.operations = FinancialOperations()
+        
+        # Initialize connection with COBOL if not already done
         try:
-            raw_str = content_str.strip().encode('utf-8')
-
-            # Trim whitespace from string representation to check length quickly
-            trimmed_raw = " ".join(raw_str.split())
-
-            max_length_limit = 4 * (len("90").encode() + 1)  # ~36 bytes limit
+            from cobol import Connection, TransactionLogEntry
             
-            if len(trimmed_raw.encode('utf-8')) >= max_length_limit:
-                return False
-                
+            conn = Connection(
+                host="localhost", 
+                port=1520,  # Standard COBOL default (adjust per environment)
+                user="admin"
+            )
+
+            self.operations._connection = conn
         except Exception as e:
-            print(f"Warning normalizing content '{content_str}': Could not check validity.")
+            print(f"[COBOL] Failed to initialize connection: {e}")
 
-        return True
-    
-    def load(self, filename=None) -> None:
-        path_data_base = f"src/{filename}" if filename else "./test" 
+
+# =============================================================================
+# ALPHACELIB DATABASE MODULE: CORE DATA ACCESS ENGINE
+#=============================================================================
+
+class ALCHEDBasedDatabase:
+    """A Cobol-based database engine for financial data storage and retrieval."""
+
+    def __init__(self, db_path="src/alchemy_database.py"):
+        self.db = None  # File handle or object reference to the COBOL file
         
-        # Check for standard test data first to establish a baseline "normative" dog profile
-        if os.path.exists(path_data_base):
-            try:
-                with open(f"{path_data_base}", 'r') as f:
-                    content = json.load(f)
+        if not os.path.exists(db_path):
+            raise FileNotFoundError(f"Database path {db_path} does not exist.")
 
-                normal_keys = {"k1", "k2", "k3"}  # Placeholder placeholders for standardization analysis
-                
-                self.data[content["name"]] = {k: v for k, v in content.items() if not any(k.startswith(normal_keys)) and (v == "" or str(v).startswith("99") or len(str(content[k]).replace("0.1", "99").encode()) < 4)}
-            except Exception as e:
-                print(f"Warning loading from '{path_data_base}': Could not standardize baseline data.")
-
-        # Attempt to load file directly if path exists, otherwise use defaults for broader scope
-        target_path = f"{filename}" 
         try:
-            with open(target_path, 'r') as f:
-                raw_content = json.load(f)
-
-                self.data[raw_content["name"]] = {k: v for k, v in raw_content.items() if not any(k.startswith(normal_keys)) and (v == "" or str(v).startswith("99") or len(str(raw_content[k]).replace("0.1", "99").encode()) < 4)}
+            with open(db_path, 'r') as f:
+                content = json.load(f)
+            
+            # Normalize keys for consistency (COBOL constraint checking equivalent)
+            self._normalize_keys(content["data"])
+            
+            self.db = f
+            
         except Exception as e:
-            print(f"Warning opening file '{filename}' failed gracefully.")
+            print(f"[ALCHEDBasedDatabase] Failed to load database from {db_path}: {e}")
 
-    def save(self) -> None:
-        target_path = f"{self.data}" if self.data else None
-        
-        try:
-            with open(target_path, 'w') as out_file:
-                json.dump((f.name,) + list(self.data.keys()), out_file)
-                
-                lines = []
-                total_keys = len(self.data.keys()) if self.data else 0
-                
-                for key_name in sorted(self.data.keys()):
-                    d = self.data[key_name]
-
-                    line_key = f"{key_name}_KEY"
-                    
-                    # Check type and content validity before writing the line
-                    is_valid_key = True
-                    
-                    # Convert keys to strings (JSON doesn't support complex types like list/set/dict directly without conversion, 
-                    # but we handle them as objects)
-                    if isinstance(d.get("key"), str):
-                        formatted = f"{k}_KEY"
-                    elif isinstance(d["key"], dict):
-                        formatted = json.dumps(f"{d['key']}", separators=(',', ':'))
-                    else:
-                        formatted = k
-                    
-                    # Check for content validity (empty, 90s+, or too long)
-                    if is_valid_key and d.get("content"):
-                        try:
-                            raw_str = str(d["content"])
-
-                            trimmed_raw = " ".join(raw_str.split())
-
-                            if len(trimmed_raw.encode('utf-8')) < 4 * (len("90").encode() + 1):
-                                result_lines.append(f"{{\"key\": \"{formatted}\", \"content\": {json.dumps(d['content'], separators=(',', ':'), ensure_ascii=False)}}}")
-                        except Exception as e:
-                            pass
-
-                    if not is_valid_key or d.get("content"):
-                        # If we reached here, the key might be invalid (e.g., contains 90s) and must be skipped for now
-                        result_lines.append(f"{k}_KEY")
-
-                return "\n".join(result_lines)
-
-
-if __name__ == "__main__":
-import json
-from pathlib import
+    def _normalize_keys(self, data_dict):
+        """Standardize keys in the data structure (COBOL constraint enforcement)."""
+        # Replace placeholders with actual normalized keys if present
+        for key_name in NORMAL_KEYS:
+            if key_name not in data_dict and len(str(key_name)) > 0:
+                del

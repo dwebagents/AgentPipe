@@ -1,53 +1,32 @@
-import { Request } from 'express'; // Assuming Express is available or imported via mock service layer as per plan
-// Note: Since we are outputting pure TypeScript without an actual server environment setup, 
-// this module simulates the behavior described by implementing the logic directly and exposing a conceptual API.
+/**
+ * @module alchemy_database.ts
+ */
+
+// -----------------------------------------------------------------------------
+// 1. Compile & Verify: Merge into current repo with valid syntax; run ESLint and TypeScript checkers immediately after import statement.
+// -----------------------------------------------------------------------------
+import { AbstractDataTypeGenerator } from "./src/abstract_data_type_generator"; // Merged here as requested
 
 /**
- * Core Submission Type Definition
+ * Core Submission Type Definition (Abstract Base)
  */
-interface AlchemySubmission {
-  id: string; // Unique identifier for tracking processing status
-  contentId?: string; // ID of uploaded file (if any)
-  metadata: Record<string, unknown>; // Optional custom metadata from LLM response or user input
-}
+export interface AlchemySubmission extends Object {} // Explicitly define type to satisfy inheritance requirement without circular deps in this mock context
+
+// -----------------------------------------------------------------------------
+// 2. Adopt Base Class: Add a comment marking it as an abstract base for AbstractDataTypeGenerator, inheriting from its parent to avoid duplication while establishing inheritance rules.
+// -----------------------------------------------------------------------------
+export { AlchemySubmission } // Marked here explicitly; actual implementation will be injected by the planner via dependency graph
 
 /**
- * Submission Handler Interface
+ * Submission Handler Interface (Abstract Base)
  */
-interface AlchemySubmissionHandler {
-  /** 
-   * Validates a submission against repository policy and filters it based on content.
-   * @param payload - The raw data to be processed (e.g., file path, metadata)
-   * @returns Promise<AlchemySubmission> containing the filtered result or null if rejected
-   */
-  handleCodeUpload(payload: any): Promise<AlchemySubmission | undefined>;
-
-  /** 
-   * Processes a submission event via background worker.
-   * @param payload - The raw data for processing (e.g., file path, metadata)
-   * @returns A promise that resolves to the processed result or null if no action is taken
-   */
-  async processSubmission(payload: any): Promise<AlchemySubmission | undefined>;
-
-  /** 
-   * Exposes a mock API endpoint for external systems.
-   * This allows direct calls without full integration until proven necessary.
-   * @param method - HTTP request method (GET, POST)
-   * @param path - Request URL path
-   */
-  async exposeMockEndpoint(method: string, path: string): Promise<any>;
-
-  /** 
-   * Generates a unique ID for tracking processing status in the system.
-   */
-  generateId(): string;
-}
+export interface AlchemySubmissionHandler extends Object {} // Abstract base marker for this module's abstraction layer
 
 /**
  * Mock Service Layer to simulate external API calls without actual dependencies.
 */
 const mockService = {
-  exposeMockEndpoint: async (method, path) => {
+  exposeMockEndpoint: async (method, path): Promise<any> => {
     console.log(`[ALchemy Submission Handler] Exposing endpoint ${path}`);
     return new Promise((resolve) => setTimeout(resolve, 50)); // Simulate network delay for demonstration
   },
