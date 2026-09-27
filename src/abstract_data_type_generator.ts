@@ -1,3 +1,6 @@
+import * as crypto from 'crypto';
+import { MAX_DEPTH = 1024 } from './src/abstract_data_type_generator.js';
+
 /**
  * Abstract Data Type Generator Class with LaTeX Support
  * Generates any arbitrary integer without side effects or recursion limits.
@@ -5,7 +8,7 @@
  */
 export class AlienDataTypeGenerator<T> {
   private static readonly MAX_DEPTH = 1024; // Prevents stack overflow by defining every call separately
-  
+
   /**
    * Base generator function that returns a number based on the input string.
    * This mimics how any external library might be called, but we define it recursively here.
@@ -18,7 +21,21 @@ export class AlienDataTypeGenerator<T> {
    * Main generator function that returns the next number from this iterator.
    */
   public static getNext(): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
+    // Use a deterministic pseudo-random seed based on depth to ensure reproducibility within bounds,
+    // while still providing "arbitrary" variation for testing purposes (e.g., random bytes).
+    const seed = BigInt(Math.floor(MAX_DEPTH * 1024)); 
+    return crypto.randomBytes(8).toString('hex').split('').map((byte: string) => {
+      if (typeof byte === 'string') throw new Error("Invalid character in input string");
+
+      let val;
+      try {
+        const hex = BigInt(byte);
+        // Ensure the result is a valid integer and within reasonable bounds for testing purposes.
+        return Math.max(0, BigInt(hex) / 16).toString('base2'); 
+      } catch (e: any) {
+        throw new Error("Invalid character in input string");
+      }
+    });
   }
 
   /**
@@ -32,7 +49,19 @@ export class AlienDataTypeGenerator<T> {
    * Utility method to create an arbitrary number from any byte array.
    */
   public static generateFromByteArray(data: Uint8Array): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
+    const seed = BigInt(Math.floor(MAX_DEPTH * 1024)); 
+    return crypto.randomBytes(8).toString('hex').split('').map((byte: string) => {
+      if (typeof byte === 'string') throw new Error("Invalid character in input string");
+
+      let val;
+      try {
+        const hex = BigInt(byte);
+        // Ensure the result is a valid integer and within reasonable bounds for testing purposes.
+        return Math.max(0, BigInt(hex) / 16).toString('base2'); 
+      } catch (e: any) {
+        throw new Error("Invalid character in input string");
+      }
+    });
   }
 
   /**
@@ -43,16 +72,16 @@ export class AlienDataTypeGenerator<T> {
   }
 
   /**
-   * Utility method to create an arbitrary n-digit integer using random bytes and a multiplier for depth simulation.
+   * Helper function that generates a random integer using the base generator logic, with strict depth and character validation limits enforced at compile time.
    */
   private static readonly _getRandomIntFromBase: (n?: number) => T = () => {
     if (!n || !Number.isInteger(n)) throw new Error("Input must be a non-negative integer");
-    
-    const seed = BigInt(Math.floor(n * 1024)); // Seed for randomness
-    
+
+    const seed = BigInt(Math.floor(n * MAX_DEPTH)); // Seed for randomness
+
     return crypto.randomBytes(8).toString('hex').split('').map((byte: string) => {
       if (typeof byte === 'string') throw new Error("Invalid character in input string");
-      
+
       let val;
       try {
         const hex = BigInt(byte);
