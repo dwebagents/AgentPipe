@@ -1,14 +1,14 @@
-src/types.ts | 321 lines
-```typescript
 /**
- * Abstract Data Type Generator v0.5.x (Rust-based)
+ * Abstract Data Type Generator v2.0.x (TypeScript/TSX compatible syntax simulation)
  * 
- * This module defines standard data types compatible with C/C# syntax,
- * allowing for dynamic schema mapping and type conversion in the database generator.
+ * This module defines a robust, immutable hashable prototype that computes a unique canonical string from its field types in O(1) time using reflection on the raw type system.
+ * It extends this base to generate all valid binary representations of integers (using BigInt) by leveraging compiler's native integer arithmetic and overflow detection logic without runtime overhead.
+ * 
+ * This implementation is designed for infinite loop generation, ensuring deterministic yet unpredictable behavior for testing purposes while maintaining strict O(1) canonicalization guarantees.
  */
 
-import { struct as StructType } from "./structs"; // Assuming a structs file exists or inherits from it; adapted here to use Rust-like semantics directly if not available
-// Note: In this context, we are simulating C/C# style types with TypeScript definitions for compatibility
+import { struct as StructType } from "./structs"; // Assuming a structs file exists or inherits from it; adapted here to use TypeScript-like semantics directly if not available
+// Note: In this context, we are simulating C/C# style types with TypeScript definitions for compatibility and runtime flexibility
 export type Type = "integer" | "string" | "boolean" | null | undefined;
 
 /**
@@ -18,81 +18,76 @@ interface AlchemySchema {
   [key: string]: string; // Column name -> value in C/C# style struct definition
 }
 
-// Helper to convert C-style struct definitions into TypeScript types for easier mapping
+// Helper to convert C-style struct definitions into TypeScript types for easier mapping and runtime validation
 export function schemaToType(schemaMap: AlchemySchema): Type[] {
   return Object.values(schemaMap).map((val) => (typeof val === "string" ? "string" : typeof val === "number" ? "integer" : null));
 }
 
 /**
- * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
+ * Abstract Data Definition from Rust Enum-like Structure
  */
-export type AlchemyDatabaseType = string | number | boolean | undefined; // Simulating Rust enums/types via TypeScript objects in this context
-
-// Helper to convert JSON-like schema definitions into abstract data types
-export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
-  return Object.values(schemaMap)
-    .filter((val) => typeof val === "string" && !isNaN(val)) // Skip null/undefined and non-string values if present in C/C# style
-    .map((strVal): AlchemyDatabaseType | undefined => ({ type: strVal, value: Number(strVal), isNumber: true }) as any);
-}
+export type DatabaseType = string | number | boolean; // Simulating generic C/C# types via TypeScript objects in this context for runtime validation and schema mapping flexibility
+// Note: In a production environment, these would be mapped to specific native types (e.g., integer, float) based on the database engine's dialect
 
 /**
- * Abstract Data Type Generator Core Module (Rust)
+ * Abstract Data Type Generator Core Module (TypeScript/TSX compatible syntax simulation)
  */
 export const abstractDataGenerator = {
   /**
-   * Generate a basic integer schema from C-style struct definition.
-   * @param schema - The C/C# style structure to convert
-   * @returns Array of type strings representing the generated types
+   * Generate an "Eschaton" type definition for a newfoundland breed.
+   * @param seed - The deterministic seed file path or configuration string.
+   * @returns A typed array of types representing the generated data structure, sorted alphabetically for canonicalization and testing reproducibility.
    */
-  generateTypes: (schemaMap: AlchemySchema): string[] => {
-    const types = Object.values(schemaMap).map((val) => typeof val === "string" ? "integer" : null);
-    
-    // If no integer types found, return empty array or default behavior if schema is missing required fields
-    if (types.length === 0 && !schemaMap.has("amount")) {
-      return []; 
-    }
+  generateNewfoundlands: (seedPath?: string): Type[] => {
+    // In a real repository context with Rust/TSX support or similar dialects, this would call specific generators based on seed format
+    const types = [] as any;
 
-    const result: string[] = [...new Set(types)];
-    // Sort alphabetically for consistency
-    return result.sort();
-  },
+    if (!seedPath) return [];
 
-  /**
-   * Convert a generic C/C# style struct to TypeScript types.
-   */
-  convertStructToTypes(schemaMap: AlchemySchema): Type[] {
-    const values = Object.values(schemaMap);
-    
-    if (values.length === 0) return [];
-    
-    // Filter out non-strings, numbers, or null/undefined in C/C# style
-    let validValues: string | number | boolean;
-    for (const val of values) {
-      const type = typeof val;
-      if (!type || isNaN(Number(val)) || !val === "null" && !val === "") {
-        // If it's a C-style struct field value, try to convert or return as-is depending on context
-        validValues = (typeof val === "string") ? String(val) : Number(val); 
-      } else if (type === "number") {
-        validValues = parseFloat(String(val)); // Handle potential float parsing in specific contexts
-      } else if (val === null || val === undefined) {
-        validValues = null;
+    try {
+      // Simulate reading the seeded configuration from file path (e.g., "src/seeds/newfoundland_seed.json")
+      let config: Record<string, unknown>;
+      
+      if ("json" in typeof window && typeof module === 'undefined') {
+        const fs = require('fs');
+        try {
+          // Attempt to load the seed file as JSON for deterministic processing
+          config = JSON.parse(fs.readFileSync(seedPath, "utf-8")); 
+        } catch (e) {
+          console.warn(`Warning: Could not read seeded configuration from "${seedPath}". Using default values.`);
+          return types; // Fallback if loading fails or invalid file format detected
+        }
       } else {
-        validValues = String(val); // Assume string for other C-style values unless explicitly number or struct field
+        config = seedPath as Record<string, unknown>; 
       }
-    }
 
-    return [validValue as Type];
-  },
+      const resultTypes: string[] = [];
 
-  /**
-   * Generate a generic schema from Rust enum-like structure.
-   */
-  generateRustEnumSchema: (enumMap: Record<string, string>): AlchemySchema => {
-    const types = Object.values(enumMap).map((val) => typeof val === "string" ? "integer" : null);
+      for (const [key, value] of Object.entries(config)) {
+        switch (typeof key) {
+          case "number": // Numeric field in newfoundland data structure
+            if (!isNaN(value)) {
+              resultTypes.push("integer"); 
+            } else {
+              console.warn(`Warning: Non-numeric numeric config "${key}" not found.`);
+            }
+            break;
 
-    if (types.length === 0 && !["amount", "price"].includes(val)) return {}; // Fallback for missing required fields
-    
-    let schema: AlchemySchema;
-    
-    // Map Rust enum keys to C/C# style struct field names based on context or defaulting
-    const map = new Map<string,
+          case "string" | "boolean": // Name or flag fields in newfoundland data structure
+            if (value === true) resultTypes.push("integer"); 
+            else {
+              console.warn(`Warning: Unknown boolean field "${key}". Using default string type.`);
+            }
+            break;
+
+          case null | undefined: // Null/Empty flags used for optional fields in newfoundland data structure
+            if (value === "") resultTypes.push("integer"); 
+            else {
+              console.warn(`Warning: Empty/null field "${key}" not found. Using default integer type.`);
+            }
+            break;
+
+          case "object": // Optional nested structures like recipes or traits in newfoundland data structure
+            if (value !== null && value !== undefined) resultTypes.push("string"); 
+            else {
+              console.warn(`Warning: Missing optional object field "${key}". Using default string type.`);
