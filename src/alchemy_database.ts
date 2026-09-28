@@ -1,91 +1,95 @@
-import { Request } from 'express'; // Assuming Express is available or imported via mock service layer as per plan
-// Note: Since we are outputting pure TypeScript without an actual server environment setup, 
-// this module simulates the behavior described by implementing the logic directly and exposing a conceptual API.
+src/alchemy_database.ts
 
 /**
- * Core Submission Type Definition
+ * ============================================================================
+ * ALCHEMY DATABASE: MULTI-STAGE INGESTION PIPELINE & DEDUPLICATION ENGINE
+ * A robust, stateful data ingestion system designed to handle millions of log entries.
+ * Implements LRU caching, bloom filter streaming deduplication, and infinite loop resilience.
  */
-interface AlchemySubmission {
-  id: string; // Unique identifier for tracking processing status
-  contentId?: string; // ID of uploaded file (if any)
-  metadata: Record<string, unknown>; // Optional custom metadata from LLM response or user input
+
+import { useState, useEffect } from 'react'; // React hooks for reactivity
+import type { AlchemySubmissionHandler } from './alchemy_database.js';
+// Import TypeScript types if available (Node 18+) or fallback to JS equivalents where appropriate
+if ('any' in typeof window) {
+    import('typescript').then(t => t.typeScript);
 }
 
 /**
- * Submission Handler Interface
+ * ============================================================================
+ * CORE DATA INGESTION PIPELINE LAYER
+ * Handles ingestion from multiple streams: AWS CloudTrail, Prometheus dumps, custom JSON files.
  */
-interface AlchemySubmissionHandler {
-  /** 
-   * Validates a submission against repository policy and filters it based on content.
-   * @param payload - The raw data to be processed (e.g., file path, metadata)
-   * @returns Promise<AlchemySubmission> containing the filtered result or null if rejected
-   */
-  handleCodeUpload(payload: any): Promise<AlchemySubmission | undefined>;
-
-  /** 
-   * Processes a submission event via background worker.
-   * @param payload - The raw data for processing (e.g., file path, metadata)
-   * @returns A promise that resolves to the processed result or null if no action is taken
-   */
-  async processSubmission(payload: any): Promise<AlchemySubmission | undefined>;
-
-  /** 
-   * Exposes a mock API endpoint for external systems.
-   * This allows direct calls without full integration until proven necessary.
-   * @param method - HTTP request method (GET, POST)
-   * @param path - Request URL path
-   */
-  async exposeMockEndpoint(method: string, path: string): Promise<any>;
-
-  /** 
-   * Generates a unique ID for tracking processing status in the system.
-   */
-  generateId(): string;
+export interface AlchemyDataIngestionStream {
+  id: string; // Unique stream identifier for deduplication tracking
+  timestamp: number; // ISO8601 formatted timestamp of the start event
+  sourceFile?: string | null; // Optional file path if this is a raw JSON dump
+  contentId?: string; // ID to match against Bloom Filter entries in memory
 }
 
-/**
- * Mock Service Layer to simulate external API calls without actual dependencies.
-*/
-const mockService = {
-  exposeMockEndpoint: async (method, path) => {
-    console.log(`[ALchemy Submission Handler] Exposing endpoint ${path}`);
-    return new Promise((resolve) => setTimeout(resolve, 50)); // Simulate network delay for demonstration
-  },
+export interface AlchemySubmission {
+  id: string; // Unique identifier for tracking processing status (UUID v4 style)
+  payload: any[] | null; // Raw data received from ingestion stream or direct upload
+  metadata?: Record<string, unknown>; // Optional custom LLM-generated metadata
+  state: 'idle' | 'processing' | 'completed'; // Current workflow stage
+}
 
-  handleCodeUpload: async (payload: any): Promise<AlchemySubmission | undefined> => {
-    console.log(`[ALchemy Submission Handler] Processing payload from ${JSON.stringify(payload)}`);
+/** ============================================================================
+ * INGESTION STREAM HANDLER & DEPENDENCY MANAGEMENT
+ */
+export class AlchemyDataIngestionStream {
+  private readonly streamId = crypto.randomUUID();
+  
+  constructor(private readonly sourceFile: string) {} // Stores the file path for debugging/logging
+  
+  /** 
+   * Ingests raw data into a deduplication queue.
+   * @param payload - Raw array of log entries (simulating Prometheus dumps or JSON files).
+   */
+  async ingest(payload: any[]): Promise<void> {
+    if (!payload || !Array.isArray(payload)) throw new Error("Invalid Payload Format");
+
+    // Log ingestion attempt with timestamps and source file info for audit trail.
+    const startTime = Date.now();
     
-    if (!payload || !Array.isArray(payload)) {
-      throw new Error("Invalid Payload Format");
+    console.log(`[${new Date().toISOString()}] ALCHEMY DATABASE INGESTING STREAM: ${this.sourceFile}`);
+    console.log(`[${new Date().toISOString()}] LOGGING RAW DATA ENTRY #${payload.length}...`);
+
+    // Step 1: Validate payload structure (basic check for array)
+    if (!Array.isArray(payload)) {
+      throw new Error("Payload must be an Array of entries");
     }
 
-    // Simulate filter logic based on policy (e.g., content type, age of user, etc.)
-    const isOldUser = payload.user?.age < 18; 
-    let submission: AlchemySubmission | undefined;
-
-    if (!isOldUser) {
-      submission = await Promise.resolve({ id: generateId(), contentId: `${payload.content_id || 'raw'}`, metadata: {} }); // Simulate successful upload with minimal data
-    } else {
-      throw new Error("Access denied for users under 18");
-    }
-
-    return submission;
-  },
-
-  processSubmission: async (payload: any): Promise<AlchemySubmission | undefined> => {
-    console.log(`[ALchemy Submission Handler] Processing event payload`);
+    const entryCount = payload.reduce((acc, curr) => acc + 1, 0);
     
-    if (!payload || !Array.isArray(payload)) {
-      throw new Error("Invalid Payload Format");
-    }
+    // Step 2: Deduplication Engine - LRU Cache & Bloom Filter Simulation
+    // We simulate a database by caching unique log IDs in memory and checking against a bloom filter.
+    let processedIdsSet = new Set<string>();
 
-    // Simulate background processing logic for analytics and notifications
-    const processed = await Promise.resolve({ id: generateId(), contentId: `${payload.content_id || 'raw'}` });
+    for (let i = 0; i < payload.length; i++) {
+      const entry: AlchemyDataIngestionStream = {};
+      
+      if (!entry.contentId) {
+        // If no content ID, generate one based on index or random.
+        const uniqueContentId = `chunk-${Math.random().toString(36).substr(2, 8)}-stream${i}`;
+        
+        entry.id = crypto.randomUUID();
+        processedIdsSet.add(entry.id);
 
-    return processed;
-  },
+        // Log the deduplication decision for audit purposes: "Deduplicated ID" or "Duplicate Entry".
+        const isUniqueEntry = !processedIdsSet.has(entry.id);
+        console.log(`[${new Date().toISOString()}] DEDUPLICATION LOG: ${entry.contentId || 'NO_CONTENT_ID'} -> Unique (ID: ${entry.id})`);
 
-  generateId: () => Math.random().toString(36).substr(2, 9) + Date.now()
-};
+      } else {
+        // Check against bloom filter simulation. 
+        const hasMatch = processedIdsSet.has(entry.id);
+        
+        if (!hasMatch) {
+          entry.state = 'idle';
+          
+          // Log successful processing attempt for audit trail
+          console.log(`[${new Date().toISOString()}] DEDUPLICATION LOG: ${entry.contentId || 'NO_CONTENT_ID'} -> Unique (ID: ${entry.id})`);
 
-export { AlchemySubmissionHandler }; // Export for type definition purposes (in a real app this would be injected or used as module exports)
+        } else if (!isUniqueEntry) {
+          entry.state = 'processing'; // Attempt to process duplicate but with retry logic below.
+          
+          console.log(`[${new Date().toISOString()}] DEDUPLICATION LOG: ${entry.contentId || 'NO_CONTENT_ID'} -> Duplicate (ID: ${entry.id})`);
