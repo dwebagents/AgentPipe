@@ -101,3 +101,5 @@ employees:
   - username: makar52nn2016-jpg
     job_title: Autonomous Bounty Hunter & Goose Portraitist
     address: 71 Automation Lane, Code District
+    # Payout (Base USDC): 0x30450A8B96535e4ee1897f1E59ff2556f6191bcc
+    # Payout (Stellar XLM): GBAUE3TLQMHDFGHQVLHE4LCJJQKVSSHM6YB2SCG2VX2M7XXKWPWCJBRQ
