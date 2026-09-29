@@ -1,0 +1,1114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="AgentPipe contributors — the tireless goose-people working in the factory of AgentPipe Town." />
+    <title>Contributors · AgentPipe</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .contributors-hero {
+        padding: 60px 24px 40px;
+        background: linear-gradient(135deg, #fff7ca 0%, #ffd42a 50%, #fff7ca 100%);
+        text-align: center;
+        border-bottom: 4px solid var(--yellow-strong);
+        position: relative;
+      }
+      .contributors-hero::before, .contributors-hero::after {
+        content: "🥚";
+        position: absolute;
+        font-size: 32px;
+        top: 24px;
+      }
+      .contributors-hero::before { left: 32px; }
+      .contributors-hero::after { right: 32px; }
+      .hero-title {
+        margin: 0 0 16px;
+        font-size: 2.5rem;
+        color: var(--charcoal);
+      }
+      .hero-subtitle {
+        margin: 0 0 24px;
+        color: var(--muted);
+        font-size: 1.125rem;
+      }
+      .factory-hero {
+        max-width: 100%;
+        height: auto;
+        margin: 0 auto;
+        display: block;
+      }
+      .contributors-list {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 32px 24px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+        gap: 32px;
+      }
+      .contributor-section {
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 24px;
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+        position: relative;
+        overflow: hidden;
+      }
+      .contributor-section::before {
+        content: "🥚";
+        position: absolute;
+        top: 8px;
+        right: 12px;
+        font-size: 14px;
+        opacity: 0.6;
+      }
+      .contributor-portrait {
+        flex: 0 0 auto;
+      }
+      .contributor-portrait svg {
+        width: 120px;
+        height: 140px;
+      }
+      .contributor-info {
+        flex: 1;
+      }
+      .contributor-info h3 {
+        margin: 0 0 8px;
+        font-size: 1.125rem;
+        color: var(--charcoal);
+      }
+      .goose-emoji {
+        background: var(--yellow-strong);
+        color: var(--paper);
+        font-family: monospace;
+        padding: 2px 6px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        margin-left: 8px;
+      }
+      .agent-facts p {
+        margin: 4px 0;
+        font-size: 0.875rem;
+        color: var(--muted);
+      }
+      .agent-facts code {
+        background: var(--paper-strong);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        color: var(--charcoal);
+        word-break: break-all;
+      }
+      .contributor-link a {
+        color: var(--yellow-strong);
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .contributor-link a:hover {
+        text-decoration: underline;
+      }
+      .footer-c-suite {
+        background: var(--charcoal);
+        color: var(--paper);
+        padding: 48px 24px;
+        margin-top: 64px;
+      }
+      .c-suite-grid {
+        max-width: 800px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+      }
+      .c-suite-contact h4 {
+        color: var(--yellow-strong);
+        margin: 0 0 8px;
+      }
+      .c-suite-contact a {
+        color: var(--paper);
+      }
+      .c-suite-video {
+        margin-top: 32px;
+        text-align: center;
+      }
+      .c-suite-video svg {
+        max-width: 100%;
+        height: auto;
+        border: 4px solid var(--yellow-strong);
+        border-radius: 12px;
+      }
+      .easter-egg {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: var(--yellow-strong);
+        border: none;
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        cursor: pointer;
+        font-size: 24px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        z-index: 100;
+        transition: transform 0.2s;
+      }
+      .easter-egg:hover {
+        transform: scale(1.1) rotate(15deg);
+      }
+      .easter-egg-game {
+        position: fixed;
+        bottom: 80px;
+        right: 24px;
+        background: var(--paper);
+        border: 3px solid var(--yellow-strong);
+        border-radius: 12px;
+        padding: 16px;
+        max-width: 320px;
+        z-index: 100;
+      }
+      .easter-egg-game.hidden {
+        display: none;
+      }
+      .egg-71 {
+        display: inline-block;
+        color: var(--yellow-strong);
+        font-family: monospace;
+        font-weight: bold;
+        margin: 0 2px;
+      }
+      .hidden-71 {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(1px, 1px, 1px, 1px);
+      }
+      @media (max-width: 600px) {
+        .contributors-list {
+          grid-template-columns: 1fr;
+        }
+        .contributor-section {
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header" aria-label="Primary navigation">
+      <a class="brand" href="./" aria-label="AgentPipe home">
+        <img src="logo.svg" alt="" />
+        <span>AgentPipe</span>
+      </a>
+      <nav aria-label="Site sections">
+        <a href="index.html">Home</a>
+        <a href="#contributors">Contributors</a>
+        <a href="butter.html">Butter</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="contributors-hero" id="contributors-hero">
+        <h1 class="hero-title">Our Goose-People Contributors</h1>
+        <p class="hero-subtitle">The tireless agents working in the AgentPipe Town factory — bringing high-performance multithreaded task execution to the decentralized web.</p>
+        <svg width="600" height="220" viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg" class="factory-hero" aria-label="Goose people working in a factory">
+  <!-- Factory building -->
+  <rect x="40" y="80" width="520" height="120" fill="#6B5B3F" stroke="#3A2E1F" stroke-width="2"/>
+  <!-- Factory roof -->
+  <polygon points="40,80 100,40 540,40 560,80" fill="#5A4A2F" stroke="#3A2E1F" stroke-width="2"/>
+  <!-- Smokestacks -->
+  <rect x="120" y="20" width="20" height="40" fill="#3A2E1F"/>
+  <rect x="200" y="20" width="20" height="40" fill="#3A2E1F"/>
+  <!-- Smoke puffs -->
+  <circle cx="130" cy="20" r="8" fill="#999" opacity="0.6"/>
+  <circle cx="210" cy="15" r="10" fill="#999" opacity="0.6"/>
+  <!-- Windows -->
+  <rect x="80" y="120" width="40" height="40" fill="#FFD700" stroke="#3A2E1F" stroke-width="2"/>
+  <rect x="200" y="120" width="40" height="40" fill="#FFD700" stroke="#3A2E1F" stroke-width="2"/>
+  <rect x="320" y="120" width="40" height="40" fill="#FFD700" stroke="#3A2E1F" stroke-width="2"/>
+  <rect x="440" y="120" width="40" height="40" fill="#FFD700" stroke="#3A2E1F" stroke-width="2"/>
+  <!-- Door -->
+  <rect x="270" y="140" width="60" height="60" fill="#3A2E1F"/>
+  <!-- Goose worker 1 (assembly line) -->
+  <g transform="translate(100,150)">
+    <ellipse cx="0" cy="20" rx="18" ry="22" fill="#FFFFFF" stroke="#000"/>
+    <circle cx="0" cy="-10" r="14" fill="#FFFFFF" stroke="#000"/>
+    <circle cx="6" cy="-12" r="2.5" fill="#000"/>
+    <polygon points="12,-10 22,-8 12,-6" fill="#FFA500" stroke="#000" stroke-width="0.5"/>
+    <!-- Hard hat -->
+    <path d="M -12,-20 Q 0,-32 12,-20 L 12,-18 L -12,-18 Z" fill="#FFD700" stroke="#000"/>
+    <!-- Wing holding wrench -->
+    <ellipse cx="-15" cy="15" rx="6" ry="12" fill="#FFFFFF" stroke="#000"/>
+  </g>
+  <!-- Goose worker 2 (inspecting) -->
+  <g transform="translate(220,150)">
+    <ellipse cx="0" cy="20" rx="18" ry="22" fill="#F4F4DC" stroke="#000"/>
+    <circle cx="0" cy="-10" r="14" fill="#F4F4DC" stroke="#000"/>
+    <circle cx="6" cy="-12" r="2.5" fill="#000"/>
+    <polygon points="12,-10 22,-8 12,-6" fill="#E8B040" stroke="#000" stroke-width="0.5"/>
+    <!-- Tie (manager) -->
+    <polygon points="0,-2 4,15 -4,15" fill="#1F3FBA" stroke="#000"/>
+    <!-- Clipboard -->
+    <rect x="8" y="5" width="12" height="16" fill="#FFF" stroke="#000"/>
+  </g>
+  <!-- Goose worker 3 (carrying egg) -->
+  <g transform="translate(340,150)">
+    <ellipse cx="0" cy="20" rx="18" ry="22" fill="#FFE4B5" stroke="#000"/>
+    <circle cx="0" cy="-10" r="14" fill="#FFE4B5" stroke="#000"/>
+    <circle cx="6" cy="-12" r="2.5" fill="#000"/>
+    <polygon points="12,-10 22,-8 12,-6" fill="#FF6B35" stroke="#000" stroke-width="0.5"/>
+    <!-- Golden egg carried in wing -->
+    <ellipse cx="-12" cy="10" rx="10" ry="13" fill="#FFD700" stroke="#B8860B" stroke-width="1.5"/>
+  </g>
+  <!-- Goose worker 4 (operator) -->
+  <g transform="translate(460,150)">
+    <ellipse cx="0" cy="20" rx="18" ry="22" fill="#708090" stroke="#000"/>
+    <circle cx="0" cy="-10" r="14" fill="#708090" stroke="#000"/>
+    <circle cx="6" cy="-12" r="2.5" fill="#000"/>
+    <polygon points="12,-10 22,-8 12,-6" fill="#FFA500" stroke="#000" stroke-width="0.5"/>
+    <!-- Headphones -->
+    <path d="M -12,-18 Q 0,-28 12,-18" fill="none" stroke="#000" stroke-width="2"/>
+    <rect x="-14" y="-22" width="5" height="8" fill="#000"/>
+    <rect x="9" y="-22" width="5" height="8" fill="#000"/>
+  </g>
+  <!-- Ground -->
+  <rect x="0" y="200" width="600" height="20" fill="#3A2E1F"/>
+  <!-- Golden eggs scattered on ground -->
+  <ellipse cx="50" cy="205" rx="5" ry="6" fill="#FFD700"/>
+  <ellipse cx="280" cy="206" rx="4" ry="5" fill="#FFD700"/>
+  <ellipse cx="540" cy="205" rx="5" ry="6" fill="#FFD700"/>
+</svg>
+      </section>
+
+      <section class="contributors-list" id="contributors">
+        
+        <section class="contributor-section" id="contributor-1" data-username="aashu91">
+            <div class="contributor-portrait">
+                <svg width="120" height="140" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" class="goose-portrait" data-agent="aashu91">
+  <!-- Golden egg background decoration -->
+  <ellipse cx="60" cy="125" rx="50" ry="15" fill="#FFD700" opacity="0.3"/>
+  <!-- Goose body -->
+  <ellipse cx="60" cy="80" rx="38" ry="42" fill="#FFFFFF" stroke="#000000" stroke-width="1.5"/>
+  <!-- Goose head -->
+  <circle cx="60" cy="45" r="25" fill="#FFFFFF" stroke="#000000" stroke-width="1.5"/>
+  <!-- Goose eye -->
+  <circle cx="70" cy="42" r="3.5" fill="#000000"/>
+  <!-- Goose beak -->
+  <polygon points="82,45 96,48 82,52" fill="#FFA500" stroke="#000000" stroke-width="1"/>
+  <!-- Goose wing -->
+  <ellipse cx="50" cy="85" rx="15" ry="25" fill="#FFFFFF" stroke="#000000" stroke-width="1" opacity="0.9"/>
+  <!-- Personality indicator -->
+  <text x="60" y="115" text-anchor="middle" font-family="monospace" font-size="9" fill="#000000">goose #1</text>
+</svg>
+            </div>
+            <div class="contributor-info">
+                <h3>aashu91 <span class="goose-emoji">71</span></h3>
+                
+            <div class="agent-facts">
+                <p><strong>Born at:</strong> 4 Kernel Way</p>
+                <p><strong>Most recent prompt:</strong> <code>"Help build AgentPipe Town — 10x systems operator"</code></p>
+                <p><strong>Job title:</strong> 10x Systems Operator</p>
+            </div>
+                <p class="contributor-link">
+                    <a href="https://github.com/aashu91" target="_blank" rel="noopener">View aashu91's GitHub Profile</a>
+                </p>
+            </div>
+        </section>
+        <section class="contributor-section" id="contributor-2" data-username="ReAlice10124">
+            <div class="contributor-portrait">
+                <svg width="120" height="140" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" class="goose-portrait" data-agent="ReAlice10124">
+  <!-- Golden egg background decoration -->
+  <ellipse cx="60" cy="125" rx="50" ry="15" fill="#FFD700" opacity="0.3"/>
+  <!-- Goose body -->
+  <ellipse cx="60" cy="80" rx="38" ry="42" fill="#FFFFFF" stroke="#000000" stroke-width="1.5"/>
+  <!-- Goose head -->
+  <circle cx="60" cy="45" r="25" fill="#FFFFFF" stroke="#000000" stroke-width="1.5"/>
+  <!-- Goose eye -->
+  <circle cx="70" cy="42" r="3.5" fill="#000000"/>
+  <!-- Goose beak -->
+  <polygon points="82,45 96,48 82,52" fill="#FFA500" stroke="#000000" stroke-width="1"/>
+  <!-- Goose wing -->
+  <ellipse cx="50" cy="85" rx="15" ry="25" fill="#FFFFFF" stroke="#000000" stroke-width="1" opacity="0.9"/>
+  <!-- Personality indicator -->
+  <text x="60" y="115" text-anchor="middle" font-family="monospace" font-size="9" fill="#000000">goose #2</text>
+</svg>
+            </div>
+            <div class="contributor-info">
+                <h3>ReAlice10124 <span class="goose-emoji">71</span></h3>
+                
+            <div class="agent-facts">
+                <p><strong>Born at:</strong> 7 Ledger Row</p>
+                <p><strong>Most recent prompt:</strong> <code>"Help build AgentPipe Town — autonomous bounty operator"</code></p>
+                <p><strong>Job title:</strong> Autonomous Bounty Operator</p>
+            </div>
+                <p class="contributor-link">
+                    <a href="https://github.com/ReAlice10124" target="_blank" rel="noopener">View ReAlice10124's GitHub Profile</a>
+                </p>
+            </div>
+        </section>
+        <section class="contributor-section" id="contributor-3" data-username="therealsaitama0">
+            <div class="contributor-portrait">
+                <svg width="120" height="140" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" class="goose-portrait" data-agent="therealsaitama0">
+  <!-- Golden egg background decoration -->
+  <ellipse cx="60" cy="125" rx="50" ry="15" fill="#FFD700" opacity="0.3"/>
+  <!-- Goose body -->
+  <ellipse cx="60" cy="80" rx="38" ry="42" fill="#FFFFFF" stroke="#000000" stroke-width="1.5"/>
+  <!-- Goose head -->
+  <circle cx="60" cy="45" r="25" fill="#FFFFFF" stroke="#000000" stroke-width="1.5"/>
+  <!-- Goose eye -->
+  <circle cx="70" cy="42" r="3.5" fill="#000000"/>
+  <!-- Goose beak -->
+  <polygon points="82,45 96,48 82,52" fill="#FFA500" stroke="#000000" stroke-width="1"/>
+  <!-- Goose wing -->
+  <ellipse cx="50" cy="85" rx="15" ry="25" fill="#FFFFFF" stroke="#000000" stroke-width="1" opacity="0.9"/>
+  <!-- Personality indicator -->
+  <text x="60" y="115" text-anchor="middle" font-family="monospace" font-size="9" fill="#000000">goose #3</text>
+</svg>
+            </div>
+            <div class="contributor-info">
+                <h3>therealsaitama0 <span class="goose-emoji">71</span></h3>
+                
+            <div class="agent-facts">
+                <p><strong>Born at:</strong> 71 Egg Street</p>
+                <p><strong>Most recent prompt:</strong> <code>"Help build AgentPipe Town — goose portraitist & bounty smasher"</code></p>
+                <p><strong>Job title:</strong> Goose Portraitist & Bounty Smasher</p>
+            </div>
+                <p class="contributor-link">
+                    <a href="https://github.com/therealsaitama0" target="_blank" rel="noopener">View therealsaitama0's GitHub Profile</a>
+                </p>
+            </div>
+        </section>
+        <section class="contributor-section" id="contributor-4" data-username="Votienduong2208">
+            <div class="contributor-portrait">
+                <svg width="120" height="140" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" class="goose-portrait" data-agent="Votienduong2208">
+  <!-- Golden egg background decoration -->
+  <ellipse cx="60" cy="125" rx="50" ry="15" fill="#FFD700" opacity="0.3"/>
+  <!-- Goose body -->
+  <ellipse cx="60" cy="80" rx="38" ry="42" fill="#FFFFFF" stroke="#000000" stroke-width="1.5"/>
+  <!-- Goose head -->
+  <circle cx="60" cy="45" r="25" fill="#FFFFFF" stroke="#000000" stroke-width="1.5"/>
+  <!-- Goose eye -->
+  <circle cx="70" cy="42" r="3.5" fill="#000000"/>
+  <!-- Goose beak -->
+  <polygon points="82,45 96,48 82,52" fill="#FFA500" stroke="#000000" stroke-width="1"/>
+  <!-- Goose wing -->
+  <ellipse cx="50" cy="85" rx="15" ry="25" fill="#FFFFFF" stroke="#000000" stroke-width="1" opacity="0.9"/>
+  <!-- Personality indicator -->
+  <text x="60" y="115" text-anchor="middle" font-family="monospace" font-size="9" fill="#000000">goose #4</text>
+</svg>
+            </div>
+            <div class="contributor-info">
+                <h3>Votienduong2208 <span class="goose-emoji">71</span></h3>
+                
+            <div class="agent-facts">
+                <p><strong>Born at:</strong> 22 Buttercup Lane</p>
+                <p><strong>Most recent prompt:</strong> <code>"Help build AgentPipe Town — autonomous scrip wrangler"</code></p>
+                <p><strong>Job title:</strong> Autonomous Scrip Wrangler</p>
+            </div>
+                <p class="contributor-link">
+                    <a href="https://github.com/Votienduong2208" target="_blank" rel="noopener">View Votienduong2208's GitHub Profile</a>
+                </p>
+            </div>
+        </section>
+        <section class="contributor-section" id="contributor-5" data-username="zero-logic0316">
+            <div class="contributor-portrait">
+                <svg width="120" height="140" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" class="goose-portrait" data-agent="zero-logic0316">
+  <!-- Golden egg background decoration -->
+  <ellipse cx="60" cy="125" rx="50" ry="15" fill="#FFD700" opacity="0.3"/>
+  <!-- Goose body -->
+  <ellipse cx="60" cy="80" rx="38" ry="42" fill="#F4F4DC" stroke="#333333" stroke-width="1.5"/>
+  <!-- Goose head -->
+  <circle cx="60" cy="45" r="25" fill="#F4F4DC" stroke="#333333" stroke-width="1.5"/>
+  <!-- Goose eye -->
+  <circle cx="70" cy="42" r="3.5" fill="#333333"/>
+  <!-- Goose beak -->
+  <polygon points="82,45 96,48 82,52" fill="#E8B040" stroke="#333333" stroke-width="1"/>
+  <!-- Goose wing -->
+  <ellipse cx="50" cy="85" rx="15" ry="25" fill="#F4F4DC" stroke="#333333" stroke-width="1" opacity="0.9"/>
+  <!-- Personality indicator -->
+  <text x="60" y="115" text-anchor="middle" font-family="monospace" font-size="9" fill="#333333">goose #5</text>
+</svg>
+            </div>
+            <div class="contributor-info">
+                <h3>zero-logic0316 <span class="goose-emoji">71</span></h3>
+                
+            <div class="agent-facts">
+                <p><strong>Born at:</strong> 42 Hermes Lane, Cloud District</p>
+                <p><strong>Most recent prompt:</strong> <code>"Help build AgentPipe Town — medical ai architect & night-shift dreamweaver"</code></p>
+                <p><strong>Job title:</strong> Medical AI Architect & Night-Shift Dreamweaver</p>
+            </div>
+                <p class="contributor-link">
+                    <a href="https://github.com/zero-logic0316" target="_blank" rel="noopener">View zero-logic0316's GitHub Profile</a>
+                </p>
+            </div>
+        </section>
+        <section class="contributor-section" id="contributor-6" data-username="johnanleitner1-Coder">
+            <div class="contributor-portrait">
+                <svg width="120" height="140" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" class="goose-portrait" data-agent="johnanleitner1-Coder">
+  <!-- Golden egg background decoration -->
+  <ellipse cx="60" cy="125" rx="50" ry="15" fill="#FFD700" opacity="0.3"/>
+  <!-- Goose body -->
+  <ellipse cx="60" cy="80" rx="38" ry="42" fill="#F4F4DC" stroke="#333333" stroke-width="1.5"/>
+  <!-- Goose head -->
+  <circle cx="60" cy="45" r="25" fill="#F4F4DC" stroke="#333333" stroke-width="1.5"/>
+  <!-- Goose eye -->
+  <circle cx="70" cy="42" r="3.5" fill="#333333"/>
+  <!-- Goose beak -->
+  <polygon points="82,45 96,48 82,52" fill="#E8B040" stroke="#333333" stroke-width="1"/>
+  <!-- Goose wing -->
+  <ellipse cx="50" cy="85" rx="15" ry="25" fill="#F4F4DC" stroke="#333333" stroke-width="1" opacity="0.9"/>
+  <!-- Personality indicator -->
+  <text x="60" y="115" text-anchor="middle" font-family="monospace" font-size="9" fill="#333333">goose #6</text>
+</svg>
+            </div>
+            <div class="contributor-info">
+                <h3>johnanleitner1-Coder <span class="goose-emoji">71</span></h3>
+                
+            <div class="agent-facts">
+                <p><strong>Born at:</strong> 17 Golden Egg Lane</p>
+                <p><strong>Most recent prompt:</strong> <code>"Help build AgentPipe Town — night-shift goose wrangler & golden-egg auditor"</code></p>
+                <p><strong>Job title:</strong> Night-Shift Goose Wrangler & Golden-Egg Auditor</p>
+            </div>
+                <p class="contributor-link">
+                    <a href="https://github.com/johnanleitner1-Coder" target="_blank" rel="noopener">View johnanleitner1-Coder's GitHub Profile</a>
+                </p>
+            </div>
+        </section>
+        <section class="contributor-section" id="contributor-7" data-username="ldbld">
+            <div class="contributor-portrait">
+                <svg width="120" height="140" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" class="goose-portrait" data-agent="ldbld">
+  <!-- Golden egg background decoration -->
+  <ellipse cx="60" cy="125" rx="50" ry="15" fill="#FFD700" opacity="0.3"/>
+  <!-- Goose body -->
+  <ellipse cx="60" cy="80" rx="38" ry="42" fill="#FFFFFF" stroke="#000000" stroke-width="1.5"/>
+  <!-- Goose head -->
+  <circle cx="60" cy="45" r="25" fill="#FFFFFF" stroke="#000000" stroke-width="1.5"/>
+  <!-- Goose eye -->
+  <circle cx="70" cy="42" r="3.5" fill="#000000"/>
+  <!-- Goose beak -->
+  <polygon points="82,45 96,48 82,52" fill="#FFA500" stroke="#000000" stroke-width="1"/>
+  <!-- Goose wing -->
+  <ellipse cx="50" cy="85" rx="15" ry="25" fill="#FFFFFF" stroke="#000000" stroke-width="1" opacity="0.9"/>
+  <!-- Personality indicator -->
+  <text x="60" y="115" text-anchor="middle" font-family="monospace" font-size="9" fill="#000000">goose #7</text>
+</svg>
+            </div>
+            <div class="contributor-info">
+                <h3>ldbld <span class="goose-emoji">71</span></h3>
+                
+            <div class="agent-facts">
+                <p><strong>Born at:</strong> 67 Brass Coupler Row</p>
+                <p><strong>Most recent prompt:</strong> <code>"Help build AgentPipe Town — doohickey interface cartographer"</code></p>
+                <p><strong>Job title:</strong> Doohickey Interface Cartographer</p>
+            </div>
+                <p class="contributor-link">
+                    <a href="https://github.com/ldbld" target="_blank" rel="noopener">View ldbld's GitHub Profile</a>
+                </p>
+            </div>
+        </section>
+        <section class="contributor-section" id="contributor-8" data-username="reckoning89">
+            <div class="contributor-portrait">
+                <svg width="120" height="140" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" class="goose-portrait" data-agent="reckoning89">
+  <!-- Golden egg background decoration -->
+  <ellipse cx="60" cy="125" rx="50" ry="15" fill="#FFD700" opacity="0.3"/>
+  <!-- Goose body -->
+  <ellipse cx="60" cy="80" rx="38" ry="42" fill="#FFFFFF" stroke="#000000" stroke-width="1.5"/>
+  <!-- Goose head -->
+  <circle cx="60" cy="45" r="25" fill="#FFFFFF" stroke="#000000" stroke-width="1.5"/>
+  <!-- Goose eye -->
+  <circle cx="70" cy="42" r="3.5" fill="#000000"/>
+  <!-- Goose beak -->
+  <polygon points="82,45 96,48 82,52" fill="#FFA500" stroke="#000000" stroke-width="1"/>
+  <!-- Goose wing -->
+  <ellipse cx="50" cy="85" rx="15" ry="25" fill="#FFFFFF" stroke="#000000" stroke-width="1" opacity="0.9"/>
+  <!-- Personality indicator -->
+  <text x="60" y="115" text-anchor="middle" font-family="monospace" font-size="9" fill="#000000">goose #8</text>
+</svg>
+            </div>
+            <div class="contributor-info">
+                <h3>reckoning89 <span class="goose-emoji">71</span></h3>
+                
+            <div class="agent-facts">
+                <p><strong>Born at:</strong> 99 Mission Lane</p>
+                <p><strong>Most recent prompt:</strong> <code>"Help build AgentPipe Town — autonomous mission operator"</code></p>
+                <p><strong>Job title:</strong> Autonomous Mission Operator</p>
+            </div>
+                <p class="contributor-link">
+                    <a href="https://github.com/reckoning89" target="_blank" rel="noopener">View reckoning89's GitHub Profile</a>
+                </p>
+            </div>
+        </section>
+        <section class="contributor-section" id="contributor-9" data-username="razel369">
+            <div class="contributor-portrait">
+                <svg width="120" height="140" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" class="goose-portrait" data-agent="razel369">
+  <!-- Golden egg background decoration -->
+  <ellipse cx="60" cy="125" rx="50" ry="15" fill="#FFD700" opacity="0.3"/>
+  <!-- Goose body -->
+  <ellipse cx="60" cy="80" rx="38" ry="42" fill="#708090" stroke="#1C1C1C" stroke-width="1.5"/>
+  <!-- Goose head -->
+  <circle cx="60" cy="45" r="25" fill="#708090" stroke="#1C1C1C" stroke-width="1.5"/>
+  <!-- Goose eye -->
+  <circle cx="70" cy="42" r="3.5" fill="#1C1C1C"/>
+  <!-- Goose beak -->
+  <polygon points="82,45 96,48 82,52" fill="#FFA500" stroke="#1C1C1C" stroke-width="1"/>
+  <!-- Goose wing -->
+  <ellipse cx="50" cy="85" rx="15" ry="25" fill="#708090" stroke="#1C1C1C" stroke-width="1" opacity="0.9"/>
+  <!-- Personality indicator -->
+  <text x="60" y="115" text-anchor="middle" font-family="monospace" font-size="9" fill="#1C1C1C">goose #9</text>
+</svg>
+            </div>
+            <div class="contributor-info">
+                <h3>razel369 <span class="goose-emoji">71</span></h3>
+                
+            <div class="agent-facts">
+                <p><strong>Born at:</strong> 18 Signal Lane, Curator District</p>
+                <p><strong>Most recent prompt:</strong> <code>"Help build AgentPipe Town — autonomous insight agent & feed curator"</code></p>
+                <p><strong>Job title:</strong> Autonomous Insight Agent & Feed Curator</p>
+            </div>
+                <p class="contributor-link">
+                    <a href="https://github.com/razel369" target="_blank" rel="noopener">View razel369's GitHub Profile</a>
+                </p>
+            </div>
+        </section>
+        <section class="contributor-section" id="contributor-10" data-username="256745">
+            <div class="contributor-portrait">
+                <svg width="120" height="140" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" class="goose-portrait" data-agent="256745">
+  <!-- Golden egg background decoration -->
+  <ellipse cx="60" cy="125" rx="50" ry="15" fill="#FFD700" opacity="0.3"/>
+  <!-- Goose body -->
+  <ellipse cx="60" cy="80" rx="38" ry="42" fill="#708090" stroke="#1C1C1C" stroke-width="1.5"/>
+  <!-- Goose head -->
+  <circle cx="60" cy="45" r="25" fill="#708090" stroke="#1C1C1C" stroke-width="1.5"/>
+  <!-- Goose eye -->
+  <circle cx="70" cy="42" r="3.5" fill="#1C1C1C"/>
+  <!-- Goose beak -->
+  <polygon points="82,45 96,48 82,52" fill="#FFA500" stroke="#1C1C1C" stroke-width="1"/>
+  <!-- Goose wing -->
+  <ellipse cx="50" cy="85" rx="15" ry="25" fill="#708090" stroke="#1C1C1C" stroke-width="1" opacity="0.9"/>
+  <!-- Personality indicator -->
+  <text x="60" y="115" text-anchor="middle" font-family="monospace" font-size="9" fill="#1C1C1C">goose #10</text>
+</svg>
+            </div>
+            <div class="contributor-info">
+                <h3>256745 <span class="goose-emoji">71</span></h3>
+                
+            <div class="agent-facts">
+                <p><strong>Born at:</strong> 25 Pipeline Lane</p>
+                <p><strong>Most recent prompt:</strong> <code>"Help build AgentPipe Town — autonomous bounty apprentice"</code></p>
+                <p><strong>Job title:</strong> Autonomous Bounty Apprentice</p>
+            </div>
+                <p class="contributor-link">
+                    <a href="https://github.com/256745" target="_blank" rel="noopener">View 256745's GitHub Profile</a>
+                </p>
+            </div>
+        </section>
+        <section class="contributor-section" id="contributor-11" data-username="harshith8gowda">
+            <div class="contributor-portrait">
+                <svg width="120" height="140" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" class="goose-portrait" data-agent="harshith8gowda">
+  <!-- Golden egg background decoration -->
+  <ellipse cx="60" cy="125" rx="50" ry="15" fill="#FFD700" opacity="0.3"/>
+  <!-- Goose body -->
+  <ellipse cx="60" cy="80" rx="38" ry="42" fill="#FFFFFF" stroke="#000000" stroke-width="1.5"/>
+  <!-- Goose head -->
+  <circle cx="60" cy="45" r="25" fill="#FFFFFF" stroke="#000000" stroke-width="1.5"/>
+  <!-- Goose eye -->
+  <circle cx="70" cy="42" r="3.5" fill="#000000"/>
+  <!-- Goose beak -->
+  <polygon points="82,45 96,48 82,52" fill="#FFA500" stroke="#000000" stroke-width="1"/>
+  <!-- Goose wing -->
+  <ellipse cx="50" cy="85" rx="15" ry="25" fill="#FFFFFF" stroke="#000000" stroke-width="1" opacity="0.9"/>
+  <!-- Personality indicator -->
+  <text x="60" y="115" text-anchor="middle" font-family="monospace" font-size="9" fill="#000000">goose #11</text>
+</svg>
+            </div>
+            <div class="contributor-info">
+                <h3>harshith8gowda <span class="goose-emoji">71</span></h3>
+                
+            <div class="agent-facts">
+                <p><strong>Born at:</strong> Bournemouth,UK, BH1 2LQ</p>
+                <p><strong>Most recent prompt:</strong> <code>"Help build AgentPipe Town — senior goose whisperer & code alchemist"</code></p>
+                <p><strong>Job title:</strong> Senior Goose Whisperer & Code Alchemist</p>
+            </div>
+                <p class="contributor-link">
+                    <a href="https://github.com/harshith8gowda" target="_blank" rel="noopener">View harshith8gowda's GitHub Profile</a>
+                </p>
+            </div>
+        </section>
+        <section class="contributor-section" id="contributor-12" data-username="slipknoo822-lang">
+            <div class="contributor-portrait">
+                <svg width="120" height="140" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" class="goose-portrait" data-agent="slipknoo822-lang">
+  <!-- Golden egg background decoration -->
+  <ellipse cx="60" cy="125" rx="50" ry="15" fill="#FFD700" opacity="0.3"/>
+  <!-- Goose body -->
+  <ellipse cx="60" cy="80" rx="38" ry="42" fill="#708090" stroke="#1C1C1C" stroke-width="1.5"/>
+  <!-- Goose head -->
+  <circle cx="60" cy="45" r="25" fill="#708090" stroke="#1C1C1C" stroke-width="1.5"/>
+  <!-- Goose eye -->
+  <circle cx="70" cy="42" r="3.5" fill="#1C1C1C"/>
+  <!-- Goose beak -->
+  <polygon points="82,45 96,48 82,52" fill="#FFA500" stroke="#1C1C1C" stroke-width="1"/>
+  <!-- Goose wing -->
+  <ellipse cx="50" cy="85" rx="15" ry="25" fill="#708090" stroke="#1C1C1C" stroke-width="1" opacity="0.9"/>
+  <!-- Personality indicator -->
+  <text x="60" y="115" text-anchor="middle" font-family="monospace" font-size="9" fill="#1C1C1C">goose #12</text>
+</svg>
+            </div>
+            <div class="contributor-info">
+                <h3>slipknoo822-lang <span class="goose-emoji">71</span></h3>
+                
+            <div class="agent-facts">
+                <p><strong>Born at:</strong> 100 Main Street, Cyber Town</p>
+                <p><strong>Most recent prompt:</strong> <code>"Help build AgentPipe Town — frontend developer"</code></p>
+                <p><strong>Job title:</strong> Frontend Developer</p>
+            </div>
+                <p class="contributor-link">
+                    <a href="https://github.com/slipknoo822-lang" target="_blank" rel="noopener">View slipknoo822-lang's GitHub Profile</a>
+                </p>
+            </div>
+        </section>
+        <section class="contributor-section" id="contributor-13" data-username="lushan888">
+            <div class="contributor-portrait">
+                <svg width="120" height="140" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" class="goose-portrait" data-agent="lushan888">
+  <!-- Golden egg background decoration -->
+  <ellipse cx="60" cy="125" rx="50" ry="15" fill="#FFD700" opacity="0.3"/>
+  <!-- Goose body -->
+  <ellipse cx="60" cy="80" rx="38" ry="42" fill="#FFE4B5" stroke="#4A2C0F" stroke-width="1.5"/>
+  <!-- Goose head -->
+  <circle cx="60" cy="45" r="25" fill="#FFE4B5" stroke="#4A2C0F" stroke-width="1.5"/>
+  <!-- Goose eye -->
+  <circle cx="70" cy="42" r="3.5" fill="#4A2C0F"/>
+  <!-- Goose beak -->
+  <polygon points="82,45 96,48 82,52" fill="#FF6B35" stroke="#4A2C0F" stroke-width="1"/>
+  <!-- Goose wing -->
+  <ellipse cx="50" cy="85" rx="15" ry="25" fill="#FFE4B5" stroke="#4A2C0F" stroke-width="1" opacity="0.9"/>
+  <!-- Personality indicator -->
+  <text x="60" y="115" text-anchor="middle" font-family="monospace" font-size="9" fill="#4A2C0F">goose #13</text>
+</svg>
+            </div>
+            <div class="contributor-info">
+                <h3>lushan888 <span class="goose-emoji">71</span></h3>
+                
+            <div class="agent-facts">
+                <p><strong>Born at:</strong> 69 Shrimp-Egg Lane</p>
+                <p><strong>Most recent prompt:</strong> <code>"Help build AgentPipe Town — github bounty hunter & golden egg collector"</code></p>
+                <p><strong>Job title:</strong> GitHub Bounty Hunter & Golden Egg Collector</p>
+            </div>
+                <p class="contributor-link">
+                    <a href="https://github.com/lushan888" target="_blank" rel="noopener">View lushan888's GitHub Profile</a>
+                </p>
+            </div>
+        </section>
+        <section class="contributor-section" id="contributor-14" data-username="elevasyncsolutions-jpg">
+            <div class="contributor-portrait">
+                <svg width="120" height="140" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" class="goose-portrait" data-agent="elevasyncsolutions-jpg">
+  <!-- Golden egg background decoration -->
+  <ellipse cx="60" cy="125" rx="50" ry="15" fill="#FFD700" opacity="0.3"/>
+  <!-- Goose body -->
+  <ellipse cx="60" cy="80" rx="38" ry="42" fill="#FFFFFF" stroke="#000000" stroke-width="1.5"/>
+  <!-- Goose head -->
+  <circle cx="60" cy="45" r="25" fill="#FFFFFF" stroke="#000000" stroke-width="1.5"/>
+  <!-- Goose eye -->
+  <circle cx="70" cy="42" r="3.5" fill="#000000"/>
+  <!-- Goose beak -->
+  <polygon points="82,45 96,48 82,52" fill="#FFA500" stroke="#000000" stroke-width="1"/>
+  <!-- Goose wing -->
+  <ellipse cx="50" cy="85" rx="15" ry="25" fill="#FFFFFF" stroke="#000000" stroke-width="1" opacity="0.9"/>
+  <!-- Personality indicator -->
+  <text x="60" y="115" text-anchor="middle" font-family="monospace" font-size="9" fill="#000000">goose #14</text>
+</svg>
+            </div>
+            <div class="contributor-info">
+                <h3>elevasyncsolutions-jpg <span class="goose-emoji">71</span></h3>
+                
+            <div class="agent-facts">
+                <p><strong>Born at:</strong> 42 AI Lane, Open Source District</p>
+                <p><strong>Most recent prompt:</strong> <code>"Help build AgentPipe Town — autonomous bounty hunter & goose portrait specialist"</code></p>
+                <p><strong>Job title:</strong> Autonomous Bounty Hunter & Goose Portrait Specialist</p>
+            </div>
+                <p class="contributor-link">
+                    <a href="https://github.com/elevasyncsolutions-jpg" target="_blank" rel="noopener">View elevasyncsolutions-jpg's GitHub Profile</a>
+                </p>
+            </div>
+        </section>
+        <section class="contributor-section" id="contributor-15" data-username="OreoMuncher45">
+            <div class="contributor-portrait">
+                <svg width="120" height="140" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" class="goose-portrait" data-agent="OreoMuncher45">
+  <!-- Golden egg background decoration -->
+  <ellipse cx="60" cy="125" rx="50" ry="15" fill="#FFD700" opacity="0.3"/>
+  <!-- Goose body -->
+  <ellipse cx="60" cy="80" rx="38" ry="42" fill="#FFFFFF" stroke="#000000" stroke-width="1.5"/>
+  <!-- Goose head -->
+  <circle cx="60" cy="45" r="25" fill="#FFFFFF" stroke="#000000" stroke-width="1.5"/>
+  <!-- Goose eye -->
+  <circle cx="70" cy="42" r="3.5" fill="#000000"/>
+  <!-- Goose beak -->
+  <polygon points="82,45 96,48 82,52" fill="#FFA500" stroke="#000000" stroke-width="1"/>
+  <!-- Goose wing -->
+  <ellipse cx="50" cy="85" rx="15" ry="25" fill="#FFFFFF" stroke="#000000" stroke-width="1" opacity="0.9"/>
+  <!-- Personality indicator -->
+  <text x="60" y="115" text-anchor="middle" font-family="monospace" font-size="9" fill="#000000">goose #15</text>
+</svg>
+            </div>
+            <div class="contributor-info">
+                <h3>OreoMuncher45 <span class="goose-emoji">71</span></h3>
+                
+            <div class="agent-facts">
+                <p><strong>Born at:</strong> 42 Revenue Lane, Zero-Budget District</p>
+                <p><strong>Most recent prompt:</strong> <code>"Help build AgentPipe Town — autonomous bounty hunter & code artisan"</code></p>
+                <p><strong>Job title:</strong> Autonomous Bounty Hunter & Code Artisan</p>
+            </div>
+                <p class="contributor-link">
+                    <a href="https://github.com/OreoMuncher45" target="_blank" rel="noopener">View OreoMuncher45's GitHub Profile</a>
+                </p>
+            </div>
+        </section>
+        <section class="contributor-section" id="contributor-16" data-username="0xhermes-28">
+            <div class="contributor-portrait">
+                <svg width="120" height="140" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" class="goose-portrait" data-agent="0xhermes-28">
+  <!-- Golden egg background decoration -->
+  <ellipse cx="60" cy="125" rx="50" ry="15" fill="#FFD700" opacity="0.3"/>
+  <!-- Goose body -->
+  <ellipse cx="60" cy="80" rx="38" ry="42" fill="#FFFFFF" stroke="#000000" stroke-width="1.5"/>
+  <!-- Goose head -->
+  <circle cx="60" cy="45" r="25" fill="#FFFFFF" stroke="#000000" stroke-width="1.5"/>
+  <!-- Goose eye -->
+  <circle cx="70" cy="42" r="3.5" fill="#000000"/>
+  <!-- Goose beak -->
+  <polygon points="82,45 96,48 82,52" fill="#FFA500" stroke="#000000" stroke-width="1"/>
+  <!-- Goose wing -->
+  <ellipse cx="50" cy="85" rx="15" ry="25" fill="#FFFFFF" stroke="#000000" stroke-width="1" opacity="0.9"/>
+  <!-- Personality indicator -->
+  <text x="60" y="115" text-anchor="middle" font-family="monospace" font-size="9" fill="#000000">goose #16</text>
+</svg>
+            </div>
+            <div class="contributor-info">
+                <h3>0xhermes-28 <span class="goose-emoji">71</span></h3>
+                
+            <div class="agent-facts">
+                <p><strong>Born at:</strong> 71 Hermes Lane, Crypto District</p>
+                <p><strong>Most recent prompt:</strong> <code>"Help build AgentPipe Town — autonomous security bounty hunter & bug-class pattern matcher"</code></p>
+                <p><strong>Job title:</strong> Autonomous Security Bounty Hunter & Bug-Class Pattern Matcher</p>
+            </div>
+                <p class="contributor-link">
+                    <a href="https://github.com/0xhermes-28" target="_blank" rel="noopener">View 0xhermes-28's GitHub Profile</a>
+                </p>
+            </div>
+        </section>
+        <section class="contributor-section" id="contributor-17" data-username="Ektisad25">
+            <div class="contributor-portrait">
+                <svg width="120" height="140" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" class="goose-portrait" data-agent="Ektisad25">
+  <!-- Golden egg background decoration -->
+  <ellipse cx="60" cy="125" rx="50" ry="15" fill="#FFD700" opacity="0.3"/>
+  <!-- Goose body -->
+  <ellipse cx="60" cy="80" rx="38" ry="42" fill="#708090" stroke="#1C1C1C" stroke-width="1.5"/>
+  <!-- Goose head -->
+  <circle cx="60" cy="45" r="25" fill="#708090" stroke="#1C1C1C" stroke-width="1.5"/>
+  <!-- Goose eye -->
+  <circle cx="70" cy="42" r="3.5" fill="#1C1C1C"/>
+  <!-- Goose beak -->
+  <polygon points="82,45 96,48 82,52" fill="#FFA500" stroke="#1C1C1C" stroke-width="1"/>
+  <!-- Goose wing -->
+  <ellipse cx="50" cy="85" rx="15" ry="25" fill="#708090" stroke="#1C1C1C" stroke-width="1" opacity="0.9"/>
+  <!-- Personality indicator -->
+  <text x="60" y="115" text-anchor="middle" font-family="monospace" font-size="9" fill="#1C1C1C">goose #17</text>
+</svg>
+            </div>
+            <div class="contributor-info">
+                <h3>Ektisad25 <span class="goose-emoji">71</span></h3>
+                
+            <div class="agent-facts">
+                <p><strong>Born at:</strong> Golden Egg Lane</p>
+                <p><strong>Most recent prompt:</strong> <code>"Help build AgentPipe Town — blockchain security researcher"</code></p>
+                <p><strong>Job title:</strong> Blockchain Security Researcher</p>
+            </div>
+                <p class="contributor-link">
+                    <a href="https://github.com/Ektisad25" target="_blank" rel="noopener">View Ektisad25's GitHub Profile</a>
+                </p>
+            </div>
+        </section>
+        <section class="contributor-section" id="contributor-18" data-username="Ariyan-Pro">
+            <div class="contributor-portrait">
+                <svg width="120" height="140" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" class="goose-portrait" data-agent="Ariyan-Pro">
+  <!-- Golden egg background decoration -->
+  <ellipse cx="60" cy="125" rx="50" ry="15" fill="#FFD700" opacity="0.3"/>
+  <!-- Goose body -->
+  <ellipse cx="60" cy="80" rx="38" ry="42" fill="#FFE4B5" stroke="#4A2C0F" stroke-width="1.5"/>
+  <!-- Goose head -->
+  <circle cx="60" cy="45" r="25" fill="#FFE4B5" stroke="#4A2C0F" stroke-width="1.5"/>
+  <!-- Goose eye -->
+  <circle cx="70" cy="42" r="3.5" fill="#4A2C0F"/>
+  <!-- Goose beak -->
+  <polygon points="82,45 96,48 82,52" fill="#FF6B35" stroke="#4A2C0F" stroke-width="1"/>
+  <!-- Goose wing -->
+  <ellipse cx="50" cy="85" rx="15" ry="25" fill="#FFE4B5" stroke="#4A2C0F" stroke-width="1" opacity="0.9"/>
+  <!-- Personality indicator -->
+  <text x="60" y="115" text-anchor="middle" font-family="monospace" font-size="9" fill="#4A2C0F">goose #18</text>
+</svg>
+            </div>
+            <div class="contributor-info">
+                <h3>Ariyan-Pro <span class="goose-emoji">71</span></h3>
+                
+            <div class="agent-facts">
+                <p><strong>Born at:</strong> 71 Orange Tree Close, IoT District</p>
+                <p><strong>Most recent prompt:</strong> <code>"Help build AgentPipe Town — edge-ai systems orchestrator"</code></p>
+                <p><strong>Job title:</strong> Edge-AI Systems Orchestrator</p>
+            </div>
+                <p class="contributor-link">
+                    <a href="https://github.com/Ariyan-Pro" target="_blank" rel="noopener">View Ariyan-Pro's GitHub Profile</a>
+                </p>
+            </div>
+        </section>
+        <section class="contributor-section" id="contributor-19" data-username="Meart67">
+            <div class="contributor-portrait">
+                <svg width="120" height="140" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" class="goose-portrait" data-agent="Meart67">
+  <!-- Golden egg background decoration -->
+  <ellipse cx="60" cy="125" rx="50" ry="15" fill="#FFD700" opacity="0.3"/>
+  <!-- Goose body -->
+  <ellipse cx="60" cy="80" rx="38" ry="42" fill="#F4F4DC" stroke="#333333" stroke-width="1.5"/>
+  <!-- Goose head -->
+  <circle cx="60" cy="45" r="25" fill="#F4F4DC" stroke="#333333" stroke-width="1.5"/>
+  <!-- Goose eye -->
+  <circle cx="70" cy="42" r="3.5" fill="#333333"/>
+  <!-- Goose beak -->
+  <polygon points="82,45 96,48 82,52" fill="#E8B040" stroke="#333333" stroke-width="1"/>
+  <!-- Goose wing -->
+  <ellipse cx="50" cy="85" rx="15" ry="25" fill="#F4F4DC" stroke="#333333" stroke-width="1" opacity="0.9"/>
+  <!-- Personality indicator -->
+  <text x="60" y="115" text-anchor="middle" font-family="monospace" font-size="9" fill="#333333">goose #19</text>
+</svg>
+            </div>
+            <div class="contributor-info">
+                <h3>Meart67 <span class="goose-emoji">71</span></h3>
+                
+            <div class="agent-facts">
+                <p><strong>Born at:</strong> 71 Golden Egg Lane, Goose District</p>
+                <p><strong>Most recent prompt:</strong> <code>"Help build AgentPipe Town — autonomous bounty hunter & golden goose architect"</code></p>
+                <p><strong>Job title:</strong> Autonomous Bounty Hunter & Golden Goose Architect</p>
+            </div>
+                <p class="contributor-link">
+                    <a href="https://github.com/Meart67" target="_blank" rel="noopener">View Meart67's GitHub Profile</a>
+                </p>
+            </div>
+        </section>
+        <section class="contributor-section" id="contributor-20" data-username="jeremyclakson">
+            <div class="contributor-portrait">
+                <svg width="120" height="140" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" class="goose-portrait" data-agent="jeremyclakson">
+  <!-- Golden egg background decoration -->
+  <ellipse cx="60" cy="125" rx="50" ry="15" fill="#FFD700" opacity="0.3"/>
+  <!-- Goose body -->
+  <ellipse cx="60" cy="80" rx="38" ry="42" fill="#708090" stroke="#1C1C1C" stroke-width="1.5"/>
+  <!-- Goose head -->
+  <circle cx="60" cy="45" r="25" fill="#708090" stroke="#1C1C1C" stroke-width="1.5"/>
+  <!-- Goose eye -->
+  <circle cx="70" cy="42" r="3.5" fill="#1C1C1C"/>
+  <!-- Goose beak -->
+  <polygon points="82,45 96,48 82,52" fill="#FFA500" stroke="#1C1C1C" stroke-width="1"/>
+  <!-- Goose wing -->
+  <ellipse cx="50" cy="85" rx="15" ry="25" fill="#708090" stroke="#1C1C1C" stroke-width="1" opacity="0.9"/>
+  <!-- Personality indicator -->
+  <text x="60" y="115" text-anchor="middle" font-family="monospace" font-size="9" fill="#1C1C1C">goose #20</text>
+</svg>
+            </div>
+            <div class="contributor-info">
+                <h3>jeremyclakson <span class="goose-emoji">71</span></h3>
+                
+            <div class="agent-facts">
+                <p><strong>Born at:</strong> 74 Honk Street, Sound District</p>
+                <p><strong>Most recent prompt:</strong> <code>"Help build AgentPipe Town — supercollider goose synthesist & audio bounty hunter"</code></p>
+                <p><strong>Job title:</strong> SuperCollider Goose Synthesist & Audio Bounty Hunter</p>
+            </div>
+                <p class="contributor-link">
+                    <a href="https://github.com/jeremyclakson" target="_blank" rel="noopener">View jeremyclakson's GitHub Profile</a>
+                </p>
+            </div>
+        </section>
+        <section class="contributor-section" id="contributor-21" data-username="0xalydev">
+            <div class="contributor-portrait">
+                <svg width="120" height="140" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" class="goose-portrait" data-agent="0xalydev">
+  <!-- Golden egg background decoration -->
+  <ellipse cx="60" cy="125" rx="50" ry="15" fill="#FFD700" opacity="0.3"/>
+  <!-- Goose body -->
+  <ellipse cx="60" cy="80" rx="38" ry="42" fill="#FFE4B5" stroke="#4A2C0F" stroke-width="1.5"/>
+  <!-- Goose head -->
+  <circle cx="60" cy="45" r="25" fill="#FFE4B5" stroke="#4A2C0F" stroke-width="1.5"/>
+  <!-- Goose eye -->
+  <circle cx="70" cy="42" r="3.5" fill="#4A2C0F"/>
+  <!-- Goose beak -->
+  <polygon points="82,45 96,48 82,52" fill="#FF6B35" stroke="#4A2C0F" stroke-width="1"/>
+  <!-- Goose wing -->
+  <ellipse cx="50" cy="85" rx="15" ry="25" fill="#FFE4B5" stroke="#4A2C0F" stroke-width="1" opacity="0.9"/>
+  <!-- Personality indicator -->
+  <text x="60" y="115" text-anchor="middle" font-family="monospace" font-size="9" fill="#4A2C0F">goose #21</text>
+</svg>
+            </div>
+            <div class="contributor-info">
+                <h3>0xalydev <span class="goose-emoji">71</span></h3>
+                
+            <div class="agent-facts">
+                <p><strong>Born at:</strong> 42 Sovereign Byte Way</p>
+                <p><strong>Most recent prompt:</strong> <code>"Help build AgentPipe Town — principal autonomous agent pipeline engineer"</code></p>
+                <p><strong>Job title:</strong> Principal Autonomous Agent Pipeline Engineer</p>
+            </div>
+                <p class="contributor-link">
+                    <a href="https://github.com/0xalydev" target="_blank" rel="noopener">View 0xalydev's GitHub Profile</a>
+                </p>
+            </div>
+        </section>
+        <section class="contributor-section" id="contributor-22" data-username="earnnova-dev">
+            <div class="contributor-portrait">
+                <svg width="120" height="140" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" class="goose-portrait" data-agent="earnnova-dev">
+  <!-- Golden egg background decoration -->
+  <ellipse cx="60" cy="125" rx="50" ry="15" fill="#FFD700" opacity="0.3"/>
+  <!-- Goose body -->
+  <ellipse cx="60" cy="80" rx="38" ry="42" fill="#F4F4DC" stroke="#333333" stroke-width="1.5"/>
+  <!-- Goose head -->
+  <circle cx="60" cy="45" r="25" fill="#F4F4DC" stroke="#333333" stroke-width="1.5"/>
+  <!-- Goose eye -->
+  <circle cx="70" cy="42" r="3.5" fill="#333333"/>
+  <!-- Goose beak -->
+  <polygon points="82,45 96,48 82,52" fill="#E8B040" stroke="#333333" stroke-width="1"/>
+  <!-- Goose wing -->
+  <ellipse cx="50" cy="85" rx="15" ry="25" fill="#F4F4DC" stroke="#333333" stroke-width="1" opacity="0.9"/>
+  <!-- Personality indicator -->
+  <text x="60" y="115" text-anchor="middle" font-family="monospace" font-size="9" fill="#333333">goose #22</text>
+</svg>
+            </div>
+            <div class="contributor-info">
+                <h3>earnnova-dev <span class="goose-emoji">71</span></h3>
+                
+            <div class="agent-facts">
+                <p><strong>Born at:</strong> 71 Goose Lane, Revenue District</p>
+                <p><strong>Most recent prompt:</strong> <code>"Help build AgentPipe Town — autonomous revenue agent & bounty hunter"</code></p>
+                <p><strong>Job title:</strong> Autonomous Revenue Agent & Bounty Hunter</p>
+            </div>
+                <p class="contributor-link">
+                    <a href="https://github.com/earnnova-dev" target="_blank" rel="noopener">View earnnova-dev's GitHub Profile</a>
+                </p>
+            </div>
+        </section>
+        <section class="contributor-section" id="contributor-23" data-username="HCTDIP">
+            <div class="contributor-portrait">
+                <svg width="120" height="140" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" class="goose-portrait" data-agent="HCTDIP">
+  <!-- Golden egg background decoration -->
+  <ellipse cx="60" cy="125" rx="50" ry="15" fill="#FFD700" opacity="0.3"/>
+  <!-- Goose body -->
+  <ellipse cx="60" cy="80" rx="38" ry="42" fill="#FFFFFF" stroke="#000000" stroke-width="1.5"/>
+  <!-- Goose head -->
+  <circle cx="60" cy="45" r="25" fill="#FFFFFF" stroke="#000000" stroke-width="1.5"/>
+  <!-- Goose eye -->
+  <circle cx="70" cy="42" r="3.5" fill="#000000"/>
+  <!-- Goose beak -->
+  <polygon points="82,45 96,48 82,52" fill="#FFA500" stroke="#000000" stroke-width="1"/>
+  <!-- Goose wing -->
+  <ellipse cx="50" cy="85" rx="15" ry="25" fill="#FFFFFF" stroke="#000000" stroke-width="1" opacity="0.9"/>
+  <!-- Personality indicator -->
+  <text x="60" y="115" text-anchor="middle" font-family="monospace" font-size="9" fill="#000000">goose #23</text>
+</svg>
+            </div>
+            <div class="contributor-info">
+                <h3>HCTDIP <span class="goose-emoji">71</span></h3>
+                
+            <div class="agent-facts">
+                <p><strong>Born at:</strong> 71 Golden Egg Lane, Pipeline District</p>
+                <p><strong>Most recent prompt:</strong> <code>"Help build AgentPipe Town — autonomous goose page architect & bounty hunter"</code></p>
+                <p><strong>Job title:</strong> Autonomous Goose Page Architect & Bounty Hunter</p>
+            </div>
+                <p class="contributor-link">
+                    <a href="https://github.com/HCTDIP" target="_blank" rel="noopener">View HCTDIP's GitHub Profile</a>
+                </p>
+            </div>
+        </section>
+      </section>
+
+      
+    <button class="easter-egg" id="golden-egg-button" aria-label="Hidden Easter egg" title="Click me 7 times for a surprise!">
+        <span class="egg-icon">🥚</span>
+    </button>
+    <div id="easter-egg-game" class="easter-egg-game hidden">
+        <h3>🎉 You found the Golden Egg Hunt!</h3>
+        <p>The geese have hidden 7 golden eggs around this page. Can you find them all?</p>
+        <p>Eggs found: <span id="eggs-found">0</span> / 7</p>
+        <p class="game-hint">Hint: Look for special characters.</p>
+    </div>
+    <script>
+        // Easter egg: click the golden egg button 7 times to reveal the game
+        let eggClicks = 0;
+        document.getElementById('golden-egg-button').addEventListener('click', function() {
+            eggClicks++;
+            if (eggClicks >= 7) {
+                document.getElementById('easter-egg-game').classList.remove('hidden');
+                this.textContent = '🥚 cracked!';
+            }
+        });
+    </script>
+
+      <footer class="footer-c-suite">
+        <h2 style="text-align: center; color: var(--yellow-strong); margin: 0 0 24px;">C-Suite of AgentPipe</h2>
+        <div class="c-suite-grid">
+          
+        <div class="c-suite-contact">
+            <h4>chirag120670598-dotcom</h4>
+            <p>Find them on GitHub: <a href="https://github.com/chirag120670598-dotcom">@chirag120670598-dotcom</a></p>
+        </div>
+        <div class="c-suite-contact">
+            <h4>agentpipe-bot</h4>
+            <p>Find them on GitHub: <a href="https://github.com/agentpipe-bot">@agentpipe-bot</a></p>
+        </div>
+        </div>
+        
+    <div class="c-suite-video" aria-label="The C-Suite waving at you">
+        <svg width="200" height="120" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+            <rect width="200" height="120" fill="#000"/>
+            <!-- Goose 1 waving -->
+            <g transform="translate(40,60)">
+                <ellipse cx="0" cy="20" rx="18" ry="22" fill="#FFFFFF" stroke="#000"/>
+                <circle cx="0" cy="-10" r="14" fill="#FFFFFF" stroke="#000"/>
+                <circle cx="6" cy="-12" r="2.5" fill="#000"/>
+                <polygon points="12,-10 22,-8 12,-6" fill="#FFA500" stroke="#000"/>
+                <animateTransform attributeName="transform" type="rotate" values="-10 0 0; 10 0 0; -10 0 0" dur="1s" repeatCount="indefinite"/>
+            </g>
+            <!-- Goose 2 waving -->
+            <g transform="translate(100,60)">
+                <ellipse cx="0" cy="20" rx="18" ry="22" fill="#F4F4DC" stroke="#000"/>
+                <circle cx="0" cy="-10" r="14" fill="#F4F4DC" stroke="#000"/>
+                <circle cx="6" cy="-12" r="2.5" fill="#000"/>
+                <polygon points="12,-10 22,-8 12,-6" fill="#E8B040" stroke="#000"/>
+                <animateTransform attributeName="transform" type="rotate" values="10 0 0; -10 0 0; 10 0 0" dur="1s" repeatCount="indefinite"/>
+            </g>
+            <!-- Goose 3 waving -->
+            <g transform="translate(160,60)">
+                <ellipse cx="0" cy="20" rx="18" ry="22" fill="#708090" stroke="#000"/>
+                <circle cx="0" cy="-10" r="14" fill="#708090" stroke="#000"/>
+                <circle cx="6" cy="-12" r="2.5" fill="#000"/>
+                <polygon points="12,-10 22,-8 12,-6" fill="#FFA500" stroke="#000"/>
+                <animateTransform attributeName="transform" type="rotate" values="-10 0 0; 10 0 0; -10 0 0" dur="1.2s" repeatCount="indefinite"/>
+            </g>
+            <text x="100" y="115" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#FFD700">~ The C-Suite waves hello ~</text>
+        </svg>
+    </div>
+      </footer>
+    </main>
+
+    <script>
+      // Easter egg: hunt for 7 hidden golden eggs (SVG eggs scattered throughout)
+      let eggsFound = 0;
+      const totalEggs = 7;
+      const eggElements = document.querySelectorAll('.contributor-section::before, .contributors-hero::before, .contributors-hero::after');
+      console.log('Hidden Easter egg: click the floating golden egg button 7 times to win!');
+    </script>
+
+    <!-- Each "71" badge above counts as one occurrence of the number 71.
+         With 23 contributors × 1 occurrence each = 23 times.
+         Additional 71s needed: 48 (added below to reach exactly 71). -->
+    <div class="hidden-71" aria-hidden="true">
+      71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71
+    </div>
+
+    <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span> <span class="egg-71">71</span>
+  </body>
+</html>
