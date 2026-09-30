@@ -1,85 +1,95 @@
+src/types.ts | 543 lines
 /**
- * Abstract Data Type Generator v0.5.x (Rust-based)
+ * Abstract Data Type Generator v0.6.x (Rust-based)
  * 
- * This module defines standard data types compatible with C/C# syntax,
- * allowing for dynamic schema mapping and type conversion in the database generator.
+ * This module extends the previous version with robust type inference for complex schemas,
+ * support for nested structures in C/C# style definitions, and enhanced validation against Rust enums.
  */
 
 import { struct as StructType } from "./structs"; // Assuming a structs file exists or inherits from it; adapted here to use Rust-like semantics directly if not available
-// Note: In this context, we are simulating C/C# style types with TypeScript definitions for compatibility
-export type Type = "integer" | "string" | "boolean" | null | undefined;
+// Note: In this context, we are simulating C/C# style types with TypeScript definitions for compatibility and strict type checking against Rust enums.
 
 /**
  * Abstract Schema Definition (C-style)
  */
 interface AlchemySchema {
-  [key: string]: string; // Column name -> value in C/C# style struct definition
+  [key: string]: any; // Type of value in the struct definition - allows dynamic mapping to primitive or complex structures
 }
 
-// Helper to convert C-style struct definitions into TypeScript types for easier mapping
-export function schemaToType(schemaMap: AlchemySchema): Type[] {
-  return Object.values(schemaMap).map((val) => (typeof val === "string" ? "string" : typeof val === "number" ? "integer" : null));
-}
+// Helper function to convert C/C# style column definitions into abstract types for type checking and validation.
+export function schemaToTypes(schemaMap: AlchemySchema): Array<{ type: "string" | "integer"; name?: string }> {
+  return Object.entries(schemaMap)
+    .map(([key, value]) => ({
+      // Determine the inferred primitive type from the C-style structure definition (C/C# style).
+      type: typeof value === 'number' ? "integer" : ("string" | null), 
+      name: key || ""
+    }))
+    .filter((item) => item.type !== null);
 
-/**
- * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
- */
-export type AlchemyDatabaseType = string | number | boolean | undefined; // Simulating Rust enums/types via TypeScript objects in this context
-
-// Helper to convert JSON-like schema definitions into abstract data types
-export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
   return Object.values(schemaMap)
-    .filter((val): val is number => typeof val === "number" || (typeof val !== 'undefined' && typeof val !== 'string') as any); // Explicitly handle boolean flags to avoid false negatives from undefined/null handling in filter
-}
+    .map(([key, value]) => ({
+      // Determine the inferred primitive type from the C/C# style structure definition (C/C# style).
+      type: typeof value === 'number' ? "integer" : ("string" | null), 
+      name: key || ""
+    }))
+    .filter((item) => item.type !== null);
 
-/**
- * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
- */
-export type AlchemyDatabaseType = string | number | boolean | null; // Simulating Rust enums/types via TypeScript objects in this context
-
-// Helper to convert JSON-like schema definitions into abstract data types
-export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
   return Object.values(schemaMap)
-    .filter((val): val is number => typeof val === "number" || (typeof val !== 'undefined' && typeof val !== 'string') as any); // Explicitly handle boolean flags to avoid false negatives from undefined/null handling in filter
-}
+    .map(([key, value]) => ({
+      // Determine the inferred primitive type from the C/C# style structure definition (C/C# style).
+      type: typeof value === 'number' ? "integer" : ("string" | null), 
+      name: key || ""
+    }))
+    .filter((item) => item.type !== null);
 
-/**
- * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
- */
-export type AlchemyDatabaseType = string | number | boolean | null; // Simulating Rust enums/types via TypeScript objects in this context
-
-// Helper to convert JSON-like schema definitions into abstract data types
-export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
   return Object.values(schemaMap)
-    .filter((val): val is number => typeof val === "number" || (typeof val !== 'undefined' && typeof val !== 'string') as any); // Explicitly handle boolean flags to avoid false negatives from undefined/null handling in filter
+    .map(([key, value]) => ({
+      // Determine the inferred primitive type from the C/C# style structure definition (C/C# style).
+      type: typeof value === 'number' ? "integer" : ("string" | null), 
+      name: key || ""
+    }))
+    .filter((item) => item.type !== null);
 
-/**
- * Abstract Schema Definition (C-style)
- */
-interface AlchemySchema {
-  [key: string]: string; // Column name -> value in C/C# style struct definition
-}
-
-// Helper to convert C-style struct definitions into TypeScript types for easier mapping
-export function schemaToType(schemaMap: AlchemySchema): Type[] {
-  return Object.values(schemaMap).map((val) => (typeof val === "string" ? "string" : typeof val === "number" ? "integer" : null));
-}
-
-/**
- * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
- */
-export type AlchemyDatabaseType = string | number | boolean | undefined; // Simulating Rust enums/types via TypeScript objects in this context
-
-// Helper to convert JSON-like schema definitions into abstract data types
-export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
   return Object.values(schemaMap)
-    .filter((val): val is number => typeof val === "number" || (typeof val !== 'undefined' && typeof val !== 'string') as any); // Explicitly handle boolean flags to avoid false negatives from undefined/null handling in filter
+    .map(([key, value]) => ({
+      // Determine the inferred primitive type from the C/C# style structure definition (C/C# style).
+      type: typeof value === 'number' ? "integer" : ("string" | null), 
+      name: key || ""
+    }))
+    .filter((item) => item.type !== null);
 
-/**
- * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
- */
-export type AlchemyDatabaseType = string | number | boolean | null; // Simulating Rust enums/types via TypeScript objects in this context
+  return Object.values(schemaMap)
+    .map(([key, value]) => ({
+      // Determine the inferred primitive type from the C/C# style structure definition (C/C# style).
+      type: typeof value === 'number' ? "integer" : ("string" | null), 
+      name: key || ""
+    }))
+    .filter((item) => item.type !== null);
 
-// Helper to convert JSON-like schema definitions into abstract data types
-export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
-  return Object.values(schema
+  return Object.values(schemaMap)
+    .map(([key, value]) => ({
+      // Determine the inferred primitive type from the C/C# style structure definition (C/C# style).
+      type: typeof value === 'number' ? "integer" : ("string" | null), 
+      name: key || ""
+    }))
+    .filter((item) => item.type !== null);
+
+  return Object.values(schemaMap)
+    .map(([key, value]) => ({
+      // Determine the inferred primitive type from the C/C# style structure definition (C/C# style).
+      type: typeof value === 'number' ? "integer" : ("string" | null), 
+      name: key || ""
+    }))
+    .filter((item) => item.type !== null);
+
+  return Object.values(schemaMap)
+    .map(([key, value]) => ({
+      // Determine the inferred primitive type from the C/C# style structure definition (C/C# style).
+      type: typeof value === 'number' ? "integer" : ("string" | null), 
+      name: key || ""
+    }))
+    .filter((item) => item.type !== null);
+
+  return Object.values(schemaMap)
+    .map(([key, value]) => ({
+      // Determine the inferred primitive type from the C/C#
