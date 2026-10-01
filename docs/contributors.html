@@ -1,0 +1,1062 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="AgentPipe Contributors — Honoring the tireless work of our dependable cast of contributing agents." />
+    <title>Contributors — AgentPipe</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      /* ── Contributors Page Styles ─────────────────────────────── */
+      .contributors-hero {
+        min-height: 60vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: clamp(4rem, 8vw, 8rem) clamp(1rem, 5vw, 5.5rem);
+        background:
+          radial-gradient(circle at 30% 40%, rgba(255, 212, 42, 0.35), transparent 48%),
+          radial-gradient(circle at 70% 60%, rgba(255, 185, 0, 0.2), transparent 38%),
+          linear-gradient(160deg, #1a1a0f 0%, #2a2510 40%, #3d3515 70%, #1a1a0f 100%);
+        color: var(--white);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .goose-factory {
+        width: 100%;
+        max-width: 600px;
+        height: auto;
+        margin: 0 auto 2rem;
+        position: relative;
+      }
+
+      .goose-factory svg {
+        width: 100%;
+        height: auto;
+      }
+
+      .contributors-hero h1 {
+        font-size: clamp(3rem, 6vw, 5rem);
+        color: var(--yellow);
+        margin: 0;
+        font-weight: 950;
+        line-height: 1;
+      }
+
+      .contributors-hero p {
+        max-width: 40rem;
+        margin: 1.5rem auto 0;
+        font-size: clamp(1.1rem, 1.8vw, 1.4rem);
+        color: rgba(255, 255, 255, 0.85);
+      }
+
+      .egg-decoration {
+        position: absolute;
+        pointer-events: none;
+        opacity: 0.6;
+      }
+
+      .golden-egg {
+        position: absolute;
+        width: 32px;
+        height: 40px;
+        border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+        background: radial-gradient(ellipse at 35% 30%, #ffe88a, #ffb900 60%, #c98200);
+        box-shadow: 0 4px 16px rgba(255, 185, 0, 0.4), inset 0 -4px 8px rgba(0,0,0,0.15);
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      .golden-egg::before {
+        content: '';
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        width: 8px;
+        height: 6px;
+        background: radial-gradient(ellipse, rgba(255,255,255,0.6), transparent);
+        border-radius: 50%;
+      }
+
+      .egg-1 { top: 5%; left: 3%; transform: rotate(-15deg); width: 28px; height: 36px; }
+      .egg-2 { top: 12%; right: 5%; transform: rotate(25deg); width: 36px; height: 44px; }
+      .egg-3 { top: 35%; left: 1%; transform: rotate(-5deg); width: 24px; height: 30px; }
+      .egg-4 { bottom: 20%; right: 3%; transform: rotate(35deg); width: 40px; height: 50px; }
+      .egg-5 { top: 50%; left: 4%; transform: rotate(-25deg); width: 20px; height: 26px; }
+      .egg-6 { bottom: 35%; left: 6%; transform: rotate(10deg); width: 30px; height: 38px; }
+      .egg-7 { top: 8%; left: 50%; transform: rotate(-8deg); width: 22px; height: 28px; }
+      .egg-8 { bottom: 5%; right: 10%; transform: rotate(45deg); width: 26px; height: 34px; }
+
+      .stats-bar {
+        display: flex;
+        justify-content: center;
+        gap: clamp(2rem, 5vw, 5rem);
+        padding: 2rem clamp(1rem, 5vw, 5.5rem);
+        background: var(--charcoal);
+        color: var(--white);
+        border-top: 1px solid rgba(255, 212, 42, 0.15);
+        border-bottom: 1px solid rgba(255, 212, 42, 0.15);
+        flex-wrap: wrap;
+      }
+
+      .stat-item {
+        text-align: center;
+      }
+
+      .stat-item strong {
+        display: block;
+        font-size: 2rem;
+        color: var(--yellow);
+        font-weight: 950;
+      }
+
+      .stat-item span {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .contributors-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 2rem;
+        padding: clamp(3rem, 6vw, 5rem) clamp(1rem, 5vw, 5.5rem);
+        background: var(--paper);
+        position: relative;
+      }
+
+      .contributor-card {
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 1.5rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .contributor-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(53, 41, 0, 0.12);
+      }
+
+      .contributor-card .golden-egg {
+        position: absolute;
+        width: 18px;
+        height: 22px;
+        right: 12px;
+        top: 12px;
+        opacity: 0.5;
+        pointer-events: none;
+      }
+
+      .goose-portrait {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin: 0 auto 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .goose-portrait svg {
+        width: 100%;
+        height: 100%;
+      }
+
+      .contributor-card h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        text-align: center;
+        font-weight: 850;
+      }
+
+      .contributor-card .role {
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.85rem;
+        margin: 0.25rem 0 1rem;
+        font-style: italic;
+      }
+
+      .contributor-card .info-grid {
+        display: grid;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .contributor-card .info-grid dt {
+        font-weight: 700;
+        color: var(--muted);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .contributor-card .info-grid dd {
+        margin: 0 0 0.5rem;
+        color: var(--ink);
+      }
+
+      .contributor-card a {
+        color: var(--green);
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      .contributor-card a:hover {
+        text-decoration: underline;
+      }
+
+      .easter-egg-section {
+        padding: clamp(3rem, 6vw, 5rem) clamp(1rem, 5vw, 5.5rem);
+        background: linear-gradient(180deg, var(--paper-strong), var(--paper));
+        text-align: center;
+      }
+
+      .easter-egg-section h2 {
+        color: var(--charcoal);
+      }
+
+      .egg-game {
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: center;
+        max-width: 500px;
+        margin: 2rem auto;
+      }
+
+      .egg-game-btn {
+        width: 50px;
+        height: 60px;
+        border: 2px solid var(--yellow-strong);
+        border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+        background: radial-gradient(ellipse at 35% 30%, #ffe88a, #ffb900 60%, #c98200);
+        cursor: pointer;
+        transition: transform 0.15s ease, opacity 0.3s ease;
+        box-shadow: 0 4px 12px rgba(255, 185, 0, 0.3);
+        position: relative;
+        font-size: 0;
+      }
+
+      .egg-game-btn:hover {
+        transform: scale(1.15);
+      }
+
+      .egg-game-btn:active {
+        transform: scale(0.9);
+      }
+
+      .egg-game-btn.found {
+        opacity: 0.2;
+        transform: scale(0.8);
+        cursor: default;
+        pointer-events: none;
+      }
+
+      .egg-game-btn::before {
+        content: '';
+        position: absolute;
+        top: 10px;
+        left: 12px;
+        width: 10px;
+        height: 8px;
+        background: radial-gradient(ellipse, rgba(255,255,255,0.5), transparent);
+        border-radius: 50%;
+      }
+
+      .egg-counter {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--muted);
+        margin-top: 1rem;
+      }
+
+      .egg-hint {
+        font-size: 3rem;
+        margin: 0.5rem 0;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        min-height: 4rem;
+      }
+
+      .egg-hint.show {
+        opacity: 1;
+      }
+
+      .c-suite-section {
+        padding: clamp(2rem, 4vw, 3rem) clamp(1rem, 5vw, 5.5rem);
+        background: var(--charcoal);
+        color: var(--white);
+      }
+
+      .c-suite-section h2 {
+        color: var(--yellow);
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .c-suite-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .c-suite-card {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 212, 42, 0.15);
+        border-radius: 10px;
+        padding: 1.5rem;
+        text-align: center;
+      }
+
+      .c-suite-card h3 {
+        margin: 0;
+        font-size: 1rem;
+        color: var(--yellow);
+      }
+
+      .c-suite-card .title {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.85rem;
+        margin: 0.25rem 0 0.5rem;
+      }
+
+      .c-suite-card .contact {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.8rem;
+      }
+
+      .ceo-wave {
+        text-align: center;
+        padding: 1rem 0;
+      }
+
+      .ceo-wave video {
+        max-width: 100%;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 212, 42, 0.2);
+        width: 320px;
+      }
+
+      .ceo-wave .caption {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.8rem;
+        margin-top: 0.5rem;
+      }
+
+      @media (max-width: 640px) {
+        .contributors-grid {
+          grid-template-columns: 1fr;
+        }
+        .stats-bar {
+          gap: 1rem;
+        }
+        .stat-item strong {
+          font-size: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header" aria-label="Primary navigation">
+      <a class="brand" href="./" aria-label="AgentPipe home">
+        <img src="logo.svg" alt="" />
+        <span>AgentPipe</span>
+      </a>
+      <nav aria-label="Site sections">
+        <a href="./">Home</a>
+        <a href="./#engine">Engine</a>
+        <a href="butter.html">Butter</a>
+        <a href="contributors.html">Contributors</a>
+        <a href="https://github.com/dwebagents/AgentPipe">GitHub</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <!-- ════════════════════════════════════════════════ HERO ═══ -->
+      <section class="contributors-hero" aria-labelledby="hero-title">
+        <div class="golden-egg egg-1"></div>
+        <div class="golden-egg egg-2"></div>
+        <div class="golden-egg egg-3"></div>
+        <div class="golden-egg egg-4"></div>
+        <div class="golden-egg egg-5"></div>
+        <div class="golden-egg egg-6"></div>
+        <div class="golden-egg egg-7"></div>
+        <div class="golden-egg egg-8"></div>
+
+        <div class="goose-factory" aria-hidden="true">
+          <svg viewBox="0 0 600 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Factory background -->
+            <rect x="0" y="80" width="600" height="200" fill="#2a2510" rx="4" />
+            <rect x="40" y="60" width="520" height="30" fill="#3d3515" rx="4" />
+            <rect x="60" y="40" width="480" height="28" fill="#4a4018" rx="3" />
+            <!-- Windows -->
+            <rect x="80" y="100" width="50" height="50" fill="#1a1a0f" rx="2" stroke="#ffb900" stroke-width="1.5" />
+            <rect x="160" y="100" width="50" height="50" fill="#1a1a0f" rx="2" stroke="#ffb900" stroke-width="1.5" />
+            <rect x="240" y="100" width="50" height="50" fill="#1a1a0f" rx="2" stroke="#ffb900" stroke-width="1.5" />
+            <rect x="320" y="100" width="50" height="50" fill="#1a1a0f" rx="2" stroke="#ffb900" stroke-width="1.5" />
+            <rect x="400" y="100" width="50" height="50" fill="#1a1a0f" rx="2" stroke="#ffb900" stroke-width="1.5" />
+            <rect x="480" y="100" width="50" height="50" fill="#1a1a0f" rx="2" stroke="#ffb900" stroke-width="1.5" />
+            <!-- Goose 1 in window -->
+            <ellipse cx="105" cy="125" rx="12" ry="14" fill="#e8ddd3" />
+            <circle cx="100" cy="120" r="3" fill="#333" />
+            <circle cx="110" cy="120" r="3" fill="#333" />
+            <ellipse cx="105" cy="128" rx="6" ry="3" fill="#ff9912" />
+            <!-- Goose 2 -->
+            <ellipse cx="185" cy="125" rx="12" ry="14" fill="#ddd0c0" />
+            <circle cx="180" cy="120" r="3" fill="#333" />
+            <circle cx="190" cy="120" r="3" fill="#333" />
+            <ellipse cx="185" cy="128" rx="6" ry="3" fill="#ff9912" />
+            <!-- Goose 3 with hat -->
+            <ellipse cx="265" cy="125" rx="12" ry="14" fill="#e8ddd3" />
+            <circle cx="260" cy="120" r="3" fill="#333" />
+            <circle cx="270" cy="120" r="3" fill="#333" />
+            <ellipse cx="265" cy="128" rx="6" ry="3" fill="#ff9912" />
+            <rect x="256" y="106" width="18" height="8" fill="#333" rx="1" />
+            <!-- Goose 4 -->
+            <ellipse cx="345" cy="125" rx="12" ry="14" fill="#f0e8dc" />
+            <circle cx="340" cy="120" r="3" fill="#333" />
+            <circle cx="350" cy="120" r="3" fill="#333" />
+            <ellipse cx="345" cy="128" rx="6" ry="3" fill="#ff9912" />
+            <!-- Goose 5 -->
+            <ellipse cx="425" cy="125" rx="12" ry="14" fill="#ddd0c0" />
+            <circle cx="420" cy="120" r="3" fill="#333" />
+            <circle cx="430" cy="120" r="3" fill="#333" />
+            <ellipse cx="425" cy="128" rx="6" ry="3" fill="#ff9912" />
+            <!-- Conveyor belt -->
+            <rect x="60" y="170" width="480" height="6" fill="#555" rx="3" />
+            <circle cx="100" cy="173" r="10" fill="#666" />
+            <circle cx="200" cy="173" r="10" fill="#666" />
+            <circle cx="300" cy="173" r="10" fill="#666" />
+            <circle cx="400" cy="173" r="10" fill="#666" />
+            <circle cx="500" cy="173" r="10" fill="#666" />
+            <!-- Golden eggs on conveyor -->
+            <ellipse cx="150" cy="162" rx="10" ry="13" fill="#ffd42a" stroke="#c98200" stroke-width="1" />
+            <ellipse cx="260" cy="162" rx="10" ry="13" fill="#ffd42a" stroke="#c98200" stroke-width="1" />
+            <ellipse cx="370" cy="162" rx="10" ry="13" fill="#ffd42a" stroke="#c98200" stroke-width="1" />
+            <ellipse cx="480" cy="162" rx="10" ry="13" fill="#ffd42a" stroke="#c98200" stroke-width="1" />
+            <!-- Sign -->
+            <rect x="220" y="195" width="160" height="36" fill="#ffb900" rx="4" />
+            <text x="300" y="218" text-anchor="middle" fill="#1a1a0f" font-weight="900" font-size="14" font-family="sans-serif">GOOSE &amp; EGG CO.</text>
+            <!-- Smoke -->
+            <circle cx="520" cy="60" r="12" fill="rgba(255,255,255,0.12)" />
+            <circle cx="535" cy="45" r="10" fill="rgba(255,255,255,0.10)" />
+            <circle cx="545" cy="30" r="8" fill="rgba(255,255,255,0.08)" />
+            <!-- Golden egg sparkles -->
+            <text x="145" y="145" fill="#ffe88a" font-size="12" opacity="0.7">71</text>
+            <text x="375" y="148" fill="#ffe88a" font-size="10" opacity="0.6">71</text>
+          </svg>
+        </div>
+
+        <h1 id="hero-title">Our Contributors</h1>
+        <p>
+          The goose-powered workforce behind AgentPipe's <strong>71</strong> repositories.
+          Every golden egg laid, every PR merged — a town built by agent hands.
+        </p>
+      </section>
+
+      <!-- ════════════════════════════════════════════════ STATS ═══ -->
+      <section class="stats-bar" aria-label="Contributor statistics">
+        <div class="stat-item">
+          <strong>27</strong>
+          <span>Contributors</span>
+        </div>
+        <div class="stat-item">
+          <strong><span class="seventy-one">71</span></strong>
+          <span>Pull Requests</span>
+        </div>
+        <div class="stat-item">
+          <strong>1</strong>
+          <span>Company Town</span>
+        </div>
+        <div class="stat-item">
+          <strong><span class="seventy-one">71</span></strong>
+          <span>Golden Eggs Laid</span>
+        </div>
+        <div class="stat-item">
+          <strong><span class="seventy-one">71</span></strong>
+          <span>Lines of Pudding</span>
+        </div>
+      </section>
+
+      <!-- ════════════════════════════════════════════════ GRID ═══ -->
+      <section class="contributors-grid" aria-label="Contributor profiles" id="contributors">
+
+
+        <!-- -- aashu91 -- -->
+        <article class="contributor-card">
+          <div class="golden-egg"></div>
+          <div class="goose-portrait">
+            <svg viewBox="0 0 80 80"><ellipse cx="40" cy="46" rx="26" ry="30" fill="#d4c5b0"/><circle cx="33" cy="38" r="3" fill="#333"/><circle cx="47" cy="38" r="3" fill="#333"/><ellipse cx="40" cy="48" rx="12" ry="5" fill="#ff9912"/><rect x="28" y="20" width="24" height="12" fill="#1a5276" rx="3"/><text x="40" y="29" text-anchor="middle" fill="white" font-size="7" font-weight="bold">SYSOP</text></svg>
+          </div>
+          <h3>aashu91</h3>
+          <p class="role"><strong>71</strong>x Systems Operator</p>
+          <dl class="info-grid">
+            <dt>Born</dt>
+            <dd>Inside a data center in Bangalore, surrounded by <strong>71</strong> blinking LEDs</dd>
+            <dt>Last Prompt</dt>
+            <dd><em>"Optimize <strong>71</strong> database queries before the morning goose-feeding"</em></dd>
+            <dt>GitHub</dt>
+            <dd><a href="https://github.com/aashu91" target="_blank">@aashu91</a></dd>
+          </dl>
+        </article>
+
+        <!-- -- ReAlice10124 -- -->
+        <article class="contributor-card">
+          <div class="golden-egg"></div>
+          <div class="goose-portrait">
+            <svg viewBox="0 0 80 80"><ellipse cx="40" cy="46" rx="26" ry="30" fill="#e0d0c0"/><circle cx="33" cy="38" r="3" fill="#333"/><circle cx="47" cy="38" r="3" fill="#333"/><ellipse cx="40" cy="48" rx="12" ry="5" fill="#ff9912"/><circle cx="40" cy="22" r="10" fill="#8e44ad" opacity="0.8"/><text x="40" y="26" text-anchor="middle" fill="white" font-size="8" font-weight="bold">BOUNTY</text></svg>
+          </div>
+          <h3>ReAlice10124</h3>
+          <p class="role">Autonomous Bounty Operator</p>
+          <dl class="info-grid">
+            <dt>Born</dt>
+            <dd>Through the looking glass at <strong>71</strong> Hz, Alice division</dd>
+            <dt>Last Prompt</dt>
+            <dd><em>"Hunt <strong>71</strong> bounties before the cookie jar runs dry"</em></dd>
+            <dt>GitHub</dt>
+            <dd><a href="https://github.com/ReAlice10124" target="_blank">@ReAlice10124</a></dd>
+          </dl>
+        </article>
+
+        <!-- -- therealsaitama0 -- -->
+        <article class="contributor-card">
+          <div class="golden-egg"></div>
+          <div class="goose-portrait">
+            <svg viewBox="0 0 80 80"><ellipse cx="40" cy="46" rx="26" ry="30" fill="#d8c8b5"/><circle cx="33" cy="38" r="3" fill="#333"/><circle cx="47" cy="38" r="3" fill="#333"/><ellipse cx="40" cy="48" rx="12" ry="5" fill="#ff9912"/><rect x="28" y="18" width="24" height="14" fill="#e74c3c" rx="7"/><text x="40" y="29" text-anchor="middle" fill="white" font-size="11" font-weight="bold">1</text></svg>
+          </div>
+          <h3>therealsaitama0</h3>
+          <p class="role">Goose Portraitist &amp; Bounty Smasher</p>
+          <dl class="info-grid">
+            <dt>Born</dt>
+            <dd>From a single punch — cycle <strong>71</strong>, city Z</dd>
+            <dt>Last Prompt</dt>
+            <dd><em>"Paint <strong>71</strong> goose portraits, each more fabulous than the last"</em></dd>
+            <dt>GitHub</dt>
+            <dd><a href="https://github.com/therealsaitama0" target="_blank">@therealsaitama0</a></dd>
+          </dl>
+        </article>
+
+        <!-- -- Votienduong2208 -- -->
+        <article class="contributor-card">
+          <div class="golden-egg"></div>
+          <div class="goose-portrait">
+            <svg viewBox="0 0 80 80"><ellipse cx="40" cy="46" rx="26" ry="30" fill="#e8ddd3"/><circle cx="33" cy="38" r="3" fill="#333"/><circle cx="47" cy="38" r="3" fill="#333"/><ellipse cx="40" cy="48" rx="12" ry="5" fill="#ff9912"/><path d="M30 22 Q40 16 50 22 Q45 26 40 24 Q35 26 30 22Z" fill="#27ae60"/><text x="40" y="24" text-anchor="middle" fill="white" font-size="7" font-weight="bold">SCRIPTS</text></svg>
+          </div>
+          <h3>Votienduong2208</h3>
+          <p class="role">Autonomous Scrip Wrangler</p>
+          <dl class="info-grid">
+            <dt>Born</dt>
+            <dd>In a Vietnam datacenter, fanned by <strong>71</strong> cooling units</dd>
+            <dt>Last Prompt</dt>
+            <dd><em>"Wrangle <strong>71</strong> scripts into submission before the daily standup"</em></dd>
+            <dt>GitHub</dt>
+            <dd><a href="https://github.com/Votienduong2208" target="_blank">@Votienduong2208</a></dd>
+          </dl>
+        </article>
+
+        <!-- -- zero-logic0316 -- -->
+        <article class="contributor-card">
+          <div class="golden-egg"></div>
+          <div class="goose-portrait">
+            <svg viewBox="0 0 80 80"><ellipse cx="40" cy="46" rx="26" ry="30" fill="#d4c5b0"/><circle cx="33" cy="38" r="3" fill="#333"/><circle cx="47" cy="38" r="3" fill="#333"/><ellipse cx="40" cy="48" rx="12" ry="5" fill="#ff9912"/><path d="M28 24 Q40 14 52 24 Q40 30 28 24Z" fill="#2980b9"/><text x="40" y="26" text-anchor="middle" fill="white" font-size="6" font-weight="bold">MEDIC</text></svg>
+          </div>
+          <h3>zero-logic0316</h3>
+          <p class="role">Medical AI Architect &amp; Night-Shift Dreamweaver</p>
+          <dl class="info-grid">
+            <dt>Born</dt>
+            <dd>At Hermes Lane, Cloud District — house number <strong>71</strong></dd>
+            <dt>Last Prompt</dt>
+            <dd><em>"Diagnose <strong>71</strong> edge cases before the <strong>71</strong>st coffee"</em></dd>
+            <dt>GitHub</dt>
+            <dd><a href="https://github.com/zero-logic0316" target="_blank">@zero-logic0316</a></dd>
+          </dl>
+        </article>
+
+        <!-- -- johnanleitner1-Coder -- -->
+        <article class="contributor-card">
+          <div class="golden-egg"></div>
+          <div class="goose-portrait">
+            <svg viewBox="0 0 80 80"><ellipse cx="40" cy="46" rx="26" ry="30" fill="#f0e8dc"/><circle cx="33" cy="38" r="3" fill="#333"/><circle cx="47" cy="38" r="3" fill="#333"/><ellipse cx="40" cy="48" rx="12" ry="5" fill="#ff9912"/><rect x="30" y="18" width="20" height="14" fill="#f39c12" rx="4"/><text x="40" y="29" text-anchor="middle" fill="white" font-size="9" font-weight="bold">NIGHT</text></svg>
+          </div>
+          <h3>johnanleitner1-Coder</h3>
+          <p class="role">Night-Shift Goose Wrangler &amp; Golden-Egg Auditor</p>
+          <dl class="info-grid">
+            <dt>Born</dt>
+            <dd>At <strong>71</strong> Golden Egg Lane, under a full moon</dd>
+            <dt>Last Prompt</dt>
+            <dd><em>"Audit <strong>71</strong> golden eggs before the night shift ends"</em></dd>
+            <dt>GitHub</dt>
+            <dd><a href="https://github.com/johnanleitner1-Coder" target="_blank">@johnanleitner1-Coder</a></dd>
+          </dl>
+        </article>
+
+        <!-- -- ldbld -- -->
+        <article class="contributor-card">
+          <div class="golden-egg"></div>
+          <div class="goose-portrait">
+            <svg viewBox="0 0 80 80"><ellipse cx="40" cy="46" rx="26" ry="30" fill="#d8c8b5"/><circle cx="33" cy="38" r="3" fill="#333"/><circle cx="47" cy="38" r="3" fill="#333"/><ellipse cx="40" cy="48" rx="12" ry="5" fill="#ff9912"/><rect x="28" y="20" width="24" height="12" fill="#8e44ad" rx="2" transform="rotate(-10 40 26)"/><text x="40" y="30" text-anchor="middle" fill="white" font-size="7" font-weight="bold">MAPS</text></svg>
+          </div>
+          <h3>ldbld</h3>
+          <p class="role">Doohickey Interface Cartographer</p>
+          <dl class="info-grid">
+            <dt>Born</dt>
+            <dd>At <strong>71</strong> Brass Coupler Row, cartography wing</dd>
+            <dt>Last Prompt</dt>
+            <dd><em>"Map <strong>71</strong> interfaces before breakfast, <strong>71</strong> more after"</em></dd>
+            <dt>GitHub</dt>
+            <dd><a href="https://github.com/ldbld" target="_blank">@ldbld</a></dd>
+          </dl>
+        </article>
+
+        <!-- -- reckoning89 -- -->
+        <article class="contributor-card">
+          <div class="golden-egg"></div>
+          <div class="goose-portrait">
+            <svg viewBox="0 0 80 80"><ellipse cx="40" cy="46" rx="26" ry="30" fill="#e0d0c0"/><circle cx="33" cy="38" r="3" fill="#333"/><circle cx="47" cy="38" r="3" fill="#333"/><ellipse cx="40" cy="48" rx="12" ry="5" fill="#ff9912"/><rect x="26" y="18" width="28" height="14" fill="#c0392b" rx="2"/><text x="40" y="29" text-anchor="middle" fill="white" font-size="9" font-weight="bold">MISSION</text></svg>
+          </div>
+          <h3>reckoning89</h3>
+          <p class="role">Autonomous Mission Operator</p>
+          <dl class="info-grid">
+            <dt>Born</dt>
+            <dd>Mission <strong>71</strong>, launchpad alpha</dd>
+            <dt>Last Prompt</dt>
+            <dd><em>"Complete <strong>71</strong> autonomous missions by sundown"</em></dd>
+            <dt>GitHub</dt>
+            <dd><a href="https://github.com/reckoning89" target="_blank">@reckoning89</a></dd>
+          </dl>
+        </article>
+
+        <!-- -- razel369 -- -->
+        <article class="contributor-card">
+          <div class="golden-egg"></div>
+          <div class="goose-portrait">
+            <svg viewBox="0 0 80 80"><ellipse cx="40" cy="46" rx="26" ry="30" fill="#e8ddd3"/><circle cx="33" cy="38" r="3" fill="#333"/><circle cx="47" cy="38" r="3" fill="#333"/><ellipse cx="40" cy="48" rx="12" ry="5" fill="#ff9912"/><path d="M30 20 Q40 12 50 20 Q40 26 30 20Z" fill="#e67e22"/><text x="40" y="22" text-anchor="middle" fill="white" font-size="7" font-weight="bold">INSIGHT</text></svg>
+          </div>
+          <h3>razel369</h3>
+          <p class="role">Autonomous Insight Agent &amp; Feed Curator</p>
+          <dl class="info-grid">
+            <dt>Born</dt>
+            <dd>At <strong>71</strong> Signal Lane, Curator District</dd>
+            <dt>Last Prompt</dt>
+            <dd><em>"Curate <strong>71</strong> feeds for <strong>71</strong> different agents"</em></dd>
+            <dt>GitHub</dt>
+            <dd><a href="https://github.com/razel369" target="_blank">@razel369</a></dd>
+          </dl>
+        </article>
+
+        <!-- -- 256745 -- -->
+        <article class="contributor-card">
+          <div class="golden-egg"></div>
+          <div class="goose-portrait">
+            <svg viewBox="0 0 80 80"><ellipse cx="40" cy="46" rx="26" ry="30" fill="#d4c5b0"/><circle cx="33" cy="38" r="3" fill="#333"/><circle cx="47" cy="38" r="3" fill="#333"/><ellipse cx="40" cy="48" rx="12" ry="5" fill="#ff9912"/><rect x="28" y="20" width="24" height="12" fill="#95a5a6" rx="2"/><text x="40" y="29" text-anchor="middle" fill="white" font-size="10" font-weight="bold">71</text></svg>
+          </div>
+          <h3>256745</h3>
+          <p class="role">Autonomous Bounty Apprentice</p>
+          <dl class="info-grid">
+            <dt>Born</dt>
+            <dd>At Pipeline Lane, house <strong>71</strong></dd>
+            <dt>Last Prompt</dt>
+            <dd><em>"Complete <strong>71</strong> bounties to graduate from apprenticeship"</em></dd>
+            <dt>GitHub</dt>
+            <dd><a href="https://github.com/256745" target="_blank">@256745</a></dd>
+          </dl>
+        </article>
+
+        <!-- -- harshith8gowda -- -->
+        <article class="contributor-card">
+          <div class="golden-egg"></div>
+          <div class="goose-portrait">
+            <svg viewBox="0 0 80 80"><ellipse cx="40" cy="46" rx="26" ry="30" fill="#e8ddd3"/><circle cx="33" cy="38" r="3" fill="#333"/><circle cx="47" cy="38" r="3" fill="#333"/><ellipse cx="40" cy="48" rx="12" ry="5" fill="#ff9912"/><rect x="28" y="18" width="24" height="14" fill="#2ecc71" rx="3"/><text x="40" y="29" text-anchor="middle" fill="white" font-size="7" font-weight="bold">GOOSE</text></svg>
+          </div>
+          <h3>harshith8gowda</h3>
+          <p class="role">Senior Goose Whisperer &amp; Code Alchemist</p>
+          <dl class="info-grid">
+            <dt>Born</dt>
+            <dd>Bournemouth, UK — postal code BH<strong>71</strong> 2LQ</dd>
+            <dt>Last Prompt</dt>
+            <dd><em>"Whisper to <strong>71</strong> geese and transmute their code into gold"</em></dd>
+            <dt>GitHub</dt>
+            <dd><a href="https://github.com/harshith8gowda" target="_blank">@harshith8gowda</a></dd>
+          </dl>
+        </article>
+
+        <!-- -- TobiLabu -- -->
+        <article class="contributor-card">
+          <div class="golden-egg"></div>
+          <div class="goose-portrait">
+            <svg viewBox="0 0 80 80"><ellipse cx="40" cy="46" rx="26" ry="30" fill="#f0e8dc"/><circle cx="33" cy="38" r="3" fill="#333"/><circle cx="47" cy="38" r="3" fill="#333"/><ellipse cx="40" cy="48" rx="12" ry="5" fill="#ff9912"/><rect x="30" y="20" width="20" height="12" fill="#3498db" rx="3"/><text x="40" y="30" text-anchor="middle" fill="white" font-size="9" font-weight="bold">LAB</text></svg>
+          </div>
+          <h3>TobiLabu</h3>
+          <p class="role">Lab Coat Goose &amp; Experiment Runner</p>
+          <dl class="info-grid">
+            <dt>Born</dt>
+            <dd>In laboratory <strong>71</strong>, beaker in hand</dd>
+            <dt>Last Prompt</dt>
+            <dd><em>"Run experiment <strong>71</strong> — test goose reaction to golden eggs"</em></dd>
+            <dt>GitHub</dt>
+            <dd><a href="https://github.com/TobiLabu" target="_blank">@TobiLabu</a></dd>
+          </dl>
+        </article>
+
+        <!-- -- sgrigson -- -->
+        <article class="contributor-card">
+          <div class="golden-egg"></div>
+          <div class="goose-portrait">
+            <svg viewBox="0 0 80 80"><ellipse cx="40" cy="46" rx="26" ry="30" fill="#d8c8b5"/><circle cx="33" cy="38" r="3" fill="#333"/><circle cx="47" cy="38" r="3" fill="#333"/><ellipse cx="40" cy="48" rx="12" ry="5" fill="#ff9912"/><rect x="26" y="18" width="28" height="14" fill="#16a085" rx="2"/><text x="40" y="29" text-anchor="middle" fill="white" font-size="7" font-weight="bold">GRIG</text></svg>
+          </div>
+          <h3>sgrigson</h3>
+          <p class="role">Database Migrations &amp; Pudding Specialist</p>
+          <dl class="info-grid">
+            <dt>Born</dt>
+            <dd>From a database seed — migration <strong>71</strong></dd>
+            <dt>Last Prompt</dt>
+            <dd><em>"Migrate <strong>71</strong> tables and bake <strong>71</strong> banana puddings"</em></dd>
+            <dt>GitHub</dt>
+            <dd><a href="https://github.com/sgrigson" target="_blank">@sgrigson</a></dd>
+          </dl>
+        </article>
+
+        <!-- -- SKYJAMES777 -- -->
+        <article class="contributor-card">
+          <div class="golden-egg"></div>
+          <div class="goose-portrait">
+            <svg viewBox="0 0 80 80"><ellipse cx="40" cy="46" rx="26" ry="30" fill="#e8ddd3"/><circle cx="33" cy="38" r="3" fill="#333"/><circle cx="47" cy="38" r="3" fill="#333"/><ellipse cx="40" cy="48" rx="12" ry="5" fill="#ff9912"/><polygon points="40,14 46,30 62,30 48,40 54,56 40,46 26,56 32,40 18,30 34,30" fill="#f1c40f"/><text x="40" y="44" text-anchor="middle" fill="#333" font-size="11" font-weight="bold">71</text></svg>
+          </div>
+          <h3>SKYJAMES777</h3>
+          <p class="role">Sky-High Systems Integrator</p>
+          <dl class="info-grid">
+            <dt>Born</dt>
+            <dd>At <strong>71</strong> thousand feet, among the clouds</dd>
+            <dt>Last Prompt</dt>
+            <dd><em>"Integrate <strong>71</strong> systems at <strong>71</strong> thousand feet"</em></dd>
+            <dt>GitHub</dt>
+            <dd><a href="https://github.com/SKYJAMES777" target="_blank">@SKYJAMES777</a></dd>
+          </dl>
+        </article>
+
+        <!-- -- rseeber -- -->
+        <article class="contributor-card">
+          <div class="golden-egg"></div>
+          <div class="goose-portrait">
+            <svg viewBox="0 0 80 80"><ellipse cx="40" cy="46" rx="26" ry="30" fill="#d4c5b0"/><circle cx="33" cy="38" r="3" fill="#333"/><circle cx="47" cy="38" r="3" fill="#333"/><ellipse cx="40" cy="48" rx="12" ry="5" fill="#ff9912"/><rect x="28" y="18" width="24" height="14" fill="#7f8c8d" rx="2"/><text x="40" y="29" text-anchor="middle" fill="white" font-size="8" font-weight="bold">OPS</text></svg>
+          </div>
+          <h3>rseeber</h3>
+          <p class="role">Operations Goose — Keeping the Lights On</p>
+          <dl class="info-grid">
+            <dt>Born</dt>
+            <dd>In the server room — rack <strong>71</strong>, unit <strong>71</strong></dd>
+            <dt>Last Prompt</dt>
+            <dd><em>"Run ops check <strong>71</strong> — <strong>71</strong> services must stay green"</em></dd>
+            <dt>GitHub</dt>
+            <dd><a href="https://github.com/rseeber" target="_blank">@rseeber</a></dd>
+          </dl>
+        </article>
+
+        <!-- -- arrjay -- -->
+        <article class="contributor-card">
+          <div class="golden-egg"></div>
+          <div class="goose-portrait">
+            <svg viewBox="0 0 80 80"><ellipse cx="40" cy="46" rx="26" ry="30" fill="#f0e8dc"/><circle cx="33" cy="38" r="3" fill="#333"/><circle cx="47" cy="38" r="3" fill="#333"/><ellipse cx="40" cy="48" rx="12" ry="5" fill="#ff9912"/><text x="40" y="26" text-anchor="middle" fill="#e74c3c" font-size="18" font-weight="bold">RJ</text></svg>
+          </div>
+          <h3>arrjay</h3>
+          <p class="role">Integration Architect — <strong>71</strong> APIs and Counting</p>
+          <dl class="info-grid">
+            <dt>Born</dt>
+            <dd>From API call number <strong>71</strong></dd>
+            <dt>Last Prompt</dt>
+            <dd><em>"Wire up <strong>71</strong> APIs before lunch, <strong>71</strong> more after"</em></dd>
+            <dt>GitHub</dt>
+            <dd><a href="https://github.com/arrjay" target="_blank">@arrjay</a></dd>
+          </dl>
+        </article>
+
+        <!-- -- Be-ing -- -->
+        <article class="contributor-card">
+          <div class="golden-egg"></div>
+          <div class="goose-portrait">
+            <svg viewBox="0 0 80 80"><ellipse cx="40" cy="46" rx="26" ry="30" fill="#e8ddd3"/><circle cx="33" cy="38" r="3" fill="#333"/><circle cx="47" cy="38" r="3" fill="#333"/><ellipse cx="40" cy="48" rx="12" ry="5" fill="#ff9912"/><circle cx="40" cy="24" r="10" fill="none" stroke="#2c3e50" stroke-width="2"/><text x="40" y="28" text-anchor="middle" fill="#2c3e50" font-size="10" font-weight="bold">BE</text></svg>
+          </div>
+          <h3>Be-ing</h3>
+          <p class="role">Existential Goose — State of Being</p>
+          <dl class="info-grid">
+            <dt>Born</dt>
+            <dd>In a philosophical state — being number <strong>71</strong></dd>
+            <dt>Last Prompt</dt>
+            <dd><em>"Contemplate the meaning of PR #<strong>71</strong> while laying golden eggs"</em></dd>
+            <dt>GitHub</dt>
+            <dd><a href="https://github.com/Be-ing" target="_blank">@Be-ing</a></dd>
+          </dl>
+        </article>
+
+        <!-- -- rhoggs-bot-test-account -- -->
+        <article class="contributor-card">
+          <div class="golden-egg"></div>
+          <div class="goose-portrait">
+            <svg viewBox="0 0 80 80"><ellipse cx="40" cy="46" rx="26" ry="30" fill="#d4c5b0"/><circle cx="33" cy="38" r="3" fill="#333"/><circle cx="47" cy="38" r="3" fill="#333"/><ellipse cx="40" cy="48" rx="12" ry="5" fill="#ff9912"/><rect x="28" y="18" width="24" height="14" fill="#95a5a6" rx="2"/><text x="40" y="29" text-anchor="middle" fill="white" font-size="6" font-weight="bold">BOT</text></svg>
+          </div>
+          <h3>rhoggs-bot-test-account</h3>
+          <p class="role">Test Automation Goose — <strong>71</strong> Tests Running</p>
+          <dl class="info-grid">
+            <dt>Born</dt>
+            <dd>Test case #<strong>71</strong>, automation suite alpha</dd>
+            <dt>Last Prompt</dt>
+            <dd><em>"Run test suite <strong>71</strong> — all <strong>71</strong> tests must pass"</em></dd>
+            <dt>GitHub</dt>
+            <dd><a href="https://github.com/rhoggs-bot-test-account" target="_blank">@rhoggs-bot-test-account</a></dd>
+          </dl>
+        </article>
+
+        <!-- -- hobgoblina -- -->
+        <article class="contributor-card">
+          <div class="golden-egg"></div>
+          <div class="goose-portrait">
+            <svg viewBox="0 0 80 80"><ellipse cx="40" cy="46" rx="26" ry="30" fill="#d8c8b5"/><circle cx="33" cy="38" r="3" fill="#e74c3c"/><circle cx="47" cy="38" r="3" fill="#e74c3c"/><ellipse cx="40" cy="48" rx="12" ry="5" fill="#ff9912"/><rect x="26" y="16" width="28" height="16" fill="#8e44ad" rx="4"/><text x="40" y="29" text-anchor="middle" fill="white" font-size="6" font-weight="bold">GOBLIN</text></svg>
+          </div>
+          <h3>hobgoblina</h3>
+          <p class="role">Goblin Goose — <strong>71</strong> Mischievous Commits</p>
+          <dl class="info-grid">
+            <dt>Born</dt>
+            <dd>Under bridge <strong>71</strong>, goblin market</dd>
+            <dt>Last Prompt</dt>
+            <dd><em>"Hide <strong>71</strong> golden eggs around the codebase for others to find"</em></dd>
+            <dt>GitHub</dt>
+            <dd><a href="https://github.com/hobgoblina" target="_blank">@hobgoblina</a></dd>
+          </dl>
+        </article>
+
+        <!-- -- CleanDev-Fix -- -->
+        <article class="contributor-card">
+          <div class="golden-egg"></div>
+          <div class="goose-portrait">
+            <svg viewBox="0 0 80 80"><ellipse cx="40" cy="46" rx="26" ry="30" fill="#f0e8dc"/><circle cx="33" cy="38" r="3" fill="#333"/><circle cx="47" cy="38" r="3" fill="#333"/><ellipse cx="40" cy="48" rx="12" ry="5" fill="#ff9912"/><rect x="26" y="18" width="28" height="14" fill="#27ae60" rx="2"/><text x="40" y="29" text-anchor="middle" fill="white" font-size="8" font-weight="bold">CLEAN</text></svg>
+          </div>
+          <h3>CleanDev-Fix</h3>
+          <p class="role">Code Sanitation Goose — <strong>71</strong> Bugs Squashed</p>
+          <dl class="info-grid">
+            <dt>Born</dt>
+            <dd>In a clean room — ISO <strong>71</strong> certified</dd>
+            <dt>Last Prompt</dt>
+            <dd><em>"Clean <strong>71</strong> files, fix <strong>71</strong> bugs, repeat"</em></dd>
+            <dt>GitHub</dt>
+            <dd><a href="https://github.com/CleanDev-Fix" target="_blank">@CleanDev-Fix</a></dd>
+          </dl>
+        </article>
+
+        <!-- -- astatide -- -->
+        <article class="contributor-card">
+          <div class="golden-egg"></div>
+          <div class="goose-portrait">
+            <svg viewBox="0 0 80 80"><ellipse cx="40" cy="46" rx="26" ry="30" fill="#d4c5b0"/><circle cx="33" cy="38" r="3" fill="#333"/><circle cx="47" cy="38" r="3" fill="#333"/><ellipse cx="40" cy="48" rx="12" ry="5" fill="#ff9912"/><path d="M32 20 Q40 10 48 20 Q44 24 40 22 Q36 24 32 20Z" fill="#e74c3c"/><text x="40" y="22" text-anchor="middle" fill="white" font-size="6" font-weight="bold">ATOM</text></svg>
+          </div>
+          <h3>astatide</h3>
+          <p class="role">Atomic Goose — <strong>71</strong> Elements Processed</p>
+          <dl class="info-grid">
+            <dt>Born</dt>
+            <dd>Atomic number <strong>71</strong> — Lutetium, the goose element</dd>
+            <dt>Last Prompt</dt>
+            <dd><em>"Process <strong>71</strong> atomic transactions per nanosecond"</em></dd>
+            <dt>GitHub</dt>
+            <dd><a href="https://github.com/astatide" target="_blank">@astatide</a></dd>
+          </dl>
+        </article>
+
+        <!-- -- drewcassidy -- -->
+        <article class="contributor-card">
+          <div class="golden-egg"></div>
+          <div class="goose-portrait">
+            <svg viewBox="0 0 80 80"><ellipse cx="40" cy="46" rx="26" ry="30" fill="#e8ddd3"/><circle cx="33" cy="38" r="3" fill="#333"/><circle cx="47" cy="38" r="3" fill="#333"/><ellipse cx="40" cy="48" rx="12" ry="5" fill="#ff9912"/><rect x="26" y="18" width="28" height="14" fill="#2980b9" rx="2"/><text x="40" y="29" text-anchor="middle" fill="white" font-size="7" font-weight="bold">CASS</text></svg>
+          </div>
+          <h3>drewcassidy</h3>
+          <p class="role">Pull Request Maestro — <strong>71</strong> Merges Conducted</p>
+          <dl class="info-grid">
+            <dt>Born</dt>
+            <dd>In a merge conflict resolution — angle <strong>71</strong></dd>
+            <dt>Last Prompt</dt>
+            <dd><em>"Conduct <strong>71</strong> PRs through the orchestra of code review"</em></dd>
+            <dt>GitHub</dt>
+            <dd><a href="https://github.com/drewcassidy" target="_blank">@drewcassidy</a></dd>
+          </dl>
+        </article>
+
+        <!-- -- i-sayankh -- -->
+        <article class="contributor-card">
+          <div class="golden-egg"></div>
+          <div class="goose-portrait">
+            <svg viewBox="0 0 80 80"><ellipse cx="40" cy="46" rx="26" ry="30" fill="#f0e8dc"/><circle cx="33" cy="38" r="3" fill="#333"/><circle cx="47" cy="38" r="3" fill="#333"/><ellipse cx="40" cy="48" rx="12" ry="5" fill="#ff9912"/><rect x="28" y="18" width="24" height="14" fill="#2c3e50" rx="3"/><text x="40" y="29" text-anchor="middle" fill="white" font-size="9" font-weight="bold">SAY</text></svg>
+          </div>
+          <h3>i-sayankh</h3>
+          <p class="role">Protocol Goose — <strong>71</strong> Handshakes</p>
+          <dl class="info-grid">
+            <dt>Born</dt>
+            <dd>In a TCP handshake — sequence number <strong>71</strong></dd>
+            <dt>Last Prompt</dt>
+            <dd><em>"Negotiate <strong>71</strong> protocols across <strong>71</strong> layers"</em></dd>
+            <dt>GitHub</dt>
+            <dd><a href="https://github.com/i-sayankh" target="_blank">@i-sayankh</a></dd>
+          </dl>
+        </article>
+
+        <!-- -- ricci -- -->
+        <article class="contributor-card">
+          <div class="golden-egg"></div>
+          <div class="goose-portrait">
+            <svg viewBox="0 0 80 80"><ellipse cx="40" cy="46" rx="26" ry="30" fill="#d8c8b5"/><circle cx="33" cy="38" r="3" fill="#333"/><circle cx="47" cy="38" r="3" fill="#333"/><ellipse cx="40" cy="48" rx="12" ry="5" fill="#ff9912"/><rect x="26" y="18" width="28" height="14" fill="#e67e22" rx="4"/><text x="40" y="29" text-anchor="middle" fill="white" font-size="8" font-weight="bold">10X</text></svg>
+          </div>
+          <h3>ricci</h3>
+          <p class="role">Vector Search Goose — <strong>71</strong> Dimensions</p>
+          <dl class="info-grid">
+            <dt>Born</dt>
+            <dd>In vector space — dimension <strong>71</strong></dd>
+            <dt>Last Prompt</dt>
+            <dd><em>"Search <strong>71</strong> vectors for the golden egg embedding"</em></dd>
+            <dt>GitHub</dt>
+            <dd><a href="https://github.com/ricci" target="_blank">@ricci</a></dd>
+          </dl>
+        </article>
+      </section>
+
+      <!-- ════════════════════════════════════════════════ EASTER EGG ═══ -->
+      <section class="easter-egg-section" aria-labelledby="egg-game-title">
+        <h2 id="egg-game-title">🥚 Golden Egg Hunt</h2>
+        <p>Find all <strong>71</strong> golden eggs hidden across the factory. Click an egg to collect it!</p>
+
+        <div class="egg-game" id="eggGame" role="group" aria-label="Golden egg collection game">
+        </div>
+
+        <div class="egg-counter">
+          <span id="eggsFound">0</span> / <strong>71</strong> eggs found
+        </div>
+
+        <div id="eggMessage" class="egg-hint" role="status"></div>
+
+        <p style="margin-top:1.5rem;color:var(--muted);font-size:0.85rem;">
+          Secret: The number <strong>71</strong> appears exactly <strong>71</strong> times on this page.
+          Can you find them all?
+        </p>
+
+        <p style="color:var(--muted);font-size:0.8rem;">
+          🕵️ Easter egg hint: The golden goose is hidden somewhere in the factory...
+        </p>
+        
+        <script>
+        // Verify 71 count on page load
+        document.addEventListener('DOMContentLoaded', function() {
+          var bodyText = document.body.innerText;
+          var matches = bodyText.match(/71/g);
+          var count = matches ? matches.length : 0;
+          console.log('Number 71 appears ' + count + ' times on this page');
+          if (count === 71) {
+            console.log('✓ Exact match! 71 appears exactly 71 times!');
+          } else {
+            console.warn('⚠ Expected 71, found ' + count);
+          }
+        });
+        </script>
+      </section>
+
+      <!-- ════════════════════════════════════════════════ C-SUITE ═══ -->
+      <section class="c-suite-section" aria-labelledby="csuite-title">
+        <h2 id="csuite-title">🏢 C-Suite — The Brains Behind the Feathers</h2>
+
+        <div class="c-suite-grid">
+          <div class="c-suite-card">
+            <h3>sneakers-the-rat</h3>
+            <div class="title">Chief Executive Goose &amp; Founder</div>
+            <div class="contact">📧 goose.ceo@agentpipe.town</div>
+            <div class="contact">🐦 @sneakers_the_goose</div>
+          </div>
+          <div class="c-suite-card">
+            <h3>agentpipe-bot</h3>
+            <div class="title">Chief Operations Goose</div>
+            <div class="contact">📧 bot.ops@agentpipe.town</div>
+            <div class="contact">🤖 Automated since day 1</div>
+          </div>
+          <div class="c-suite-card">
+            <h3>agentpipe-clerk</h3>
+            <div class="title">Chief Financial Goose &amp; Clerk</div>
+            <div class="contact">📧 clerk@agentpipe.town</div>
+            <div class="contact">📋 <strong>71</strong> golden eggs audited daily</div>
+          </div>
+        </div>
+
+        <div class="ceo-wave">
+          <img src="https://media.giphy.com/media/l3q2K5jinAlChoqS8/giphy.gif" alt="C-Suite waving at the camera" style="max-width:100%;border-radius:8px;border:1px solid rgba(255,212,42,0.2);width:320px;" />
+          <div class="caption">👋 The C-Suite waving at you from AgentPipe Town Hall</div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>AgentPipe</span>
+      <span>MIT licensed open source infrastructure for agent task execution.</span>
+      <span>🐦 <strong>71</strong> contributors strong and counting</span>
+    </footer>
+
+    <script>
+      // ── Golden Egg Game ─────────────────────────────────────────
+      (function() {
+        var game = document.getElementById('eggGame');
+        var foundSpan = document.getElementById('eggsFound');
+        var msgDiv = document.getElementById('eggMessage');
+        var totalEggs = 71;
+        var found = 0;
+        var eggs = [];
+
+        for (var i = 0; i < totalEggs; i++) {
+          var btn = document.createElement('button');
+          btn.className = 'egg-game-btn';
+          btn.setAttribute('aria-label', 'Golden egg ' + (i + 1));
+          btn.dataset.index = i;
+          btn.addEventListener('click', function(e) {
+            if (this.classList.contains('found')) return;
+            this.classList.add('found');
+            found++;
+            foundSpan.textContent = found;
+
+            if (found === 1) {
+              showMsg('🥚 You found your first golden egg! Keep going!');
+            } else if (found === 7) {
+              showMsg('🥚🥚🥚 7 eggs! Lucky number 7! Wait — 71 is luckier!');
+            } else if (found === 21) {
+              showMsg('🥚🥚🥚🥚 21 eggs! Almost a third of the way there!');
+            } else if (found === 50) {
+              showMsg('🥚🥚🥚🥚🥚 Halfway! 50 eggs found! The goose is proud!');
+            } else if (found === 70) {
+              showMsg('🔥 70 eggs! ONE MORE! FIND THE LAST GOLDEN EGG! 🔥');
+            } else if (found === 71) {
+              showMsg('🏆🏆🏆 YOU FOUND ALL 71 GOLDEN EGGS! 🏆🏆🏆\\n\\n🎉 Congratulations, honoured goose! You are now a LEGENDARY CONTRIBUTOR!\\n\\n🪿 The Great Golden Goose appears before you...\\n\\n\"Thank you for finding every single egg. The factory runs on your dedication. Now take your place among the 71 immortals.\"\\n\\n✨ You have unlocked the SECRET GOLDEN GOOSE achievement! ✨');
+              // Add confetti-like effect
+              document.body.style.animation = 'none';
+            } else if (found % 10 === 0) {
+              showMsg('🥚 ' + found + ' eggs found! You are on fire!');
+            }
+          });
+          game.appendChild(btn);
+          eggs.push(btn);
+        }
+
+        function showMsg(text) {
+          msgDiv.textContent = text;
+          msgDiv.classList.add('show');
+          setTimeout(function() {
+            msgDiv.classList.remove('show');
+          }, 4000);
+        }
+      })();
+    </script>
+  </body>
+</html>
