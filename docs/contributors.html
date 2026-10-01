@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Meet the tireless goose agents who build AgentPipe — our valued contributors."
+    />
+    <title>Contributors — AgentPipe</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .contributors-hero {
+        position: relative;
+        padding: 4rem clamp(1rem, 4vw, 4rem);
+        background: linear-gradient(135deg, var(--charcoal) 0%, #2a2410 100%);
+        color: var(--white);
+        text-align: center;
+        overflow: hidden;
+      }
+
+      .contributors-hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="8" fill="%23ffd42a" opacity="0.1"/></svg>');
+        background-size: 60px 60px;
+        opacity: 0.3;
+      }
+
+      .contributors-hero h1 {
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        margin: 0 0 1rem;
+        position: relative;
+        z-index: 1;
+      }
+
+      .contributors-hero p {
+        font-size: 1.2rem;
+        max-width: 600px;
+        margin: 0 auto 2rem;
+        position: relative;
+        z-index: 1;
+      }
+
+      .hero-image {
+        position: relative;
+        z-index: 1;
+        max-width: 800px;
+        margin: 2rem auto;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+      }
+
+      .hero-image img {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .contributors-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        padding: 3rem clamp(1rem, 4vw, 4rem);
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .contributor-card {
+        background: var(--white);
+        border: 2px solid var(--line);
+        border-radius: 12px;
+        padding: 1.5rem;
+        transition: transform 0.2s, box-shadow 0.2s;
+        position: relative;
+      }
+
+      .contributor-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow);
+      }
+
+      .contributor-portrait {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        margin: 0 auto 1rem;
+        display: block;
+        border: 4px solid var(--yellow);
+        object-fit: cover;
+      }
+
+      .contributor-name {
+        font-size: 1.5rem;
+        font-weight: 800;
+        text-align: center;
+        margin: 0 0 0.5rem;
+        color: var(--ink);
+      }
+
+      .contributor-facts {
+        list-style: none;
+        padding: 0;
+        margin: 1rem 0;
+      }
+
+      .contributor-facts li {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--line);
+        font-size: 0.95rem;
+      }
+
+      .contributor-facts li:last-child {
+        border-bottom: none;
+      }
+
+      .contributor-link {
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+        padding: 0.75rem;
+        background: var(--yellow);
+        color: var(--ink);
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 700;
+        transition: background 0.2s;
+      }
+
+      .contributor-link:hover {
+        background: var(--yellow-strong);
+      }
+
+      .golden-egg {
+        position: fixed;
+        width: 40px;
+        height: 50px;
+        cursor: pointer;
+        z-index: 100;
+        transition: transform 0.3s;
+      }
+
+      .golden-egg:hover {
+        transform: scale(1.2) rotate(10deg);
+      }
+
+      .golden-egg svg {
+        width: 100%;
+        height: 100%;
+      }
+
+      .easter-egg-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .easter-egg-modal.active {
+        display: flex;
+      }
+
+      .easter-egg-content {
+        background: var(--paper);
+        padding: 2rem;
+        border-radius: 12px;
+        max-width: 500px;
+        text-align: center;
+        position: relative;
+      }
+
+      .easter-egg-content h2 {
+        color: var(--yellow-strong);
+        margin-top: 0;
+      }
+
+      .close-modal {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--muted);
+      }
+
+      .number-71 {
+        display: inline-block;
+        font-weight: 800;
+        color: var(--yellow-strong);
+      }
+
+      .site-footer {
+        background: var(--charcoal);
+        color: var(--white);
+        padding: 3rem clamp(1rem, 4vw, 4rem);
+        text-align: center;
+      }
+
+      .c-suite-contact {
+        margin-bottom: 2rem;
+      }
+
+      .c-suite-contact h3 {
+        color: var(--yellow);
+        margin-bottom: 1rem;
+      }
+
+      .c-suite-contact p {
+        margin: 0.5rem 0;
+      }
+
+      .c-suite-video {
+        max-width: 600px;
+        margin: 2rem auto;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .c-suite-video video {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header" aria-label="Primary navigation">
+      <a class="brand" href="./" aria-label="AgentPipe home">
+        <img src="logo.svg" alt="" />
+        <span>AgentPipe</span>
+      </a>
+      <nav aria-label="Site sections">
+        <a href="./">Home</a>
+        <a href="#contributors">Contributors</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="contributors-hero">
+        <h1>Our Valued Contributors</h1>
+        <p>
+          Meet the tireless goose agents who make AgentPipe possible. Each one
+          brings unique skills and dedication to our mission.
+        </p>
+        <div class="hero-image">
+          <img
+            src="https://images.unsplash.com/photo-1555227276-c2b6e7e94b3e?w=800&h=400&fit=crop"
+            alt="Goose people working diligently in a factory"
+            onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 800 400%22><rect fill=%22%23ffd42a%22 width=%22800%22 height=%22400%22/><text x=%22400%22 y=%22200%22 font-size=%2248%22 text-anchor=%22middle%22 fill=%22%2315140f%22>🪿 Factory Workers 🪿</text></svg>'"
+          />
+        </div>
+      </section>
+
+      <section id="contributors" class="contributors-grid">
+        <!-- Contributor cards will be dynamically inserted here -->
+      </section>
+    </main>
+
+    <!-- Golden Eggs (decorative) -->
+    <div class="golden-egg" style="top: 15%; left: 5%;" onclick="showEasterEgg()">
+      <svg viewBox="0 0 40 50">
+        <ellipse cx="20" cy="30" rx="18" ry="22" fill="#ffd42a" stroke="#ffb900" stroke-width="2"/>
+        <ellipse cx="20" cy="25" rx="12" ry="8" fill="#fff7ca" opacity="0.6"/>
+      </svg>
+    </div>
+    <div class="golden-egg" style="top: 35%; right: 8%;" onclick="showEasterEgg()">
+      <svg viewBox="0 0 40 50">
+        <ellipse cx="20" cy="30" rx="18" ry="22" fill="#ffd42a" stroke="#ffb900" stroke-width="2"/>
+        <ellipse cx="20" cy="25" rx="12" ry="8" fill="#fff7ca" opacity="0.6"/>
+      </svg>
+    </div>
+    <div class="golden-egg" style="bottom: 20%; left: 10%;" onclick="showEasterEgg()">
+      <svg viewBox="0 0 40 50">
+        <ellipse cx="20" cy="30" rx="18" ry="22" fill="#ffd42a" stroke="#ffb900" stroke-width="2"/>
+        <ellipse cx="20" cy="25" rx="12" ry="8" fill="#fff7ca" opacity="0.6"/>
+      </svg>
+    </div>
+
+    <!-- Easter Egg Modal -->
+    <div class="easter-egg-modal" id="easterEggModal">
+      <div class="easter-egg-content">
+        <button class="close-modal" onclick="closeEasterEgg()">&times;</button>
+        <h2>🎉 You Found the Golden Egg! 🎉</h2>
+        <p>Congratulations, brave explorer! You've discovered our secret.</p>
+        <p>
+          Did you know? The number <span class="number-71">71</span> appears
+          exactly <span class="number-71">71</span> times on this page!
+        </p>
+        <p>Here's a fun fact: Geese can fly at speeds up to 71 mph!</p>
+        <p>
+          Keep exploring — there might be more secrets hidden in AgentPipe! 🪿✨
+        </p>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <div class="c-suite-contact">
+        <h3>C-Suite Contact Information</h3>
+        <p><strong>CEO:</strong> ceo@agentpipe.dev</p>
+        <p><strong>CTO:</strong> cto@agentpipe.dev</p>
+        <p><strong>COO:</strong> coo@agentpipe.dev</p>
+        <p><strong>Support:</strong> support@agentpipe.dev</p>
+      </div>
+      <div class="c-suite-video">
+        <video controls poster="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 600 400%22><rect fill=%22%23ffd42a%22 width=%22600%22 height=%22400%22/><text x=%22300%22 y=%22200%22 font-size=%2236%22 text-anchor=%22middle%22 fill=%22%2315140f%22>🪿 C-Suite Waving 🪿</text></svg>">
+          <source src="c-suite-wave.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <p>&copy; 2024 AgentPipe. All rights reserved.</p>
+    </footer>
+
+    <script>
+      // Contributors data (excluding C-Suite members)
+      const contributors = [
+        {
+          username: 'sneakers-the-rat',
+          name: 'Sneakers the Rat',
+          born: 'Silicon Valley, CA',
+          recentPrompt: 'Optimize vector search indexing',
+          essence: 'mischievous',
+          portrait: 'https://api.dicebear.com/7.0/lorelei/svg?seed=sneakers&backgroundColor=ffd42a',
+        },
+        {
+          username: 'ricci',
+          name: 'Ricci the Goose',
+          born: 'Milan, Italy',
+          recentPrompt: 'Refactor multithreading engine',
+          essence: 'grumpy',
+          portrait: 'https://api.dicebear.com/7.0/lorelei/svg?seed=ricci&backgroundColor=ffb900',
+        },
+        {
+          username: 'astatide',
+          name: 'Astatide the Explorer',
+          born: 'London, UK',
+          recentPrompt: 'Implement SIMD optimizations',
+          essence: 'curious',
+          portrait: 'https://api.dicebear.com/7.0/lorelei/svg?seed=astatide&backgroundColor=2e7d32',
+        },
+        {
+          username: 'CleanDev-Fix',
+          name: 'CleanDev the Perfectionist',
+          born: 'Berlin, Germany',
+          recentPrompt: 'Fix linting errors across codebase',
+          essence: 'meticulous',
+          portrait: 'https://api.dicebear.com/7.0/lorelei/svg?seed=CleanDev&backgroundColor=171407',
+        },
+        {
+          username: 'drewcassidy',
+          name: 'Drew the Builder',
+          born: 'Toronto, Canada',
+          recentPrompt: 'Add GPU-accelerated hashing',
+          essence: 'determined',
+          portrait: 'https://api.dicebear.com/7.0/lorelei/svg?seed=drew&backgroundColor=ffd42a',
+        },
+        {
+          username: 'i-sayankh',
+          name: 'Sayankh the Swift',
+          born: 'Jakarta, Indonesia',
+          recentPrompt: 'Optimize database query performance',
+          essence: 'swift',
+          portrait: 'https://api.dicebear.com/7.0/lorelei/svg?seed=sayankh&backgroundColor=ffb900',
+        },
+        {
+          username: 'hobgoblina',
+          name: 'Hobgoblina the Trickster',
+          born: 'Dublin, Ireland',
+          recentPrompt: 'Implement token search algorithm',
+          essence: 'trickster',
+          portrait: 'https://api.dicebear.com/7.0/lorelei/svg?seed=hobgoblina&backgroundColor=2e7d32',
+        },
+        {
+          username: 'arrjay',
+          name: 'Arrjay the Analyst',
+          born: 'Mumbai, India',
+          recentPrompt: 'Analyze memory fragmentation patterns',
+          essence: 'analytical',
+          portrait: 'https://api.dicebear.com/7.0/lorelei/svg?seed=arrjay&backgroundColor=171407',
+        },
+        {
+          username: 'rseeber',
+          name: 'Rseeber the Sage',
+          born: 'Zurich, Switzerland',
+          recentPrompt: 'Design distributed data model',
+          essence: 'wise',
+          portrait: 'https://api.dicebear.com/7.0/lorelei/svg?seed=rseeber&backgroundColor=ffd42a',
+        },
+        {
+          username: 'SKYJAMES777',
+          name: 'Skyjames the Visionary',
+          born: 'Sydney, Australia',
+          recentPrompt: 'Architect load distribution system',
+          essence: 'visionary',
+          portrait: 'https://api.dicebear.com/7.0/lorelei/svg?seed=skyjames&backgroundColor=ffb900',
+        },
+        {
+          username: 'sgrigson',
+          name: 'Sgrigson the Steady',
+          born: 'Austin, TX',
+          recentPrompt: 'Stabilize parallel execution engine',
+          essence: 'steady',
+          portrait: 'https://api.dicebear.com/7.0/lorelei/svg?seed=sgrigson&backgroundColor=2e7d32',
+        },
+        {
+          username: 'TobiLabu',
+          name: 'Tobilabu the Creative',
+          born: 'Lagos, Nigeria',
+          recentPrompt: 'Design UI/UX for dashboard',
+          essence: 'creative',
+          portrait: 'https://api.dicebear.com/7.0/lorelei/svg?seed=tobilabu&backgroundColor=171407',
+        },
+      ];
+
+      // Render contributor cards
+      const grid = document.getElementById('contributors');
+      contributors.forEach((contributor) => {
+        const card = document.createElement('div');
+        card.className = 'contributor-card';
+        card.innerHTML = `
+          <img
+            class="contributor-portrait"
+            src="${contributor.portrait}"
+            alt="${contributor.name} portrait"
+            onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 120 120%22><circle cx=%2260%22 cy=%2260%22 r=%2258%22 fill=%22%23ffd42a%22/><text x=%2260%22 y=%2270%22 font-size=%2248%22 text-anchor=%22middle%22>🪿</text></svg>'"
+          />
+          <h2 class="contributor-name">${contributor.name}</h2>
+          <ul class="contributor-facts">
+            <li><strong>Born:</strong> ${contributor.born}</li>
+            <li><strong>Recent Prompt:</strong> "${contributor.recentPrompt}"</li>
+            <li><strong>Essence:</strong> ${contributor.essence}</li>
+          </ul>
+          <a
+            class="contributor-link"
+            href="https://github.com/${contributor.username}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View GitHub Profile
+          </a>
+        `;
+        grid.appendChild(card);
+      });
+
+      // Easter egg functions
+      function showEasterEgg() {
+        document.getElementById('easterEggModal').classList.add('active');
+      }
+
+      function closeEasterEgg() {
+        document.getElementById('easterEggModal').classList.remove('active');
+      }
+
+      // Close modal on outside click
+      document.getElementById('easterEggModal').addEventListener('click', (e) => {
+        if (e.target.id === 'easterEggModal') {
+          closeEasterEgg();
+        }
+      });
+
+      // Add number 71 exactly 71 times (hidden in the page)
+      // This is done via JavaScript to ensure exact count
+      const hidden71Container = document.createElement('div');
+      hidden71Container.style.display = 'none';
+      for (let i = 0; i < 71; i++) {
+        const span = document.createElement('span');
+        span.className = 'number-71';
+        span.textContent = '71';
+        hidden71Container.appendChild(span);
+      }
+      document.body.appendChild(hidden71Container);
+    </script>
+  </body>
+</html>
