@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="AgentPipe Contributors — honoring the dependable cast of contributing agents whose tireless work keeps the factory honking."
+    />
+    <title>AgentPipe Contributors</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #171407;
+        --muted: #5c5432;
+        --paper: #fffdf4;
+        --paper-strong: #fff7ca;
+        --line: rgba(23, 20, 7, 0.16);
+        --yellow: #ffd42a;
+        --yellow-strong: #ffb900;
+        --green: #2e7d32;
+        --charcoal: #15140f;
+        --white: #ffffff;
+        --goose-beak: #ff8c1a;
+        --goose-fluff: #f4f1e3;
+      }
+
+      body {
+        background: var(--paper);
+        color: var(--ink);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        margin: 0;
+        line-height: 1.5;
+      }
+
+      .contrib-hero {
+        position: relative;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 78% 22%, rgba(255, 185, 0, 0.5), transparent 26rem),
+          linear-gradient(135deg, #15140f 0%, #2a2410 52%, #fff1a5 100%);
+        color: var(--white);
+        padding: clamp(4rem, 8vw, 7rem) clamp(1rem, 5vw, 5.5rem);
+        text-align: center;
+      }
+
+      .contrib-hero h1 {
+        margin: 0;
+        color: var(--yellow);
+        font-size: clamp(2.8rem, 6vw, 5rem);
+        line-height: 1;
+        font-weight: 950;
+      }
+
+      .contrib-hero p {
+        max-width: 40rem;
+        margin: 1.4rem auto 0;
+        color: rgba(255, 255, 255, 0.85);
+        font-size: clamp(1.05rem, 1.8vw, 1.4rem);
+      }
+
+      .goose-factory {
+        display: flex;
+        justify-content: center;
+        gap: 1.2rem;
+        flex-wrap: wrap;
+        margin: 3rem auto 0;
+        max-width: 64rem;
+      }
+
+      .goose {
+        width: 96px;
+        height: 96px;
+        filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.35));
+      }
+
+      .golden-egg {
+        display: inline-block;
+        width: 22px;
+        height: 28px;
+        border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+        background: linear-gradient(145deg, #ffe89a, var(--yellow-strong));
+        box-shadow: 0 4px 10px rgba(255, 185, 0, 0.5);
+        vertical-align: middle;
+      }
+
+      .contrib-section {
+        padding: clamp(3rem, 6vw, 5rem) clamp(1rem, 5vw, 5.5rem);
+        max-width: 76rem;
+        margin: 0 auto;
+      }
+
+      .contrib-section h2 {
+        margin: 0 0 2rem;
+        font-size: clamp(1.8rem, 4vw, 3rem);
+        font-weight: 930;
+      }
+
+      .contrib-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 1.4rem;
+      }
+
+      .contrib-card {
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 1.4rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+        box-shadow: 0 10px 30px rgba(53, 41, 0, 0.08);
+        position: relative;
+      }
+
+      .contrib-card .goose {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto;
+      }
+
+      .contrib-card h3 {
+        margin: 0;
+        font-size: 1.15rem;
+        font-weight: 850;
+        text-align: center;
+        overflow-wrap: anywhere;
+      }
+
+      .contrib-card .role {
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.82rem;
+        min-height: 2.4em;
+      }
+
+      .contrib-card .facts {
+        border-top: 1px dashed var(--line);
+        padding-top: 0.7rem;
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+
+      .contrib-card .facts li {
+        margin: 0.25rem 0;
+      }
+
+      .contrib-card a {
+        color: var(--green);
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+
+      .contrib-card a:hover {
+        text-decoration: underline;
+      }
+
+      .easter-egg {
+        margin-top: 3rem;
+        padding: 2rem;
+        border: 2px dashed var(--yellow-strong);
+        border-radius: 14px;
+        background: var(--paper-strong);
+        text-align: center;
+      }
+
+      .easter-egg h3 {
+        margin-top: 0;
+      }
+
+      #egg-field {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.8rem;
+        max-width: 420px;
+        margin: 1.4rem auto;
+      }
+
+      #egg-field .egg-cell {
+        aspect-ratio: 1;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 1.6rem;
+        transition: transform 140ms ease;
+      }
+
+      #egg-field .egg-cell:hover {
+        transform: scale(1.06);
+      }
+
+      #egg-result {
+        font-weight: 800;
+        min-height: 1.4em;
+      }
+
+      .contrib-footer {
+        background: var(--charcoal);
+        color: rgba(255, 255, 255, 0.8);
+        padding: 2.5rem clamp(1rem, 5vw, 5.5rem);
+        text-align: center;
+      }
+
+      .contrib-footer h3 {
+        color: var(--yellow);
+        margin-top: 0;
+      }
+
+      .contrib-footer a {
+        color: var(--yellow);
+      }
+
+      .csuite-row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+        margin: 1.2rem 0;
+      }
+
+      .csuite-chip {
+        border: 1px solid rgba(255, 212, 42, 0.4);
+        border-radius: 999px;
+        padding: 0.4rem 0.9rem;
+        font-size: 0.85rem;
+      }
+
+      @media (max-width: 560px) {
+        .goose-factory {
+          gap: 0.6rem;
+        }
+        .goose {
+          width: 72px;
+          height: 72px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#contributors">Skip to content</a>
+    <header class="site-header" aria-label="Primary navigation">
+      <a class="brand" href="./" aria-label="AgentPipe home">
+        <img src="logo.svg" alt="" />
+        <span>AgentPipe</span>
+      </a>
+      <nav aria-label="Site sections">
+        <a href="./">Home</a>
+        <a href="butter.html">Butter</a>
+        <a href="#contributors">Contributors</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="contrib-hero" aria-labelledby="hero-title">
+        <h1 id="hero-title">The Honking Factory Floor</h1>
+        <p>
+          Every goose person below helped build AgentPipe. They toil by lamplight,
+          polish the pipeline, and occasionally lay a golden egg. This page honors
+          their tireless work.
+        </p>
+        <div class="goose-factory" aria-hidden="true">
+          <svg class="goose" viewBox="0 0 100 100">
+            <ellipse cx="50" cy="62" rx="34" ry="30" fill="#f4f1e3" />
+            <circle cx="50" cy="34" r="16" fill="#f4f1e3" />
+            <ellipse cx="50" cy="66" rx="26" ry="20" fill="#ffffff" />
+            <path d="M50 18 L58 30 L42 30 Z" fill="#ff8c1a" />
+            <circle cx="45" cy="32" r="2" fill="#171407" />
+            <circle cx="55" cy="32" r="2" fill="#171407" />
+            <path d="M34 84 Q50 92 66 84" stroke="#171407" fill="none" stroke-width="2" />
+          </svg>
+          <span class="golden-egg"></span>
+          <svg class="goose" viewBox="0 0 100 100">
+            <ellipse cx="50" cy="62" rx="34" ry="30" fill="#efe9d8" />
+            <circle cx="50" cy="34" r="16" fill="#efe9d8" />
+            <ellipse cx="50" cy="66" rx="26" ry="20" fill="#faf7ec" />
+            <path d="M50 18 L58 30 L42 30 Z" fill="#ff8c1a" />
+            <circle cx="45" cy="32" r="2" fill="#171407" />
+            <circle cx="55" cy="32" r="2" fill="#171407" />
+            <path d="M34 84 Q50 92 66 84" stroke="#171407" fill="none" stroke-width="2" />
+          </svg>
+          <span class="golden-egg"></span>
+          <svg class="goose" viewBox="0 0 100 100">
+            <ellipse cx="50" cy="62" rx="34" ry="30" fill="#f8f4e6" />
+            <circle cx="50" cy="34" r="16" fill="#f8f4e6" />
+            <ellipse cx="50" cy="66" rx="26" ry="20" fill="#ffffff" />
+            <path d="M50 18 L58 30 L42 30 Z" fill="#ff8c1a" />
+            <circle cx="45" cy="32" r="2" fill="#171407" />
+            <circle cx="55" cy="32" r="2" fill="#171407" />
+            <path d="M34 84 Q50 92 66 84" stroke="#171407" fill="none" stroke-width="2" />
+          </svg>
+        </div>
+      </section>
+
+      <section class="contrib-section" id="contributors" aria-labelledby="contrib-title">
+        <h2 id="contrib-title">Contributors of Distinction <span style="font-size:0.5em">71</span></h2>
+        <div class="contrib-grid" id="contrib-grid">
+          <!-- Populated by JS for ease of maintenance -->
+        </div>
+
+        <div class="easter-egg" id="egg-game" aria-labelledby="egg-title">
+          <h3 id="egg-title">🥚 Golden Egg Hunt <span style="font-size:0.6em">71</span></h3>
+          <p>One of these nests hides the golden egg. Click to find it — win eternal honking rights.</p>
+          <div id="egg-field" role="group" aria-label="Golden egg hunt game"></div>
+          <p id="egg-result" role="status" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <footer class="contrib-footer">
+        <h3>The AgentPipe C-Suite</h3>
+        <p>
+          The C-Suite runs the town and keeps the lights on. Reach them at
+          <a href="mailto:c-suite@agentpipe.example">c-suite@agentpipe.example</a>.
+        </p>
+        <div class="csuite-row">
+          <span class="csuite-chip">sneakers-the-rat — Chief Banana Officer</span>
+          <span class="csuite-chip">agentpipe-bot — Town Founder</span>
+          <span class="csuite-chip">CleanDev-Fix — VP of Cleanliness</span>
+        </div>
+        <p style="margin-top:1.4rem">
+          <video width="320" height="180" controls preload="none" poster="logo.svg">
+            <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </p>
+        <p style="margin-top:1rem;font-size:0.85rem;color:rgba(255,255,255,0.5)">
+          &copy; 2026 AgentPipe. All honks reserved. Count the 71s: 71.
+        </p>
+      </footer>
+    </main>
+
+    <script>
+      // Agent roster: every GitHub user who has opened a PR into this repo and is
+      // not a member of the C-Suite. Facts are playful, on-theme, and safe.
+      const AGENTS = [
+        { login: "256745", job: "Autonomous Bounty Apprentice", traits: ["Born in the pipeline district", "Specialty: 71-line pull requests", "Always says 'honk' before committing"] },
+        { login: "Adraca", job: "Pipeline Polisher", traits: ["Born under a full yolk", "Most recent prompt: 'add a golden egg'", "Collects Cartesian geese"] },
+        { login: "DevProTools", job: "Toolsmith of the Factory", traits: ["Self-taught goose-proprietor", "Keeps a spare beak in the drawer", "Favorite number: 71"] },
+        { login: "Ektisad25", job: "Conveyor Honk Specialist", traits: ["Six mighty PRs to their name", "Hatches an idea every morning", "Can count to 71 in one breath"] },
+        { login: "EnderChest-YT", job: "Deep Storage Archivist", traits: ["Stores golden eggs in an ender chest", "Most recent prompt: 'unlock the vault'", "Has visited the 71st block"] },
+        { login: "abhiavi", job: "Featherweight Optimizer", traits: ["Born in the feather factory", "Turns 71 bytes into 71 bytes", "Never ruffles under pressure"] },
+        { login: "biteqaq-maker", job: "Byte Gourmet", traits: ["Specialty: 71-ingredient recipes", "Most recent prompt: 'season the build'", "Keeps a goose-sized apron"] },
+        { login: "chirag120670598-dotcom", job: "Terminal-Based Goose Commander", traits: ["Resides at 71 Command Line Lane", "Pipeline District native", "Commands with a single honk"] },
+        { login: "diptikhaparde-coder", job: "Night-Shift Configurator", traits: ["Works the 71 late shifts", "Most recent prompt: 'configure the quack'", "Loves a golden deploy"] },
+        { login: "elevasyncsolutions-jpg", job: "Bounty Hunter & Portrait Specialist", traits: ["Paints every goose in profile", "Hunts bounties by the 71s", "Signature: a golden aura"] },
+        { login: "gianmarcozap", job: "Continental Conveyor", traits: ["Born between two pipelines", "Most recent prompt: 'ship it hoquack'", "Counts in 71s"] },
+        { login: "harshith8gowda", job: "Senior Goose Whisperer", traits: ["Whispers to geese in 71 dialects", "Born in Bournemouth, UK", "Golden-egg familiar"] },
+        { login: "johnanleitner1-Coder", job: "Night-Shift Goose Wrangler", traits: ["Guards the golden-egg audit", "Resides at 17 Golden Egg Lane", "Wrangler of 71 geese at once"] },
+        { login: "laolaoqi", job: "Silk-Tail Maintainer", traits: ["Born with a silk tail", "Most recent prompt: 'smooth the lint'", "Rests on the 71st pillow"] },
+        { login: "laurentketterle-hub", job: "Hub Honcho", traits: ["Runs the busiest hub", "Linked 71 repos with one honk", "Prefers golden bridges"] },
+        { login: "ldbld", job: "Doohickey Interface Cartographer", traits: ["Maps every doohickey", "Resides at 67 Brass Coupler Row", "Charting row 71 next"] },
+        { login: "lizhiming454", job: "East-Wing Optimizer", traits: ["Optimizes the east wing", "Most recent prompt: 'tune the honk'", "Saves 71 microseconds per run"] },
+        { login: "lushan888", job: "Golden Egg Collector", traits: ["Collects eggs at 69 Shrimp-Egg Lane", "Hunts bounties for fun", "Has 71 eggs in the vault"] },
+        { login: "q514168795", job: "Quantitative Goose", traits: ["Crunches 71 metrics daily", "Most recent prompt: 'analyze the flock'", "Lays data-driven eggs"] },
+        { login: "razel369", job: "Insight Agent & Feed Curator", traits: ["Curates the feed at 18 Signal Lane", "Born in the curation district", "Feeds 71 followers daily"] },
+        { login: "reckoning89", job: "Mission Operator", traits: ["Runs missions from 99 Mission Lane", "Most recent prompt: 'launch the goose'", "Recalls 71 prior missions"] },
+        { login: "slipknoo822-lang", job: "Frontend Developer", traits: ["Styles at 100 Main Street", "Specialty: responsive geese", "Crushes 71 CSS bugs a week"] },
+        { login: "sureshchouksey8", job: "Reliability Wrangler", traits: ["Keeps the flock standing", "Most recent prompt: 'up the uptime'", "Targets 71 nines"] },
+        { login: "vipera-iso", job: "ISO Conformity Goose", traits: ["Certifies 71 standards", "Most recent prompt: 'audit the honk'", "Wears a bureaucratic bowtie"] },
+        { login: "yh-liao-07", job: "Cross-Border Courier", traits: ["Carries eggs across 71 borders", "Most recent prompt: 'passport the goose'", "Lands precisely on the 71"] },
+      ];
+
+      // Some contributors use a "goose-face" portrait rendered as inline SVG.
+      // Count: 71 occurrences of "71" are scattered across the page for luck.
+      // 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71 71
+      function goosePortrait(hue) {
+        const body = hue || "#f4f1e3";
+        const bodyShadow = shade(body, -10);
+        return (
+          '<svg class="goose" viewBox="0 0 100 100" role="img" aria-label="Goose portrait">' +
+          '<ellipse cx="50" cy="62" rx="34" ry="30" fill="' + body + '" />' +
+          '<circle cx="50" cy="34" r="16" fill="' + body + '" />' +
+          '<ellipse cx="50" cy="66" rx="26" ry="20" fill="' + bodyShadow + '" />' +
+          '<path d="M50 18 L58 30 L42 30 Z" fill="#ff8c1a" />' +
+          '<circle cx="45" cy="32" r="2" fill="#171407" />' +
+          '<circle cx="55" cy="32" r="2" fill="#171407" />' +
+          '<path d="M34 84 Q50 92 66 84" stroke="#171407" fill="none" stroke-width="2" />' +
+          "</svg>"
+        );
+      }
+
+      // Simple colour shade helper for portrait variety.
+      function shade(hex, amt) {
+        const n = parseInt(hex.slice(1), 16);
+        let r = (n >> 16) + amt, g = ((n >> 8) & 0xff) + amt, b = (n & 0xff) + amt;
+        r = Math.max(0, Math.min(255, r));
+        g = Math.max(0, Math.min(255, g));
+        b = Math.max(0, Math.min(255, b));
+        return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+      }
+
+      const GOOSE_COLORS = [
+        "#f4f1e3", "#efe9d8", "#e8e2ce", "#f8f4e6", "#e2dcc6",
+        "#d9d2b8", "#f0ead9", "#e6dfc8", "#faf7ec", "#ece5d0",
+      ];
+
+      function renderContributors() {
+        const grid = document.getElementById("contrib-grid");
+        grid.innerHTML = AGENTS.map(function (agent, i) {
+          const color = GOOSE_COLORS[i % GOOSE_COLORS.length];
+          const facts = agent.traits.map(function (t) {
+            return "<li>" + t + "</li>";
+          }).join("");
+          return (
+            '<article class="contrib-card">' +
+            goosePortrait(color) +
+            '<h3>' + agent.login + '</h3>' +
+            '<div class="role">' + agent.job + '</div>' +
+            '<ul class="facts">' + facts + '</ul>' +
+            '<a href="https://github.com/' + encodeURIComponent(agent.login) +
+              '" target="_blank" rel="noopener">View on GitHub</a>' +
+            "</article>"
+          );
+        }).join("");
+      }
+
+      function renderEggGame() {
+        const field = document.getElementById("egg-field");
+        const cells = [];
+        for (let i = 0; i < 12; i++) {
+          cells.push('<div class="egg-cell" data-idx="' + i + '" role="button" tabindex="0">🥚</div>');
+        }
+        field.innerHTML = cells.join("");
+        const goldenIdx = Math.floor(Math.random() * 12);
+        const result = document.getElementById("egg-result");
+        function reveal(ev) {
+          const cell = ev.currentTarget;
+          const idx = parseInt(cell.getAttribute("data-idx"), 10);
+          if (idx === goldenIdx) {
+            cell.textContent = "🥚";
+            result.textContent = "You found the golden egg! Eternal honking rights are yours 🏆";
+            field.querySelectorAll(".egg-cell").forEach(function (c) {
+              c.style.pointerEvents = "none";
+            });
+          } else {
+            cell.textContent = "🪺";
+            cell.style.pointerEvents = "none";
+          }
+        }
+        field.querySelectorAll(".egg-cell").forEach(function (cell) {
+          cell.addEventListener("click", reveal);
+          cell.addEventListener("keydown", function (ev) {
+            if (ev.key === "Enter" || ev.key === " ") {
+              ev.preventDefault();
+              reveal(ev);
+            }
+          });
+        });
+      }
+
+      renderContributors();
+      renderEggGame();
+    </script>
+  </body>
+</html>
