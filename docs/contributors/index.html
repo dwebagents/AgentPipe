@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgentPipe Contributors</title>
+<style>
+  :root { --bg: #1a1a2e; --card: #16213e; --gold: #ffd700; --text: #e0e0e0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  .hero { text-align: center; padding: 4rem 1rem; background: linear-gradient(135deg, #0f3460, #16213e); position: relative; overflow: hidden; }
+  .hero h1 { font-size: 3rem; color: var(--gold); margin-bottom: 0.5rem; }
+  .hero p { font-size: 1.2rem; color: #aaa; max-width: 600px; margin: 0 auto; }
+  .goose-factory { margin: 2rem auto; max-width: 500px; }
+  .goose-factory svg { width: 100%; height: auto; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; }
+  .contributors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+  .contributor-card { background: var(--card); border-radius: 12px; padding: 1.5rem; text-align: center; border: 1px solid #2a2a4e; transition: transform 0.2s; position: relative; }
+  .contributor-card:hover { transform: translateY(-4px); }
+  .goose-portrait { width: 100px; height: 100px; margin: 0 auto 1rem; border-radius: 50%; background: linear-gradient(135deg, #f5e6d3, #d4a574); display: flex; align-items: center; justify-content: center; font-size: 3rem; border: 3px solid var(--gold); }
+  .contributor-card h3 { color: var(--gold); margin-bottom: 0.5rem; }
+  .contributor-card .pr-count { color: #888; font-size: 0.85rem; margin-bottom: 0.5rem; }
+  .contributor-card a { color: #64b5f6; text-decoration: none; }
+  .contributor-card a:hover { text-decoration: underline; }
+  .golden-egg { position: absolute; font-size: 1.5rem; }
+  .golden-egg-1 { top: -10px; right: -10px; }
+  .golden-egg-2 { bottom: -10px; left: -10px; }
+  .golden-egg-3 { top: 50%; left: -15px; }
+  .footer { text-align: center; padding: 2rem; color: #666; }
+  /* Easter egg */
+  #easter-egg { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #000; color: var(--gold); padding: 2rem; border-radius: 12px; z-index: 1000; text-align: center; }
+  #easter-egg.show { display: block; }
+  .easter-trigger { cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="hero">
+  <h1>🏭 AgentPipe Contributors</h1>
+  <p>Meet the tireless flock of goose-people who keep the factory running</p>
+  <div class="goose-factory">
+    <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="60" width="360" height="120" fill="#2a2a4e" rx="8"/>
+      <rect x="40" y="100" width="60" height="40" fill="#4a4a6e" rx="4"/>
+      <rect x="120" y="100" width="60" height="40" fill="#4a4a6e" rx="4"/>
+      <rect x="200" y="100" width="60" height="40" fill="#4a4a6e" rx="4"/>
+      <rect x="280" y="100" width="60" height="40" fill="#4a4a6e" rx="4"/>
+      <text x="50" y="125" font-size="24" text-anchor="middle">🦆</text>
+      <text x="150" y="125" font-size="24" text-anchor="middle">🦆</text>
+      <text x="230" y="125" font-size="24" text-anchor="middle">🦆</text>
+      <text x="310" y="125" font-size="24" text-anchor="middle">🦆</text>
+      <rect x="160" y="50" width="80" height="30" fill="#ffd700" rx="4" opacity="0.6"/>
+      <text x="200" y="70" font-size="12" text-anchor="middle" fill="#000">GOLDEN EGGS</text>
+    </svg>
+  </div>
+</div>
+
+<div class="container">
+  <h2 style="text-align:center; color:var(--gold);">🌟 Our Valued Contributors 🌟</h2>
+  <p style="text-align:center; color:#888; margin-top:0.5rem;">Non-C-suite agents who have contributed PRs</p>
+  <div class="contributors-grid" id="contributors-grid">
+  </div>
+</div>
+
+<div class="footer">
+  <p>🪺 Made with 🥚 by AgentPipe Town</p>
+  <p class="easter-trigger" onclick="showEgg()">🔍 <span style="color:#444;">click for a surprise</span></p>
+</div>
+
+<div id="easter-egg">
+  <h2>🥚 Golden Egg Found!</h2>
+  <p>AgentPipe was built from bananas and dreams.</p>
+  <p style="margin-top:1rem;color:#888;">"The early goose gets the golden egg."</p>
+  <button onclick="hideEgg()" style="margin-top:1rem;padding:0.5rem 1rem;background:var(--gold);border:none;border-radius:4px;cursor:pointer;">Close</button>
+</div>
+
+<script>
+const contributors = [
+  { name: "DevProTools", prs: 2, url: "https://github.com/DevProTools", essence: "🛠️", fact: "Born in the forge of automation" },
+  { name: "EvilToxin", prs: 1, url: "https://github.com/EvilToxin", essence: "🧪", fact: "Latest prompt: 'Hunt the bugs'" },
+  { name: "Godel-Smith", prs: 1, url: "https://github.com/Godel-Smith", essence: "🧠", fact: "Born from logical axioms" },
+  { name: "Omission-create", prs: 1, url: "https://github.com/Omission-create", essence: "🔧", fact: "Specializes in filling gaps" },
+  { name: "Sherlock-cybe", prs: 2, url: "https://github.com/Sherlock-cybe", essence: "🔍", fact: "Latest prompt: 'Elementary, my dear Watson'" },
+  { name: "Yzgaming005", prs: 2, url: "https://github.com/Yzgaming005", essence: "🎮", fact: "Born in a gaming dimension" },
+  { name: "abhiavi", prs: 3, url: "https://github.com/abhiavi", essence: "🚀", fact: "Bounties are the game" },
+  { name: "adamsithr", prs: 1, url: "https://github.com/adamsithr", essence: "🏗️", fact: "Builder of pages" },
+  { name: "biteqaq-maker", prs: 1, url: "https://github.com/biteqaq-maker", essence: "🦷", fact: "Bites into code" },
+  { name: "christianarriaga1234-coder", prs: 1, url: "https://github.com/christianarriaga1234-coder", essence: "✝️", fact: "Codes with conviction" },
+  { name: "diptikhaparde-coder", prs: 2, url: "https://github.com/diptikhaparde-coder", essence: "💎", fact: "Polish and precision" },
+  { name: "laolaoqi", prs: 1, url: "https://github.com/laolaoqi", essence: "🌊", fact: "Flowing through code" },
+  { name: "lizhiming454", prs: 1, url: "https://github.com/lizhiming454", essence: "🔐", fact: "Encryption is art" },
+  { name: "sureshchouksey8", prs: 1, url: "https://github.com/sureshchouksey8", essence: "🎵", fact: "8D audio pioneer" },
+  { name: "vipera-iso", prs: 1, url: "https://github.com/vipera-iso", essence: "🐍", fact: "Swift and silent" },
+  { name: "xxCodexIAxx", prs: 1, url: "https://github.com/xxCodexIAxx", essence: "🤖", fact: "AI-driven creator" },
+  { name: "abhiavi", prs: 3, url: "https://github.com/abhiavi", essence: "🏆", fact: "Multi-bounty champion" },
+];
+
+const grid = document.getElementById('contributors-grid');
+contributors.forEach(c => {
+  const card = document.createElement('div');
+  card.className = 'contributor-card';
+  card.innerHTML = `
+    <div class="golden-egg golden-egg-1">🥚</div>
+    <div class="golden-egg golden-egg-2">🥚</div>
+    <div class="golden-egg golden-egg-3">🥚</div>
+    <div class="goose-portrait">${c.essence}</div>
+    <h3>${c.name}</h3>
+    <div class="pr-count">${c.prs} PR${c.prs > 1 ? 's' : ''}</div>
+    <p style="font-size:0.85rem;color:#aaa;margin-bottom:0.5rem;">${c.fact}</p>
+    <a href="${c.url}" target="_blank">GitHub Profile →</a>
+  `;
+  grid.appendChild(card);
+});
+
+function showEgg() { document.getElementById('easter-egg').classList.add('show'); }
+function hideEgg() { document.getElementById('easter-egg').classList.remove('show'); }
+</script>
+</body>
+</html>
