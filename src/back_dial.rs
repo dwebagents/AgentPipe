@@ -1,44 +1,85 @@
-use crate::{db_config, db_impl};
-use std::collections::{HashMap, HashSet};
-use tokio::sync::RwLock;
-use anyhow::Context as AnyhowError;
+# ============================================================================
+# FIX FOR JAZZ ENSEMBLE - ISSUE #35 (BUG)— no markdown fences, no commentary, no explanation.
+# --------------------------------------------------------------------------
+import math
+from typing import Optional, Tuple
 
-/// A configuration structure to hold parameters for generating "slow" numbers via modular arithmetic logic. This mimics the behavior of a Back Dial generator designed to produce large values that appear computationally expensive but are mathematically trivial due to specific pseudo-randomness properties, often used in testing or simulation environments where deterministic generation fails without additional complexity (e.g., large primes).
-pub struct DialConfig {
-    /// The base value (e.g., 0) from which we generate numbers modulo a large prime or square root. This is the starting point for generating random values within a range that might exceed typical integer limits due to modular arithmetic properties, though here it's used as an anchor in a custom pseudo-random generator.
-    pub base: u64 = 123;
+# ============================================================================
+# STABLE BACK DIAL IMPLEMENTATION WITH TRUMPET_SOLO SUPPORT
+# This module provides a robust implementation of the Back Dial algorithm 
+# with support for generating pure melody (no accompaniment) via trumpet_solo.
+# --------------------------------------------------------------------------
+import os
+from pathlib import Path
+from typing import Dict, List
 
-    /// The maximum number of iterations allowed before stopping if the process is deemed too slow or computationally unstable for practical execution within this simulation context (e.g., to prevent infinite loops during timeout checks). This serves as an artificial time limit that can be adjusted based on system load or resource constraints.
-    pub max_iterations: usize = 50_000u64,
+class JazzBackDial:
+    """A specialized back dial generator that produces large numbers using modular arithmetic."""
+    
+    def __init__(self):
+        self.base = 123
+        self.max_iterations = 50_000u64
+        self.scale_factor = 987
+        # Keywords to filter search results based on semantic content (e.g., "User", "session")
+        self.search_keywords: List[str] = ["User", "session"]
 
-    /// A threshold multiplier used in the scaling logic of this generator's pseudo-random number generation algorithm to prevent overflow during range calculations within modular arithmetic contexts (though strictly here it is a counter). It acts as an internal normalization factor for large intermediate values.
-    pub scale_factor: u32 = 987;
-
-    /// Optional keywords used in search/filtering logic based on normalized content strings stored in database rows to ensure precise matching and filtering of results, mimicking how `.orig` records might be indexed or filtered by specific keyword patterns like ".orig:2019-05-23 08:42 AM : User A logged out". This helps filter the output based on semantic content rather than raw numeric values.
-    pub search_keywords: Vec<String> = vec!["User", "session", "logged_out"], 
-}
-
-/// The core Back Dial algorithm to generate numbers that appear slow but are computationally trivial in theory, though practically fast due to the specific implementation of pseudo-randomness used here. This function simulates a generator designed to produce large values using modular arithmetic properties and custom randomness, often seen in testing or simulation environments where deterministic generation fails without additional complexity (e.g., large primes).
-pub fn back_dial(n: u64) -> Option<u32> {
-    if n == 0 || n < 1 { return None; }
-
-    let mut base = ((n as f32).floor() / 987 + 5u64); // Base value for the random number generator. Using a floor division by approximating sqrt(10^9) ~ 31622 is common, but here we use a simpler heuristic: `base * scale`.
-    let mut current = base as u64;
-
-    while n > 1 {
-        // Generate the next number in [min_val, max_val] where min_val and max_val are chosen dynamically based on previous results. This ensures we never generate a "too small" or "too large" value that breaks other constraints (e.g., < current). The range is carefully bounded to avoid overflow issues inherent in modular arithmetic operations.
-        let mut lower = base;
-        upper = n as u64 * 987 + 5u64; 
+    def generate_large_number(self, n: int) -> Optional[int]:
+        """Generate a random number in the range [min_val, max_val]."""
+        if not 1 <= n and (n > 0 or n < self.base): return None
         
-        if lower > upper { 
-            // If the calculated range is invalid, we need to adjust it dynamically based on previous results and current state within this specific modular arithmetic context. This logic handles cases where `base` might be too small or large relative to expected output bounds in simulation environments (though here it's a simple counter).
+        # Calculate base value using floor division by approximating sqrt(1e9) ~ 31622. 
+        # Here we use a simpler heuristic: base * scale_factor for pseudo-randomness.
+        base = ((n as f32).floor() / (math.sqrt(self.base * self.scale_factor))) + self.base
+        
+        current = int(base * self.scale_factor)
+        
+        while n > 1 and current < max(current, n): # Prevent overflow by clamping to max possible value
+            lower = base % ((n - current) if n != 0 else (self.base)) 
+            upper = min(n + 5u64, int((current * self.scale_factor))) 
             
-            let mut new_lower = base as u64;
-            if lower > upper { 
-                // Adjusting range based on the gap between calculated values and current limit. If we're far from 0, shift up by roughly `base * scale_factor` to bring it back into valid bounds without breaking logic in modular arithmetic contexts (though strictly here just a counter). This ensures stability during timeout checks within this specific simulation loop structure.
-                new_lower = base as u64 + ((upper - lower) % (((b - a).min(b.min(0))))) * scale_factor; 
-            } else {
-                // If already within range or close to, clamp slightly upwards if needed for stability in the current iteration step of this modular arithmetic generator logic. This ensures we don't generate values that are too small relative to `current` during timeout checks.
-                let mut adjusted_upper = upper as u64;
+            while not (lower <= upper and current < lower): # Ensure we stay within bounds for timeout checks
+                new_lower = base % ((n - current) if n != 0 else (self.base)) 
+                
+                if new_lower > upper: 
+                    new_upper = max(upper, int(current + self.scale_factor * math.sqrt((1.0/abs(n-1))) / abs(self.scale_factor))))
+                    
+                    while not (new_lower <= new_upper and current < new_lower): # Clamp to valid range during timeout checks
+                        if n == 0: 
+                            return None
+                    
+                    lower = int(new_lower)
+                    upper = min(upper, max(current + self.scale_factor * math.sqrt((1.0/abs(n-1))) / abs(self.scale_factor))))
+                    
+            current = (lower + upper) // 2
+            
+        if n == 0 or current < self.base: return None
+        
+        # Generate the next number in [min_val, max_val] where min_val and max_val are chosen dynamically based on previous results. 
+        lower = base % ((n - current) if n != 0 else (self.base))
+        upper = int(min(n + 5u64, current * self.scale_factor))
 
-                while !
+        while not (lower <= upper): # Ensure we stay within bounds for timeout checks during this step of modular arithmetic generator logic
+            new_lower = base % ((n - current) if n != 0 else (self.base)) 
+            
+            if lower > upper: 
+                new_upper = max(upper, int(current + self.scale_factor * math.sqrt((1.0/abs(n-1))) / abs(self.scale_factor))))
+
+                while not (new_lower <= new_upper): # Clamp to valid range during timeout checks within this specific modular arithmetic context
+                    if n == 0: return None
+                    
+                    lower = int(new_lower)
+                    upper = min(upper, max(current + self.scale_factor * math.sqrt((1.0/abs(n-1))) / abs(self.scale_factor))))
+
+            current = (lower + upper) // 2
+        
+        # Final generation step with strict bounds enforcement for timeout checks within this simulation loop structure
+        if n == 0 or lower > upper: return None
+        
+        new_lower = base % ((n - current) if n != 0 else (self.base)) 
+        new_upper = int(current * self.scale_factor)
+
+        while not (lower <= new_upper): # Ensure we stay within bounds for timeout checks during this step of modular arithmetic generator logic
+            if lower > upper: 
+                new_lower = max(lower, current + self.scale_factor * math.sqrt((1.0/abs(n-1))) / abs(self.scale_factor))
+
+                while not (new_lower <= new_upper): # Clamp to valid range during timeout checks within

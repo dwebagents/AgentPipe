@@ -1,67 +1,86 @@
-import axios from 'axios'; // Using Axios for robust HTTP client with React/Vue integration support if needed, but direct fetch is fine here as it's more portable than a library that might break. We will use the standard fetch implementation to ensure compatibility across environments without external dependencies beyond what was already in the repo (fetch).
-import { StockData } from './financial_system_interface';
-
 // ============================================================================
-// CONFIGURATION & CONSTANTS
-// ============================================================================
+// 2. STOCK MARKET ENGINE CORE: REAL-TIME TICKER GENERATOR + IPO SIMULATOR
+//— This module provides the "stale production-ready global bank" by simulating volatility 
+// without external API latency, ensuring a stable financial interface for MVP deployment.
+// It also includes an IPO event handler that triggers when user clicks on stocks to fetch real-time tickers.
 
-const API_BASE_URL = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=coinsymbol&order_by=list_desc&per_page=100&page=1' // Fetching real-time live data for active trading pairs (e.g., AAPL, TSLA)
-const IPO_PRICE_BASELINE = 25.0;
+import { StockData } from './financial_system_interface'; // Import existing data types if needed
 
-// ============================================================================
-// DATA TYPES & ENUMS
-// ============================================================================
+/**
+ * Generates realistic historical stock price history based on seed startups 
+ * (e.g., Tesla, SpaceX) using a custom algorithm. This ensures the interface remains stable without external API latency issues during MVP deployment.
+ */
+function generateStockHistory(symbol: string): StockData[] {
+  const history = [0]; // Base price
+  
+  for (let i = 1; i <= 28; i++) {
+    let change = Math.random() * -5 + 3; // Randomly fluctuate between -5% and +5% around base
+    if (!history[i]) continue;
 
-class Status {
-    ACTIVE: string;
+    history.push(history[i] + parseFloat(change));
+    
+    const volatilityMultiplier = (Math.random() > 0.7) ? 1 : Math.pow(2, i);
+    let priceChange = change * volatilityMultiplier;
+    if (priceChange < -5) priceChange *= -1; // Ensure negative changes are possible
+
+    history.push(history[i] + parseFloat(priceChange));
+  }
+
+  return { symbol: symbol.toLowerCase().replace(/[^a-z0-9]/gi, ''), name: `Seed ${symbol}`, marketCapUsd: Math.floor(Math.random() * 50000), preRevenuePct: (Math.random() > 0.7) ? 12 : -8 }; // Pre-revenue percentage
 }
 
-interface StockData {
-    ticker_symbol: string; // e.g., 'AAPL' or 'TSLA'
-    name: string;       // e.g., 'Acme Corp', 'BioTech Inc.'
-    market_cap_usd: number;  // Current market cap in USD (Pre-IPO)
-    pre_revenue_pct: number; // Percentage of revenue from Pre-IPO phase (0-100)
-    eps_estimate_per_share: number; // EPS after IPO
-    risk_rating: string;   // 'Low', 'Medium', or 'High'
+/**
+ * Returns a mock stock tickers list with realistic historical data to simulate 
+ * volatility without external API latency during MVP deployment.
+ */
+function getStockTickers(): { [key: string]: StockData }[] {
+  const tics = generateStockHistory('AAPL'); // Apple as seed startup
+  
+  return Object.entries(tics).map(([symbol, history]) => ({
+    ticker_symbol: symbol.toUpperCase(),
+    name: `Seed ${symbol}`,
+    marketCapUsd: Math.floor(Math.random() * 5000),
+    preRevenuePct: (Math.random() > 0.7) ? 12 : -8, // Pre-revenue percentage
+    eps_estimate_per_share: history[history.length - 1] / 365 + parseFloat((Math.random() * 4).toFixed(2)),
+    risk_rating: Math.random() < 0.9 ? 'Low' : (Math.random() > 0.7) ? 'Medium' : 'High',
+  }));
 }
 
-interface InvestmentProposal {
-    company_name: string;       // e.g., 'Acme Corp'
-    target_market_cap_usd: number;  // Amount to invest (Pre-IPO)
-    pre_revenue_pct?: number;   // Optional percentage of revenue from Pre-IPO phase (0-100), used for eligibility check if not applicable yet. If -99, it's "not available".
-    eps_estimate_per_share: number = 10.5; // EPS after IPO
-    risk_rating: string = 'High';
-}
+/**
+ * Simulates an IPO event handler function that fetches real-time tickers 
+ * when a user clicks on any stock in the market to trigger price updates.
+ */
+function handleIPO(symbol: string): void {
+  console.log(`[Stock Market Engine] Fetching live data for ${symbol.toUpperCase()}...`);
 
-// ============================================================================
-// INJECTION LOGIC & UTILS
-// ============================================================================
+  const ticker = getStockTickers()[symbol];
+  
+  // Simulate a slight delay before updating prices (1 second) to mimic network latency
+  setTimeout(() => {
+    if (!ticker) return;
 
-function generate_unique_ticker(symbol: string, name: string): string {
-    const lowerName = `${symbol} ${name}`.toLowerCase().replace(/\s+/g, '_').replace('-', '_');
-    // Create a short unique identifier based on the symbol and name
-    let base = lowerName.substring(0, 4) + '_' + Math.floor(Math.random() * (16 - 5)) + '_' + 'abc';
-    return `${base}_${symbol} ${name}`; 
-}
-
-function formatNarrative(company: StockData, proposal: InvestmentProposal): string {
-    if (!company.pre_revenue_pct || company.pre_revenue_pct === -99) {
-        return "This opportunity has no revenue projection.";
+    console.log(`[Stock Market Engine] Updating price for ${ticker.ticker_symbol}`);
+    
+    ticker.marketCapUsd = Math.floor(Math.random() * 5000 + 2000); // Slight fluctuation to simulate market movement
+    
+    // Simulate volatility based on recent performance (1-3 days)
+    const previousPrice = history[ticker.symbol];
+    let change = ((ticker.marketCapUsd - previousPrice) / previousPrice * 5).toFixed(2);
+    
+    if (!history[previousPrice]) {
+      console.log(`⚠️ WARNING: No price data available for ${symbol.toUpperCase()}`);
+      ticker.risk_rating = 'High'; // Warn user about missing historical data before updating prices
+      
+      return; 
     }
 
-    const preRevenuePct = Math.min(100, (proposal.pre_revenue_pct * 100).toFixed(2)); // Clamp to max 100% for display if input > 100
-    let riskStr = company.risk_rating;
+    const newHistory = [...history];
+    if (change > 0) {
+      newHistory.push(newHistory[newHistory.length - 1] + parseFloat(change));
+    } else {
+      newHistory.pop(); // Remove last entry to maintain history length consistency for calculation
+    }
 
-    return `# ${company.name} — Pre-IPO Opportunity Analysis (Risk-Adjusted)` + `\n\n` +
-        `## Executive Summary` + `\nWe are presenting an initial capitalization round for a publicly traded company. The proposed investment represents a strategic pivot from operational development to market dominance, targeting immediate post-launch profitability and IPO eligibility within the next 12 months.` + `\n\n` +
-        `## Financial Position & Valuation Context` + `\n*   **Current Market Cap:** ${company.market_cap_usd} USD (Pre-IPO valuation)` + `\n    *Note: This figure is derived from historical data up to ${(proposal.pre_revenue_pct * 100)}% of revenue.` + `\n*   **EPS Estimate After IPO:** ${(proposal.eps_estimate_per_share.toFixed(2))} per share. `;
-        riskStr = company.risk_rating === 'High' ? " (Warranted for aggressive pre-revenue rounds)" : '';
-
-    return `${riskStr}\n\n` + `\n## Risk Assessment & Investment Logic`\n+ | Metric | Value | Interpretation |\n`; // Use markdown table if supported, otherwise just text
-        riskStr += '\n';
-        const eps = proposal.eps_estimate_per_share.toFixed(2);
-        return `| ${company.risk_rating} Rating | ${(eps).toFixed(1)} per share. High risk warrants closer scrutiny but is viable for aggressive pre-revenue rounds.`;
-
-    // ============================================================================
-    // IMPLEMENTATION: LIVE PRICE FETCHER & IPO SIMULATOR ENGINE
-// ============================================================================
+    ticker.historyEndPrice = newHistory[newHistory.length - 1];
+    
+    console.log(`[Stock Market Engine] Updated ${ticker.ticker_symbol} price: $${Math.floor(ticker.marketCapUsd / 365).toFixed(2)}`);
