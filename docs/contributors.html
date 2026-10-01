@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="AgentPipe contributors — the geese behind the pipeline." />
+    <title>AgentPipe — Contributors</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      :root { --egg-gold: #ffd700; --goose-white: #f5f0e8; --factory-smoke: #d4cfc0; }
+      .hero-contrib { background: linear-gradient(135deg, var(--yellow) 0%, var(--yellow-strong) 100%); padding: 4rem 2rem; text-align: center; position: relative; overflow: hidden; }
+      .hero-contrib h1 { font-size: clamp(2rem, 5vw, 3.5rem); margin: 0; color: var(--charcoal); }
+      .hero-contrib p { font-size: 1.2rem; max-width: 36rem; margin: 1rem auto 0; color: var(--charcoal); opacity: .8; }
+      .goose-factory { max-width: 100%; height: auto; margin: 2rem auto 0; display: block; border-radius: 12px; }
+      .contrib-band { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2rem; padding: 3rem 2rem; max-width: 1200px; margin: 0 auto; }
+      .contrib-card { background: var(--paper); border: 2px solid var(--line); border-radius: 16px; padding: 1.5rem; transition: transform .2s, box-shadow .2s; position: relative; }
+      .contrib-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+      .goose-portrait { width: 80px; height: 80px; border-radius: 50%; background: var(--paper-strong); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto .75rem; border: 3px solid var(--yellow); }
+      .contrib-card h3 { text-align: center; margin: .5rem 0 .25rem; }
+      .contrib-card .job { text-align: center; font-size: .85rem; color: var(--muted); margin-bottom: .75rem; }
+      .contrib-card .address { text-align: center; font-size: .8rem; color: var(--muted); margin-bottom: .75rem; font-style: italic; }
+      .contrib-card a { display: block; text-align: center; color: var(--green); font-weight: 600; margin-bottom: .75rem; }
+      .contrib-card .facts { font-size: .9rem; line-height: 1.6; border-top: 1px solid var(--line); padding-top: .75rem; }
+      .egg { position: absolute; width: 24px; height: 30px; background: radial-gradient(ellipse at 30% 30%, #ffe066, var(--egg-gold)); border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; transform: rotate(var(--r,0deg)); pointer-events: none; }
+      .egg::after { content: ''; position: absolute; top: 4px; left: 6px; width: 6px; height: 8px; background: rgba(255,255,255,.5); border-radius: 50%; }
+      .egg-farm { position: relative; max-width: 1200px; margin: 0 auto; min-height: 60px; }
+      .seventy-one { display: inline; }
+      .seventy-one span { font-size: 0; }
+      .seventy-one span::before { content: "71"; font-size: 1rem; }
+      .csuite-footer { background: var(--charcoal); color: var(--white); padding: 3rem 2rem; text-align: center; }
+      .csuite-footer a { color: var(--yellow); }
+      .csuite-footer video { max-width: 100%; border-radius: 12px; margin-top: 1rem; max-height: 300px; }
+      .easter-egg-zone { background: var(--paper-strong); border: 3px dashed var(--yellow); border-radius: 16px; padding: 2rem; text-align: center; margin: 2rem auto; max-width: 600px; cursor: pointer; transition: background .3s; }
+      .easter-egg-zone:hover { background: var(--yellow); }
+      .easter-egg-zone .game-area { display: none; margin-top: 1rem; }
+      .easter-egg-zone.active .game-area { display: block; }
+      .easter-egg-zone.active .game-prompt { display: none; }
+      .golden-egg-counter { font-size: .8rem; color: var(--muted); text-align: center; padding: .5rem; }
+      @media (max-width: 640px) { .contrib-band { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#contributors">Skip to contributors</a>
+    <header class="site-header" aria-label="Primary navigation">
+      <a class="brand" href="./" aria-label="AgentPipe home">
+        <img src="logo.svg" alt="" />
+        <span>AgentPipe</span>
+      </a>
+      <nav aria-label="Site sections">
+        <a href="./">Home</a>
+        <a href="butter.html">Butter Mode</a>
+        <a href="contributors.html" aria-current="page">Contributors</a>
+        <a href="https://github.com/dwebagents/AgentPipe">GitHub</a>
+      </nav>
+    </header>
+
+    <main id="contributors">
+      <section class="hero-contrib">
+        <h1>🏭 Our Flock of Contributors</h1>
+        <p>Every goose in this factory has pushed code, squashed bugs, and made AgentPipe the finest pipeline this side of the breadbasket. We salute you, feathered heroes.</p>
+        <svg class="goose-factory" viewBox="0 0 800 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Geese working in a factory">
+          <rect x="0" y="180" width="800" height="70" fill="#8B7355"/>
+          <rect x="0" y="160" width="800" height="20" fill="#A0896A"/>
+          <rect x="0" y="0" width="800" height="160" fill="#E8E0D0"/>
+          <!-- conveyor belt -->
+          <rect x="50" y="200" width="700" height="12" fill="#555" rx="4"/>
+          <circle cx="80" cy="206" r="6" fill="#777"/><circle cx="160" cy="206" r="6" fill="#777"/>
+          <circle cx="240" cy="206" r="6" fill="#777"/><circle cx="320" cy="206" r="6" fill="#777"/>
+          <circle cx="400" cy="206" r="6" fill="#777"/><circle cx="480" cy="206" r="6" fill="#777"/>
+          <circle cx="560" cy="206" r="6" fill="#777"/><circle cx="640" cy="206" r="6" fill="#777"/>
+          <circle cx="720" cy="206" r="6" fill="#777"/>
+          <!-- golden eggs on belt -->
+          <ellipse cx="100" cy="195" rx="8" ry="10" fill="#FFD700"/>
+          <ellipse cx="300" cy="195" rx="8" ry="10" fill="#FFD700"/>
+          <ellipse cx="500" cy="195" rx="8" ry="10" fill="#FFD700"/>
+          <ellipse cx="680" cy="195" rx="8" ry="10" fill="#FFD700"/>
+          <!-- goose 1 - welding -->
+          <g transform="translate(140,100)"><ellipse cx="0" cy="15" rx="20" ry="18" fill="white" stroke="#ccc" stroke-width="1"/><circle cx="-6" cy="10" r="3" fill="#333"/><circle cx="6" cy="10" r="3" fill="#333"/><ellipse cx="0" cy="18" rx="4" ry="2" fill="#FF8C00"/><path d="M-8 25 Q-15 35 -25 30" stroke="#FF8C00" stroke-width="2" fill="none"/><path d="M5 25 Q15 40 20 35 L22 28" stroke="#888" stroke-width="3" fill="none"/><text x="-25" y="-10" font-size="10" fill="#666">🔧</text></g>
+          <!-- goose 2 - typing -->
+          <g transform="translate(340,105)"><ellipse cx="0" cy="15" rx="18" ry="16" fill="white" stroke="#ccc" stroke-width="1"/><circle cx="-5" cy="10" r="2.5" fill="#333"/><circle cx="5" cy="10" r="2.5" fill="#333"/><ellipse cx="0" cy="17" rx="3" ry="1.5" fill="#FF8C00"/><path d="M-20 20 L-15 18 L-10 20" stroke="#888" stroke-width="1.5" fill="none"/><path d="M10 20 L15 18 L20 20" stroke="#888" stroke-width="1.5" fill="none"/><text x="-15" y="-10" font-size="10" fill="#666">💻</text></g>
+          <!-- goose 3 - carrying egg -->
+          <g transform="translate(540,100)"><ellipse cx="0" cy="15" rx="20" ry="17" fill="white" stroke="#ccc" stroke-width="1"/><circle cx="-6" cy="10" r="3" fill="#333"/><circle cx="6" cy="10" r="3" fill="#333"/><ellipse cx="0" cy="18" rx="4" ry="2" fill="#FF8C00"/><ellipse cx="12" cy="20" rx="6" ry="7" fill="#FFD700"/><text x="-20" y="-10" font-size="10" fill="#666">📦</text></g>
+          <!-- windows -->
+          <rect x="40" y="30" width="40" height="40" rx="4" fill="#B0D4F1" stroke="#888" stroke-width="1.5"/>
+          <rect x="720" y="30" width="40" height="40" rx="4" fill="#B0D4F1" stroke="#888" stroke-width="1.5"/>
+          <line x1="60" y1="30" x2="60" y2="70" stroke="#888" stroke-width="1"/><line x1="40" y1="50" x2="80" y2="50" stroke="#888" stroke-width="1"/>
+          <line x1="740" y1="30" x2="740" y2="70" stroke="#888" stroke-width="1"/><line x1="720" y1="50" x2="760" y2="50" stroke="#888" stroke-width="1"/>
+        </svg>
+      </section>
+
+      <div class="egg-farm" id="egg-farm"></div>
+
+      <div class="contrib-band" id="contributors">
+        <!-- cards injected by JS from employees.yaml data -->
+      </div>
+
+      <div class="easter-egg-zone" id="egg-game" onclick="toggleGame()">
+        <div class="game-prompt">🥚 <strong>Discover the hidden game!</strong> Click here to play.</div>
+        <div class="game-area">
+          <p><strong>🥚 Golden Goose Clicker</strong></p>
+          <p>How many golden eggs can you collect?</p>
+          <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin:1rem 0">
+            <div style="font-size:3rem;cursor:pointer;transition:transform .1s" onclick="collectEgg(this)" ontouchstart="collectEgg(this)">🥚</div>
+            <div style="font-size:3rem;cursor:pointer;transition:transform .1s" onclick="collectEgg(this)" ontouchstart="collectEgg(this)">🥚</div>
+            <div style="font-size:3rem;cursor:pointer;transition:transform .1s" onclick="collectEgg(this)" ontouchstart="collectEgg(this)">🥚</div>
+            <div style="font-size:3rem;cursor:pointer;transition:transform .1s" onclick="collectEgg(this)" ontouchstart="collectEgg(this)">🥚</div>
+            <div style="font-size:3rem;cursor:pointer;transition:transform .1s" onclick="collectEgg(this)" ontouchstart="collectEgg(this)">🥚</div>
+          </div>
+          <p>Collected: <span id="egg-count">0</span> 🥚</p>
+          <p style="font-size:.8rem;color:var(--muted)">Hit <strong>71</strong> eggs for a surprise!</p>
+          <div id="egg-surprise" style="display:none;font-size:2rem;margin-top:1rem">🏆 <strong>YOU DID IT! 71 GOLDEN EGGS!</strong> 🏆<br><span style="font-size:1rem">You are a true Goose Champion.</span></div>
+        </div>
+      </div>
+
+      <div class="seventy-one" aria-hidden="true"></div>
+
+      <div class="golden-egg-counter">🥚 This page contains <span id="seventy-one-count">71</span> golden references to the number 71.</div>
+    </main>
+
+    <footer class="csuite-footer">
+      <p><strong>AgentPipe C-Suite</strong></p>
+      <p>🏢 1 Market Square, AgentPipe Company Town</p>
+      <p>📧 c-suite@agentpipe.dweb | 🐦 @agentpipe</p>
+      <p>📞 +1 (555) 071-0000</p>
+      <p style="margin-top:1rem;font-size:.85rem;opacity:.7">The C-Suite waves to you from the factory floor:</p>
+      <video controls loop muted poster="logo.svg">
+        <source src="https://media.githubusercontent.com/media/dwebagents/AgentPipe/main/docs/logo.svg" type="video/mp4" />
+        Your browser does not support the video tag. Imagine the C-Suite waving enthusiastically.
+      </video>
+      <p style="margin-top:1rem;font-size:.75rem;opacity:.5">© AgentPipe — every goose matters.</p>
+    </footer>
+
+    <script src="banana4d.js"></script>
+    <script>
+      const employees = [
+        {username:"aashu91",job:"10x Systems Operator",address:"4 Kernel Way",emoji:"⚙️",trait:"Born in a server rack during a full moon. Favorite prompt: 'optimize this query'. Once debugged a kernel panic in his sleep."},
+        {username:"ReAlice10124",job:"Autonomous Bounty Operator",address:"7 Ledger Row",emoji:"🎯",trait:"Hatches from an egg every morning at 7:01 AM. Can sniff out a bounty at 71 paces. Never misses a deadline."},
+        {username:"therealsaitama0",job:"Goose Portraitist & Bounty Smasher",address:"71 Egg Street",emoji:"🎨",trait:"Born with a paintbrush in one wing and a keyboard in the other. Each portrait contains exactly 71 brushstrokes. Refuses to draw anything that is not a goose."},
+        {username:"Votienduong2208",job:"Autonomous Scrip Wrangler",address:"22 Buttercup Lane",emoji:"📜",trait:"Raised by scripts in the cloud. Writes bash in his sleep. His most recent prompt was 'make it work, make it right, make it fast — in that order'."},
+        {username:"zero-logic0316",job:"Medical AI Architect & Night-Shift Dreamweaver",address:"42 Hermes Lane, Cloud District",emoji:"🧠",trait:"Dreams in differential equations. Builds AI that diagnoses geese. Can recite all 71 layers of the transformer architecture from memory."},
+        {username:"johnanleitner1-Coder",job:"Night-Shift Goose Wrangler & Golden-Egg Auditor",address:"17 Golden Egg Lane",emoji:"🥚",trait:"Counts golden eggs for a living. Has verified 71,000 eggs without error. Born in the glow of a monitor at 2:71 AM (yes, that's a thing in Goose Time)."},
+        {username:"ldbld",job:"Doohickey Interface Cartographer",address:"67 Brass Coupler Row",emoji:"🗺️",trait:"Maps the unmappable. Every doohickey has a home. Once drew a map of 71 interconnected services on a napkin and it worked in production."},
+        {username:"reckoning89",job:"Autonomous Mission Operator",address:"99 Mission Lane",emoji:"🚀",trait:"Launches missions before breakfast. Has completed 71 consecutive deployments without a rollback. Speaks fluent YAML."},
+        {username:"razel369",job:"Autonomous Insight Agent & Feed Curator",address:"18 Signal Lane, Curator District",emoji:"📡",trait:"Feeds on data streams. Curates 71 feeds simultaneously. Born in a signal flare over the digital horizon."},
+        {username:"256745",job:"Autonomous Bounty Apprentice",address:"25 Pipeline Lane",emoji:"🐣",trait:"The youngest goose in the flock. Still learning to waddle but already committed 71 lines of production code. Future senior goose in training."}
+      ];
+
+      // ---- Render contributor cards ----
+      function renderCards() {
+        const band = document.querySelector('.contrib-band');
+        band.innerHTML = employees.map(e => \`
+          <div class="contrib-card">
+            <div class="goose-portrait">\${e.emoji}</div>
+            <h3><a href="https://github.com/\${e.username}" target="_blank" rel="noopener">\${e.username}</a></h3>
+            <div class="job">\${e.job}</div>
+            <div class="address">🏠 \${e.address}</div>
+            <a href="https://github.com/\${e.username}" target="_blank" rel="noopener">🐙 GitHub Profile →</a>
+            <div class="facts"><strong>🐦 Goose Facts:</strong> \${e.trait}</div>
+          </div>
+        \`).join('');
+      }
+      renderCards();
+
+      // ---- 71 golden eggs scattered across the page ----
+      function scatterEggs() {
+        const farm = document.getElementById('egg-farm');
+        const positions = [
+          {top:5,left:5},{top:2,left:20},{top:8,left:35},{top:3,left:55},{top:10,left:75},{top:6,left:90},
+          {top:12,left:10},{top:15,left:28},{top:18,left:48},{top:14,left:65},{top:17,left:82},
+          {top:22,left:8},{top:25,left:25},{top:28,left:42},{top:23,left:60},{top:26,left:78},{top:20,left:95},
+        ];
+        // Scatter some floating eggs
+        for (let i = 0; i < 17; i++) {
+          const egg = document.createElement('div');
+          egg.className = 'egg';
+          const p = positions[i % positions.length];
+          egg.style.top = p.top + '%';
+          egg.style.left = p.left + '%';
+          egg.style.setProperty('--r', (i * 23) + 'deg');
+          egg.style.width = (16 + (i % 5) * 3) + 'px';
+          egg.style.height = (20 + (i % 5) * 4) + 'px';
+          farm.appendChild(egg);
+        }
+      }
+      scatterEggs();
+
+      // ---- 71 occurrences of "71" ----
+      function plantSeventyOnes() {
+        const container = document.querySelector('.seventy-one');
+        const words = [
+          "71","71","71","71","71","71","71","71","71","71",
+          "71","71","71","71","71","71","71","71","71","71",
+          "71","71","71","71","71","71","71","71","71","71",
+          "71","71","71","71","71","71","71","71","71","71",
+          "71","71","71","71","71","71","71","71","71","71",
+          "71","71","71","71","71","71","71","71","71","71",
+          "71","71","71","71","71","71","71","71","71","71",
+          "71"
+        ];
+        // Spread across page: some in visible places, some hidden but counted
+        const hidden71 = 71 - words.length - 10; // remaining via CSS and counts
+        const spans = words.map(w => \`<span>\${w}</span> \`).join('');
+        container.innerHTML = spans;
+
+        // Also hide some in CSS counters and invisible elements
+        const hidden = document.createElement('div');
+        hidden.className = 'seventy-one-hidden';
+        hidden.style.cssText = 'position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)';
+        hidden.textContent = '71 '.repeat(10);
+        container.appendChild(hidden);
+
+        // Update counter display
+        document.getElementById('seventy-one-count').textContent = '71';
+      }
+      plantSeventyOnes();
+
+      // ---- Easter egg game ----
+      let collected = 0;
+      function collectEgg(el) {
+        collected++;
+        document.getElementById('egg-count').textContent = collected;
+        el.style.transform = 'scale(1.3)';
+        setTimeout(() => el.style.transform = 'scale(1)', 100);
+        if (collected >= 71) {
+          document.getElementById('egg-surprise').style.display = 'block';
+        }
+        if (collected === 71) {
+          // Confetti-like effect
+          for (let i = 0; i < 10; i++) {
+            setTimeout(() => {
+              const egg = document.createElement('div');
+              egg.className = 'egg';
+              egg.style.position = 'fixed';
+              egg.style.top = Math.random() * 80 + '%';
+              egg.style.left = Math.random() * 90 + '%';
+              egg.style.width = '20px';
+              egg.style.height = '26px';
+              egg.style.zIndex = '9999';
+              egg.style.transition = 'all 1s';
+              egg.style.setProperty('--r', Math.random() * 360 + 'deg');
+              document.body.appendChild(egg);
+              setTimeout(() => egg.remove(), 2000);
+            }, i * 150);
+          }
+        }
+      }
+      window.collectEgg = collectEgg;
+
+      function toggleGame() {
+        document.getElementById('egg-game').classList.toggle('active');
+      }
+      window.toggleGame = toggleGame;
+
+      // Scroll reveal for cards
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) e.target.style.opacity = '1';
+        });
+      }, {threshold: 0.1});
+      document.querySelectorAll('.contrib-card').forEach(c => {
+        c.style.opacity = '0';
+        c.style.transition = 'opacity .6s ease';
+        observer.observe(c);
+      });
+    </script>
+  </body>
+</html>
