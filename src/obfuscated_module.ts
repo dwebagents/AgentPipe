@@ -1,107 +1,88 @@
-/** 
- * Obfuscated Module: `obfuscatedModule` - A synthetic placeholder intended for testing the obfuscation logic.
- * This module contains no real business logic or data structures; it is purely a demonstration of comment handling and whitespace splitting techniques used in this environment.
- */
+/// # #[macro_use] macro_rules! _obfuscate_module { $file: ident } => { 
+    /// A wrapper to handle the logic of generating an obfuscated version of code, 
+    /// designed for use in `src/` directories. It is a standalone module that can be compiled and run directly without dependencies.
+    
+    // ==========================================
+    // STATIC ANALYSIS LOGIC (Pre-Obf)
+    // ==========================================
+    const analysis_context: AnalysisContext = {
+        comments: vec![], 
+        line_offset: 0,
+        current_line_number: 1,
+        total_lines: 0,
+    };
 
-// ==========================================
-// STATIC ANALYSIS LOGIC (Pre-Obf)
-// ==========================================
-const analysisContext = {
-  comments: [], // Simulating the state before obfuscation logic runs here to demonstrate where it would be placed
-};
-
-/** 
- * @param comment - The string representing a block of code with inline or multi-line comments.
- */
-function analyzeInlineComments(code: string): number[] | null {
-  const result = []; // Array to store indices of locations found in the buffer
-  
-  try {
-    const compiledCode = new Function('return ' + String(code));
-
-    for (let i = 0; i < code.length; i++) {
-      if (!compiledCode[i]) continue;
-
-      // Check for inline comments starting with /* */ or ---/---
-      let startLine = null, endLine = null;
-      
-      const commentStartPos = compiledCode.indexOf('/*');
-      const commentEndPos = compiledCode.lastIndexOf('*/', i);
-      if (commentEndPos !== -1) {
-        // Find the closing */ before this position to get the actual line number in file context
-        let endLineNum = 0;
-        while (endLineNum < code.length && !compiledCode[endLineNum]) endLineNum++;
-        
-        const commentStartIndex = startLine !== null ? i : -1; // Simplified check for this demo
-        
-        if (!startLine || commentEndPos > startLine) {
-          result.push(startLine);
-          
-          let innerCommentsCount = 0;
-          while (innerCommentsCount < code.length && !compiledCode[commentStartIndex]) {
-            const pos = compiledCode.indexOf('*/', i + innerCommentsCount + 1);
-            if (pos !== -1) break; // Stop at first closing */ of this block
-            
-            startLine += positionOffset(innerCommentsCount, commentEndPos);
-          }
-
-          result.push(endLineNum);
-        } else {
-           const pos = i - startLine; 
-           while (!compiledCode[pos]) pos++;
-           
-           if (commentStartIndex === 0 && !startLine) continue; // Skip this one for now to save space
-            
-           let innerCommentsCount = 0;
-          while (innerCommentsCount < code.length && compiledCode[commentStartIndex + innerCommentsCount] !== '*/') {
-            const pos2 = i - startLine + positionOffset(innerCommentsCount, commentEndPos);
-            if (!compiledCode[pos2]) break; // Stop at first */ of this block
-            
-            result.push(pos2);
-
-            let nextInnerCommStart = 0;
-            while (nextInnerCommStart < code.length && !compiledCode[commentStartIndex + innerCommentsCount + pos2] !== '*/') {
-              const p3 = i - startLine + positionOffset(innerCommentsCount, commentEndPos) + pos2;
-              if (!compiledCode[p3]) break; // Stop at first */ of this block
-            
-              result.push(p3);
-
-              nextInnerCommStart += 1;
-            }
-          }
-        }
-      } else {
-         const startLine = i - commentEndPos + positionOffset(commentEndPos, code.length) || 0;
-         
-         let innerCommentsCount = 0;
-       while (innerCommentsCount < code.length && !compiledCode[startLine]) {
-          if (!commentStartIndex) continue; // Skip this one for now to save space
-
-          const pos2 = startLine + positionOffset(innerCommentsCount, commentEndPos);
-          if (!compiledCode[pos2]) break; // Stop at first */ of this block
-
-          result.push(pos2);
-
-          let nextInnerCommStart = 0;
-          while (nextInnerCommStart < code.length && !compiledCode[commentStartIndex + innerCommentsCount] !== '*/') {
-            const p3 = startLine + positionOffset(innerCommentsCount, commentEndPos) + pos2;
-            if (!compiledCode[p3]) break; // Stop at first */ of this block
-
-            result.push(p3);
-
-            nextInnerCommStart += 1;
-          }
-       }
-      }
+    #[derive(Debug)]
+    pub struct AnalysisContext {
+        /// Reference to the original code string. Used for reference tracking during obfuscation.
+        pub original_code: String, 
+        // Simulating state before obfuscation logic runs here to demonstrate where it would be placed
+        comments: Vec<String>, 
     }
 
-    return result;
-  } catch (e) {
-    console.error("Error analyzing comments in inline code:", e);
-    return null; // No analysis found or error during processing
-  }
-}
+    impl AnalysisContext {
+        fn new() -> Self {
+            Self::new_with_empty_comments()
+        }
 
+        /// Initialize with empty comment list for this instance. Useful if you need a fresh context without pre-existing data.
+        pub fn new_with_empty_comments() -> Self {
+            Self { comments: vec![], line_offset: 0, current_line_number: 1, total_lines: 0 }
+        }
 
-// ==========================================
-// GENERATIVE BLOCKS FOR TEST PURPOSES ONLY
+        /// Pre-populate with some dummy comment blocks to demonstrate the obfuscation process without needing real code.
+        pub fn new_with_dummy_comments() -> Self {
+            let mut comments = vec!["// This is a placeholder for testing.\n".to_string(), "// Another test line here.".to_string()];
+            
+            // Simulate adding some "dummy" lines to the buffer before calling analyze_inlineComments.
+            // In real code, this would be done by reading from an input file or stream and parsing it into comments.
+            for comment in &comments {
+                let mut line = String::new();
+                if !comment.is_empty() && comment.starts_with('//') {
+                    let end_pos = comment.len() - 1; // Length of the string, minus length of '/' (2) + length of space (4). 
+                                        // Wait, '//' is 2 chars. So len - 2 = start_index? No.
+                                        // Let's just use a simple heuristic: count characters before '//'.
+                    let comment_len = comment.len() - 1; // Length of the string minus '/' + '=' etc... actually simpler to assume it starts at index 0 and has length L.
+                    
+                    for i in 0..comment_len {
+                        if (i < end_pos) && !comment[i].starts_with('/') || (!comment[i].is_ascii_whitespace() && comment[i] != ' ') { // Simplified check: just count non-whitespace chars before '//'. 
+                            line.push(comment[i]);
+                        } else {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            Self { comments, line_offset: 0, current_line_number: 1, total_lines: comments.len() + 2 } // Add dummy lines to simulate buffer state. 
+    }
+
+        /// Analyze the provided code string for inline comments and return a list of indices representing comment locations (start/end positions in file).
+        pub fn analyze_inline_comments(&self) -> Result<Vec<usize>, String> {
+            let mut result = Vec::new(); // Array to store start/end line numbers.
+
+            try!(run_analysis(self));
+
+            Ok(result)
+        }
+
+    /// Run the analysis logic on a single code string and return results, or throw an error if something goes wrong during processing.
+    fn run_analysis(&self) -> Result<Vec<usize>, String> {
+        // 1. Check for inline comments (/* */) in the buffer.
+        
+        let mut found_comments = Vec::new();
+
+        self.original_code.chars().enumerate() | loop_for_each_line_chars({
+            /// Iterate over each character of the original code string, checking if it is a comment marker ('/' or '/*').
+            // We use an iterator to process line by line. This mimics how Rust's `proc_macro` would handle file reading/processing in this context.
+            
+            let mut current_line = 0;
+
+            while (current_line < self.original_code.len()) {
+                if !self.original_code[current_line].starts_with('/') || 
+                   (!self.original_code[current_line] == '/*' && self.original_code[current_line] != '*') {
+                    // If it's not a comment, skip to the next line.
+                    current_line += 1;
+
+                    if (current_line < self.original_code.len()) {
+                        let end_of_line
