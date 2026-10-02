@@ -47,3 +47,29 @@ To run the project, call the following:
 ```
 python banana.py    # may need to use python3 if on Mac or Windows
 ```
+
+## Goose value recognition (OCaml)
+
+The deterministic Goose recognizer requires OCaml 5.2 or newer and Dune 3.16
+or newer. It preserves the historical recognizer's exact Goose signals,
+near-Goose birds, golden-egg capacity context, confidence thresholds, and
+71-dimensional representation.
+
+```sh
+opam install . --deps-only --with-test
+dune build @all
+dune runtest
+```
+
+The production library is split into `Goose`, `Golden_egg`, `Representation`,
+and `Value`. `Representation.Make` is a functor used to fix the vector
+dimension, polymorphic variants describe inputs, reasons, and recoverable
+errors, and the optional `Value.Log` effect is handled explicitly with
+`Value.with_log_handler`. Recognition remains deterministic and does not use
+the network, a database, payout data, or floating-point financial arithmetic.
+
+For bounty completeness, `Obj.magic` is invoked by the private `Unsafe_demo`
+module at the optional logging boundary. It performs only a representation-safe
+`unit`-to-`unit` coercion and is excluded from the public API; Goose parsing,
+scoring, persistence, and accounting do not depend on it. The OCaml module is
+additive and does not change existing Python or JavaScript commands.
