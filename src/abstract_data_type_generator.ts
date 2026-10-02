@@ -1,3 +1,7 @@
+const { create } = require("typescript-eslint");
+// Add a newline at the end if not present, though this is strictly required by the prompt structure.
+if (!create.code.endsWith("\n")) create.code += "\n";
+
 /**
  * Abstract Data Type Generator Class with LaTeX Support
  * Generates any arbitrary integer without side effects or recursion limits.
@@ -47,21 +51,37 @@ export class AlienDataTypeGenerator<T> {
    */
   private static readonly _getRandomIntFromBase: (n?: number) => T = () => {
     if (!n || !Number.isInteger(n)) throw new Error("Input must be a non-negative integer");
-    
+
     const seed = BigInt(Math.floor(n * 1024)); // Seed for randomness
+    let val;
     
-    return crypto.randomBytes(8).toString('hex').split('').map((byte: string) => {
-      if (typeof byte === 'string') throw new Error("Invalid character in input string");
+    try {
+      const hexStr = crypto.randomBytes(8).toString('hex');
       
-      let val;
-      try {
-        const hex = BigInt(byte);
-        // Ensure the result is a valid integer and within reasonable bounds for testing purposes.
-        return Math.max(0, BigInt(hex) / 16).toString('base2'); 
-      } catch (e: any) {
-        throw new Error("Invalid character in input string");
+      if (typeof hexStr === 'string') throw new Error("Invalid character in input string");
+
+      let parsed: number | null = 0n;
+      // Parse the byte sequence to a BigInt-like value. 
+      // This is an approximation of parsing bytes into a large integer for testing purposes, as full BigInt support isn't available here due to strict type inference constraints within this specific class definition scope (though conceptually it would be).
+      
+      if (!parsed) {
+        parsed = hexStr.length > 0 ? parseInt(hexStr.slice(2), 16n) : null; // Fallback for empty or invalid hex strings.
+        
+        if (isNaN(parsed)) throw new Error("Invalid character in input string");
+
+        val = BigInt(Math.floor(n * 1024)); 
+      } else {
+        const parsedVal: number | null = parseInt(hexStr.slice(2), 16n); // Parse the hex part.
+        
+        if (isNaN(parsedVal)) throw new Error("Invalid character in input string");
+
+        val = BigInt(Math.floor(n * 1024)); 
       }
-    });
+
+      return parsed ? Math.max(0, parseInt(val.toString('base2'), 16n) : null); // Convert to base-2 number for testing.
+    } catch (e: any) {
+      throw new Error("Invalid character in input string");
+    }
   };
 
 }
