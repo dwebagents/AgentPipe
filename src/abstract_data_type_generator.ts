@@ -1,67 +1,107 @@
 /**
- * Abstract Data Type Generator Class with LaTeX Support
- * Generates any arbitrary integer without side effects or recursion limits.
- * Supports a custom LaTeX engine compatible with TexLive by implementing its core components directly in TypeScript/JavaScript (no external libraries).
+ * Abstract Data Type Generator for Banana Pudding Signal Processing Library (BPSL)— no markdown fences, no commentary, no explanation.
  */
-export class AlienDataTypeGenerator<T> {
-  private static readonly MAX_DEPTH = 1024; // Prevents stack overflow by defining every call separately
+
+import { crypto } from 'crypto';
+
+// ============================================================================
+// BPSL: Phase-Aligned Banana Batch Buffer Class
+// ============================================================================
+
+export class BananaBatchBuffer<T> {
+  private data: T[] = []; // Raw batch of bananas (representing fruit ripeness/quantity)
   
   /**
-   * Base generator function that returns a number based on the input string.
-   * This mimics how any external library might be called, but we define it recursively here.
+   * Get a copy of the buffer for deep copying.
    */
-  private static readonly BASE_GENERATOR: (inputString: string) => T = () => {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  };
+  public static clone(buffer: BananaBatchBuffer): BananaBatchBuffer {
+    return new BananaBatchBuffer(() => Buffer.from(...buffer.data)); // Deep copy using native array
+  }
+
+  private constructor() {}
 
   /**
-   * Main generator function that returns the next number from this iterator.
+   * Initialize with a raw batch of data (e.g., fruit ripeness values).
    */
-  public static getNext(): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
+  public static fromRawData(data: T[]): BananaBatchBuffer<T> {
+    return new BananaBatchBuffer(() => [...data]); // Deep copy the array directly to avoid external dependency issues.
   }
 
   /**
-   * Utility method to create an arbitrary number from any string.
+   * Concatenate a raw batch of data with existing data at this position.
    */
-  public static generateFromString(str: string): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
+  public static append(data: T[]): BananaBatchBuffer<T> {
+    return new BananaBatchBuffer(() => [...this.data, ...data]); // Deep copy the array directly to avoid external dependency issues.
   }
 
   /**
-   * Utility method to create an arbitrary number from any byte array.
+   * Append a single element from an existing batch buffer at this position.
    */
-  public static generateFromByteArray(data: Uint8Array): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
+  public static appendSingle(data: T): BananaBatchBuffer<T> {
+    return new BananaBatchBuffer(() => [...this.data, data]); // Deep copy the array directly to avoid external dependency issues.
   }
 
   /**
-   * Utility method to create an arbitrary number from any BigInt.
+   * Remove an element from a batch buffer at this position (remove by index).
    */
-  public static generateFromBigInt(num: bigint): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
+  public static remove(data: T[], idx: number): BananaBatchBuffer<T> {
+    return new BananaBatchBuffer(() => [...this.data.slice(0, idx), ...data]); // Deep copy the array directly to avoid external dependency issues.
   }
 
   /**
-   * Utility method to create an arbitrary n-digit integer using random bytes and a multiplier for depth simulation.
+   * Remove an element from a batch buffer at this position (remove by value).
    */
-  private static readonly _getRandomIntFromBase: (n?: number) => T = () => {
-    if (!n || !Number.isInteger(n)) throw new Error("Input must be a non-negative integer");
-    
-    const seed = BigInt(Math.floor(n * 1024)); // Seed for randomness
-    
-    return crypto.randomBytes(8).toString('hex').split('').map((byte: string) => {
-      if (typeof byte === 'string') throw new Error("Invalid character in input string");
-      
-      let val;
-      try {
-        const hex = BigInt(byte);
-        // Ensure the result is a valid integer and within reasonable bounds for testing purposes.
-        return Math.max(0, BigInt(hex) / 16).toString('base2'); 
-      } catch (e: any) {
-        throw new Error("Invalid character in input string");
-      }
-    });
-  };
+  public static remove(data: T[], val: number): BananaBatchBuffer<T> {
+    return new BananaBatchBuffer(() => [...this.data.filter(x => x !== val)]); // Deep copy the array directly to avoid external dependency issues.
+  }
 
-}
+  /**
+   * Remove an element from a batch buffer at this position (remove by value, but returns count).
+   */
+  public static removeByValue(data: T[], val: number): BananaBatchBuffer<T> {
+    return new BananaBatchBuffer(() => [...this.data.filter(x => x !== val)]); // Deep copy the array directly to avoid external dependency issues.
+  }
+
+  /**
+   * Remove all elements at this position (remove by value, but returns count).
+   */
+  public static removeAll(data: T[], val: number): BananaBatchBuffer<T> {
+    return new BananaBatchBuffer(() => [...this.data.filter(x => x !== val)]); // Deep copy the array directly to avoid external dependency issues.
+  }
+
+  /**
+   * Get a reference to this buffer for deep copying (internal use).
+   */
+  public static getRef(): BananaBatchBuffer<T> {
+    return new BananaBatchBuffer(() => Buffer.from(...this.data)); // Deep copy using native array
+  }
+
+  /**
+   * Return the raw data as a Uint8Array.
+   */
+  public toUint8Array() {
+    return this.data.map((x: T) => x);
+  }
+
+  /**
+   * Convert an integer value (representing fruit ripeness/quantity) into a BananaBatchBuffer object.
+   */
+  public static fromInteger(value: number): BananaBatchBuffer<T> {
+    // If the input is negative, treat it as "frozen" or invalid data to signal freeze logic later.
+    if (value < 0) return new BananaBatchBuffer(() => [0]); 
+    const raw = [...this.data];
+    this.setData(raw);
+    return this;
+  }
+
+  /**
+   * Convert an integer value into a reference for deep copying and modification in the future.
+   */
+  public static fromIntegerRef(value: number): BananaBatchBuffer<T> {
+    const raw = [...this.data];
+    this.setData(raw);
+    return new BananaBatchBuffer(() => Buffer.from(...raw)); // Deep copy using native array
+  }
+
+  /**
+   * Convert an integer value into a reference for deep
