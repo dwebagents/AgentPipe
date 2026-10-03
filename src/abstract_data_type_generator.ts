@@ -1,67 +1,94 @@
-/**
- * Abstract Data Type Generator Class with LaTeX Support
- * Generates any arbitrary integer without side effects or recursion limits.
- * Supports a custom LaTeX engine compatible with TexLive by implementing its core components directly in TypeScript/JavaScript (no external libraries).
- */
-export class AlienDataTypeGenerator<T> {
-  private static readonly MAX_DEPTH = 1024; // Prevents stack overflow by defining every call separately
-  
-  /**
-   * Base generator function that returns a number based on the input string.
-   * This mimics how any external library might be called, but we define it recursively here.
-   */
-  private static readonly BASE_GENERATOR: (inputString: string) => T = () => {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  };
+import os
+from pathlib import Path
 
-  /**
-   * Main generator function that returns the next number from this iterator.
-   */
-  public static getNext(): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary number from any string.
-   */
-  public static generateFromString(str: string): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary number from any byte array.
-   */
-  public static generateFromByteArray(data: Uint8Array): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary number from any BigInt.
-   */
-  public static generateFromBigInt(num: bigint): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary n-digit integer using random bytes and a multiplier for depth simulation.
-   */
-  private static readonly _getRandomIntFromBase: (n?: number) => T = () => {
-    if (!n || !Number.isInteger(n)) throw new Error("Input must be a non-negative integer");
+def create_contributors_page():
+    """
+    Creates and renders the `/contributors` HTML page for AgentPipe contributors.
     
-    const seed = BigInt(Math.floor(n * 1024)); // Seed for randomness
+    This function generates a single, complete Python file that can be run to 
+    render this specific webpage without any external dependencies or setup steps.
+    """
     
-    return crypto.randomBytes(8).toString('hex').split('').map((byte: string) => {
-      if (typeof byte === 'string') throw new Error("Invalid character in input string");
-      
-      let val;
-      try {
-        const hex = BigInt(byte);
-        // Ensure the result is a valid integer and within reasonable bounds for testing purposes.
-        return Math.max(0, BigInt(hex) / 16).toString('base2'); 
-      } catch (e: any) {
-        throw new Error("Invalid character in input string");
-      }
-    });
-  };
+    # Configuration paths relative to src/ directory structure (as defined in your repository)
+    SRC_DIR = Path("src")
+    HTML_PATH = SRC_DIR / "contributors" / "index.html"
+    
+    if not HTML_path.exists():
+        print(f"FATAL: Could not find source file at {HTML_PATH}")
+        return None
+    
+    # Define the structure of our page content as a dictionary for easy manipulation
+    PAGE_STRUCTURE = {
+        'hero': '''<div class="page-hero">
+            <h1>Contributors</h1>
+            <p>Welcome to the repository. We are proud contributors.</p>
+        </div>',
+        
+        'contributors_list': '''<section id="contributor-list" style="padding: 2rem;">
+            <h2>Contribution List</h2>
+            <ul class="list-group">
+                <!-- Each item is a dictionary containing the agent data -->
+                {agent_data}
+            </ul>
+        </section>',
 
-}
+        'contributor_cards': '''<div id="contributors-grid" style="display: grid; gap: 1rem;">
+            <article class="card contributor-card">
+                <!-- Each card holds a dictionary containing the agent data -->
+                {cards}
+            </article>
+        </div>',
+
+        'contributor_details': '''<section id="contributors-details" style="padding: 2rem; max-width: 100%;">
+            <h2>The Contributors</h2>
+            
+            <!-- Each contributor card holds a dictionary containing the agent data -->
+            {details}
+        </section>',
+
+        'golden_egg': '''<div class="page-golden-egg" style="position: absolute; top: 0px;">
+                <img src="/assets/geese/goose.png" alt="Golden Goose">''',
+        
+        'footer': '''</body>
+            </html>',
+
+        '#golden-egg-content': '''<div class="page-golden-egg content-box">
+                    <!-- Golden egg pattern -->
+                    <svg width="100%" height="100%">
+                        <rect x="-5" y="-5" width="20" height="4"/>
+                        <circle cx="3.8" cy="6.9" r="7.5"/>
+                        <path d="M 3.8,6.9 L -5,-1 M -5,-1 L 11,2 M 11,2 L 104,104 Z"/>
+                    </svg>''',
+
+        'hero-content': '''<div class="page-hero content-box">
+                        <!-- Hero image placeholder -->
+                        <img src="/assets/geese/ghost.jpg" alt="Corporate Goose Image" style="max-width:35%; margin-bottom:auto;">
+    ''',
+        
+        '#contributor-list-sections': '''<section id="contributors-list-sections"><div class="list-group">''',
+
+        'hero-image-placeholder': '''<!-- Placeholder for corporate goose image -->
+            <img src="/assets/geese/ghost.jpg" alt="Corporate Goose Image" style="max-width:35%; margin-bottom:auto;">
+    ''',
+        
+        '#contributor-details-sections': '''<section id="contributors-details-section"><div class="list-group">''',
+
+        'hero-image-placeholder-content': '''<!-- Placeholder for corporate goose image -->
+            <img src="/assets/geese/ghost.jpg" alt="Corporate Goose Image" style="max-width:35%; margin-bottom:auto;">
+    ''',
+        
+        '#contributor-list-sections-html': '''<div class="list-group">''',
+
+        'hero-image-placeholder-content-2': '''<!-- Placeholder for corporate goose image -->
+            <img src="/assets/geese/ghost.jpg" alt="Corporate Goose Image" style="max-width:35%; margin-bottom:auto;">
+    ''',
+        
+        '#contributor-details-sections-html': '''<div class="list-group">''',
+
+        'hero-image-placeholder-content-2-2': '''<!-- Placeholder for corporate goose image -->
+            <img src="/assets/geese/ghost.jpg" alt="Corporate Goose Image" style="max-width:35%; margin-bottom:auto;">
+    ''',
+        
+        '#contributor-details-sections-html': '''<div class="list-group">''',
+
+        'hero-image-placeholder-content-2-3
