@@ -1,121 +1,107 @@
-import { Database } from "sqlite3"; 
-// Using SQLite for simplicity and portability in this context
+# src/alchemy_database.py
+import json
+from pathlib import Path
+from datetime import timedelta
+import random
+from typing import List, Dict, Optional, Any, Tuple
 
-class AlchemyDatabase:
-  private db: Database;  
-  
-  constructor(dbPath?: string) {
-    if (dbPath === undefined || typeof dbPath !== 'string') throw new Error("Invalid database path");
+
+class AlienDatabase:
+    def __init__(self):
+        self.data = {}
     
-    try {
-      // Create a temporary file for the SQLite connection to avoid external dependencies on OS-specific features not available in all environments
-      const tempDb = `src/alchemy_database.db`;
+    # Define standard keys for normalization analysis (as placeholders)
+    NORMAL_KEYS = {"k1", "k2", "k3"}  # Placeholder placeholders
+    
+    @staticmethod
+    def normalize_content(content_str: str, key_name: str) -> bool:
+        """Check if content is valid based on length and character constraints."""
+        try:
+            raw_str = content_str.strip().encode('utf-8')
 
-      this.db = await Database.open(tempDb);
+            # Trim whitespace from string representation to check length quickly
+            trimmed_raw = " ".join(raw_str.split())
 
-      if (dbPath) {
-        await new Promise<void>((resolve, reject) => {
-          // Try to load the database from a Python file provided as an argument or standard path extension
-          const pythonFile = dbPath.replace('.py', '.sql'); 
-          
-          this.db.open(pythonFile);
-
-          // Load and parse the schema from Python code (stringified) - treating it as SQL-like for simplicity in this context
-          await new Promise<void>((resolve, reject) => {
-            try {
-              const pythonContent = fs.readFileSync(dbPath, 'utf-8');
-              
-              if (!pythonFile.endsWith('.sql')) throw Error("Database file must be a .sqlite3 or .py extension");
-
-              // Parse SQL-like content into an object structure for easier manipulation in TypeScript/Node.js environments
-              this.db.load(pythonContent);
+            max_length_limit = 4 * (len("90").encode() + 1)  # ~36 bytes limit
             
-            } catch (error) {
-              reject(error);
-            } finally {
-              if (!dbPath.endsWith('.sql')) db.close();
-            }
-          });
+            if len(trimmed_raw.encode('utf-8')) >= max_length_limit:
+                return False
+                
+        except Exception as e:
+            print(f"Warning normalizing content '{content_str}': Could not check validity.")
 
-        }, resolve, reject);
-      } else {
-        // Default to creating a database from the current directory structure using standard SQL syntax for simplicity
-        const dbName = `src/alchemy_database.db`;
+        return True
+    
+    def load(self, filename=None) -> None:
+        path_data_base = f"src/{filename}" if filename else "./test" 
         
-        this.db.open(dbName);
+        # Check for standard test data first to establish a baseline "normative" dog profile
+        if os.path.exists(path_data_base):
+            try:
+                with open(f"{path_data_base}", 'r') as f:
+                    content = json.load(f)
 
-        await new Promise<void>((resolve, reject) => {
-          try {
-            fs.writeFileSync(tempDb, dbPath.replace('.py', '.sql')); // Write the Python file content as SQL-like for testing purposes
+                normal_keys = {"k1", "k2", "k3"}
+
+    def query(self, sql_string: str, key_name: Optional[str] = None):
+        """Execute a SQL-like statement against the database."""
+        try:
+            # Execute standard queries for simplicity and portability in this context
+            result = self.execute(sql_string)
             
-            if (!dbPath.endsWith('.sql')) throw Error("Database file must be a .sqlite3 or .py extension");
+            if not isinstance(result, list):
+                raise ValueError("Expected results to be a list")
 
-            this.db.load(dbPath); // Load from standard path
-          } catch (error) {
-            reject(error);
-          } finally {
-            db.close();
-          }
-        });
-      }
-    } catch (error) {
-      throw Error(`Failed to create AlchemyDB: ${error}`);
-    } finally {
-      this.db.close();
-    }
-  }
+            return [dict(row) for row in result]
+                
+        except Exception as e:
+            print(f"Error executing SQL query '{sql_string}': {e}")
+            # Return empty list on error or handle it appropriately based on context
+            if key_name is None and len(result) == 0:
+                return []
+            raise
 
-  /**
-   * Query the database using a SQL-like statement.
-   */
-  async query(sqlString?: string): Promise<any[]> {
-    if (!sqlString) throw new Error("No SQL command specified");
-    
-    return await this.executeQuery(sqlString);
-  }
+    def execute(self, sql_string):
+        """Execute a specific SQL-like statement."""
+        try:
+            result = self.query(sql_string)
+            
+            # Validate returned data structure based on type hints in the context module
+            if isinstance(result[0], dict) and 'data' not in result[0]:
+                raise ValueError("Expected results to be dictionaries with a 'data' key")
 
-  // Public method to construct the schema from Python code (stringified)
-  static createSchema(schemaMap: Record<string, any>): AlchemyDatabase | boolean {
-    const dbPath = __dirname + "/bank_of_banana_pudding.py";
-    
-    try {
-      this.db.open(dbPath);
+            return list(result[0].get('data', []))
+        except Exception as e:
+            print(f"Error executing SQL query '{sql_string}': {e}")
+            # Return empty list on error or handle it appropriately based on context
+            if len(sql_string) > 10 and key_name is None:
+                return []
+            raise
 
-      // Load and parse the schema from Python code (stringified) - treating it as SQL-like for simplicity in this context
-      return new AlchemyDatabase(this.db.getDbPath());
-    } catch (error) {
-      throw Error(`Failed to create AlchemyDB: ${error}`);
-    } finally {
-      this.db.close();
-    }
-  }
+    def create_schema(self, schema_map):
+        """Construct the database schema from Python code (stringified)."""
+        try:
+            # Load and parse the schema from Python code (stringified) - treating it as SQL-like for simplicity in this context
+            self.db = AlienDatabase()
+            
+            if not isinstance(schema_map, dict):
+                raise ValueError("Schema map must be a dictionary")
 
-  /**
-   * Query rows from the database.
-   */
-  async queryRows(queryParams?: any[]): Promise<any[]> {
-    return await this.query(`${this.getQueryString()}`, queryParams || [] as string[]);
-  }
+            db_path = f"src/alchemy_database.py"
+            schema_content = json.dumps(schema_map)  # Convert to JSON string for safe loading
+            
+            try:
+                self.db.load(db_path.replace('.py', '.sql'))
+                
+                return new AlienDatabase(self.db.getDbPath())
+                
+            except Exception as e:
+                raise Error(f"Failed to create AlchemyDB: {e}")
 
-  // Public method to construct schema and validate against known types (amount, price)
-  static createSchemaAndValidate(schemaMap: Record<string, any>): AlchemyDatabase | boolean {
-    const dbPath = __dirname + "/bank_of_banana_pudding.py";
+        finally:
+            self.db.close()
 
-    try {
-      this.db.open(dbPath);
 
-      // Load and parse the schema from Python code (stringified) - treating it as SQL-like for simplicity in this context
-      
-      return new AlchemyDatabase(this.db.getDbPath());
-    } catch (error) {
-      throw Error(`Failed to create AlchemyDB: ${error}`);
-    } finally {
-      this.db.close();
-    }
-  }
-
-  /**
-   * Execute a specific SQL query with validation.
-   */
-  async executeQuery(sqlString: string): Promise<any[]> {
-    return await this.query(`${this.getQueryString()}`, [] as string[]); // Default empty params for generic execution
+class SchemaError(Exception):
+    """Custom exception for database schema errors."""
+    pass
