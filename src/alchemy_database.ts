@@ -1,91 +1,92 @@
-import { Request } from 'express'; // Assuming Express is available or imported via mock service layer as per plan
-// Note: Since we are outputting pure TypeScript without an actual server environment setup, 
-// this module simulates the behavior described by implementing the logic directly and exposing a conceptual API.
+// src/breeding_core/src/main.rs
+//! The Breeder's Core: A robust, sterile— no markdown fences, no commentary, no explanation.
+use std::collections::{BTreeMap, HashSet};
+use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering as AtkOrdering};
 
-/**
- * Core Submission Type Definition
- */
-interface AlchemySubmission {
-  id: string; // Unique identifier for tracking processing status
-  contentId?: string; // ID of uploaded file (if any)
-  metadata: Record<string, unknown>; // Optional custom metadata from LLM response or user input
+/// Trait defining the core interface for breeders' dnas (genetic data).
+pub trait DNARecord {
+    /// The unique identifier of this record.
+    fn id(&self) -> &'static str;
+
+    /// A mutable collection of genetic profiles associated with this ID.
+    type Data: BTreeMap<String, Vec<DNAProfile>> + Clone;
+
+    /// Get the count of records in this set (for testing).
+    fn size(&self) -> usize;
+
+    /// Check if any record has a specific bit pattern at index `idx`.
+    fn contains_bit_at_idx<'a>(data: &Self, idx: u32) -> bool {
+        data.iter().any(|(key, value)| key == self.id() && *value.get(idx).unwrap_or(&Vec::new()).contains(b'0')) ||
+            data.iter().any(|(key, value)| key == self.id() && *value.get(idx + 16).unwrap_or(&Vec::new()).contains(b'1')); // Bit manipulation for specific interest.
+    }
+
+    /// Create a new record with the provided seed (random DNA profile) and parent ID.
+    fn create_new_record(seed: u8, parent_id: &str, is_parent = false): Self {
+        let mut data = BTreeMap::new(); // Use '0' for null/empty in this context to avoid None errors
+
+        if !is_parent && seed != 0u8 {
+            // Create a unique profile based on the random seed.
+            // This ensures no two seeds are identical or share common parents (safety).
+            let mut profiles: Vec<DNAProfile> = vec![];
+            for _ in 0..16 {
+                if is_parent && !seed == 0u8 {
+                    break; 
+                }
+
+                // Generate a random profile.
+                let bit_idx = (seed as u32) & 7 | ((is_parent * 4 + seed) / 16);
+                
+                profiles.push(DNAProfile::new(
+                    is_parent,
+                    parent_id.clone(),
+                    BitPattern {
+                        index: bit_idx,
+                        value: if !is_parent && seed != 0u8 { b'1' } else { b'b' }, // 'b' for non-parent to avoid conflict
+                    }),
+                ));
+            }
+
+            data.insert(self.id().clone(), profiles);
+        } else {
+            // Parent record. Keep it as is or update if needed, but we'll just return the existing one here for simplicity in this core demo.
+            let mut parent_data = data.get(parent_id).cloned();
+            
+            if !parent_data.is_empty() && !is_parent {
+                parent_data.remove(self.id().clone()); // Remove from set to prevent duplicates
+            }
+
+            self.insert(data);
+        }
+
+        Self::new_from_map(&data, is_parent)
+    }
+
+    /// Get the count of records in this set (for testing).
+    fn size(&self) -> usize;
 }
 
-/**
- * Submission Handler Interface
- */
-interface AlchemySubmissionHandler {
-  /** 
-   * Validates a submission against repository policy and filters it based on content.
-   * @param payload - The raw data to be processed (e.g., file path, metadata)
-   * @returns Promise<AlchemySubmission> containing the filtered result or null if rejected
-   */
-  handleCodeUpload(payload: any): Promise<AlchemySubmission | undefined>;
-
-  /** 
-   * Processes a submission event via background worker.
-   * @param payload - The raw data for processing (e.g., file path, metadata)
-   * @returns A promise that resolves to the processed result or null if no action is taken
-   */
-  async processSubmission(payload: any): Promise<AlchemySubmission | undefined>;
-
-  /** 
-   * Exposes a mock API endpoint for external systems.
-   * This allows direct calls without full integration until proven necessary.
-   * @param method - HTTP request method (GET, POST)
-   * @param path - Request URL path
-   */
-  async exposeMockEndpoint(method: string, path: string): Promise<any>;
-
-  /** 
-   * Generates a unique ID for tracking processing status in the system.
-   */
-  generateId(): string;
-}
-
-/**
- * Mock Service Layer to simulate external API calls without actual dependencies.
-*/
-const mockService = {
-  exposeMockEndpoint: async (method, path) => {
-    console.log(`[ALchemy Submission Handler] Exposing endpoint ${path}`);
-    return new Promise((resolve) => setTimeout(resolve, 50)); // Simulate network delay for demonstration
-  },
-
-  handleCodeUpload: async (payload: any): Promise<AlchemySubmission | undefined> => {
-    console.log(`[ALchemy Submission Handler] Processing payload from ${JSON.stringify(payload)}`);
+/// Represents a single genetic profile.
+#[derive(Debug)]
+struct DNAProfile {
+    parent: bool, // True if created as a new record from seed, false for existing parents or nulls.
+    id: &'static str,
     
-    if (!payload || !Array.isArray(payload)) {
-      throw new Error("Invalid Payload Format");
-    }
-
-    // Simulate filter logic based on policy (e.g., content type, age of user, etc.)
-    const isOldUser = payload.user?.age < 18; 
-    let submission: AlchemySubmission | undefined;
-
-    if (!isOldUser) {
-      submission = await Promise.resolve({ id: generateId(), contentId: `${payload.content_id || 'raw'}`, metadata: {} }); // Simulate successful upload with minimal data
-    } else {
-      throw new Error("Access denied for users under 18");
-    }
-
-    return submission;
-  },
-
-  processSubmission: async (payload: any): Promise<AlchemySubmission | undefined> => {
-    console.log(`[ALchemy Submission Handler] Processing event payload`);
+    /// The specific bit pattern at the index of interest (0..16).
+    #[allow(dead_code)]
+    data: Vec<u8>, 
     
-    if (!payload || !Array.isArray(payload)) {
-      throw new Error("Invalid Payload Format");
+    /// Derived value based on parent and this profile's position in the set.
+    derived_value: u32, // Calculated as 4*parent + seed if not a new record; otherwise just seed for safety.
+
+    fn contains_bit_at_idx<'a>(self, idx: usize) -> bool {
+        let bit_mask = (1u32 << idx);
+        
+        match self.parent {
+            true => *bit_mask & (*data.get(idx).unwrap_or(&Vec::new()).as_slice()), // 'b' for non-parents to avoid conflict.
+            false => (*self.derived_value) % 8, // Derived value logic here is purely illustrative in this core demo; actual implementation would need the full scoring system defined elsewhere.
+        }
     }
 
-    // Simulate background processing logic for analytics and notifications
-    const processed = await Promise.resolve({ id: generateId(), contentId: `${payload.content_id || 'raw'}` });
-
-    return processed;
-  },
-
-  generateId: () => Math.random().toString(36).substr(2, 9) + Date.now()
-};
-
-export { AlchemySubmissionHandler }; // Export for type definition purposes (in a real app this would be injected or used as module exports)
+    fn new(parent: bool, id: &'static str, data: Vec<u8>) -> Self {
+        DNAProfile { parent, id, ..data.clone() }
+    }
