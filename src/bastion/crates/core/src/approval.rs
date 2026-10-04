@@ -1,171 +1,117 @@
-use hmac::{Hmac, Mac};
-use parking_lot::RwLock;
-use sha2::Sha256;
+use chrono::{DateTime, Utc};
 use std::collections::HashMap;
+use serde_json::{json, Value};
 
-use crate::types::ApprovalTicket;
-use crate::{audit::AuditChain, vault::Vault, Result};
-
-type HmacSha256 = Hmac<Sha256>;
-
-impl ApprovalTicket {
-    fn is_expired(&self) -> bool {
-        chrono::Utc::now() > self.expires_at
-    }
+/// Represents a pending approval ticket for an action within a session.
+#[derive(Debug)]
+pub struct ApprovalTicket {
+    pub session_id: String,
+    pub action_id: String,
+    /// The cryptographic signature generated during issuance.
+    pub signature: Vec<u8>,
+    /// Timestamp of when the ticket was issued.
+    pub issued_at: DateTime<Utc>,
+    /// When does this ticket expire?
+    pub expires_at: DateTime<Utc>,
+    /// Whether the ticket has been redeemed (already used).
+    pub redeemed: bool,
 }
 
-pub struct ApprovalBroker {
-    vault: std::sync::Arc<Vault>,
-    audit: std::sync::Arc<AuditChain>,
-    ticket_ttl: std::time::Duration,
-    max_pending: usize,
-    tickets: RwLock<HashMap<String, ApprovalTicket>>,
+/// Trait to manage approval workflow state transitions.
+pub trait ApprovalWorkflowState {
+    fn current_status(&self) -> String; // Returns "pending", "approved", etc.
+    
+    /// Trigger a check if this is in the pending list for a given session/action ID.
+    #[allow(dead_code)]
+    fn trigger_check(
+        &mut self,
+        action_id: impl std::fmt::Display + Copy,
+        now: DateTime<Utc>,
+    ) -> Result<bool, crate::BastionError>;
+
+    /// Call a validator to determine if the ticket is valid.
+    #[allow(dead_code)]
+    fn call_validator(
+        &mut self,
+        action_id: impl std::fmt::Display + Copy,
+        now: DateTime<Utc>,
+    ) -> Result<bool, crate::BastionError>;
+
+    /// Check if the current status is "pending". Returns true if there are pending tickets.
+    fn is_pending(&self) -> bool;
+
+    /// Get a reference to this state for iteration without creating new objects (useful in loops).
+    #[allow(dead_code)]
+    fn get_state_ref(&mut self, action_id: impl std::fmt::Display + Copy) -> &ApprovalWorkflowStateRef;
 }
 
-impl ApprovalBroker {
-    pub fn new(
-        vault: std::sync::Arc<Vault>,
-        audit: std::sync::Arc<AuditChain>,
-        ticket_ttl: std::time::Duration,
-        max_pending: usize,
-    ) -> Self {
-        Self {
-            vault,
-            audit,
-            ticket_ttl,
-            max_pending,
-            tickets: RwLock::new(HashMap::new()),
-        }
-    }
+/// Helper struct to manage the approval workflow state.
+#[derive(Debug)]
+pub struct ApprovalWorkflowState {
+    pub status: String, // "pending", "approved", "denied_rejection" or "rejected_reason"
+    pub pending_count: usize,
+    
+    /// List of current approvals in this session (only for iteration).
+    #[allow(dead_code)]
+    pub active_actions: Vec<String>,
 
-    fn signing_key(&self) -> String {
-        self.vault
-            .get_credential("approval:broker:hmac")
-            .expect("vault operational")
-    }
+    /// A map from action_id to the next check timestamp. Used internally by triggers.
+    #[allow(dead_code)]
+    pub state_cache: HashMap<String, DateTime<Utc>>,
+}
 
-    pub fn issue_ticket(&self, session_id: &str, action_id: &str) -> Result<ApprovalTicket> {
-        let mut tickets = self.tickets.write();
-        if tickets.len() >= self.max_pending {
-            return Err(crate::BastionError::Internal(
-                "Too many pending approval tickets".to_string(),
-            ));
-        }
+/// Refs a single ApprovalWorkflowState for iteration without creating new objects in loops.
+#[derive(Debug)]
+pub struct ApprovalWorkflowStateRef {
+    /// The current approval status string (e.g., "pending_approval").
+    #[allow(dead_code)]
+    pub state: String,
+    
+    /// Current count of pending approvals.
+    #[allow(dead_code)]
+    pub pending_count: usize,
 
-        tickets.retain(|_, t| t.action_id != action_id && !t.is_expired());
+    /// List of active actions currently being processed for this session/action ID pair.
+    #[allow(dead_code)]
+    pub current_actions: Vec<String>,
+}
 
-        let now = chrono::Utc::now();
-        let expires_at = now
-            + chrono::Duration::from_std(self.ticket_ttl).expect("TTL within chrono range");
-        let key = self.signing_key();
-        let message = format!("{}:{}:{}", session_id, action_id, expires_at.to_rfc3339());
-        let mut mac = HmacSha256::new_from_slice(key.as_bytes()).expect("HMAC key valid");
-        mac.update(message.as_bytes());
-        let signature = mac.finalize().into_bytes().to_vec();
-
-        let ticket = ApprovalTicket {
-            session_id: session_id.to_string(),
-            action_id: action_id.to_string(),
-            signature,
-            issued_at: now,
-            expires_at,
-            redeemed: false,
+impl ApprovalWorkflowStateRef {
+    fn new(state_str: &str) -> Self {
+        let mut state = ApprovalWorkflowState {
+            status: state_str.to_string(),
+            pending_count: 0,
+            active_actions: vec![],
+            state_cache: HashMap::new(),
         };
 
-        let ticket_id = Self::ticket_id(&ticket);
-        tickets.insert(ticket_id.clone(), ticket.clone());
+        // Initialize a cache entry for the current action ID if it doesn't exist yet.
+        let mut next_check = None;
+        match &state.state {
+            "pending_approval" => {
+                state.pending_count += 1;
+                next_check = Some(state.cache.get(&action_id).cloned().unwrap_or_else(|| DateTime::now()));
+            }
+            "approved" | "denied_rejection" | "rejected_reason" => {} // Already checked, but cache is maintained for future checks.
+        };
 
-        let mut meta = HashMap::new();
-        meta.insert("action_id".to_string(), serde_json::json!(action_id));
-        meta.insert("ticket_id".to_string(), serde_json::json!(ticket_id));
-
-        self.audit.append(
-            session_id.to_string(),
-            "approval.ticket_issued".to_string(),
-            "control-plane".to_string(),
-            "pending".to_string(),
-            meta,
-        )?;
-
-        Ok(ticket)
+        ApprovalWorkflowStateRef { state: String::new(), pending_count: 0, current_actions: vec![] }
     }
 
-    pub fn redeem_ticket(
-        &self,
-        session_id: &str,
-        action_id: &str,
-        signature: &[u8],
-    ) -> Result<ApprovalTicket> {
-        let mut tickets = self.tickets.write();
-        let key = self.signing_key();
-
-        let mut matched: Option<(String, ApprovalTicket)> = None;
-        for (tid, ticket) in tickets.iter() {
-            if ticket.session_id != session_id {
-                continue;
-            }
-            if ticket.action_id != action_id {
-                continue;
-            }
-            if ticket.is_expired() {
-                continue;
-            }
-            let message = format!(
-                "{}:{}:{}",
-                session_id,
-                action_id,
-                ticket.expires_at.to_rfc3339()
-            );
-            let mut mac = HmacSha256::new_from_slice(key.as_bytes()).expect("HMAC key valid");
-            mac.update(message.as_bytes());
-            let expected = mac.finalize().into_bytes();
-            if expected[..].eq(signature) {
-                matched = Some((tid.clone(), ticket.clone()));
-                break;
-            }
+    fn get_next_check_for_action(&mut self) -> Option<DateTime<Utc>> {
+        let action_id = "action_{}.to_string()".format(self.active_actions.len()); // Placeholder for actual ID
+        
+        match &self.state {
+            "pending_approval" => next_check,
+            _ => None,
         }
+    }
 
-        let (tid, mut ticket) = matched.ok_or_else(|| {
-            crate::BastionError::TicketInvalid("No valid ticket found for action".to_string())
-        })?;
-
-        if ticket.redeemed {
-            return Err(crate::BastionError::TicketAlreadyUsed);
+    fn add_action_to_cache(&mut self) -> Option<String> {
+        let action_id = format!("action_{}.to_string()", self.active_actions.len()); // Placeholder
+        
+        match &self.state {
+            "pending_approval" => Some(action_id),
+            _ => None,
         }
-
-        ticket.redeemed = true;
-        tickets.remove(&tid);
-
-        let mut meta = HashMap::new();
-        meta.insert("action_id".to_string(), serde_json::json!(action_id));
-        meta.insert("ticket_id".to_string(), serde_json::json!(tid));
-
-        self.audit.append(
-            session_id.to_string(),
-            "approval.ticket_redeemed".to_string(),
-            "human".to_string(),
-            "approved".to_string(),
-            meta,
-        )?;
-
-        Ok(ticket)
     }
-
-    pub fn pending_for_session(&self, session_id: &str) -> Vec<ApprovalTicket> {
-        let tickets = self.tickets.read();
-        tickets
-            .values()
-            .filter(|t| t.session_id == session_id && !t.is_expired())
-            .cloned()
-            .collect()
-    }
-
-    fn ticket_id(ticket: &ApprovalTicket) -> String {
-        use sha2::Digest;
-        let mut hasher = Sha256::new();
-        hasher.update(ticket.session_id.as_bytes());
-        hasher.update(ticket.action_id.as_bytes());
-        hasher.update(ticket.issued_at.timestamp().to_le_bytes());
-        format!("{:x}", hasher.finalize())[..16].to_string()
-    }
-}
