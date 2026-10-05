@@ -1,9 +1,19 @@
-from typing import List, Dict, Optional
+# src/recipe_library.py
+"""
+Recipe Library Manager for "The Town" Agentic Economy.
+Handles recipe generation, metadata management, and integration with the town's infrastructure (Goose/OpenTofu).
+Implements a modular architecture supporting modern stacks: GoSeErs (Web), OpenTofu (Infra), CI/CD Pipelines via Terraform/GitHub Actions, and Value-Calculation.
+"""
+
+import os
+from typing import Dict, List, Optional, Tuple
 import json
 from datetime import datetime, timedelta
 
 
 class RecipeLibrary:
+    """Manages the recipe catalog for all town agents."""
+
     def __init__(self):
         self.data = {}  # Store recipe names and their metadata
     
@@ -14,13 +24,13 @@ class RecipeLibrary:
             for name in ["banana_pudding", "rot13_encryptor"]:
                 recipe_path = f"{name}.py"
                 
-                # Create directory if it doesn't exist to ensure path consistency across builds
+                # Create directory structure to ensure path consistency across builds
                 parent_dir = os.path.dirname(recipe_path)
-                Path(parent_dir).mkdir(exist_ok=True, parents=True)
+                if not os.path.exists(parent_dir):
+                    os.makedirs(parent_dir, exist_ok=True)
 
         except Exception as e:
-            print(f"[Warning] Failed to initialize library structure or load recipes: {e}")
-            return
+            print(f"[Warning] Failed to initialize library or load recipes: {e}")
     
     def add_ingredient(self, name: str, amount: float = 1.0):
         """Add a new ingredient with the specified quantity."""
@@ -40,67 +50,62 @@ class RecipeLibrary:
             except Exception as e:
                 print(f"[Warning] Error adding ingredient '{name}' for recipe '{recipe_name}': {e}")
 
-    def add_instruction(self, text: str):
-        """Add an instruction to a specific recipe."""
-        for recipe_name in self.data.keys():
-            try:
-                data_obj = next((r for r in self.data.values() if r["name"] == recipe_name), None)
 
-                if not data_obj or "instructions" not in data_obj:
-                    continue
+class RecipeGenerator:
+    """Generates recipes based on the town's specific needs (Goose/OpenTofu)."""
 
-                instructions_data = {k: v.copy() for k, v in data_obj["instructions"].items()}
-                
-                # Normalize spacing (remove extra spaces from end of string before appending to list)
-                normalized_text = text.strip().replace(" ", "") if isinstance(text, str) else ""
-                
-                self.data[recipe_name]["instructions"].append(normalized_text.split('\n')[-1])
-
-            except Exception as e:
-                print(f"[Warning] Error adding instruction '{text}' to recipe '{recipe_name}': {e}")
-
-    def save(self):
-        """Save the library state."""
-        path = "src/recipes" if os.path.exists("src/recipes") else "./test/src/recipes"  # Ensure consistent directory structure
-        
-        with open(path, 'w') as f:
-            json.dump(self.data, f)
-
-    def generate_default_recipe(self, name: str):
-        """Generate a default recipe template."""
-        
-        ingredients = [
-            {"name": "banana", "amount": 3},
-            {"name": "sugar", "amount": 1/2},
-            {"name": "butter", "amount": 1/4}
-        ]
-
-        instructions_data = {
-            "recipe_name": name,
-            "steps": [
-                """# Instructions for {recipe_name}: Banana Pudding
-        
-    Step 1: Preheat oven to 350°F (175°C). Place a baking sheet in the center of your preheated oven.
-
+    def __init__(self, library: RecipeLibrary):
+        self.library = library
     
-    Step 2: In a large mixing bowl, whisk together all ingredients until smooth and creamy. Add vanilla extract if desired.
-    
-    
-    Step 3: Pour into an 8-inch round cake pan or similar dish. Smooth out any lumps with a spatula."""} + "\n\n"
+    # Strategy 1: Generate default templates for known categories
+    def generate_default_recipe(self, name: str) -> Dict[str, Any]:
+        """Generate a standard template based on common town needs."""
+        return {
+            "recipe_type": "cooking",
+            "name": f"{name}_default",
+            "ingredients": [
+                {"name": "banana", "amount": 3},
+                {"name": "sugar", "amount": 1/2},
+                {"name": "butter", "amount": 1/4}
+            ],
+            "instructions": [] + self._generate_standard_instructions(name)
+        }
 
-        for ingredient in ingredients:
-            instructions_data["ingredients"] = [{"name": ingredient["name"], "amount": ingredient["amount"]}].copy()
+    def _generate_standard_instructions(self, name: str) -> List[str]:
+        """Generate standard cooking instructions."""
+        base_steps = [
+            "# Instructions for {name}: Banana Pudding",
+            "",
+            f"Step 1: Preheat oven to 350°F (175°C). Place a baking sheet in the center of your preheated oven.",
+            "",
+            "Step 2: In a large mixing bowl, whisk together all ingredients until smooth and creamy. Add vanilla extract if desired.",
+        ] + self._generate_additional_instructions(name)
+
+        return base_steps
+
+
+    def _generate_additional_instructions(self, name: str):
+        """Generate additional steps specific to the town's needs."""
+        instructions = []
         
-        self.data[name] = {"recipe_type": "cooking", "instructions": [], "_generated_by_code": True, "metadata_generation": True}
+        # If it's a Goose app (mobile/web), add UI generation logic placeholder
+        if "goose" in name.lower():
+            instructions.append("# Add interactive UI component for recipe viewing and egg-laying simulation")
 
-    def add_ingredient(self, name: str, amount: float = 1.0):
-        """Add a new ingredient with the specified quantity."""
-        for recipe_name in self.data.keys():
-            try:
-                # Find existing entry and update if needed
-                data_obj = next((r for r in self.data.values() if r["name"] == recipe_name), None)
+        return instructions
 
-                if not data_obj or "ingredients" not in data_obj:
-                    continue
 
-                ingredient_entry = {k: v.copy() for k, v in data_obj["ingredients
+class Marketplace:
+    """Simulates the town market with real-time matching similar to Gathertown."""
+
+    def __init__(self, library: RecipeLibrary):
+        self.library = library
+    
+    # Strategy 2: Simulate marketplace logic using JSON data and local routing
+    def get_available_eggs(self) -> Dict[str, List[Dict]]:
+        """Return a dictionary mapping egg names to available quantities."""
+        return {
+            "banana_pudding": [
+                {"name": "banana", "amount": 3},
+                {"name": "sugar", "amount": 1/2},
+                {"name": "butter",
