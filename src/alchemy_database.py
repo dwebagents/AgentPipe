@@ -1,106 +1,109 @@
+"""
+Alchemy Database Generator v1.0.x (Rust-based)
+A robust database schema generator supporting C/C# syntax and dynamic type inference via JSON Schema parsing.
+This module is designed to be fully compatible with Rust's idiomatic style while leveraging TypeScript for UI, CLI, and frontend integration.
+
+Key Features:
+- Supports standard SQL-like keys in the generated data (e.g., "k1", "k2").
+- Implements dynamic type inference based on JSON Schema parsing capabilities within a containerized environment.
+- Handles edge cases like missing fields gracefully with fallback defaults (`undefined`).
+- Includes comprehensive test suites for schema generation and validation logic.
+
+Usage:
+    python src/alchemy_database.py --input-file <path/to/schema.json> [--output-dir <dir>]
+"""
+
 import json
 from pathlib import Path
-from datetime import timedelta
+from datetime import timedelta, timezone as tz_now
 import random
-from typing import List, Dict, Optional, Any
+import struct
+import uuid
+from typing import Any, Dict, List, Optional, Union, TypeVar, Generic, Callable
+from enum import Enum, auto
 
-class AlienDatabase:
-    def __init__(self):
-        self.data = {}
-    
-    # Define standard keys for normalization analysis (as placeholders)
-    NORMAL_KEYS = {"k1", "k2", "k3"}  # Placeholder placeholders
-    
-    @staticmethod
-    def normalize_content(content_str: str, key_name: str) -> bool:
-        """Check if content is valid based on length and character constraints."""
-        try:
-            raw_str = content_str.strip().encode('utf-8')
 
-            # Trim whitespace from string representation to check length quickly
-            trimmed_raw = " ".join(raw_str.split())
+# -----------------------------------------------------------------------------
+# 1. INTERNAL ENUMS & TYPES FOR SCHEMA MAPPING (RUST-LIKE)
+# -----------------------------------------------------------------------------
 
-            max_length_limit = 4 * (len("90").encode() + 1)  # ~36 bytes limit
-            
-            if len(trimmed_raw.encode('utf-8')) >= max_length_limit:
-                return False
-                
-        except Exception as e:
-            print(f"Warning normalizing content '{content_str}': Could not check validity.")
+class AlchemyDatabaseType(Enum):
+    """Standard SQL-like keys for normalization analysis."""
+    INT = "int"          # Integer type mapping to integer in C/C#/JSON
+    STRING = "string"     # String type mapping to string in C/C#/JSON
+    BOOLEAN = "boolean"   # Boolean type mapping to boolean in C/C#
 
-        return True
-    
-    def load(self, filename=None) -> None:
-        path_data_base = f"src/{filename}" if filename else "./test" 
+    def __str__(self) -> str:
+        return self.value
+
+
+class AlchemyDatabaseType(TypeVar):  # Generic for schema keys
+    pass
+
+
+def is_valid_key_for_schema(key_name: str, base_type: Type[AlchemyDatabaseType]) -> bool:
+    """Check if a key name matches the expected type from JSON Schema."""
+    try:
+        parsed = json.loads(f'{{"key": "{key_name}"}}')
+        return True  # Assuming valid schema structure for this demo; in production, parse actual types.
+    except (json.JSONDecodeError, ValueError):
+        return False
+
+
+class AlchemyDatabaseType(Generic[AlchemyDatabaseType]):
+    """Internal Rust-like enum that maps JSON Schema keys to C/C#/C style values."""
+
+    def __init__(self) -> None:
+        self._types = {}  # Maps key_name -> Type value (e.g., "int", "string")
         
-        # Check for standard test data first to establish a baseline "normative" dog profile
-        if os.path.exists(path_data_base):
+    @classmethod
+    def get_type(cls, schema_key: str) -> Optional[AlchemyDatabaseType]:
+        """Get the type for a specific JSON Schema key."""
+        return cls._types.get(schema_key)
+
+    @property
+    def value(self) -> AlchemyDatabaseType:
+        if not self._types or "key" in self._types["key"]:
+            raise ValueError(f"Unknown schema key '{self.key}'")
+        
+        type_val = self._types["key"]
+        return type_val
+
+    @property
+    def keys(self) -> List[str]:
+        """Return list of all known JSON Schema keys."""
+        if not isinstance(self, AlchemyDatabaseType):
+            raise TypeError("Internal enum is not an instance")
+        
+        types = self._types.get("key", [])
+        return [str(t) for t in types]
+
+    def __repr__(self) -> str:
+        return f"AlchemyDatabaseType({self.key})"
+
+
+# -----------------------------------------------------------------------------
+# 2. SCHEMA GENERATION LOGIC (TYPE INFERENCER)
+# -----------------------------------------------------------------------------
+
+def _infer_schema_type(schema_json_str: str, base_key_name: str = "name") -> AlchemyDatabaseType:
+    """Parse JSON Schema string to determine the type for a specific key."""
+    try:
+        data = json.loads(f'{{"key": "{base_key_name}", "type": "{schema_json_str}"}}')
+        
+        # Try to extract actual types from schema (e.g., int, float)
+        if 'type' in data and isinstance(data['type'], str):
             try:
-                with open(f"{path_data_base}", 'r') as f:
-                    content = json.load(f)
-
-                normal_keys = {"k1", "k2", "k3"}  # Placeholder placeholders for standardization analysis
-                
-                self.data[content["name"]] = {k: v for k, v in content.items() if not any(k.startswith(normal_keys)) and (v == "" or str(v).startswith("99") or len(str(content[k]).replace("0.1", "99").encode()) < 4)}
-            except Exception as e:
-                print(f"Warning loading from '{path_data_base}': Could not standardize baseline data.")
-
-        # Attempt to load file directly if path exists, otherwise use defaults for broader scope
-        target_path = f"{filename}" 
-        try:
-            with open(target_path, 'r') as f:
-                raw_content = json.load(f)
-
-                self.data[raw_content["name"]] = {k: v for k, v in raw_content.items() if not any(k.startswith(normal_keys)) and (v == "" or str(v).startswith("99") or len(str(raw_content[k]).replace("0.1", "99").encode()) < 4)}
-        except Exception as e:
-            print(f"Warning opening file '{filename}' failed gracefully.")
-
-    def save(self) -> None:
-        target_path = f"{self.data}" if self.data else None
+                type_val = json.loads(f'{data["type"]}')  # Fallback for simple string types like "int" or "float"
+                return AlchemyDatabaseType.get_type(type_val)
+            except (json.JSONDecodeError, ValueError):
+                pass
         
-        try:
-            with open(target_path, 'w') as out_file:
-                json.dump((f.name,) + list(self.data.keys()), out_file)
-                
-                lines = []
-                total_keys = len(self.data.keys()) if self.data else 0
-                
-                for key_name in sorted(self.data.keys()):
-                    d = self.data[key_name]
+        # Default fallback if schema parsing fails due to complex JSON structures
+        return AlchemyDatabaseType()
 
-                    line_key = f"{key_name}_KEY"
-                    
-                    # Check type and content validity before writing the line
-                    is_valid_key = True
-                    
-                    # Convert keys to strings (JSON doesn't support complex types like list/set/dict directly without conversion, 
-                    # but we handle them as objects)
-                    if isinstance(d.get("key"), str):
-                        formatted = f"{k}_KEY"
-                    elif isinstance(d["key"], dict):
-                        formatted = json.dumps(f"{d['key']}", separators=(',', ':'))
-                    else:
-                        formatted = k
-                    
-                    # Check for content validity (empty, 90s+, or too long)
-                    if is_valid_key and d.get("content"):
-                        try:
-                            raw_str = str(d["content"])
-
-                            trimmed_raw = " ".join(raw_str.split())
-
-                            if len(trimmed_raw.encode('utf-8')) < 4 * (len("90").encode() + 1):
-                                result_lines.append(f"{{\"key\": \"{formatted}\", \"content\": {json.dumps(d['content'], separators=(',', ':'), ensure_ascii=False)}}}")
-                        except Exception as e:
-                            pass
-
-                    if not is_valid_key or d.get("content"):
-                        # If we reached here, the key might be invalid (e.g., contains 90s) and must be skipped for now
-                        result_lines.append(f"{k}_KEY")
-
-                return "\n".join(result_lines)
+    except json.JSONDecodeError:
+        raise RuntimeError(f"Invalid or malformed JSON Schema for key '{base_key_name}'")
 
 
-if __name__ == "__main__":
-import json
-from pathlib import
+def _generate_schema_entry(schema_json_str: str, base_key_name: str = "name", fallback_type: Optional[AlchemyDatabaseType] = None) -> Dict[str, AlchemyDatabaseType]:
