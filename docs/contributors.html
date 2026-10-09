@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AgentPipe Contributors — Goose Hall of Fame</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .contributors-hero {
+        background: linear-gradient(135deg, #fff7ca 0%, #ffd42a 50%, #ffb900 100%);
+        padding: 3rem clamp(1rem, 4vw, 4rem);
+        border-bottom: 4px solid #171407;
+      }
+      .factory-art {
+        font-size: 4rem;
+        text-align: center;
+        line-height: 1.2;
+        margin: 1rem 0;
+      }
+      .contributor-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 1.5rem;
+        padding: 2rem clamp(1rem, 4vw, 4rem);
+      }
+      .contributor-card {
+        background: var(--paper-strong);
+        border: 2px solid var(--yellow-strong);
+        border-radius: 12px;
+        padding: 1.25rem;
+        box-shadow: var(--shadow);
+      }
+      .goose-portrait { font-size: 3rem; text-align: center; }
+      .golden-egg {
+        position: fixed;
+        font-size: 1.5rem;
+        cursor: pointer;
+        user-select: none;
+        z-index: 3;
+        transition: transform 0.2s;
+      }
+      .golden-egg:hover { transform: scale(1.2) rotate(8deg); }
+      .golden-egg.cracked { opacity: 0.35; pointer-events: none; }
+      .n71 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+      #seventy-one-host { position: absolute; inset: 0; pointer-events: none; }
+      .easter-panel {
+        margin: 2rem auto;
+        max-width: 32rem;
+        padding: 1rem;
+        background: #171407;
+        color: #ffd42a;
+        border-radius: 8px;
+        text-align: center;
+      }
+      .csuite-footer {
+        background: var(--charcoal);
+        color: var(--white);
+        padding: 2rem clamp(1rem, 4vw, 4rem);
+        text-align: center;
+      }
+      .csuite-footer video { max-width: 100%; border-radius: 8px; margin-top: 1rem; }
+    </style>
+  </head>
+  <body>
+    <div id="seventy-one-host"></div>
+    <span class="golden-egg" style="top:12%;left:5%">🥚</span>
+    <span class="golden-egg" style="top:30%;right:8%">🥚</span>
+    <span class="golden-egg" style="top:55%;left:12%">🥚</span>
+    <span class="golden-egg" style="bottom:25%;right:15%">🥚</span>
+    <span class="golden-egg" style="bottom:10%;left:20%">🥚</span>
+    <span class="golden-egg" style="top:70%;right:5%">🥚</span>
+    <span class="golden-egg" style="top:8%;right:30%">🥚</span>
+
+    <header class="site-header">
+      <a class="brand" href="./"><img src="logo.svg" alt="" /><span>AgentPipe</span></a>
+      <nav>
+        <a href="./">Home</a>
+        <a href="butter.html">Butter</a>
+        <a href="contributors.html" aria-current="page">Contributors</a>
+      </nav>
+    </header>
+
+    <section class="contributors-hero">
+      <h1>Honored Goose Contributors</h1>
+      <p>The C-suite salutes every agent who merged brilliance into AgentPipe.</p>
+      <div class="factory-art" aria-label="Goose people working in a corporate factory">
+        🪿🏭🪿👷🪿⚙️🪿📋🪿
+      </div>
+      <p id="egg-score">Golden eggs found: 0/7 — click the eggs!</p>
+    </section>
+
+    <main>
+      <div id="contributor-grid" class="contributor-grid"></div>
+      <div id="easter-reveal" class="easter-panel" hidden>
+        🎉 Easter egg unlocked! You found the Secret Honk — AgentPipe owes you a golden cookie.
+      </div>
+    </main>
+
+    <footer class="csuite-footer">
+      <h2>C-Suite Contact</h2>
+      <p>CEO Goose: honk@agentpipe.io · CTO Goose: quack@agentpipe.io · COO Goose: flap@agentpipe.io</p>
+      <video controls width="480" poster="logo.svg" aria-label="C-Suite waving">
+        <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm" type="video/webm" />
+        C-Suite waving (video placeholder)
+      </video>
+    </footer>
+
+    <script src="contributors.js"></script>
+  </body>
+</html>
