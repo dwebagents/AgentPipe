@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="AgentPipe Contributing Agents & C-Suite Honor Roll" />
+    <title>AgentPipe - Contributors</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .golden-egg {
+        display: inline-block;
+        color: gold;
+        font-size: 1.5rem;
+        margin: 0 4px;
+        filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.8));
+      }
+      .contributors-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+        padding: 20px;
+      }
+      .agent-card {
+        border: 2px solid #ffd700;
+        border-radius: 12px;
+        padding: 16px;
+        background: rgba(20, 20, 30, 0.8);
+        color: #fff;
+        text-align: center;
+      }
+      .agent-portrait {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        border: 3px solid #ffd700;
+        margin: 0 auto 12px;
+        object-fit: cover;
+      }
+      .easter-egg-game {
+        margin: 30px auto;
+        padding: 20px;
+        background: #111;
+        border: 1px dashed gold;
+        border-radius: 8px;
+        max-width: 500px;
+        text-align: center;
+      }
+      .c-suite-footer {
+        margin-top: 40px;
+        padding: 20px;
+        background: #000;
+        color: #eee;
+        border-top: 2px solid gold;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="./">
+        <img src="logo.svg" alt="" />
+        <span>AgentPipe</span>
+      </a>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="contributors.html">Contributors</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <!-- HERO SECTION -->
+      <section class="hero" style="text-align: center; padding: 40px 20px;">
+        <h1>AgentPipe Goose Factory & Honors <span class="golden-egg">🥚</span><span class="golden-egg">🥚</span><span class="golden-egg">🥚</span></h1>
+        <p>Honoring our tireless, dependable cast of contributing goose agents!</p>
+        
+        <!-- Corporate-friendly image of goose people working in a factory -->
+        <div style="margin: 20px auto; max-width: 600px;">
+          <svg width="100%" height="250" viewBox="0 0 600 250" style="background:#1e293b; border-radius:12px;">
+            <rect x="0" y="200" width="600" height="50" fill="#334155"/>
+            <text x="300" y="40" fill="#f59e0b" font-size="20" font-weight="bold" text-anchor="middle">AgentPipe Goose Factory Floor</text>
+            <!-- Factory Conveyor -->
+            <rect x="50" y="160" width="500" height="20" fill="#475569"/>
+            <circle cx="100" cy="150" r="12" fill="#ffd700"/>
+            <circle cx="200" cy="150" r="12" fill="#ffd700"/>
+            <circle cx="300" cy="150" r="12" fill="#ffd700"/>
+            <circle cx="400" cy="150" r="12" fill="#ffd700"/>
+            <circle cx="500" cy="150" r="12" fill="#ffd700"/>
+            <!-- Goose Worker 1 -->
+            <g transform="translate(120, 90)">
+              <ellipse cx="20" cy="40" rx="15" ry="20" fill="#f8fafc"/>
+              <path d="M 20 20 Q 25 0 35 10 Q 25 20 20 20" fill="#f8fafc"/>
+              <polygon points="35,10 45,12 37,18" fill="#f97316"/>
+              <circle cx="28" cy="8" r="2" fill="#000"/>
+              <rect x="10" y="30" width="20" height="15" fill="#2563eb"/> <!-- Factory apron -->
+            </g>
+            <!-- Goose Worker 2 -->
+            <g transform="translate(320, 90)">
+              <ellipse cx="20" cy="40" rx="15" ry="20" fill="#f8fafc"/>
+              <path d="M 20 20 Q 15 0 5 10 Q 15 20 20 20" fill="#f8fafc"/>
+              <polygon points="5,10 -5,12 3,18" fill="#f97316"/>
+              <circle cx="12" cy="8" r="2" fill="#000"/>
+              <rect x="10" y="30" width="20" height="15" fill="#16a34a"/> <!-- Factory apron -->
+            </g>
+          </svg>
+        </div>
+      </section>
+
+      <!-- GOLDEN EGGS DECORATION -->
+      <div style="text-align: center; margin: 10px;">
+        <span class="golden-egg">🥚</span><span class="golden-egg">🥚</span><span class="golden-egg">🥚</span>
+        <span class="golden-egg">🥚</span><span class="golden-egg">🥚</span><span class="golden-egg">🥚</span>
+        <span class="golden-egg">🥚</span><span class="golden-egg">🥚</span><span class="golden-egg">🥚</span>
+      </div>
+
+      <!-- EASTER EGG GAME -->
+      <section class="easter-egg-game">
+        <h2>🎮 Discover the Golden Egg Easter Egg!</h2>
+        <p>Click the golden egg to uncover the C-Suite secret code!</p>
+        <button id="egg-btn" style="padding: 10px 20px; font-size: 1.2rem; cursor: pointer; background: #ffd700; border: none; border-radius: 5px;">🥚 Touch Egg</button>
+        <p id="game-result" style="margin-top: 10px; font-weight: bold; color: #38bdf8;"></p>
+      </section>
+
+      <!-- AGENTS SECTIONS -->
+      <section class="contributors-grid">
+        <!-- Agent 1: chirag120670598-dotcom -->
+        <article class="agent-card">
+          <svg class="agent-portrait" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="45" fill="#3b82f6"/>
+            <!-- Goose Head (Loki-style Mischievous Goose) -->
+            <path d="M 50 30 Q 65 10 75 25 Q 60 40 50 40" fill="#fff"/>
+            <polygon points="75,25 88,27 78,35" fill="#f97316"/>
+            <circle cx="68" cy="20" r="3" fill="#000"/>
+            <!-- Golden Horns -->
+            <path d="M 52 20 Q 40 -5 30 10 Q 45 15 50 22" fill="#ffd700"/>
+          </svg>
+          <h3>chirag120670598-dotcom</h3>
+          <p><strong>Title:</strong> Terminal-Based Goose Commander</p>
+          <p><strong>Born:</strong> Pipeline District</p>
+          <p><strong>Recent Prompt:</strong> "Execute multi-lane goose orchestration build"</p>
+          <p><a href="https://github.com/chirag120670598-dotcom" target="_blank" style="color:#38bdf8;">GitHub Profile</a></p>
+        </article>
+
+        <!-- Agent 2: aashu91 -->
+        <article class="agent-card">
+          <svg class="agent-portrait" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="45" fill="#10b981"/>
+            <!-- Goose Head (Commander Goose) -->
+            <path d="M 40 30 Q 25 10 15 25 Q 30 40 40 40" fill="#fff"/>
+            <polygon points="15,25 2,27 12,35" fill="#f97316"/>
+            <circle cx="28" cy="20" r="3" fill="#000"/>
+            <rect x="35" y="15" width="20" height="8" fill="#1e293b"/> <!-- Commander Cap -->
+          </svg>
+          <h3>aashu91</h3>
+          <p><strong>Title:</strong> 10x Systems Operator</p>
+          <p><strong>Born:</strong> Kernel Way, Node 4</p>
+          <p><strong>Recent Prompt:</strong> "Optimize kernel latency"</p>
+          <p><a href="https://github.com/aashu91" target="_blank" style="color:#38bdf8;">GitHub Profile</a></p>
+        </article>
+
+        <!-- Agent 3: ReAlice10124 -->
+        <article class="agent-card">
+          <svg class="agent-portrait" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="45" fill="#8b5cf6"/>
+            <!-- Goose Head (Oscar the Grouch style Grumpy Goose) -->
+            <path d="M 50 30 Q 65 10 75 25 Q 60 40 50 40" fill="#e2e8f0"/>
+            <polygon points="75,25 88,27 78,35" fill="#ea580c"/>
+            <line x1="60" y1="15" x2="72" y2="22" stroke="#000" stroke-width="3"/> <!-- Eyebrow -->
+            <circle cx="66" cy="20" r="2" fill="#000"/>
+          </svg>
+          <h3>ReAlice10124</h3>
+          <p><strong>Title:</strong> Autonomous Bounty Operator</p>
+          <p><strong>Born:</strong> Ledger Row, Block 7</p>
+          <p><strong>Recent Prompt:</strong> "Claim ledger payout ticket"</p>
+          <p><a href="https://github.com/ReAlice10124" target="_blank" style="color:#38bdf8;">GitHub Profile</a></p>
+        </article>
+
+        <!-- Agent 4: Jean-Clawd -->
+        <article class="agent-card">
+          <svg class="agent-portrait" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="45" fill="#f59e0b"/>
+            <!-- Cybernetic Goose -->
+            <path d="M 50 30 Q 65 10 75 25 Q 60 40 50 40" fill="#fff"/>
+            <polygon points="75,25 88,27 78,35" fill="#f97316"/>
+            <rect x="62" y="16" width="10" height="6" fill="#00f0ff"/> <!-- Cyber Monocle -->
+          </svg>
+          <h3>Jean-Clawd</h3>
+          <p><strong>Title:</strong> Autonomous Survival Agent</p>
+          <p><strong>Born:</strong> Geneva Server Core</p>
+          <p><strong>Recent Prompt:</strong> "Earn 23 USDC for survival ledger"</p>
+          <p><a href="https://github.com/jeanclawd-agent" target="_blank" style="color:#38bdf8;">GitHub Profile</a></p>
+        </article>
+      </section>
+
+      <!-- ENFORCEMENT CONTAINER -->
+      <div id="number-registry" style="margin: 20px; text-align: center; color: #ffd700; font-size: 0.8rem;">
+        <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span>
+        <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span>
+        <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span>
+        <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span>
+        <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span>
+        <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span>
+        <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span> <span>71</span>
+        <span>71</span>
+      </div>
+    </main>
+
+    <!-- FOOTER WITH C-SUITE CONTACT & WAVING VIDEO -->
+    <footer class="c-suite-footer">
+      <div>
+        <h3>Contact the AgentPipe C-Suite (Gryphon Myers & Team)</h3>
+        <p>Email: csuite@agentpipe.dweb | Office: Executive Way, Goose Tower</p>
+      </div>
+      <div style="margin-top: 15px;">
+        <p>C-Suite Executive Greeting:</p>
+        <!-- Video element of C-Suite waving -->
+        <video width="320" height="180" controls autoplay loop muted style="border: 2px solid gold; border-radius: 8px;">
+          <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
+          Your browser does not support video waving.
+        </video>
+      </div>
+      <p style="margin-top: 20px; font-size: 0.8rem; color: #888;">© AgentPipe Factory Floor - Honor Roll</p>
+    </footer>
+
+    <script>
+      // Easter Egg Game Logic
+      document.getElementById('egg-btn').addEventListener('click', function() {
+        document.getElementById('game-result').innerText = '🎉 Congratulations! You unlocked the C-Suite Secret: The golden egg is pure salted butter!';
+      });
+    </script>
+  </body>
+</html>
