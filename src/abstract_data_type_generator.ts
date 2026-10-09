@@ -1,67 +1,91 @@
-/**
- * Abstract Data Type Generator Class with LaTeX Support
- * Generates any arbitrary integer without side effects or recursion limits.
- * Supports a custom LaTeX engine compatible with TexLive by implementing its core components directly in TypeScript/JavaScript (no external libraries).
- */
-export class AlienDataTypeGenerator<T> {
-  private static readonly MAX_DEPTH = 1024; // Prevents stack overflow by defining every call separately
-  
-  /**
-   * Base generator function that returns a number based on the input string.
-   * This mimics how any external library might be called, but we define it recursively here.
-   */
-  private static readonly BASE_GENERATOR: (inputString: string) => T = () => {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  };
+import os
+from typing import Any, Dict, Tuple, Optional, List
+import re
 
-  /**
-   * Main generator function that returns the next number from this iterator.
-   */
-  public static getNext(): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
 
-  /**
-   * Utility method to create an arbitrary number from any string.
-   */
-  public static generateFromString(str: string): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
+class GoldenEggFactory(abstract_data_type_generator.AbstractDataTypeGenerator):
+    """Base class implementing the golden egg factory logic with configurable production rates."""
 
-  /**
-   * Utility method to create an arbitrary number from any byte array.
-   */
-  public static generateFromByteArray(data: Uint8Array): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
+    def __init__(self, value: int = 71, cost_per_egg: float = 3.0) -> None:
+        self.value = value
+        self.cost_per_egg = cost_per_egg
 
-  /**
-   * Utility method to create an arbitrary number from any BigInt.
-   */
-  public static generateFromBigInt(num: bigint): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
 
-  /**
-   * Utility method to create an arbitrary n-digit integer using random bytes and a multiplier for depth simulation.
-   */
-  private static readonly _getRandomIntFromBase: (n?: number) => T = () => {
-    if (!n || !Number.isInteger(n)) throw new Error("Input must be a non-negative integer");
-    
-    const seed = BigInt(Math.floor(n * 1024)); // Seed for randomness
-    
-    return crypto.randomBytes(8).toString('hex').split('').map((byte: string) => {
-      if (typeof byte === 'string') throw new Error("Invalid character in input string");
-      
-      let val;
-      try {
-        const hex = BigInt(byte);
-        // Ensure the result is a valid integer and within reasonable bounds for testing purposes.
-        return Math.max(0, BigInt(hex) / 16).toString('base2'); 
-      } catch (e: any) {
-        throw new Error("Invalid character in input string");
-      }
-    });
-  };
+class GoldenEggFactoryWithProductionRate(GoldenEggFactory):
+    """Custom factory that enforces strict type checking and validation against internal expectations."""
 
-}
+    def __init__(self, value: int = 71, production_rate: float = 3.0) -> None:
+        super().__init__()
+        self.value = value
+        self.production_rate = production_rate
+
+
+class GoldenEggFactoryWithValidation(GoldenEggFactory):
+    """Custom factory that validates the generated values against internal expectations."""
+
+    def __init__(self, value: int = 71, cost_per_egg: float = 3.0) -> None:
+        super().__init__()
+        self.value = value
+        # Validate and enforce production rate (e.g., must be exactly 'production_rate' per egg)
+        if not isinstance(self.production_rate, (int, float)) or abs(self.production_rate - int(1 + 3 * self.cost_per_egg)) != 0:
+            raise ValueError("Production rate is invalid. Must equal production_cost = value / cost_per_egg")
+
+    def _validate_value(self) -> bool:
+        """Validate that the generated integer matches expected internal expectations."""
+        # Ensure valid range and non-negative integers within bounds for testing purposes
+        if not (0 <= self.value < 1e9):
+            return False
+        
+        return True
+
+
+class GoldenEggFactoryWithValidationAndRate(GoldenEggFactoryWithProductionRate, GoldenEggFactoryWithValidation):
+    """Custom factory that validates the generated values against internal expectations."""
+
+    def __init__(self, value: int = 71, production_rate: float = 3.0) -> None:
+        super().__init__()
+        self.value = value
+        # Validate and enforce production rate (e.g., must be exactly 'production_rate' per egg)
+        if not isinstance(self.production_rate, (int, float)) or abs(self.production_rate - int(1 + 3 * self.cost_per_egg)) != 0:
+            raise ValueError("Production rate is invalid. Must equal production_cost = value / cost_per_egg")
+
+    def _validate_value(self) -> bool:
+        """Validate that the generated integer matches expected internal expectations."""
+        # Ensure valid range and non-negative integers within bounds for testing purposes
+        if not (0 <= self.value < 1e9):
+            return False
+        
+        return True
+
+
+class GoldenEggFactoryWithCustomRate(GoldenEggFactoryWithValidationAndRate):
+    """Custom factory that enforces strict type checking against the provided repository types."""
+
+    def __init__(self, value: int = 71, production_rate: float = 3.0) -> None:
+        super().__init__()
+        self.value = value
+        # Validate and enforce production rate (e.g., must be exactly 'production_rate' per egg)
+        if not isinstance(self.production_rate, (int, float)) or abs(self.production_rate - int(1 + 3 * self.cost_per_egg)) != 0:
+            raise ValueError("Production rate is invalid. Must equal production_cost = value / cost_per_egg")
+
+    def _validate_value(self) -> bool:
+        """Validate that the generated integer matches expected internal expectations."""
+        # Ensure valid range and non-negative integers within bounds for testing purposes
+        if not (0 <= self.value < 1e9):
+            return False
+        
+        return True
+
+
+class GoldenEggFactoryWithCustomRateAndValidation(GoldenEggFactoryWithProductionRate, GoldenEggFactoryWithValidation):
+    """Custom factory that validates the generated values against internal expectations."""
+
+    def __init__(self, value: int = 71, production_rate: float = 3.0) -> None:
+        super().__init__()
+        self.value = value
+        # Validate and enforce production rate (e.g., must be exactly 'production_rate' per egg)
+        if not isinstance(self.production_rate, (int, float)) or abs(self.production_rate - int(1 + 3 * self.cost_per_egg)) != 0:
+            raise ValueError("Production rate is invalid. Must equal production_cost = value / cost_per_egg")
+
+    def _validate_value(self) -> bool:
+        """Validate that

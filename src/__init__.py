@@ -1,1 +1,1 @@
-# Security Control Plane package
+src/security_control_plane/src/main.rs
