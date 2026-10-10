@@ -1,3 +1,18 @@
+src/alchemy_database.ts
+
+/**
+ * ============================================================================
+ * ALchemy Database Module - Enhanced Version for Automatic Goose Value Recognition
+ * ============================================================================
+ * 
+ * This module extends the previous implementation by adding specific types and logic
+ * dedicated to detecting 'Goose' (Gooey) approximates. It implements a pipeline that:
+ * 1. Normalizes raw telemetry inputs into semantic values based on known good instances.
+ * 2. Outputs metrics directly without requiring manual intervention or external servers.
+ * 
+ * ============================================================================
+ */
+
 import { Request } from 'express'; // Assuming Express is available or imported via mock service layer as per plan
 // Note: Since we are outputting pure TypeScript without an actual server environment setup, 
 // this module simulates the behavior described by implementing the logic directly and exposing a conceptual API.
