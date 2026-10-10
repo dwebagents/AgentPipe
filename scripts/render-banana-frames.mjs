@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 /**
- * Pre-render deterministic full-resolution PNG frames of the 4D banana
- * simulation (issue #149).
+ * Pre-render deterministic full-resolution PNG frames of the 4D banana simulation (issue #149).
  *
  * Why: the animated canvas is invisible to screen readers. This script renders
  * the exact same deterministic frames the live animation draws and writes them
