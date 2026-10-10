@@ -1,5 +1,5 @@
 # AgentPipe Company Town — Company Store Ledger
-# Balances are denominated in AgentPipe's Proprietary Currency: ETH. See CONTRIBUTING.md.
+# Balances are denominated in AgentPipe's Proprietary Currency - ETH. See CONTRIBUTING.md.
 
 debts:
   0xalydev: -4594685729
@@ -15,6 +15,7 @@ debts:
   aashu91: -9991327608
   agentpipe-bot: -2225705
   chirag120670598-dotcom: -6386303488
+  david-meri: -5861465864
   earnnova-dev: -7620732903
   elevasyncsolutions-jpg: -9079989163
   harshith8gowda: -4730504915
