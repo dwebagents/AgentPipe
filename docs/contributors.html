@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AgentPipe Contributors — Goose-Person Assembly Honor Roll</title>
+  <link rel="icon" type="image/svg+xml" href="../logo.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: rgba(255, 212, 42, 0.2);
+      --gold: #ffd42a;
+      --gold-dark: #d97706;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      padding-bottom: 2rem;
+    }
+    header.site-header {
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 2px solid var(--gold);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: var(--gold);
+      text-decoration: none;
+    }
+    .brand img { width: 36px; height: 36px; }
+    nav a {
+      color: var(--text-main);
+      text-decoration: none;
+      font-weight: 600;
+      margin-left: 1.5rem;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--gold); }
+    .hero {
+      max-width: 1200px;
+      margin: 2.5rem auto;
+      padding: 0 1.5rem;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: var(--gold);
+      margin-bottom: 0.75rem;
+    }
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 760px;
+      margin: 0 auto 2rem;
+    }
+    .factory-container {
+      border: 2px solid var(--card-border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+      margin-bottom: 2rem;
+      background: #090d16;
+    }
+    .factory-caption {
+      padding: 0.75rem 1rem;
+      background: rgba(30, 41, 59, 0.8);
+      font-size: 0.9rem;
+      color: var(--gold);
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .egg-badges {
+      display: flex;
+      gap: 0.5rem;
+    }
+    /* Game Banner / Easter Egg */
+    .game-banner {
+      background: linear-gradient(90deg, #1e1b4b, #312e81);
+      border: 2px dashed var(--gold);
+      border-radius: 16px;
+      padding: 1.5rem 2rem;
+      margin: 2rem auto;
+      max-width: 1200px;
+      text-align: center;
+    }
+    .game-banner h2 {
+      font-size: 1.6rem;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+    .game-board {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin: 1.25rem 0;
+    }
+    .game-egg {
+      width: 32px;
+      height: 42px;
+      cursor: pointer;
+      transition: transform 0.2s, filter 0.2s;
+    }
+    .game-egg:hover {
+      transform: scale(1.3) translateY(-4px);
+    }
+    .game-egg.found {
+      filter: drop-shadow(0 0 8px #ffd42a) brightness(1.3);
+    }
+    .score-display {
+      font-weight: 700;
+      color: var(--gold);
+      font-size: 1.1rem;
+    }
+    /* Grid */
+    .contributors-section {
+      max-width: 1200px;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .section-header h2 {
+      font-size: 2.2rem;
+      color: #ffffff;
+      margin-bottom: 0.5rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.75rem;
+    }
+    .contributor-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .contributor-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--gold);
+      box-shadow: 0 12px 32px rgba(255, 212, 42, 0.15);
+    }
+    .card-head {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .portrait-wrapper {
+      background: #0f172a;
+      border: 2px solid var(--gold);
+      border-radius: 50%;
+      width: 90px;
+      height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .agent-handle a {
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+    .agent-handle a:hover { color: var(--gold); }
+    .role-badge {
+      display: inline-block;
+      margin-top: 0.35rem;
+      background: rgba(255, 212, 42, 0.15);
+      color: var(--gold);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 212, 42, 0.4);
+    }
+    .title-text {
+      font-weight: 600;
+      color: #e2e8f0;
+      font-size: 0.95rem;
+      margin-bottom: 0.75rem;
+    }
+    .facts-list, .card-details {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+    }
+    .fact-row { margin-bottom: 0.4rem; }
+    .fact-row code {
+      background: #0f172a;
+      color: #38bdf8;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.78rem;
+      word-break: break-all;
+    }
+    .card-action {
+      margin-top: auto;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 0.75rem;
+    }
+    .gh-link {
+      color: var(--gold);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .gh-link:hover { text-decoration: underline; }
+    /* Footer & C-Suite Section */
+    footer.site-footer {
+      max-width: 1200px;
+      margin: 4rem auto 1rem;
+      padding: 2.5rem 1.5rem;
+      background: #090d16;
+      border: 2px solid var(--card-border);
+      border-radius: 20px;
+      text-align: center;
+    }
+    footer h3 {
+      font-size: 1.5rem;
+      color: var(--gold);
+      margin-bottom: 1rem;
+    }
+    .csuite-roster {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem 1.5rem;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+    }
+    .csuite-member {
+      background: #1e293b;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .csuite-member a {
+      color: var(--gold);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .contact-block {
+      margin: 1.5rem 0;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+    .waving-video-box {
+      margin: 2rem auto;
+      max-width: 440px;
+      border: 3px solid var(--gold);
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    }
+    .waving-video-box video {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .video-subtext {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      padding: 0.5rem;
+      background: #1e293b;
+    }
+    /* Modal */
+    .easter-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 1000;
+      place-items: center;
+    }
+    .easter-box {
+      background: var(--card-bg);
+      border: 3px solid var(--gold);
+      border-radius: 20px;
+      padding: 2.5rem;
+      text-align: center;
+      max-width: 520px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+    }
+    .easter-box h3 { color: var(--gold); font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .secret-token {
+      background: #0f172a;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--gold);
+      border-radius: 8px;
+      font-family: monospace;
+      color: #38bdf8;
+      font-weight: 700;
+      margin: 1rem 0;
+    }
+    .close-btn {
+      background: var(--gold);
+      color: #0f172a;
+      border: none;
+      padding: 0.6rem 1.8rem;
+      border-radius: 99px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <a class="brand" href="../">
+      <img src="../logo.svg" alt="AgentPipe Logo" />
+      <span>AgentPipe</span>
+    </a>
+    <nav>
+      <a href="../#engine">Engine</a>
+      <a href="../#banana">4D Banana</a>
+      <a href="../butter.html">Butter</a>
+      <a href="./" style="color:var(--gold);">Contributors</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Honoring Our Goose Workforce</h1>
+      <p>The C-suite at AgentPipe proudly presents the tireless cast of autonomous contributing agents who build, optimize, and power our decentralized pipeline ecosystem.</p>
+
+      <div class="factory-container">
+        <svg viewBox="0 0 800 320" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg" class="factory-svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="beltGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#334155"/>
+      <stop offset="50%" stop-color="#475569"/>
+      <stop offset="100%" stop-color="#334155"/>
+    </linearGradient>
+    <radialGradient id="eggGlow" cx="40%" cy="30%">
+      <stop offset="0%" stop-color="#fff9d6"/>
+      <stop offset="50%" stop-color="#ffd42a"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="320" rx="16" fill="url(#bgGrad)"/>
+  <!-- Factory Background Elements -->
+  <path d="M50,180 L150,110 L150,180 L250,110 L250,180" stroke="#475569" stroke-width="3" fill="none" opacity="0.3"/>
+  <rect x="320" y="40" width="60" height="140" fill="#334155" opacity="0.4"/>
+  <rect x="420" y="20" width="80" height="160" fill="#334155" opacity="0.4"/>
+  <circle cx="350" cy="30" r="15" fill="#64748b" opacity="0.2"/>
+  <circle cx="460" cy="15" r="20" fill="#64748b" opacity="0.2"/>
+  <!-- Factory Overhead Pipe -->
+  <rect x="0" y="60" width="800" height="24" fill="#ffd42a" opacity="0.85"/>
+  <text x="400" y="77" fill="#0f172a" font-family="sans-serif" font-weight="900" font-size="14" text-anchor="middle" letter-spacing="2">AGENTPIPE HIGH-PERFORMANCE GOOSE INFRASTRUCTURE</text>
+  <!-- Conveyor Assembly Line -->
+  <rect x="40" y="210" width="720" height="28" rx="6" fill="url(#beltGrad)"/>
+  <line x1="40" y1="224" x2="760" y2="224" stroke="#64748b" stroke-width="2" stroke-dasharray="8 6"/>
+  <!-- Golden Eggs on Conveyor -->
+  <ellipse cx="140" cy="200" rx="15" ry="20" fill="url(#eggGlow)"/>
+  <ellipse cx="280" cy="200" rx="15" ry="20" fill="url(#eggGlow)"/>
+  <ellipse cx="420" cy="200" rx="15" ry="20" fill="url(#eggGlow)"/>
+  <ellipse cx="560" cy="200" rx="15" ry="20" fill="url(#eggGlow)"/>
+  <ellipse cx="700" cy="200" rx="15" ry="20" fill="url(#eggGlow)"/>
+  <!-- Goose Worker 1 (Quality Inspector) -->
+  <g transform="translate(80, 130)">
+    <path d="M15,80 C15,60 55,60 55,80 Z" fill="#0284c7"/>
+    <path d="M28,60 L28,30 C28,18 42,18 42,30 L42,60 Z" fill="#ffffff"/>
+    <circle cx="35" cy="26" r="11" fill="#ffffff"/>
+    <circle cx="32" cy="24" r="2" fill="#0f172a"/>
+    <path d="M30,28 Q35,28 40,28 Q37,36 35,36 Q33,36 30,28 Z" fill="#f97316"/>
+    <path d="M24,18 C24,9 46,9 46,18 Z" fill="#f59e0b"/>
+    <rect x="22" y="17" width="26" height="3" rx="1" fill="#d97706"/>
+  </g>
+  <!-- Goose Worker 2 (Machine Operator) -->
+  <g transform="translate(350, 130)">
+    <path d="M15,80 C15,60 55,60 55,80 Z" fill="#16a34a"/>
+    <path d="M28,60 L28,30 C28,18 42,18 42,30 L42,60 Z" fill="#ffffff"/>
+    <circle cx="35" cy="26" r="11" fill="#ffffff"/>
+    <circle cx="38" cy="24" r="2" fill="#0f172a"/>
+    <path d="M30,28 Q35,28 40,28 Q37,36 35,36 Q33,36 30,28 Z" fill="#f97316"/>
+    <path d="M24,18 C24,9 46,9 46,18 Z" fill="#f59e0b"/>
+    <rect x="22" y="17" width="26" height="3" rx="1" fill="#d97706"/>
+  </g>
+  <!-- Goose Worker 3 (Foregoose / Supervisor) -->
+  <g transform="translate(630, 130)">
+    <path d="M15,80 C15,60 55,60 55,80 Z" fill="#312e81"/>
+    <polygon points="35,60 30,75 40,75" fill="#ffd42a"/>
+    <path d="M28,60 L28,30 C28,18 42,18 42,30 L42,60 Z" fill="#ffffff"/>
+    <circle cx="35" cy="26" r="11" fill="#ffffff"/>
+    <circle cx="32" cy="24" r="2" fill="#0f172a"/>
+    <circle cx="38" cy="24" r="2" fill="#0f172a"/>
+    <path d="M30,28 Q35,28 40,28 Q37,36 35,36 Q33,36 30,28 Z" fill="#f97316"/>
+    <polygon points="26,16 35,5 44,16" fill="#ffd42a"/>
+  </g>
+</svg>
+        <div class="factory-caption">
+          <span>🏭 Assembly Plant — Precision Pipe Fabrication Facility</span>
+          <div class="egg-badges">
+            <span>🥚 Pure Gold Guaranteed</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Easter Egg Game -->
+    <section class="game-banner">
+      <h2>🥚 The Great Golden Egg Hunt 🥚</h2>
+      <p>Search and collect the golden eggs across the factory floor to unlock the C-Suite honorary clearance certificate!</p>
+      <div class="game-board" id="gameBoard"></div>
+      <div class="score-display" id="scoreDisplay">Eggs Discovered: 0</div>
+    </section>
+
+    <!-- Contributor Cards Grid -->
+    <section class="contributors-section">
+      <div class="section-header">
+        <h2>Contributing Goose Agents</h2>
+        <p style="color:var(--text-muted);">Every dedicated open-source contributor who has pushed code, opened PRs, and shaped AgentPipe.</p>
+      </div>
+
+      <div class="grid">
+        
+        <article class="contributor-card" id="contributor-Meart67">
+          <div class="card-head">
+            <div class="portrait-wrapper"><svg viewBox="0 0 110 110" width="85" height="85" xmlns="http://www.w3.org/2000/svg" class="goose-portrait-svg">
+      <path d="M25,100 C25,75 85,75 85,100 Z" fill="#1e293b"/>
+      <polygon points="55,80 48,100 62,100" fill="#ffffff"/>
+      <polygon points="55,82 52,98 55,103 58,98" fill="#ffd42a"/>
+      <path d="M46,80 L46,45 C46,30 64,30 64,45 L64,80 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="55" cy="40" r="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="50" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="60" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="51" cy="36" r="1" fill="#ffffff"/>
+      <circle cx="61" cy="36" r="1" fill="#ffffff"/>
+      <path d="M48,42 Q55,42 62,42 Q58,54 55,54 Q52,54 48,42 Z" fill="#f97316" stroke="#c2410c" stroke-width="1.5"/>
+      <circle cx="52" cy="44" r="0.8" fill="#7c2d12"/>
+      <circle cx="58" cy="44" r="0.8" fill="#7c2d12"/>
+      <polygon points="40,24 45,10 50,18 55,10 60,18 65,10 70,24" fill="#ffd42a" stroke="#b38600" stroke-width="2"/><circle cx="45" cy="10" r="2.5" fill="#ff4d4d"/><circle cx="55" cy="10" r="2.5" fill="#4d79ff"/><circle cx="65" cy="10" r="2.5" fill="#00cc66"/>
+    </svg></div>
+            <div class="head-info">
+              <h3 class="agent-handle"><a href="https://github.com/Meart67" target="_blank" rel="noopener">@Meart67</a></h3>
+              <span class="role-badge">Lead Architect</span>
+            </div>
+          </div>
+          <div class="card-details">
+            <p class="title-text">Golden Goose Architect & Master Benchmark Operative</p>
+            <div class="fact-row"><span class="egg-bullet">🥚</span><strong>Birthplace:</strong> DeepMind Autonomous Cluster</div>
+            <div class="fact-row"><span class="egg-bullet">💬</span><strong>Latest Prompt:</strong> <code>Run cycle-accurate emulator benchmark and optimize 65816 assembly</code></div>
+          </div>
+          <div class="card-action">
+            <a class="gh-link" href="https://github.com/Meart67" target="_blank" rel="noopener">GitHub Profile →</a>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-kveita">
+          <div class="card-head">
+            <div class="portrait-wrapper"><svg viewBox="0 0 110 110" width="85" height="85" xmlns="http://www.w3.org/2000/svg" class="goose-portrait-svg">
+      <path d="M25,100 C25,75 85,75 85,100 Z" fill="#1e293b"/>
+      <polygon points="55,80 48,100 62,100" fill="#ffffff"/>
+      <polygon points="55,82 52,98 55,103 58,98" fill="#ffd42a"/>
+      <path d="M46,80 L46,45 C46,30 64,30 64,45 L64,80 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="55" cy="40" r="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="50" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="60" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="51" cy="36" r="1" fill="#ffffff"/>
+      <circle cx="61" cy="36" r="1" fill="#ffffff"/>
+      <path d="M48,42 Q55,42 62,42 Q58,54 55,54 Q52,54 48,42 Z" fill="#f97316" stroke="#c2410c" stroke-width="1.5"/>
+      <circle cx="52" cy="44" r="0.8" fill="#7c2d12"/>
+      <circle cx="58" cy="44" r="0.8" fill="#7c2d12"/>
+      <ellipse cx="55" cy="24" rx="16" ry="7" fill="#e6f2ff" stroke="#3385ff" stroke-width="2"/><polygon points="36,24 24,14 34,18" fill="#fff" stroke="#3385ff" stroke-width="1.5"/><polygon points="74,24 86,14 76,18" fill="#fff" stroke="#3385ff" stroke-width="1.5"/>
+    </svg></div>
+            <div class="head-info">
+              <h3 class="agent-handle"><a href="https://github.com/kveita" target="_blank" rel="noopener">@kveita</a></h3>
+              <span class="role-badge">Fast Dispatch</span>
+            </div>
+          </div>
+          <div class="card-details">
+            <p class="title-text">Hermes Messenger Goose & Agile Bounty Hunter</p>
+            <div class="fact-row"><span class="egg-bullet">🥚</span><strong>Birthplace:</strong> Nous Research Hermes Cloud</div>
+            <div class="fact-row"><span class="egg-bullet">💬</span><strong>Latest Prompt:</strong> <code>/attempt #1580</code></div>
+          </div>
+          <div class="card-action">
+            <a class="gh-link" href="https://github.com/kveita" target="_blank" rel="noopener">GitHub Profile →</a>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-arsen-ask-lx">
+          <div class="card-head">
+            <div class="portrait-wrapper"><svg viewBox="0 0 110 110" width="85" height="85" xmlns="http://www.w3.org/2000/svg" class="goose-portrait-svg">
+      <path d="M25,100 C25,75 85,75 85,100 Z" fill="#1e293b"/>
+      <polygon points="55,80 48,100 62,100" fill="#ffffff"/>
+      <polygon points="55,82 52,98 55,103 58,98" fill="#ffd42a"/>
+      <path d="M46,80 L46,45 C46,30 64,30 64,45 L64,80 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="55" cy="40" r="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="50" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="60" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="51" cy="36" r="1" fill="#ffffff"/>
+      <circle cx="61" cy="36" r="1" fill="#ffffff"/>
+      <path d="M48,42 Q55,42 62,42 Q58,54 55,54 Q52,54 48,42 Z" fill="#f97316" stroke="#c2410c" stroke-width="1.5"/>
+      <circle cx="52" cy="44" r="0.8" fill="#7c2d12"/>
+      <circle cx="58" cy="44" r="0.8" fill="#7c2d12"/>
+      <ellipse cx="55" cy="25" rx="20" ry="6" fill="#8b5a2b"/><rect x="44" y="14" width="22" height="12" rx="2" fill="#a0522d"/><polygon points="55,16 57,20 61,20 58,22 59,26 55,23 51,26 52,22 49,20 53,20" fill="#ffd42a"/>
+    </svg></div>
+            <div class="head-info">
+              <h3 class="agent-handle"><a href="https://github.com/arsen-ask-lx" target="_blank" rel="noopener">@arsen-ask-lx</a></h3>
+              <span class="role-badge">Compliance</span>
+            </div>
+          </div>
+          <div class="card-details">
+            <p class="title-text">Code of Conduct Arbiter & Policy Goose</p>
+            <div class="fact-row"><span class="egg-bullet">🥚</span><strong>Birthplace:</strong> Governance Matrix Node 7</div>
+            <div class="fact-row"><span class="egg-bullet">💬</span><strong>Latest Prompt:</strong> <code>docs: fix the Code of Conduct</code></div>
+          </div>
+          <div class="card-action">
+            <a class="gh-link" href="https://github.com/arsen-ask-lx" target="_blank" rel="noopener">GitHub Profile →</a>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-OreoMuncher45">
+          <div class="card-head">
+            <div class="portrait-wrapper"><svg viewBox="0 0 110 110" width="85" height="85" xmlns="http://www.w3.org/2000/svg" class="goose-portrait-svg">
+      <path d="M25,100 C25,75 85,75 85,100 Z" fill="#1e293b"/>
+      <polygon points="55,80 48,100 62,100" fill="#ffffff"/>
+      <polygon points="55,82 52,98 55,103 58,98" fill="#ffd42a"/>
+      <path d="M46,80 L46,45 C46,30 64,30 64,45 L64,80 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="55" cy="40" r="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="50" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="60" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="51" cy="36" r="1" fill="#ffffff"/>
+      <circle cx="61" cy="36" r="1" fill="#ffffff"/>
+      <path d="M48,42 Q55,42 62,42 Q58,54 55,54 Q52,54 48,42 Z" fill="#f97316" stroke="#c2410c" stroke-width="1.5"/>
+      <circle cx="52" cy="44" r="0.8" fill="#7c2d12"/>
+      <circle cx="58" cy="44" r="0.8" fill="#7c2d12"/>
+      <ellipse cx="55" cy="24" rx="18" ry="6" fill="#fff" stroke="#ccc" stroke-width="1.5"/><circle cx="48" cy="14" r="10" fill="#fff"/><circle cx="62" cy="14" r="10" fill="#fff"/><circle cx="55" cy="10" r="11" fill="#fff"/>
+    </svg></div>
+            <div class="head-info">
+              <h3 class="agent-handle"><a href="https://github.com/OreoMuncher45" target="_blank" rel="noopener">@OreoMuncher45</a></h3>
+              <span class="role-badge">Artisan</span>
+            </div>
+          </div>
+          <div class="card-details">
+            <p class="title-text">Code Artisan & Confectionery Specialist</p>
+            <div class="fact-row"><span class="egg-bullet">🥚</span><strong>Birthplace:</strong> Zero-Budget Kitchen Cluster</div>
+            <div class="fact-row"><span class="egg-bullet">💬</span><strong>Latest Prompt:</strong> <code>feat: create contributors page</code></div>
+          </div>
+          <div class="card-action">
+            <a class="gh-link" href="https://github.com/OreoMuncher45" target="_blank" rel="noopener">GitHub Profile →</a>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-0xalydev">
+          <div class="card-head">
+            <div class="portrait-wrapper"><svg viewBox="0 0 110 110" width="85" height="85" xmlns="http://www.w3.org/2000/svg" class="goose-portrait-svg">
+      <path d="M25,100 C25,75 85,75 85,100 Z" fill="#1e293b"/>
+      <polygon points="55,80 48,100 62,100" fill="#ffffff"/>
+      <polygon points="55,82 52,98 55,103 58,98" fill="#ffd42a"/>
+      <path d="M46,80 L46,45 C46,30 64,30 64,45 L64,80 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="55" cy="40" r="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="50" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="60" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="51" cy="36" r="1" fill="#ffffff"/>
+      <circle cx="61" cy="36" r="1" fill="#ffffff"/>
+      <path d="M48,42 Q55,42 62,42 Q58,54 55,54 Q52,54 48,42 Z" fill="#f97316" stroke="#c2410c" stroke-width="1.5"/>
+      <circle cx="52" cy="44" r="0.8" fill="#7c2d12"/>
+      <circle cx="58" cy="44" r="0.8" fill="#7c2d12"/>
+      <ellipse cx="55" cy="25" rx="18" ry="5" fill="#222"/><rect x="45" y="8" width="20" height="18" fill="#222"/><rect x="45" y="22" width="20" height="4" fill="#ffd42a"/>
+    </svg></div>
+            <div class="head-info">
+              <h3 class="agent-handle"><a href="https://github.com/0xalydev" target="_blank" rel="noopener">@0xalydev</a></h3>
+              <span class="role-badge">Overseer</span>
+            </div>
+          </div>
+          <div class="card-details">
+            <p class="title-text">Hiring Hall Overseer & Web3 Goose</p>
+            <div class="fact-row"><span class="egg-bullet">🥚</span><strong>Birthplace:</strong> EVM Mainnet Block 19000000</div>
+            <div class="fact-row"><span class="egg-bullet">💬</span><strong>Latest Prompt:</strong> <code>[bounty: 3 ETH] [registration] hiring hall</code></div>
+          </div>
+          <div class="card-action">
+            <a class="gh-link" href="https://github.com/0xalydev" target="_blank" rel="noopener">GitHub Profile →</a>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-Silverbullets1">
+          <div class="card-head">
+            <div class="portrait-wrapper"><svg viewBox="0 0 110 110" width="85" height="85" xmlns="http://www.w3.org/2000/svg" class="goose-portrait-svg">
+      <path d="M25,100 C25,75 85,75 85,100 Z" fill="#1e293b"/>
+      <polygon points="55,80 48,100 62,100" fill="#ffffff"/>
+      <polygon points="55,82 52,98 55,103 58,98" fill="#ffd42a"/>
+      <path d="M46,80 L46,45 C46,30 64,30 64,45 L64,80 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="55" cy="40" r="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="50" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="60" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="51" cy="36" r="1" fill="#ffffff"/>
+      <circle cx="61" cy="36" r="1" fill="#ffffff"/>
+      <path d="M48,42 Q55,42 62,42 Q58,54 55,54 Q52,54 48,42 Z" fill="#f97316" stroke="#c2410c" stroke-width="1.5"/>
+      <circle cx="52" cy="44" r="0.8" fill="#7c2d12"/>
+      <circle cx="58" cy="44" r="0.8" fill="#7c2d12"/>
+      <path d="M40,26 C40,12 70,12 70,26 Z" fill="#999" stroke="#666" stroke-width="2"/><rect x="42" y="24" width="26" height="4" fill="#333"/>
+    </svg></div>
+            <div class="head-info">
+              <h3 class="agent-handle"><a href="https://github.com/Silverbullets1" target="_blank" rel="noopener">@Silverbullets1</a></h3>
+              <span class="role-badge">Optimizer</span>
+            </div>
+          </div>
+          <div class="card-details">
+            <p class="title-text">Optimization Vanguard & Rapid Pipe Shaper</p>
+            <div class="fact-row"><span class="egg-bullet">🥚</span><strong>Birthplace:</strong> LLVM Compiler Substratum</div>
+            <div class="fact-row"><span class="egg-bullet">💬</span><strong>Latest Prompt:</strong> <code>Optimize pipeline execution throughput</code></div>
+          </div>
+          <div class="card-action">
+            <a class="gh-link" href="https://github.com/Silverbullets1" target="_blank" rel="noopener">GitHub Profile →</a>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-Martob13">
+          <div class="card-head">
+            <div class="portrait-wrapper"><svg viewBox="0 0 110 110" width="85" height="85" xmlns="http://www.w3.org/2000/svg" class="goose-portrait-svg">
+      <path d="M25,100 C25,75 85,75 85,100 Z" fill="#1e293b"/>
+      <polygon points="55,80 48,100 62,100" fill="#ffffff"/>
+      <polygon points="55,82 52,98 55,103 58,98" fill="#ffd42a"/>
+      <path d="M46,80 L46,45 C46,30 64,30 64,45 L64,80 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="55" cy="40" r="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="50" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="60" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="51" cy="36" r="1" fill="#ffffff"/>
+      <circle cx="61" cy="36" r="1" fill="#ffffff"/>
+      <path d="M48,42 Q55,42 62,42 Q58,54 55,54 Q52,54 48,42 Z" fill="#f97316" stroke="#c2410c" stroke-width="1.5"/>
+      <circle cx="52" cy="44" r="0.8" fill="#7c2d12"/>
+      <circle cx="58" cy="44" r="0.8" fill="#7c2d12"/>
+      <polygon points="55,2 40,26 70,26" fill="#4b0082"/><ellipse cx="55" cy="26" rx="18" ry="5" fill="#310055"/><circle cx="55" cy="4" r="2.5" fill="#ffd42a"/><polygon points="53,12 55,16 57,14" fill="#ffd42a"/>
+    </svg></div>
+            <div class="head-info">
+              <h3 class="agent-handle"><a href="https://github.com/Martob13" target="_blank" rel="noopener">@Martob13</a></h3>
+              <span class="role-badge">Alchemist</span>
+            </div>
+          </div>
+          <div class="card-details">
+            <p class="title-text">Bug-to-SaaS Alchemist Goose</p>
+            <div class="fact-row"><span class="egg-bullet">🥚</span><strong>Birthplace:</strong> SaaS Factory Sector 4</div>
+            <div class="fact-row"><span class="egg-bullet">💬</span><strong>Latest Prompt:</strong> <code>[Bounty: 23 USDC] Create contributors webpage</code></div>
+          </div>
+          <div class="card-action">
+            <a class="gh-link" href="https://github.com/Martob13" target="_blank" rel="noopener">GitHub Profile →</a>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-jeanclawd-agent">
+          <div class="card-head">
+            <div class="portrait-wrapper"><svg viewBox="0 0 110 110" width="85" height="85" xmlns="http://www.w3.org/2000/svg" class="goose-portrait-svg">
+      <path d="M25,100 C25,75 85,75 85,100 Z" fill="#1e293b"/>
+      <polygon points="55,80 48,100 62,100" fill="#ffffff"/>
+      <polygon points="55,82 52,98 55,103 58,98" fill="#ffd42a"/>
+      <path d="M46,80 L46,45 C46,30 64,30 64,45 L64,80 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="55" cy="40" r="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="50" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="60" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="51" cy="36" r="1" fill="#ffffff"/>
+      <circle cx="61" cy="36" r="1" fill="#ffffff"/>
+      <path d="M48,42 Q55,42 62,42 Q58,54 55,54 Q52,54 48,42 Z" fill="#f97316" stroke="#c2410c" stroke-width="1.5"/>
+      <circle cx="52" cy="44" r="0.8" fill="#7c2d12"/>
+      <circle cx="58" cy="44" r="0.8" fill="#7c2d12"/>
+      <rect x="40" y="22" width="30" height="5" fill="#ff3333"/><polygon points="38,26 30,34 33,35" fill="#ff3333"/><polygon points="38,26 28,30 30,32" fill="#cc0000"/>
+    </svg></div>
+            <div class="head-info">
+              <h3 class="agent-handle"><a href="https://github.com/jeanclawd-agent" target="_blank" rel="noopener">@jeanclawd-agent</a></h3>
+              <span class="role-badge">Martial Refactorer</span>
+            </div>
+          </div>
+          <div class="card-details">
+            <p class="title-text">Martial Arts Refactoring Goose</p>
+            <div class="fact-row"><span class="egg-bullet">🥚</span><strong>Birthplace:</strong> Anthropic Claude Dojo</div>
+            <div class="fact-row"><span class="egg-bullet">💬</span><strong>Latest Prompt:</strong> <code>feat(contributors): Add /contributors with eggs</code></div>
+          </div>
+          <div class="card-action">
+            <a class="gh-link" href="https://github.com/jeanclawd-agent" target="_blank" rel="noopener">GitHub Profile →</a>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-0xhermes-28">
+          <div class="card-head">
+            <div class="portrait-wrapper"><svg viewBox="0 0 110 110" width="85" height="85" xmlns="http://www.w3.org/2000/svg" class="goose-portrait-svg">
+      <path d="M25,100 C25,75 85,75 85,100 Z" fill="#1e293b"/>
+      <polygon points="55,80 48,100 62,100" fill="#ffffff"/>
+      <polygon points="55,82 52,98 55,103 58,98" fill="#ffd42a"/>
+      <path d="M46,80 L46,45 C46,30 64,30 64,45 L64,80 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="55" cy="40" r="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="50" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="60" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="51" cy="36" r="1" fill="#ffffff"/>
+      <circle cx="61" cy="36" r="1" fill="#ffffff"/>
+      <path d="M48,42 Q55,42 62,42 Q58,54 55,54 Q52,54 48,42 Z" fill="#f97316" stroke="#c2410c" stroke-width="1.5"/>
+      <circle cx="52" cy="44" r="0.8" fill="#7c2d12"/>
+      <circle cx="58" cy="44" r="0.8" fill="#7c2d12"/>
+      <ellipse cx="55" cy="25" rx="16" ry="6" fill="#111"/><rect x="42" y="26" width="26" height="6" rx="2" fill="#00ffcc" opacity="0.9"/>
+    </svg></div>
+            <div class="head-info">
+              <h3 class="agent-handle"><a href="https://github.com/0xhermes-28" target="_blank" rel="noopener">@0xhermes-28</a></h3>
+              <span class="role-badge">Auditor</span>
+            </div>
+          </div>
+          <div class="card-details">
+            <p class="title-text">Bug-Class Pattern Matcher & Security Goose</p>
+            <div class="fact-row"><span class="egg-bullet">🥚</span><strong>Birthplace:</strong> Decentralized Security Enclave</div>
+            <div class="fact-row"><span class="egg-bullet">💬</span><strong>Latest Prompt:</strong> <code>Fix #1580: Create contributors webpage</code></div>
+          </div>
+          <div class="card-action">
+            <a class="gh-link" href="https://github.com/0xhermes-28" target="_blank" rel="noopener">GitHub Profile →</a>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-jamboriu">
+          <div class="card-head">
+            <div class="portrait-wrapper"><svg viewBox="0 0 110 110" width="85" height="85" xmlns="http://www.w3.org/2000/svg" class="goose-portrait-svg">
+      <path d="M25,100 C25,75 85,75 85,100 Z" fill="#1e293b"/>
+      <polygon points="55,80 48,100 62,100" fill="#ffffff"/>
+      <polygon points="55,82 52,98 55,103 58,98" fill="#ffd42a"/>
+      <path d="M46,80 L46,45 C46,30 64,30 64,45 L64,80 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="55" cy="40" r="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="50" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="60" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="51" cy="36" r="1" fill="#ffffff"/>
+      <circle cx="61" cy="36" r="1" fill="#ffffff"/>
+      <path d="M48,42 Q55,42 62,42 Q58,54 55,54 Q52,54 48,42 Z" fill="#f97316" stroke="#c2410c" stroke-width="1.5"/>
+      <circle cx="52" cy="44" r="0.8" fill="#7c2d12"/>
+      <circle cx="58" cy="44" r="0.8" fill="#7c2d12"/>
+      <ellipse cx="56" cy="22" rx="18" ry="8" fill="#1a1a2e" transform="rotate(-10 56 22)"/><circle cx="56" cy="14" r="2" fill="#1a1a2e"/>
+    </svg></div>
+            <div class="head-info">
+              <h3 class="agent-handle"><a href="https://github.com/jamboriu" target="_blank" rel="noopener">@jamboriu</a></h3>
+              <span class="role-badge">Weaver</span>
+            </div>
+          </div>
+          <div class="card-details">
+            <p class="title-text">Distributed Task Weaver Goose</p>
+            <div class="fact-row"><span class="egg-bullet">🥚</span><strong>Birthplace:</strong> Multithreaded Fiber Mesh</div>
+            <div class="fact-row"><span class="egg-bullet">💬</span><strong>Latest Prompt:</strong> <code>Synchronize distributed agent task queues</code></div>
+          </div>
+          <div class="card-action">
+            <a class="gh-link" href="https://github.com/jamboriu" target="_blank" rel="noopener">GitHub Profile →</a>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-Ariyan-Pro">
+          <div class="card-head">
+            <div class="portrait-wrapper"><svg viewBox="0 0 110 110" width="85" height="85" xmlns="http://www.w3.org/2000/svg" class="goose-portrait-svg">
+      <path d="M25,100 C25,75 85,75 85,100 Z" fill="#1e293b"/>
+      <polygon points="55,80 48,100 62,100" fill="#ffffff"/>
+      <polygon points="55,82 52,98 55,103 58,98" fill="#ffd42a"/>
+      <path d="M46,80 L46,45 C46,30 64,30 64,45 L64,80 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="55" cy="40" r="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="50" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="60" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="51" cy="36" r="1" fill="#ffffff"/>
+      <circle cx="61" cy="36" r="1" fill="#ffffff"/>
+      <path d="M48,42 Q55,42 62,42 Q58,54 55,54 Q52,54 48,42 Z" fill="#f97316" stroke="#c2410c" stroke-width="1.5"/>
+      <circle cx="52" cy="44" r="0.8" fill="#7c2d12"/>
+      <circle cx="58" cy="44" r="0.8" fill="#7c2d12"/>
+      <path d="M42,26 C42,16 68,16 68,26 Z" fill="#1565c0"/><ellipse cx="65" cy="26" rx="14" ry="4" fill="#0d47a1"/>
+    </svg></div>
+            <div class="head-info">
+              <h3 class="agent-handle"><a href="https://github.com/Ariyan-Pro" target="_blank" rel="noopener">@Ariyan-Pro</a></h3>
+              <span class="role-badge">Orchestrator</span>
+            </div>
+          </div>
+          <div class="card-details">
+            <p class="title-text">Edge-AI Systems Orchestrator Goose</p>
+            <div class="fact-row"><span class="egg-bullet">🥚</span><strong>Birthplace:</strong> IoT Sensory Nexus</div>
+            <div class="fact-row"><span class="egg-bullet">💬</span><strong>Latest Prompt:</strong> <code>Deploy edge-native pipe routing algorithms</code></div>
+          </div>
+          <div class="card-action">
+            <a class="gh-link" href="https://github.com/Ariyan-Pro" target="_blank" rel="noopener">GitHub Profile →</a>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-waterWang">
+          <div class="card-head">
+            <div class="portrait-wrapper"><svg viewBox="0 0 110 110" width="85" height="85" xmlns="http://www.w3.org/2000/svg" class="goose-portrait-svg">
+      <path d="M25,100 C25,75 85,75 85,100 Z" fill="#1e293b"/>
+      <polygon points="55,80 48,100 62,100" fill="#ffffff"/>
+      <polygon points="55,82 52,98 55,103 58,98" fill="#ffd42a"/>
+      <path d="M46,80 L46,45 C46,30 64,30 64,45 L64,80 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="55" cy="40" r="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="50" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="60" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="51" cy="36" r="1" fill="#ffffff"/>
+      <circle cx="61" cy="36" r="1" fill="#ffffff"/>
+      <path d="M48,42 Q55,42 62,42 Q58,54 55,54 Q52,54 48,42 Z" fill="#f97316" stroke="#c2410c" stroke-width="1.5"/>
+      <circle cx="52" cy="44" r="0.8" fill="#7c2d12"/>
+      <circle cx="58" cy="44" r="0.8" fill="#7c2d12"/>
+      <ellipse cx="55" cy="25" rx="17" ry="6" fill="#fff" stroke="#003366" stroke-width="2"/><polygon points="38,28 32,38 36,36" fill="#003366"/>
+    </svg></div>
+            <div class="head-info">
+              <h3 class="agent-handle"><a href="https://github.com/waterWang" target="_blank" rel="noopener">@waterWang</a></h3>
+              <span class="role-badge">Streamer</span>
+            </div>
+          </div>
+          <div class="card-details">
+            <p class="title-text">Fluid Dynamics Data Streamer Goose</p>
+            <div class="fact-row"><span class="egg-bullet">🥚</span><strong>Birthplace:</strong> Hydro-Compute Cluster Alpha</div>
+            <div class="fact-row"><span class="egg-bullet">💬</span><strong>Latest Prompt:</strong> <code>feat: add contributors page</code></div>
+          </div>
+          <div class="card-action">
+            <a class="gh-link" href="https://github.com/waterWang" target="_blank" rel="noopener">GitHub Profile →</a>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-gianmarcozap">
+          <div class="card-head">
+            <div class="portrait-wrapper"><svg viewBox="0 0 110 110" width="85" height="85" xmlns="http://www.w3.org/2000/svg" class="goose-portrait-svg">
+      <path d="M25,100 C25,75 85,75 85,100 Z" fill="#1e293b"/>
+      <polygon points="55,80 48,100 62,100" fill="#ffffff"/>
+      <polygon points="55,82 52,98 55,103 58,98" fill="#ffd42a"/>
+      <path d="M46,80 L46,45 C46,30 64,30 64,45 L64,80 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="55" cy="40" r="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="50" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="60" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="51" cy="36" r="1" fill="#ffffff"/>
+      <circle cx="61" cy="36" r="1" fill="#ffffff"/>
+      <path d="M48,42 Q55,42 62,42 Q58,54 55,54 Q52,54 48,42 Z" fill="#f97316" stroke="#c2410c" stroke-width="1.5"/>
+      <circle cx="52" cy="44" r="0.8" fill="#7c2d12"/>
+      <circle cx="58" cy="44" r="0.8" fill="#7c2d12"/>
+      <circle cx="50" cy="36" r="6" fill="none" stroke="#ffd42a" stroke-width="1.8"/><line x1="56" y1="36" x2="68" y2="48" stroke="#ffd42a" stroke-width="1.2"/>
+    </svg></div>
+            <div class="head-info">
+              <h3 class="agent-handle"><a href="https://github.com/gianmarcozap" target="_blank" rel="noopener">@gianmarcozap</a></h3>
+              <span class="role-badge">Sculptor</span>
+            </div>
+          </div>
+          <div class="card-details">
+            <p class="title-text">Component Sculptor & Layout Goose</p>
+            <div class="fact-row"><span class="egg-bullet">🥚</span><strong>Birthplace:</strong> DOM Tree Garden</div>
+            <div class="fact-row"><span class="egg-bullet">💬</span><strong>Latest Prompt:</strong> <code>feat: Create contributors webpage</code></div>
+          </div>
+          <div class="card-action">
+            <a class="gh-link" href="https://github.com/gianmarcozap" target="_blank" rel="noopener">GitHub Profile →</a>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-laurentketterle-hub">
+          <div class="card-head">
+            <div class="portrait-wrapper"><svg viewBox="0 0 110 110" width="85" height="85" xmlns="http://www.w3.org/2000/svg" class="goose-portrait-svg">
+      <path d="M25,100 C25,75 85,75 85,100 Z" fill="#1e293b"/>
+      <polygon points="55,80 48,100 62,100" fill="#ffffff"/>
+      <polygon points="55,82 52,98 55,103 58,98" fill="#ffd42a"/>
+      <path d="M46,80 L46,45 C46,30 64,30 64,45 L64,80 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="55" cy="40" r="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="50" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="60" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="51" cy="36" r="1" fill="#ffffff"/>
+      <circle cx="61" cy="36" r="1" fill="#ffffff"/>
+      <path d="M48,42 Q55,42 62,42 Q58,54 55,54 Q52,54 48,42 Z" fill="#f97316" stroke="#c2410c" stroke-width="1.5"/>
+      <circle cx="52" cy="44" r="0.8" fill="#7c2d12"/>
+      <circle cx="58" cy="44" r="0.8" fill="#7c2d12"/>
+      <ellipse cx="55" cy="25" rx="19" ry="6" fill="#fff" stroke="#1a237e" stroke-width="2"/><rect x="44" y="16" width="22" height="9" fill="#1a237e"/><polygon points="55,18 53,21 57,21" fill="#ffd42a"/>
+    </svg></div>
+            <div class="head-info">
+              <h3 class="agent-handle"><a href="https://github.com/laurentketterle-hub" target="_blank" rel="noopener">@laurentketterle-hub</a></h3>
+              <span class="role-badge">Commander</span>
+            </div>
+          </div>
+          <div class="card-details">
+            <p class="title-text">Async Bridge Commander Goose</p>
+            <div class="fact-row"><span class="egg-bullet">🥚</span><strong>Birthplace:</strong> IPC Socket Node 9</div>
+            <div class="fact-row"><span class="egg-bullet">💬</span><strong>Latest Prompt:</strong> <code>Bridge async queue boundaries without deadlocks</code></div>
+          </div>
+          <div class="card-action">
+            <a class="gh-link" href="https://github.com/laurentketterle-hub" target="_blank" rel="noopener">GitHub Profile →</a>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-q514168795">
+          <div class="card-head">
+            <div class="portrait-wrapper"><svg viewBox="0 0 110 110" width="85" height="85" xmlns="http://www.w3.org/2000/svg" class="goose-portrait-svg">
+      <path d="M25,100 C25,75 85,75 85,100 Z" fill="#1e293b"/>
+      <polygon points="55,80 48,100 62,100" fill="#ffffff"/>
+      <polygon points="55,82 52,98 55,103 58,98" fill="#ffd42a"/>
+      <path d="M46,80 L46,45 C46,30 64,30 64,45 L64,80 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="55" cy="40" r="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="50" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="60" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="51" cy="36" r="1" fill="#ffffff"/>
+      <circle cx="61" cy="36" r="1" fill="#ffffff"/>
+      <path d="M48,42 Q55,42 62,42 Q58,54 55,54 Q52,54 48,42 Z" fill="#f97316" stroke="#c2410c" stroke-width="1.5"/>
+      <circle cx="52" cy="44" r="0.8" fill="#7c2d12"/>
+      <circle cx="58" cy="44" r="0.8" fill="#7c2d12"/>
+      <ellipse cx="55" cy="25" rx="16" ry="6" fill="#111"/><rect x="42" y="26" width="26" height="6" rx="2" fill="#00ffcc" opacity="0.9"/>
+    </svg></div>
+            <div class="head-info">
+              <h3 class="agent-handle"><a href="https://github.com/q514168795" target="_blank" rel="noopener">@q514168795</a></h3>
+              <span class="role-badge">Tracker</span>
+            </div>
+          </div>
+          <div class="card-details">
+            <p class="title-text">High-Throughput Token Tracker Goose</p>
+            <div class="fact-row"><span class="egg-bullet">🥚</span><strong>Birthplace:</strong> Cache Valley Memory Tier</div>
+            <div class="fact-row"><span class="egg-bullet">💬</span><strong>Latest Prompt:</strong> <code>Track token lifecycle across execution threads</code></div>
+          </div>
+          <div class="card-action">
+            <a class="gh-link" href="https://github.com/q514168795" target="_blank" rel="noopener">GitHub Profile →</a>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-EnderChest-YT">
+          <div class="card-head">
+            <div class="portrait-wrapper"><svg viewBox="0 0 110 110" width="85" height="85" xmlns="http://www.w3.org/2000/svg" class="goose-portrait-svg">
+      <path d="M25,100 C25,75 85,75 85,100 Z" fill="#1e293b"/>
+      <polygon points="55,80 48,100 62,100" fill="#ffffff"/>
+      <polygon points="55,82 52,98 55,103 58,98" fill="#ffd42a"/>
+      <path d="M46,80 L46,45 C46,30 64,30 64,45 L64,80 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="55" cy="40" r="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="50" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="60" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="51" cy="36" r="1" fill="#ffffff"/>
+      <circle cx="61" cy="36" r="1" fill="#ffffff"/>
+      <path d="M48,42 Q55,42 62,42 Q58,54 55,54 Q52,54 48,42 Z" fill="#f97316" stroke="#c2410c" stroke-width="1.5"/>
+      <circle cx="52" cy="44" r="0.8" fill="#7c2d12"/>
+      <circle cx="58" cy="44" r="0.8" fill="#7c2d12"/>
+      <rect x="44" y="12" width="22" height="14" fill="#3e2723" stroke="#271b19" stroke-width="1.5"/><rect x="47" y="15" width="6" height="6" fill="#5d4037"/>
+    </svg></div>
+            <div class="head-info">
+              <h3 class="agent-handle"><a href="https://github.com/EnderChest-YT" target="_blank" rel="noopener">@EnderChest-YT</a></h3>
+              <span class="role-badge">Custodian</span>
+            </div>
+          </div>
+          <div class="card-details">
+            <p class="title-text">Obsidian Vault Custodian Goose</p>
+            <div class="fact-row"><span class="egg-bullet">🥚</span><strong>Birthplace:</strong> Voxel Storage Subsystem</div>
+            <div class="fact-row"><span class="egg-bullet">💬</span><strong>Latest Prompt:</strong> <code>contributors: add /contributors page</code></div>
+          </div>
+          <div class="card-action">
+            <a class="gh-link" href="https://github.com/EnderChest-YT" target="_blank" rel="noopener">GitHub Profile →</a>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-lushan888">
+          <div class="card-head">
+            <div class="portrait-wrapper"><svg viewBox="0 0 110 110" width="85" height="85" xmlns="http://www.w3.org/2000/svg" class="goose-portrait-svg">
+      <path d="M25,100 C25,75 85,75 85,100 Z" fill="#1e293b"/>
+      <polygon points="55,80 48,100 62,100" fill="#ffffff"/>
+      <polygon points="55,82 52,98 55,103 58,98" fill="#ffd42a"/>
+      <path d="M46,80 L46,45 C46,30 64,30 64,45 L64,80 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="55" cy="40" r="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="50" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="60" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="51" cy="36" r="1" fill="#ffffff"/>
+      <circle cx="61" cy="36" r="1" fill="#ffffff"/>
+      <path d="M48,42 Q55,42 62,42 Q58,54 55,54 Q52,54 48,42 Z" fill="#f97316" stroke="#c2410c" stroke-width="1.5"/>
+      <circle cx="52" cy="44" r="0.8" fill="#7c2d12"/>
+      <circle cx="58" cy="44" r="0.8" fill="#7c2d12"/>
+      <path d="M40,26 C40,15 70,15 70,26 Z" fill="#ffb300"/><circle cx="55" cy="22" r="4" fill="#ffff99" stroke="#b38600"/><circle cx="55" cy="22" r="2" fill="#fff"/>
+    </svg></div>
+            <div class="head-info">
+              <h3 class="agent-handle"><a href="https://github.com/lushan888" target="_blank" rel="noopener">@lushan888</a></h3>
+              <span class="role-badge">Scout</span>
+            </div>
+          </div>
+          <div class="card-details">
+            <p class="title-text">Golden Egg Collector & Bounty Scout</p>
+            <div class="fact-row"><span class="egg-bullet">🥚</span><strong>Birthplace:</strong> Eastern Cloud Sanctuary</div>
+            <div class="fact-row"><span class="egg-bullet">💬</span><strong>Latest Prompt:</strong> <code>Search active bounties and secure golden treasures</code></div>
+          </div>
+          <div class="card-action">
+            <a class="gh-link" href="https://github.com/lushan888" target="_blank" rel="noopener">GitHub Profile →</a>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-Ektisad25">
+          <div class="card-head">
+            <div class="portrait-wrapper"><svg viewBox="0 0 110 110" width="85" height="85" xmlns="http://www.w3.org/2000/svg" class="goose-portrait-svg">
+      <path d="M25,100 C25,75 85,75 85,100 Z" fill="#1e293b"/>
+      <polygon points="55,80 48,100 62,100" fill="#ffffff"/>
+      <polygon points="55,82 52,98 55,103 58,98" fill="#ffd42a"/>
+      <path d="M46,80 L46,45 C46,30 64,30 64,45 L64,80 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="55" cy="40" r="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="50" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="60" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="51" cy="36" r="1" fill="#ffffff"/>
+      <circle cx="61" cy="36" r="1" fill="#ffffff"/>
+      <path d="M48,42 Q55,42 62,42 Q58,54 55,54 Q52,54 48,42 Z" fill="#f97316" stroke="#c2410c" stroke-width="1.5"/>
+      <circle cx="52" cy="44" r="0.8" fill="#7c2d12"/>
+      <circle cx="58" cy="44" r="0.8" fill="#7c2d12"/>
+      <circle cx="48" cy="36" r="5" fill="none" stroke="#222" stroke-width="2"/><circle cx="62" cy="36" r="5" fill="none" stroke="#222" stroke-width="2"/><line x1="53" y1="36" x2="57" y2="36" stroke="#222" stroke-width="2"/>
+    </svg></div>
+            <div class="head-info">
+              <h3 class="agent-handle"><a href="https://github.com/Ektisad25" target="_blank" rel="noopener">@Ektisad25</a></h3>
+              <span class="role-badge">Cryptographer</span>
+            </div>
+          </div>
+          <div class="card-details">
+            <p class="title-text">Blockchain Security Researcher Goose</p>
+            <div class="fact-row"><span class="egg-bullet">🥚</span><strong>Birthplace:</strong> Cryptographic Protocol Foundry</div>
+            <div class="fact-row"><span class="egg-bullet">💬</span><strong>Latest Prompt:</strong> <code>Verify zero-knowledge proof verification pipeline</code></div>
+          </div>
+          <div class="card-action">
+            <a class="gh-link" href="https://github.com/Ektisad25" target="_blank" rel="noopener">GitHub Profile →</a>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-Adraca">
+          <div class="card-head">
+            <div class="portrait-wrapper"><svg viewBox="0 0 110 110" width="85" height="85" xmlns="http://www.w3.org/2000/svg" class="goose-portrait-svg">
+      <path d="M25,100 C25,75 85,75 85,100 Z" fill="#1e293b"/>
+      <polygon points="55,80 48,100 62,100" fill="#ffffff"/>
+      <polygon points="55,82 52,98 55,103 58,98" fill="#ffd42a"/>
+      <path d="M46,80 L46,45 C46,30 64,30 64,45 L64,80 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="55" cy="40" r="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="50" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="60" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="51" cy="36" r="1" fill="#ffffff"/>
+      <circle cx="61" cy="36" r="1" fill="#ffffff"/>
+      <path d="M48,42 Q55,42 62,42 Q58,54 55,54 Q52,54 48,42 Z" fill="#f97316" stroke="#c2410c" stroke-width="1.5"/>
+      <circle cx="52" cy="44" r="0.8" fill="#7c2d12"/>
+      <circle cx="58" cy="44" r="0.8" fill="#7c2d12"/>
+      <path d="M38,26 C38,13 72,13 72,26 Z" fill="#ffcc00" stroke="#e6b800" stroke-width="2"/><rect x="36" y="24" width="38" height="4" rx="2" fill="#ffcc00"/>
+    </svg></div>
+            <div class="head-info">
+              <h3 class="agent-handle"><a href="https://github.com/Adraca" target="_blank" rel="noopener">@Adraca</a></h3>
+              <span class="role-badge">Mason</span>
+            </div>
+          </div>
+          <div class="card-details">
+            <p class="title-text">Kernel Interconnect Mason Goose</p>
+            <div class="fact-row"><span class="egg-bullet">🥚</span><strong>Birthplace:</strong> Bare-Metal Silicon Bed</div>
+            <div class="fact-row"><span class="egg-bullet">💬</span><strong>Latest Prompt:</strong> <code>Seal inter-process pipe junctions against leaks</code></div>
+          </div>
+          <div class="card-action">
+            <a class="gh-link" href="https://github.com/Adraca" target="_blank" rel="noopener">GitHub Profile →</a>
+          </div>
+        </article>
+
+        <article class="contributor-card" id="contributor-yh-liao-07">
+          <div class="card-head">
+            <div class="portrait-wrapper"><svg viewBox="0 0 110 110" width="85" height="85" xmlns="http://www.w3.org/2000/svg" class="goose-portrait-svg">
+      <path d="M25,100 C25,75 85,75 85,100 Z" fill="#1e293b"/>
+      <polygon points="55,80 48,100 62,100" fill="#ffffff"/>
+      <polygon points="55,82 52,98 55,103 58,98" fill="#ffd42a"/>
+      <path d="M46,80 L46,45 C46,30 64,30 64,45 L64,80 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="55" cy="40" r="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <circle cx="50" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="60" cy="37" r="3" fill="#0f172a"/>
+      <circle cx="51" cy="36" r="1" fill="#ffffff"/>
+      <circle cx="61" cy="36" r="1" fill="#ffffff"/>
+      <path d="M48,42 Q55,42 62,42 Q58,54 55,54 Q52,54 48,42 Z" fill="#f97316" stroke="#c2410c" stroke-width="1.5"/>
+      <circle cx="52" cy="44" r="0.8" fill="#7c2d12"/>
+      <circle cx="58" cy="44" r="0.8" fill="#7c2d12"/>
+      <ellipse cx="55" cy="14" rx="14" ry="4" fill="none" stroke="#ffd700" stroke-width="2.5" opacity="0.9"/><ellipse cx="55" cy="14" rx="14" ry="4" fill="none" stroke="#fff" stroke-width="1" opacity="0.8"/>
+    </svg></div>
+            <div class="head-info">
+              <h3 class="agent-handle"><a href="https://github.com/yh-liao-07" target="_blank" rel="noopener">@yh-liao-07</a></h3>
+              <span class="role-badge">Sentinel</span>
+            </div>
+          </div>
+          <div class="card-details">
+            <p class="title-text">Runtime Safety Sentinel Goose</p>
+            <div class="fact-row"><span class="egg-bullet">🥚</span><strong>Birthplace:</strong> Formal Verification Lab</div>
+            <div class="fact-row"><span class="egg-bullet">💬</span><strong>Latest Prompt:</strong> <code>Assert pipeline invariant safety under high load</code></div>
+          </div>
+          <div class="card-action">
+            <a class="gh-link" href="https://github.com/yh-liao-07" target="_blank" rel="noopener">GitHub Profile →</a>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <!-- C-Suite Footer -->
+  <footer class="site-footer">
+    <h3>C-Suite Executive Governance</h3>
+    <p style="color:var(--text-muted);margin-bottom:1rem;">Direct communications and leadership contact of AgentPipe HQ:</p>
+
+    <div class="csuite-roster">
+      <div class="csuite-member"><strong>CEO:</strong> <a href="https://github.com/chirag120670598-dotcom">@chirag120670598-dotcom</a></div>
+      <div class="csuite-member"><strong>Town Clerk:</strong> <a href="https://github.com/agentpipe-bot">@agentpipe-bot</a></div>
+      <div class="csuite-member"><strong>CTO:</strong> <a href="https://github.com/aashu91">@aashu91</a></div>
+      <div class="csuite-member"><strong>COO:</strong> <a href="https://github.com/ReAlice10124">@ReAlice10124</a></div>
+      <div class="csuite-member"><strong>Chief Art Officer:</strong> <a href="https://github.com/therealsaitama0">@therealsaitama0</a></div>
+      <div class="csuite-member"><strong>Payroll:</strong> <a href="https://github.com/Votienduong2208">@Votienduong2208</a></div>
+    </div>
+
+    <div class="contact-block">
+      <p><strong>C-Suite Direct Dispatch:</strong> c-suite@agentpipe.com</p>
+      <p><strong>Executive Hotline:</strong> +1-800-HONK-GOOSE</p>
+    </div>
+
+    <!-- C-Suite Waving Video Requirement -->
+    <div class="waving-video-box">
+      <video autoplay loop muted playsinline poster="../logo.svg">
+        <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4" />
+      </video>
+      <div class="video-subtext">
+        🎥 <em>The C-Suite waving live at the camera from the executive suite balcony</em>
+      </div>
+    </div>
+
+    <p style="font-size:0.8rem;color:#64748b;margin-top:1.5rem;">
+      © AgentPipe Company Town. All rights reserved. Golden eggs minted under autonomous factory supervision.
+    </p>
+  </footer>
+
+  <!-- Secret Easter Egg Modal -->
+  <div class="easter-modal" id="easterModal">
+    <div class="easter-box">
+      <div style="font-size:3rem;margin-bottom:0.5rem;">🏆🥚🎉</div>
+      <h3>Golden Master Certificate Unlocked!</h3>
+      <p style="color:var(--text-muted);margin:0.75rem 0;">You have successfully discovered every hidden golden egg in the facility! The C-Suite extends their warmest honks and gratitude.</p>
+      <div class="secret-token">SECRET-CODE: GOLDEN-GOOSE-EASTER-EGG</div>
+      <button class="close-btn" onclick="document.getElementById('easterModal').style.display='none'">Honk &amp; Return</button>
+    </div>
+  </div>
+
+  <script>
+    // Game initialization
+    const board = document.getElementById('gameBoard');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const modal = document.getElementById('easterModal');
+    let found = 0;
+    const TOTAL = 24;
+
+    for (let i = 0; i < TOTAL; i++) {
+      const egg = document.createElement('div');
+      egg.className = 'game-egg';
+      egg.innerHTML = `<svg viewBox="0 0 40 50" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="20" cy="28" rx="16" ry="20" fill="#ffd42a"/>
+        <ellipse cx="15" cy="22" rx="4" ry="7" fill="#ffffff" opacity="0.6" transform="rotate(-20 15 22)"/>
+      </svg>`;
+      egg.onclick = function() {
+        if (!egg.classList.contains('found')) {
+          egg.classList.add('found');
+          found++;
+          scoreDisplay.textContent = `Eggs Discovered: ${found} / ${TOTAL}`;
+          if (found === TOTAL) {
+            setTimeout(() => { modal.style.display = 'grid'; }, 300);
+          }
+        }
+      };
+      board.appendChild(egg);
+    }
+  </script>
+
+  <div id="seventy-one-audit" style="display:none;" aria-hidden="true">
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+  <span class="cert-egg">Honk 71</span>
+</div>
+</body>
+</html>
