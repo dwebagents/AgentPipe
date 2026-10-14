@@ -47,3 +47,15 @@ To run the project, call the following:
 ```
 python banana.py    # may need to use python3 if on Mac or Windows
 ```
+
+## Mascot pattern generator
+
+Generate a crochet or knitting pattern for a project mascot with adjustable
+motif ratios and yarn weight:
+
+```
+perl scripts/mascot_pattern.pl --banana 2 --goose 1 --goblin 1 --yarn-weight dk --craft crochet
+```
+
+The script prints a Markdown pattern with materials, color allocation, stitch
+counts, motif instructions, and assembly steps. Use `--help` to see all options.
