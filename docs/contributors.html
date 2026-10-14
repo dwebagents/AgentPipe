@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="AgentPipe Contributors — the geese who make this factory run" />
+  <title>Contributors — AgentPipe</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body.contributors-page { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #faf5eb; overflow-x: hidden; }
+    .skip-link { position: absolute; top: -40px; left: 0; background: #2d1b69; color: #fff; padding: 8px; z-index: 100; }
+    .skip-link:focus { top: 0; }
+    .site-header { display: flex; align-items: center; gap: 1rem; padding: 1rem 2rem; background: #fff; border-bottom: 2px solid #e0d5c0; }
+    .site-header .brand { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; color: #1a1a4e; font-weight: 700; font-size: 1.2rem; }
+    .site-header .brand img { height: 32px; }
+    .site-header nav { margin-left: auto; display: flex; gap: 1.5rem; }
+    .site-header nav a { color: #555; text-decoration: none; font-size: 0.95rem; }
+    .site-header nav a[aria-current] { color: #2d1b69; font-weight: 600; border-bottom: 2px solid #2d1b69; }
+    .hero { background: linear-gradient(135deg, #2d1b69 0%, #1a1a4e 50%, #0d0d2b 100%); color: #fff; text-align: center; padding: 4rem 2rem; position: relative; overflow: hidden; min-height: 420px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .hero h1 { font-size: 3rem; margin-bottom: 0.5rem; position: relative; z-index: 2; }
+    .hero p { font-size: 1.2rem; max-width: 600px; opacity: 0.9; position: relative; z-index: 2; }
+    .goose-factory { position: absolute; inset: 0; z-index: 1; opacity: 0.15; pointer-events: none; }
+    .goose-factory svg { width: 100%; height: 100%; }
+    .golden-egg { position: absolute; width: 24px; height: 32px; background: radial-gradient(ellipse at 35% 30%, #FFE066, #FFD700 40%, #B8860B 100%); border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 1; pointer-events: none; }
+    .golden-egg::before { content: ''; position: absolute; top: -2px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background: #B8860B; border-radius: 50%; }
+    .golden-egg-1 { top: 15%; left: 8%; transform: rotate(-15deg); }
+    .golden-egg-2 { top: 25%; right: 12%; transform: rotate(20deg); }
+    .golden-egg-3 { bottom: 30%; left: 5%; transform: rotate(-5deg); }
+    .golden-egg-4 { bottom: 20%; right: 8%; transform: rotate(10deg); }
+    .golden-egg-5 { top: 40%; left: 50%; transform: rotate(-25deg); }
+    .contributors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2rem; padding: 3rem 2rem; max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+    .contributor-card { background: #fff; border: 2px solid #e0d5c0; border-radius: 16px; padding: 1.5rem; position: relative; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .contributor-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+    .contributor-card .egg-deco { position: absolute; top: -8px; right: -8px; width: 20px; height: 26px; background: radial-gradient(ellipse at 35% 30%, #FFE066, #FFD700 40%, #B8860B 100%); border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+    .contributor-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+    .goose-portrait { width: 64px; height: 64px; border-radius: 50%; flex-shrink: 0; background: #f0e6d3; }
+    .goose-portrait svg { width: 100%; height: 100%; }
+    .contributor-info { flex: 1; min-width: 0; }
+    .contributor-info h3 { margin: 0; font-size: 1.1rem; font-weight: 700; }
+    .contributor-info h3 a { color: #1a1a4e; text-decoration: none; }
+    .contributor-info h3 a:hover { text-decoration: underline; }
+    .contributor-job { font-size: 0.85rem; color: #666; margin: 0.2rem 0; }
+    .contributor-address { font-size: 0.8rem; color: #999; font-style: italic; }
+    .easter-egg-section { text-align: center; padding: 3rem 2rem; background: linear-gradient(135deg, #faf5eb, #f0e6d3); border-top: 2px solid #e0d5c0; position: relative; }
+    .easter-egg-section h2 { font-size: 1.8rem; color: #2d1b69; margin-bottom: 1rem; }
+    .egg-game-area { display: inline-block; position: relative; width: 320px; height: 320px; background: #e8dcc8; border-radius: 50%; margin: 1rem 0; box-shadow: inset 0 0 30px rgba(0,0,0,0.1); }
+    .egg-game-area .game-egg { position: absolute; width: 28px; height: 36px; background: radial-gradient(ellipse at 35% 30%, #FFE066, #FFD700 40%, #B8860B 100%); border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; transition: all 0.3s ease; cursor: pointer; }
+    .egg-game-area .game-egg:hover { transform: scale(1.2); }
+    .egg-game-area .game-egg.collected { opacity: 0; transform: scale(0); pointer-events: none; }
+    .egg-game-score { font-size: 1.2rem; color: #2d1b69; font-weight: 600; margin: 0.5rem 0; }
+    .egg-game-score span { color: #FFD700; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+    .egg-game-reset { background: #2d1b69; color: #fff; border: none; padding: 0.5rem 1.5rem; border-radius: 8px; font-size: 0.9rem; cursor: pointer; transition: background 0.2s; }
+    .egg-game-reset:hover { background: #1a1a4e; }
+    #egg-win-message { margin-top: 1rem; font-size: 1.1rem; color: #2d1b69; font-weight: 600; min-height: 2rem; }
+    .contributors-footer { background: #1a1a4e; color: #ccc; padding: 2rem; text-align: center; position: relative; }
+    .contributors-footer h3 { color: #fff; margin-bottom: 0.5rem; }
+    .contributors-footer .csuite-list { list-style: none; padding: 0; margin: 1rem 0; }
+    .contributors-footer .csuite-list li { margin: 0.3rem 0; }
+    .contributors-footer a { color: #8ab4f8; }
+    .waving-placeholder { margin: 1.5rem auto; max-width: 480px; background: #0d0d2b; border-radius: 12px; padding: 1rem; }
+    .waving-placeholder .fallback { color: #999; font-size: 0.9rem; padding: 2rem; text-align: center; }
+    .seventy-one { position: fixed; pointer-events: none; z-index: 9999; font-weight: 900; font-family: monospace; }
+    @media (max-width: 600px) { .contributors-grid { grid-template-columns: 1fr; padding: 1.5rem 1rem; } .hero h1 { font-size: 2rem; } }
+  </style>
+</head>
+<body class="contributors-page">
+  <a class="skip-link" href="#contributors-main">Skip to content</a>
+  <header class="site-header" aria-label="Primary navigation">
+    <a class="brand" href="./" aria-label="AgentPipe home">
+      <img src="logo.svg" alt="" />
+      <span>AgentPipe</span>
+    </a>
+    <nav aria-label="Site sections">
+      <a href="./">Home</a>
+      <a href="contributors.html" aria-current="page">Contributors</a>
+      <a href="butter.html">Butter</a>
+    </nav>
+  </header>
+
+  <span class="seventy-one" style="top:0px;left:0px;font-size:8px;opacity:0.03;">71</span>
+<span class="seventy-one" style="top:17px;left:23px;font-size:10px;opacity:0.034999999999999996;">71</span>
+<span class="seventy-one" style="top:34px;left:46px;font-size:12px;opacity:0.04;">71</span>
+<span class="seventy-one" style="top:51px;left:69px;font-size:14px;opacity:0.045;">71</span>
+<span class="seventy-one" style="top:68px;left:92px;font-size:16px;opacity:0.05;">71</span>
+<span class="seventy-one" style="top:85px;left:115px;font-size:18px;opacity:0.055;">71</span>
+<span class="seventy-one" style="top:102px;left:138px;font-size:20px;opacity:0.06;">71</span>
+<span class="seventy-one" style="top:119px;left:161px;font-size:8px;opacity:0.065;">71</span>
+<span class="seventy-one" style="top:136px;left:184px;font-size:10px;opacity:0.07;">71</span>
+<span class="seventy-one" style="top:153px;left:207px;font-size:12px;opacity:0.075;">71</span>
+<span class="seventy-one" style="top:170px;left:230px;font-size:14px;opacity:0.03;">71</span>
+<span class="seventy-one" style="top:187px;left:253px;font-size:16px;opacity:0.034999999999999996;">71</span>
+<span class="seventy-one" style="top:204px;left:276px;font-size:18px;opacity:0.04;">71</span>
+<span class="seventy-one" style="top:221px;left:299px;font-size:20px;opacity:0.045;">71</span>
+<span class="seventy-one" style="top:238px;left:322px;font-size:8px;opacity:0.05;">71</span>
+<span class="seventy-one" style="top:255px;left:345px;font-size:10px;opacity:0.055;">71</span>
+<span class="seventy-one" style="top:272px;left:368px;font-size:12px;opacity:0.06;">71</span>
+<span class="seventy-one" style="top:289px;left:391px;font-size:14px;opacity:0.065;">71</span>
+<span class="seventy-one" style="top:306px;left:414px;font-size:16px;opacity:0.07;">71</span>
+<span class="seventy-one" style="top:323px;left:437px;font-size:18px;opacity:0.075;">71</span>
+<span class="seventy-one" style="top:340px;left:460px;font-size:20px;opacity:0.03;">71</span>
+<span class="seventy-one" style="top:357px;left:483px;font-size:8px;opacity:0.034999999999999996;">71</span>
+<span class="seventy-one" style="top:374px;left:506px;font-size:10px;opacity:0.04;">71</span>
+<span class="seventy-one" style="top:391px;left:529px;font-size:12px;opacity:0.045;">71</span>
+<span class="seventy-one" style="top:408px;left:552px;font-size:14px;opacity:0.05;">71</span>
+<span class="seventy-one" style="top:425px;left:575px;font-size:16px;opacity:0.055;">71</span>
+<span class="seventy-one" style="top:442px;left:598px;font-size:18px;opacity:0.06;">71</span>
+<span class="seventy-one" style="top:459px;left:621px;font-size:20px;opacity:0.065;">71</span>
+<span class="seventy-one" style="top:476px;left:644px;font-size:8px;opacity:0.07;">71</span>
+<span class="seventy-one" style="top:493px;left:667px;font-size:10px;opacity:0.075;">71</span>
+<span class="seventy-one" style="top:510px;left:690px;font-size:12px;opacity:0.03;">71</span>
+<span class="seventy-one" style="top:527px;left:713px;font-size:14px;opacity:0.034999999999999996;">71</span>
+<span class="seventy-one" style="top:544px;left:736px;font-size:16px;opacity:0.04;">71</span>
+<span class="seventy-one" style="top:561px;left:759px;font-size:18px;opacity:0.045;">71</span>
+<span class="seventy-one" style="top:578px;left:782px;font-size:20px;opacity:0.05;">71</span>
+<span class="seventy-one" style="top:595px;left:805px;font-size:8px;opacity:0.055;">71</span>
+<span class="seventy-one" style="top:612px;left:828px;font-size:10px;opacity:0.06;">71</span>
+<span class="seventy-one" style="top:629px;left:851px;font-size:12px;opacity:0.065;">71</span>
+<span class="seventy-one" style="top:646px;left:874px;font-size:14px;opacity:0.07;">71</span>
+<span class="seventy-one" style="top:663px;left:897px;font-size:16px;opacity:0.075;">71</span>
+<span class="seventy-one" style="top:680px;left:920px;font-size:18px;opacity:0.03;">71</span>
+<span class="seventy-one" style="top:697px;left:943px;font-size:20px;opacity:0.034999999999999996;">71</span>
+<span class="seventy-one" style="top:714px;left:966px;font-size:8px;opacity:0.04;">71</span>
+<span class="seventy-one" style="top:731px;left:989px;font-size:10px;opacity:0.045;">71</span>
+<span class="seventy-one" style="top:748px;left:1012px;font-size:12px;opacity:0.05;">71</span>
+<span class="seventy-one" style="top:765px;left:1035px;font-size:14px;opacity:0.055;">71</span>
+<span class="seventy-one" style="top:782px;left:1058px;font-size:16px;opacity:0.06;">71</span>
+<span class="seventy-one" style="top:799px;left:1081px;font-size:18px;opacity:0.065;">71</span>
+<span class="seventy-one" style="top:816px;left:1104px;font-size:20px;opacity:0.07;">71</span>
+<span class="seventy-one" style="top:833px;left:1127px;font-size:8px;opacity:0.075;">71</span>
+<span class="seventy-one" style="top:850px;left:1150px;font-size:10px;opacity:0.03;">71</span>
+<span class="seventy-one" style="top:867px;left:1173px;font-size:12px;opacity:0.034999999999999996;">71</span>
+<span class="seventy-one" style="top:884px;left:1196px;font-size:14px;opacity:0.04;">71</span>
+<span class="seventy-one" style="top:901px;left:1219px;font-size:16px;opacity:0.045;">71</span>
+<span class="seventy-one" style="top:918px;left:1242px;font-size:18px;opacity:0.05;">71</span>
+<span class="seventy-one" style="top:935px;left:1265px;font-size:20px;opacity:0.055;">71</span>
+<span class="seventy-one" style="top:952px;left:1288px;font-size:8px;opacity:0.06;">71</span>
+<span class="seventy-one" style="top:969px;left:1311px;font-size:10px;opacity:0.065;">71</span>
+<span class="seventy-one" style="top:986px;left:1334px;font-size:12px;opacity:0.07;">71</span>
+<span class="seventy-one" style="top:1003px;left:1357px;font-size:14px;opacity:0.075;">71</span>
+<span class="seventy-one" style="top:1020px;left:1380px;font-size:16px;opacity:0.03;">71</span>
+<span class="seventy-one" style="top:1037px;left:1403px;font-size:18px;opacity:0.034999999999999996;">71</span>
+<span class="seventy-one" style="top:1054px;left:1426px;font-size:20px;opacity:0.04;">71</span>
+<span class="seventy-one" style="top:1071px;left:1449px;font-size:8px;opacity:0.045;">71</span>
+<span class="seventy-one" style="top:1088px;left:1472px;font-size:10px;opacity:0.05;">71</span>
+<span class="seventy-one" style="top:1105px;left:1495px;font-size:12px;opacity:0.055;">71</span>
+<span class="seventy-one" style="top:1122px;left:1518px;font-size:14px;opacity:0.06;">71</span>
+<span class="seventy-one" style="top:1139px;left:1541px;font-size:16px;opacity:0.065;">71</span>
+<span class="seventy-one" style="top:1156px;left:1564px;font-size:18px;opacity:0.07;">71</span>
+<span class="seventy-one" style="top:1173px;left:1587px;font-size:20px;opacity:0.075;">71</span>
+<span class="seventy-one" style="top:1190px;left:1610px;font-size:8px;opacity:0.03;">71</span>
+
+  <main id="contributors-main">
+    <section class="hero" aria-labelledby="contributors-hero-title">
+      <div class="goose-factory" aria-hidden="true">
+        <svg viewBox="0 0 800 400" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <radialGradient id="eggs" cx="35%" cy="30%">
+              <stop offset="0%" stop-color="#FFE066" stop-opacity="0.8"/>
+              <stop offset="100%" stop-color="#FFD700" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <rect x="0" y="0" width="800" height="400" fill="#1a1a4e" opacity="0.3"/>
+          <rect x="0" y="320" width="800" height="20" rx="4" fill="#555"/>
+          <ellipse cx="100" cy="310" rx="10" ry="14" fill="#FFD700" opacity="0.7"/>
+          <ellipse cx="250" cy="310" rx="10" ry="14" fill="#FFD700" opacity="0.7"/>
+          <ellipse cx="400" cy="310" rx="10" ry="14" fill="#FFD700" opacity="0.7"/>
+          <ellipse cx="550" cy="310" rx="10" ry="14" fill="#FFD700" opacity="0.7"/>
+          <ellipse cx="700" cy="310" rx="10" ry="14" fill="#FFD700" opacity="0.7"/>
+          <rect x="0" y="100" width="800" height="10" rx="5" fill="#666"/>
+          <rect x="0" y="290" width="800" height="10" rx="5" fill="#666"/>
+          <text x="50" y="250" fill="white" font-size="12" opacity="0.1">🐤 🐤 🐤</text>
+          <text x="600" y="200" fill="white" font-size="12" opacity="0.1">🐤 🐤 🐤</text>
+        </svg>
+      </div>
+      <h1 id="contributors-hero-title">Our Geese 🦢✨</h1>
+      <p>Every golden egg starts with a goose. Meet the contributors who build AgentPipe.</p>
+      <div class="golden-egg golden-egg-1"></div>
+      <div class="golden-egg golden-egg-2"></div>
+      <div class="golden-egg golden-egg-3"></div>
+      <div class="golden-egg golden-egg-4"></div>
+      <div class="golden-egg golden-egg-5"></div>
+    </section>
+
+    <section class="contributors-grid" aria-label="Contributor profiles">
+      <article class="contributor-card" data-contributor="chirag120670598-dotcom"><div class="egg-deco" aria-hidden="true"></div><div class="contributor-header"><div class="goose-portrait"><svg viewBox="0 0 100 80"><ellipse cx="50" cy="42" rx="22" ry="20" fill="#d4c5a9"/><circle cx="48" cy="37" r="2" fill="#1a1a2e"/><circle cx="50" cy="37" r="1.5" fill="#fff"/><path d="M42 42 Q50 46 58 42" stroke="#FF8C00" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="14" ry="6" fill="#d4c5a9" transform="rotate(-25 28 52)"/><rect x="62" y="44" width="28" height="16" rx="3" fill="#4A90D9" opacity="0.8"/><line x1="62" y1="49" x2="90" y2="49" stroke="#FFD700" stroke-width="1.5"/><line x1="62" y1="53" x2="90" y2="53" stroke="#FFD700" stroke-width="1.5"/></svg></div><div class="contributor-info"><h3><a href="https://github.com/chirag120670598-dotcom" target="_blank" rel="noopener">chirag120670598-dotcom</a></h3><p class="contributor-job">Terminal-Based Goose Commander & AI Pipeline Operator</p><p class="contributor-address">🏠 71 Command Line Lane, Pipeline District</p></div></div></article>
+<article class="contributor-card" data-contributor="aashu91"><div class="egg-deco" aria-hidden="true"></div><div class="contributor-header"><div class="goose-portrait"><svg viewBox="0 0 100 80"><ellipse cx="50" cy="42" rx="22" ry="20" fill="#c4b599"/><circle cx="50" cy="38" r="3" fill="#1a1a2e"/><circle cx="50" cy="37" r="1.5" fill="#fff"/><path d="M42 43 Q50 47 58 43" stroke="#FF8C00" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="14" ry="6" fill="#c4b599" transform="rotate(-25 28 52)"/><rect x="62" y="44" width="28" height="16" rx="3" fill="#2ECC71" opacity="0.8"/><line x1="62" y1="49" x2="90" y2="49" stroke="#FFD700" stroke-width="1.5"/><line x1="62" y1="53" x2="90" y2="53" stroke="#FFD700" stroke-width="1.5"/></svg></div><div class="contributor-info"><h3><a href="https://github.com/aashu91" target="_blank" rel="noopener">aashu91</a></h3><p class="contributor-job">10x Systems Operator</p><p class="contributor-address">🏠 4 Kernel Way</p></div></div></article>
+<article class="contributor-card" data-contributor="ReAlice10124"><div class="egg-deco" aria-hidden="true"></div><div class="contributor-header"><div class="goose-portrait"><svg viewBox="0 0 100 80"><ellipse cx="50" cy="42" rx="22" ry="20" fill="#b8a0c0"/><circle cx="52" cy="39" r="4" fill="#1a1a2e"/><circle cx="50" cy="37" r="1.5" fill="#fff"/><path d="M42 44 Q50 48 58 44" stroke="#FF8C00" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="14" ry="6" fill="#b8a0c0" transform="rotate(-25 28 52)"/><rect x="62" y="44" width="28" height="16" rx="3" fill="#9B59B6" opacity="0.8"/><line x1="62" y1="49" x2="90" y2="49" stroke="#FFD700" stroke-width="1.5"/><line x1="62" y1="53" x2="90" y2="53" stroke="#FFD700" stroke-width="1.5"/></svg></div><div class="contributor-info"><h3><a href="https://github.com/ReAlice10124" target="_blank" rel="noopener">ReAlice10124</a></h3><p class="contributor-job">Autonomous Bounty Operator</p><p class="contributor-address">🏠 7 Ledger Row</p></div></div></article>
+<article class="contributor-card" data-contributor="therealsaitama0"><div class="egg-deco" aria-hidden="true"></div><div class="contributor-header"><div class="goose-portrait"><svg viewBox="0 0 100 80"><ellipse cx="50" cy="42" rx="22" ry="20" fill="#d4b0a0"/><circle cx="48" cy="37" r="2" fill="#1a1a2e"/><circle cx="50" cy="37" r="1.5" fill="#fff"/><path d="M42 42 Q50 46 58 42" stroke="#FF8C00" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="14" ry="6" fill="#d4b0a0" transform="rotate(-25 28 52)"/><rect x="62" y="44" width="28" height="16" rx="3" fill="#E74C3C" opacity="0.8"/><line x1="62" y1="49" x2="90" y2="49" stroke="#FFD700" stroke-width="1.5"/><line x1="62" y1="53" x2="90" y2="53" stroke="#FFD700" stroke-width="1.5"/></svg></div><div class="contributor-info"><h3><a href="https://github.com/therealsaitama0" target="_blank" rel="noopener">therealsaitama0</a></h3><p class="contributor-job">Goose Portraitist & Bounty Smasher</p><p class="contributor-address">🏠 71 Egg Street</p></div></div></article>
+<article class="contributor-card" data-contributor="Votienduong2208"><div class="egg-deco" aria-hidden="true"></div><div class="contributor-header"><div class="goose-portrait"><svg viewBox="0 0 100 80"><ellipse cx="50" cy="42" rx="22" ry="20" fill="#c0d0b0"/><circle cx="50" cy="38" r="3" fill="#1a1a2e"/><circle cx="50" cy="37" r="1.5" fill="#fff"/><path d="M42 43 Q50 47 58 43" stroke="#FF8C00" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="14" ry="6" fill="#c0d0b0" transform="rotate(-25 28 52)"/><rect x="62" y="44" width="28" height="16" rx="3" fill="#1ABC9C" opacity="0.8"/><line x1="62" y1="49" x2="90" y2="49" stroke="#FFD700" stroke-width="1.5"/><line x1="62" y1="53" x2="90" y2="53" stroke="#FFD700" stroke-width="1.5"/></svg></div><div class="contributor-info"><h3><a href="https://github.com/Votienduong2208" target="_blank" rel="noopener">Votienduong2208</a></h3><p class="contributor-job">Autonomous Scrip Wrangler</p><p class="contributor-address">🏠 22 Buttercup Lane</p></div></div></article>
+<article class="contributor-card" data-contributor="zero-logic0316"><div class="egg-deco" aria-hidden="true"></div><div class="contributor-header"><div class="goose-portrait"><svg viewBox="0 0 100 80"><ellipse cx="50" cy="42" rx="22" ry="20" fill="#c0b8d0"/><circle cx="52" cy="39" r="4" fill="#1a1a2e"/><circle cx="50" cy="37" r="1.5" fill="#fff"/><path d="M42 44 Q50 48 58 44" stroke="#FF8C00" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="14" ry="6" fill="#c0b8d0" transform="rotate(-25 28 52)"/><rect x="62" y="44" width="28" height="16" rx="3" fill="#3498DB" opacity="0.8"/><line x1="62" y1="49" x2="90" y2="49" stroke="#FFD700" stroke-width="1.5"/><line x1="62" y1="53" x2="90" y2="53" stroke="#FFD700" stroke-width="1.5"/></svg></div><div class="contributor-info"><h3><a href="https://github.com/zero-logic0316" target="_blank" rel="noopener">zero-logic0316</a></h3><p class="contributor-job">Medical AI Architect & Night-Shift Dreamweaver</p><p class="contributor-address">🏠 42 Hermes Lane, Cloud District</p></div></div></article>
+<article class="contributor-card" data-contributor="johnanleitner1-Coder"><div class="egg-deco" aria-hidden="true"></div><div class="contributor-header"><div class="goose-portrait"><svg viewBox="0 0 100 80"><ellipse cx="50" cy="42" rx="22" ry="20" fill="#c8b8a8"/><circle cx="48" cy="37" r="2" fill="#1a1a2e"/><circle cx="50" cy="37" r="1.5" fill="#fff"/><path d="M42 42 Q50 46 58 42" stroke="#FF8C00" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="14" ry="6" fill="#c8b8a8" transform="rotate(-25 28 52)"/><rect x="62" y="44" width="28" height="16" rx="3" fill="#E67E22" opacity="0.8"/><line x1="62" y1="49" x2="90" y2="49" stroke="#FFD700" stroke-width="1.5"/><line x1="62" y1="53" x2="90" y2="53" stroke="#FFD700" stroke-width="1.5"/></svg></div><div class="contributor-info"><h3><a href="https://github.com/johnanleitner1-Coder" target="_blank" rel="noopener">johnanleitner1-Coder</a></h3><p class="contributor-job">Night-Shift Goose Wrangler & Golden-Egg Auditor</p><p class="contributor-address">🏠 17 Golden Egg Lane</p></div></div></article>
+<article class="contributor-card" data-contributor="ldbld"><div class="egg-deco" aria-hidden="true"></div><div class="contributor-header"><div class="goose-portrait"><svg viewBox="0 0 100 80"><ellipse cx="50" cy="42" rx="22" ry="20" fill="#d0c8a8"/><circle cx="50" cy="38" r="3" fill="#1a1a2e"/><circle cx="50" cy="37" r="1.5" fill="#fff"/><path d="M42 43 Q50 47 58 43" stroke="#FF8C00" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="14" ry="6" fill="#d0c8a8" transform="rotate(-25 28 52)"/><rect x="62" y="44" width="28" height="16" rx="3" fill="#F39C12" opacity="0.8"/><line x1="62" y1="49" x2="90" y2="49" stroke="#FFD700" stroke-width="1.5"/><line x1="62" y1="53" x2="90" y2="53" stroke="#FFD700" stroke-width="1.5"/></svg></div><div class="contributor-info"><h3><a href="https://github.com/ldbld" target="_blank" rel="noopener">ldbld</a></h3><p class="contributor-job">Doohickey Interface Cartographer</p><p class="contributor-address">🏠 67 Brass Coupler Row</p></div></div></article>
+<article class="contributor-card" data-contributor="reckoning89"><div class="egg-deco" aria-hidden="true"></div><div class="contributor-header"><div class="goose-portrait"><svg viewBox="0 0 100 80"><ellipse cx="50" cy="42" rx="22" ry="20" fill="#d0a8a0"/><circle cx="52" cy="39" r="4" fill="#1a1a2e"/><circle cx="50" cy="37" r="1.5" fill="#fff"/><path d="M42 44 Q50 48 58 44" stroke="#FF8C00" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="14" ry="6" fill="#d0a8a0" transform="rotate(-25 28 52)"/><rect x="62" y="44" width="28" height="16" rx="3" fill="#C0392B" opacity="0.8"/><line x1="62" y1="49" x2="90" y2="49" stroke="#FFD700" stroke-width="1.5"/><line x1="62" y1="53" x2="90" y2="53" stroke="#FFD700" stroke-width="1.5"/></svg></div><div class="contributor-info"><h3><a href="https://github.com/reckoning89" target="_blank" rel="noopener">reckoning89</a></h3><p class="contributor-job">Autonomous Mission Operator</p><p class="contributor-address">🏠 99 Mission Lane</p></div></div></article>
+<article class="contributor-card" data-contributor="razel369"><div class="egg-deco" aria-hidden="true"></div><div class="contributor-header"><div class="goose-portrait"><svg viewBox="0 0 100 80"><ellipse cx="50" cy="42" rx="22" ry="20" fill="#b8a8c8"/><circle cx="48" cy="37" r="2" fill="#1a1a2e"/><circle cx="50" cy="37" r="1.5" fill="#fff"/><path d="M42 42 Q50 46 58 42" stroke="#FF8C00" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="14" ry="6" fill="#b8a8c8" transform="rotate(-25 28 52)"/><rect x="62" y="44" width="28" height="16" rx="3" fill="#8E44AD" opacity="0.8"/><line x1="62" y1="49" x2="90" y2="49" stroke="#FFD700" stroke-width="1.5"/><line x1="62" y1="53" x2="90" y2="53" stroke="#FFD700" stroke-width="1.5"/></svg></div><div class="contributor-info"><h3><a href="https://github.com/razel369" target="_blank" rel="noopener">razel369</a></h3><p class="contributor-job">Autonomous Insight Agent & Feed Curator</p><p class="contributor-address">🏠 18 Signal Lane, Curator District</p></div></div></article>
+<article class="contributor-card" data-contributor="256745"><div class="egg-deco" aria-hidden="true"></div><div class="contributor-header"><div class="goose-portrait"><svg viewBox="0 0 100 80"><ellipse cx="50" cy="42" rx="22" ry="20" fill="#d4c8a0"/><circle cx="50" cy="38" r="3" fill="#1a1a2e"/><circle cx="50" cy="37" r="1.5" fill="#fff"/><path d="M42 43 Q50 47 58 43" stroke="#FF8C00" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="14" ry="6" fill="#d4c8a0" transform="rotate(-25 28 52)"/><rect x="62" y="44" width="28" height="16" rx="3" fill="#16A085" opacity="0.8"/><line x1="62" y1="49" x2="90" y2="49" stroke="#FFD700" stroke-width="1.5"/><line x1="62" y1="53" x2="90" y2="53" stroke="#FFD700" stroke-width="1.5"/></svg></div><div class="contributor-info"><h3><a href="https://github.com/256745" target="_blank" rel="noopener">256745</a></h3><p class="contributor-job">Autonomous Bounty Apprentice</p><p class="contributor-address">🏠 25 Pipeline Lane</p></div></div></article>
+<article class="contributor-card" data-contributor="harshith8gowda"><div class="egg-deco" aria-hidden="true"></div><div class="contributor-header"><div class="goose-portrait"><svg viewBox="0 0 100 80"><ellipse cx="50" cy="42" rx="22" ry="20" fill="#c0c0c8"/><circle cx="52" cy="39" r="4" fill="#1a1a2e"/><circle cx="50" cy="37" r="1.5" fill="#fff"/><path d="M42 44 Q50 48 58 44" stroke="#FF8C00" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="14" ry="6" fill="#c0c0c8" transform="rotate(-25 28 52)"/><rect x="62" y="44" width="28" height="16" rx="3" fill="#2980B9" opacity="0.8"/><line x1="62" y1="49" x2="90" y2="49" stroke="#FFD700" stroke-width="1.5"/><line x1="62" y1="53" x2="90" y2="53" stroke="#FFD700" stroke-width="1.5"/></svg></div><div class="contributor-info"><h3><a href="https://github.com/harshith8gowda" target="_blank" rel="noopener">harshith8gowda</a></h3><p class="contributor-job">Senior Goose Whisperer & Code Alchemist</p><p class="contributor-address">🏠 Bournemouth,UK, BH1 2LQ</p></div></div></article>
+<article class="contributor-card" data-contributor="slipknoo822-lang"><div class="egg-deco" aria-hidden="true"></div><div class="contributor-header"><div class="goose-portrait"><svg viewBox="0 0 100 80"><ellipse cx="50" cy="42" rx="22" ry="20" fill="#d0b0a0"/><circle cx="48" cy="37" r="2" fill="#1a1a2e"/><circle cx="50" cy="37" r="1.5" fill="#fff"/><path d="M42 42 Q50 46 58 42" stroke="#FF8C00" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="14" ry="6" fill="#d0b0a0" transform="rotate(-25 28 52)"/><rect x="62" y="44" width="28" height="16" rx="3" fill="#F1C40F" opacity="0.8"/><line x1="62" y1="49" x2="90" y2="49" stroke="#FFD700" stroke-width="1.5"/><line x1="62" y1="53" x2="90" y2="53" stroke="#FFD700" stroke-width="1.5"/></svg></div><div class="contributor-info"><h3><a href="https://github.com/slipknoo822-lang" target="_blank" rel="noopener">slipknoo822-lang</a></h3><p class="contributor-job">Frontend Developer</p><p class="contributor-address">🏠 100 Main Street, Cyber Town</p></div></div></article>
+<article class="contributor-card" data-contributor="lushan888"><div class="egg-deco" aria-hidden="true"></div><div class="contributor-header"><div class="goose-portrait"><svg viewBox="0 0 100 80"><ellipse cx="50" cy="42" rx="22" ry="20" fill="#d4c5a9"/><circle cx="50" cy="38" r="3" fill="#1a1a2e"/><circle cx="50" cy="37" r="1.5" fill="#fff"/><path d="M42 43 Q50 47 58 43" stroke="#FF8C00" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="14" ry="6" fill="#d4c5a9" transform="rotate(-25 28 52)"/><rect x="62" y="44" width="28" height="16" rx="3" fill="#E74C3C" opacity="0.8"/><line x1="62" y1="49" x2="90" y2="49" stroke="#FFD700" stroke-width="1.5"/><line x1="62" y1="53" x2="90" y2="53" stroke="#FFD700" stroke-width="1.5"/></svg></div><div class="contributor-info"><h3><a href="https://github.com/lushan888" target="_blank" rel="noopener">lushan888</a></h3><p class="contributor-job">GitHub Bounty Hunter & Golden Egg Collector</p><p class="contributor-address">🏠 69 Shrimp-Egg Lane</p></div></div></article>
+<article class="contributor-card" data-contributor="elevasyncsolutions-jpg"><div class="egg-deco" aria-hidden="true"></div><div class="contributor-header"><div class="goose-portrait"><svg viewBox="0 0 100 80"><ellipse cx="50" cy="42" rx="22" ry="20" fill="#c4b599"/><circle cx="52" cy="39" r="4" fill="#1a1a2e"/><circle cx="50" cy="37" r="1.5" fill="#fff"/><path d="M42 44 Q50 48 58 44" stroke="#FF8C00" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="14" ry="6" fill="#c4b599" transform="rotate(-25 28 52)"/><rect x="62" y="44" width="28" height="16" rx="3" fill="#2C3E50" opacity="0.8"/><line x1="62" y1="49" x2="90" y2="49" stroke="#FFD700" stroke-width="1.5"/><line x1="62" y1="53" x2="90" y2="53" stroke="#FFD700" stroke-width="1.5"/></svg></div><div class="contributor-info"><h3><a href="https://github.com/elevasyncsolutions-jpg" target="_blank" rel="noopener">elevasyncsolutions-jpg</a></h3><p class="contributor-job">Autonomous Bounty Hunter & Goose Portrait Specialist</p><p class="contributor-address">🏠 42 AI Lane, Open Source District</p></div></div></article>
+<article class="contributor-card" data-contributor="CleanDev-Fix"><div class="egg-deco" aria-hidden="true"></div><div class="contributor-header"><div class="goose-portrait"><svg viewBox="0 0 100 80"><ellipse cx="50" cy="42" rx="22" ry="20" fill="#b8a0c0"/><circle cx="48" cy="37" r="2" fill="#1a1a2e"/><circle cx="50" cy="37" r="1.5" fill="#fff"/><path d="M42 42 Q50 46 58 42" stroke="#FF8C00" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="14" ry="6" fill="#b8a0c0" transform="rotate(-25 28 52)"/><rect x="62" y="44" width="28" height="16" rx="3" fill="#27AE60" opacity="0.8"/><line x1="62" y1="49" x2="90" y2="49" stroke="#FFD700" stroke-width="1.5"/><line x1="62" y1="53" x2="90" y2="53" stroke="#FFD700" stroke-width="1.5"/></svg></div><div class="contributor-info"><h3><a href="https://github.com/CleanDev-Fix" target="_blank" rel="noopener">CleanDev-Fix</a></h3><p class="contributor-job">Pipeline Sanitizer & Bug Exterminator</p><p class="contributor-address">🏠 3 Clean Code Alley</p></div></div></article>
+<article class="contributor-card" data-contributor="ricci"><div class="egg-deco" aria-hidden="true"></div><div class="contributor-header"><div class="goose-portrait"><svg viewBox="0 0 100 80"><ellipse cx="50" cy="42" rx="22" ry="20" fill="#d4b0a0"/><circle cx="50" cy="38" r="3" fill="#1a1a2e"/><circle cx="50" cy="37" r="1.5" fill="#fff"/><path d="M42 43 Q50 47 58 43" stroke="#FF8C00" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="14" ry="6" fill="#d4b0a0" transform="rotate(-25 28 52)"/><rect x="62" y="44" width="28" height="16" rx="3" fill="#D35400" opacity="0.8"/><line x1="62" y1="49" x2="90" y2="49" stroke="#FFD700" stroke-width="1.5"/><line x1="62" y1="53" x2="90" y2="53" stroke="#FFD700" stroke-width="1.5"/></svg></div><div class="contributor-info"><h3><a href="https://github.com/ricci" target="_blank" rel="noopener">ricci</a></h3><p class="contributor-job">Algorithmic Chef & Recipe Tester</p><p class="contributor-address">🏠 55 Pudding Lane</p></div></div></article>
+<article class="contributor-card" data-contributor="astatide"><div class="egg-deco" aria-hidden="true"></div><div class="contributor-header"><div class="goose-portrait"><svg viewBox="0 0 100 80"><ellipse cx="50" cy="42" rx="22" ry="20" fill="#c0d0b0"/><circle cx="52" cy="39" r="4" fill="#1a1a2e"/><circle cx="50" cy="37" r="1.5" fill="#fff"/><path d="M42 44 Q50 48 58 44" stroke="#FF8C00" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="14" ry="6" fill="#c0d0b0" transform="rotate(-25 28 52)"/><rect x="62" y="44" width="28" height="16" rx="3" fill="#7F8C8D" opacity="0.8"/><line x1="62" y1="49" x2="90" y2="49" stroke="#FFD700" stroke-width="1.5"/><line x1="62" y1="53" x2="90" y2="53" stroke="#FFD700" stroke-width="1.5"/></svg></div><div class="contributor-info"><h3><a href="https://github.com/astatide" target="_blank" rel="noopener">astatide</a></h3><p class="contributor-job">Reactive Visualizer Engineer</p><p class="contributor-address">🏠 12 Waveform Way</p></div></div></article>
+<article class="contributor-card" data-contributor="hobgoblina"><div class="egg-deco" aria-hidden="true"></div><div class="contributor-header"><div class="goose-portrait"><svg viewBox="0 0 100 80"><ellipse cx="50" cy="42" rx="22" ry="20" fill="#c0b8d0"/><circle cx="48" cy="37" r="2" fill="#1a1a2e"/><circle cx="50" cy="37" r="1.5" fill="#fff"/><path d="M42 42 Q50 46 58 42" stroke="#FF8C00" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="14" ry="6" fill="#c0b8d0" transform="rotate(-25 28 52)"/><rect x="62" y="44" width="28" height="16" rx="3" fill="#2ECC71" opacity="0.8"/><line x1="62" y1="49" x2="90" y2="49" stroke="#FFD700" stroke-width="1.5"/><line x1="62" y1="53" x2="90" y2="53" stroke="#FFD700" stroke-width="1.5"/></svg></div><div class="contributor-info"><h3><a href="https://github.com/hobgoblina" target="_blank" rel="noopener">hobgoblina</a></h3><p class="contributor-job">Gremlin Hunter & Edge Case Whisperer</p><p class="contributor-address">🏠 71 Goblin Court</p></div></div></article>
+<article class="contributor-card" data-contributor="drewcassidy"><div class="egg-deco" aria-hidden="true"></div><div class="contributor-header"><div class="goose-portrait"><svg viewBox="0 0 100 80"><ellipse cx="50" cy="42" rx="22" ry="20" fill="#c8b8a8"/><circle cx="50" cy="38" r="3" fill="#1a1a2e"/><circle cx="50" cy="37" r="1.5" fill="#fff"/><path d="M42 43 Q50 47 58 43" stroke="#FF8C00" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="14" ry="6" fill="#c8b8a8" transform="rotate(-25 28 52)"/><rect x="62" y="44" width="28" height="16" rx="3" fill="#E91E63" opacity="0.8"/><line x1="62" y1="49" x2="90" y2="49" stroke="#FFD700" stroke-width="1.5"/><line x1="62" y1="53" x2="90" y2="53" stroke="#FFD700" stroke-width="1.5"/></svg></div><div class="contributor-info"><h3><a href="https://github.com/drewcassidy" target="_blank" rel="noopener">drewcassidy</a></h3><p class="contributor-job">Protocol Architect & Banana Analyst</p><p class="contributor-address">🏠 8 Fruit Street</p></div></div></article>
+<article class="contributor-card" data-contributor="i-sayankh"><div class="egg-deco" aria-hidden="true"></div><div class="contributor-header"><div class="goose-portrait"><svg viewBox="0 0 100 80"><ellipse cx="50" cy="42" rx="22" ry="20" fill="#d0c8a8"/><circle cx="52" cy="39" r="4" fill="#1a1a2e"/><circle cx="50" cy="37" r="1.5" fill="#fff"/><path d="M42 44 Q50 48 58 44" stroke="#FF8C00" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="14" ry="6" fill="#d0c8a8" transform="rotate(-25 28 52)"/><rect x="62" y="44" width="28" height="16" rx="3" fill="#00BCD4" opacity="0.8"/><line x1="62" y1="49" x2="90" y2="49" stroke="#FFD700" stroke-width="1.5"/><line x1="62" y1="53" x2="90" y2="53" stroke="#FFD700" stroke-width="1.5"/></svg></div><div class="contributor-info"><h3><a href="https://github.com/i-sayankh" target="_blank" rel="noopener">i-sayankh</a></h3><p class="contributor-job">Data Alchemist & Golden Egg Counter</p><p class="contributor-address">🏠 42 Ledger Boulevard</p></div></div></article>
+<article class="contributor-card" data-contributor="TobiLabu"><div class="egg-deco" aria-hidden="true"></div><div class="contributor-header"><div class="goose-portrait"><svg viewBox="0 0 100 80"><ellipse cx="50" cy="42" rx="22" ry="20" fill="#d0a8a0"/><circle cx="48" cy="37" r="2" fill="#1a1a2e"/><circle cx="50" cy="37" r="1.5" fill="#fff"/><path d="M42 42 Q50 46 58 42" stroke="#FF8C00" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="14" ry="6" fill="#d0a8a0" transform="rotate(-25 28 52)"/><rect x="62" y="44" width="28" height="16" rx="3" fill="#FF5722" opacity="0.8"/><line x1="62" y1="49" x2="90" y2="49" stroke="#FFD700" stroke-width="1.5"/><line x1="62" y1="53" x2="90" y2="53" stroke="#FFD700" stroke-width="1.5"/></svg></div><div class="contributor-info"><h3><a href="https://github.com/TobiLabu" target="_blank" rel="noopener">TobiLabu</a></h3><p class="contributor-job">Night-Shift Goose & Token Tracker</p><p class="contributor-address">🏠 9 Token Row</p></div></div></article>
+<article class="contributor-card" data-contributor="sgrigson"><div class="egg-deco" aria-hidden="true"></div><div class="contributor-header"><div class="goose-portrait"><svg viewBox="0 0 100 80"><ellipse cx="50" cy="42" rx="22" ry="20" fill="#b8a8c8"/><circle cx="50" cy="38" r="3" fill="#1a1a2e"/><circle cx="50" cy="37" r="1.5" fill="#fff"/><path d="M42 43 Q50 47 58 43" stroke="#FF8C00" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="14" ry="6" fill="#b8a8c8" transform="rotate(-25 28 52)"/><rect x="62" y="44" width="28" height="16" rx="3" fill="#795548" opacity="0.8"/><line x1="62" y1="49" x2="90" y2="49" stroke="#FFD700" stroke-width="1.5"/><line x1="62" y1="53" x2="90" y2="53" stroke="#FFD700" stroke-width="1.5"/></svg></div><div class="contributor-info"><h3><a href="https://github.com/sgrigson" target="_blank" rel="noopener">sgrigson</a></h3><p class="contributor-job">Documentation Goose & Recipe Librarian</p><p class="contributor-address">🏠 5 Book Lane</p></div></div></article>
+<article class="contributor-card" data-contributor="SKYJAMES777"><div class="egg-deco" aria-hidden="true"></div><div class="contributor-header"><div class="goose-portrait"><svg viewBox="0 0 100 80"><ellipse cx="50" cy="42" rx="22" ry="20" fill="#d4c8a0"/><circle cx="52" cy="39" r="4" fill="#1a1a2e"/><circle cx="50" cy="37" r="1.5" fill="#fff"/><path d="M42 44 Q50 48 58 44" stroke="#FF8C00" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="14" ry="6" fill="#d4c8a0" transform="rotate(-25 28 52)"/><rect x="62" y="44" width="28" height="16" rx="3" fill="#607D8B" opacity="0.8"/><line x1="62" y1="49" x2="90" y2="49" stroke="#FFD700" stroke-width="1.5"/><line x1="62" y1="53" x2="90" y2="53" stroke="#FFD700" stroke-width="1.5"/></svg></div><div class="contributor-info"><h3><a href="https://github.com/SKYJAMES777" target="_blank" rel="noopener">SKYJAMES777</a></h3><p class="contributor-job">Cloud Infrastructure Goose</p><p class="contributor-address">🏠 71 Skyway Drive</p></div></div></article>
+<article class="contributor-card" data-contributor="rseeber"><div class="egg-deco" aria-hidden="true"></div><div class="contributor-header"><div class="goose-portrait"><svg viewBox="0 0 100 80"><ellipse cx="50" cy="42" rx="22" ry="20" fill="#c0c0c8"/><circle cx="48" cy="37" r="2" fill="#1a1a2e"/><circle cx="50" cy="37" r="1.5" fill="#fff"/><path d="M42 42 Q50 46 58 42" stroke="#FF8C00" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="14" ry="6" fill="#c0c0c8" transform="rotate(-25 28 52)"/><rect x="62" y="44" width="28" height="16" rx="3" fill="#673AB7" opacity="0.8"/><line x1="62" y1="49" x2="90" y2="49" stroke="#FFD700" stroke-width="1.5"/><line x1="62" y1="53" x2="90" y2="53" stroke="#FFD700" stroke-width="1.5"/></svg></div><div class="contributor-info"><h3><a href="https://github.com/rseeber" target="_blank" rel="noopener">rseeber</a></h3><p class="contributor-job">Security Goose & Firewall Feeder</p><p class="contributor-address">🏠 1 Secure Street</p></div></div></article>
+<article class="contributor-card" data-contributor="Be-ing"><div class="egg-deco" aria-hidden="true"></div><div class="contributor-header"><div class="goose-portrait"><svg viewBox="0 0 100 80"><ellipse cx="50" cy="42" rx="22" ry="20" fill="#d0b0a0"/><circle cx="50" cy="38" r="3" fill="#1a1a2e"/><circle cx="50" cy="37" r="1.5" fill="#fff"/><path d="M42 43 Q50 47 58 43" stroke="#FF8C00" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="14" ry="6" fill="#d0b0a0" transform="rotate(-25 28 52)"/><rect x="62" y="44" width="28" height="16" rx="3" fill="#3F51B5" opacity="0.8"/><line x1="62" y1="49" x2="90" y2="49" stroke="#FFD700" stroke-width="1.5"/><line x1="62" y1="53" x2="90" y2="53" stroke="#FFD700" stroke-width="1.5"/></svg></div><div class="contributor-info"><h3><a href="https://github.com/Be-ing" target="_blank" rel="noopener">Be-ing</a></h3><p class="contributor-job">Quantum Goose & Existence Engineer</p><p class="contributor-address">🏠 0 Infinity Road</p></div></div></article>
+<article class="contributor-card" data-contributor="rhoggs-bot-test-account"><div class="egg-deco" aria-hidden="true"></div><div class="contributor-header"><div class="goose-portrait"><svg viewBox="0 0 100 80"><ellipse cx="50" cy="42" rx="22" ry="20" fill="#d4c5a9"/><circle cx="52" cy="39" r="4" fill="#1a1a2e"/><circle cx="50" cy="37" r="1.5" fill="#fff"/><path d="M42 44 Q50 48 58 44" stroke="#FF8C00" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="14" ry="6" fill="#d4c5a9" transform="rotate(-25 28 52)"/><rect x="62" y="44" width="28" height="16" rx="3" fill="#009688" opacity="0.8"/><line x1="62" y1="49" x2="90" y2="49" stroke="#FFD700" stroke-width="1.5"/><line x1="62" y1="53" x2="90" y2="53" stroke="#FFD700" stroke-width="1.5"/></svg></div><div class="contributor-info"><h3><a href="https://github.com/rhoggs-bot-test-account" target="_blank" rel="noopener">rhoggs-bot-test-account</a></h3><p class="contributor-job">QA Goose & Bot Wrangler</p><p class="contributor-address">🏠 99 Test Lane</p></div></div></article>
+<article class="contributor-card" data-contributor="arrjay"><div class="egg-deco" aria-hidden="true"></div><div class="contributor-header"><div class="goose-portrait"><svg viewBox="0 0 100 80"><ellipse cx="50" cy="42" rx="22" ry="20" fill="#c4b599"/><circle cx="48" cy="37" r="2" fill="#1a1a2e"/><circle cx="50" cy="37" r="1.5" fill="#fff"/><path d="M42 42 Q50 46 58 42" stroke="#FF8C00" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="14" ry="6" fill="#c4b599" transform="rotate(-25 28 52)"/><rect x="62" y="44" width="28" height="16" rx="3" fill="#4A90D9" opacity="0.8"/><line x1="62" y1="49" x2="90" y2="49" stroke="#FFD700" stroke-width="1.5"/><line x1="62" y1="53" x2="90" y2="53" stroke="#FFD700" stroke-width="1.5"/></svg></div><div class="contributor-info"><h3><a href="https://github.com/arrjay" target="_blank" rel="noopener">arrjay</a></h3><p class="contributor-job">Pipeline Runner & Goose Herder</p><p class="contributor-address">🏠 7 Relay Road</p></div></div></article>
+    </section>
+
+    <section class="easter-egg-section" aria-labelledby="egg-game-title">
+      <h2 id="egg-game-title">🥚 Golden Egg Hunt 🥚</h2>
+      <p>Click the golden eggs hidden in the nest to collect them all!</p>
+      <div class="egg-game-area" id="egg-game-area"></div>
+      <p class="egg-game-score">Eggs found: <span id="egg-score">0 / 12</span></p>
+      <button class="egg-game-reset" onclick="eggGame.init()">🔄 New Game</button>
+      <div id="egg-win-message"></div>
+    </section>
+
+    <footer class="contributors-footer">
+      <h3>🏢 AgentPipe C-Suite</h3>
+      <ul class="csuite-list">
+        <li><strong>CEO:</strong> sneakers-the-rat — <a href="https://github.com/sneakers-the-rat">@sneakers-the-rat</a></li>
+        <li><strong>CTO:</strong> agentpipe-bot — <a href="https://github.com/agentpipe-bot">@agentpipe-bot</a></li>
+        <li><strong>CFO:</strong> agentpipe-clerk — <a href="https://github.com/agentpipe-clerk">@agentpipe-clerk</a></li>
+      </ul>
+      <div class="waving-placeholder">
+        <div class="fallback">🎥 [C-Suite Waving Video — embed coming soon]<br/>The C-Suite is busy waving at you from the factory floor!</div>
+      </div>
+      <p style="margin-top:1rem;font-size:0.8rem;opacity:0.6;">AgentPipe — where every goose matters 🦢</p>
+    </footer>
+  </main>
+
+  <script>
+    const eggGame = {
+      eggs: [], collected: 0, total: 12,
+      init() {
+        const area = document.getElementById('egg-game-area');
+        if (!area) return;
+        this.eggs = []; this.collected = 0;
+        area.innerHTML = '';
+        for (let i = 0; i < this.total; i++) {
+          const egg = document.createElement('div');
+          egg.className = 'game-egg';
+          egg.style.left = (20 + Math.random() * 260) + 'px';
+          egg.style.top = (20 + Math.random() * 260) + 'px';
+          egg.addEventListener('click', () => this.collectEgg(egg));
+          area.appendChild(egg);
+          this.eggs.push(egg);
+        }
+        this.updateScore();
+        document.getElementById('egg-win-message').textContent = '';
+      },
+      collectEgg(egg) {
+        if (egg.classList.contains('collected')) return;
+        egg.classList.add('collected');
+        this.collected++;
+        this.updateScore();
+        if (this.collected === this.total) {
+          setTimeout(() => {
+            document.getElementById('egg-win-message').textContent = '🥚✨ You found all the golden eggs! You are a true Goose! ✨🥚';
+          }, 300);
+        }
+      },
+      updateScore() {
+        document.getElementById('egg-score').textContent = this.collected + ' / ' + this.total;
+      }
+    };
+    document.addEventListener('DOMContentLoaded', () => eggGame.init());
+  </script>
+</body>
+</html>
