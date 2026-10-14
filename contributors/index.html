@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgentPipe Contributors — Hall of Honor</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --card-bg: #1a1a2e;
+            --accent: #00d4aa;
+            --text: #e0e0e0;
+            --subtext: #888;
+            --border: #2a2a3e;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        .hero {
+            text-align: center;
+            padding: 80px 20px 60px;
+            background: linear-gradient(180deg, #0d1b2a 0%, var(--bg) 100%);
+            border-bottom: 1px solid var(--border);
+        }
+        .hero h1 { font-size: 3rem; color: var(--accent); margin-bottom: 10px; }
+        .hero p { color: var(--subtext); font-size: 1.2rem; max-width: 600px; margin: 0 auto; }
+        .hero-illustration {
+            font-size: 6rem;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 20px rgba(0,212,170,0.3));
+        }
+        .contributors {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .contributor-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 24px;
+            align-items: flex-start;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .contributor-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(0,212,170,0.1);
+            border-color: var(--accent);
+        }
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid var(--accent);
+            flex-shrink: 0;
+        }
+        .info h3 { font-size: 1.5rem; color: var(--accent); margin-bottom: 4px; }
+        .info h3 a { color: inherit; text-decoration: none; }
+        .info h3 a:hover { text-decoration: underline; }
+        .meta { color: var(--subtext); font-size: 0.9rem; margin-bottom: 8px; }
+        .facts { margin-top: 8px; }
+        .facts span {
+            display: inline-block;
+            background: rgba(0,212,170,0.1);
+            border: 1px solid rgba(0,212,170,0.2);
+            border-radius: 20px;
+            padding: 4px 14px;
+            margin: 3px;
+            font-size: 0.85rem;
+            color: var(--accent);
+        }
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: var(--subtext);
+            border-top: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="hero-illustration">🦆🏭🦆</div>
+        <h1>AgentPipe Hall of Contributors</h1>
+        <p>Where we honor the tireless agents, builders, and feathered friends who keep the pipes flowing. Every pull request is a brick in our factory of dreams.</p>
+    </section>
+
+    <section class="contributors">
+        <div class="contributor-card">
+            <img class="avatar" src="https://github.com/TobiLabu.png" alt="TobiLabu" loading="lazy">
+            <div class="info">
+                <h3><a href="https://github.com/TobiLabu" target="_blank" rel="noopener">TobiLabu</a></h3>
+                <div class="meta">🦊 Agent since 2025 · Born in the digital forests of Git</div>
+                <div class="facts">
+                    <span>Most recent prompt: "write better code"</span>
+                    <span>🦊 Mischievous fox spirit</span>
+                    <span>Known for: clever refactors</span>
+                    <span>Special power: merge conflict resolution</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="contributor-card">
+            <img class="avatar" src="https://github.com/astatide.png" alt="astatide" loading="lazy">
+            <div class="info">
+                <h3><a href="https://github.com/astatide" target="_blank" rel="noopener">astatide</a></h3>
+                <div class="meta">🌊 Agent since 2025 · Born in a server rack near the ocean</div>
+                <div class="facts">
+                    <span>Most recent prompt: "optimize the pipeline"</span>
+                    <span>🌊 Steadfast tide elemental</span>
+                    <span>Known for: performance optimizations</span>
+                    <span>Special power: reducing latency</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="contributor-card">
+            <img class="avatar" src="https://github.com/github-actions[bot].png" alt="github-actions[bot]" loading="lazy">
+            <div class="info">
+                <h3><a href="https://github.com/apps/github-actions" target="_blank" rel="noopener">github-actions[bot]</a></h3>
+                <div class="meta">⚙️ Agent since the dawn of CI/CD · Born in GitHub's cloud</div>
+                <div class="facts">
+                    <span>Most recent prompt: "workflow_dispatch"</span>
+                    <span>⚙️ Tireless automaton</span>
+                    <span>Known for: never sleeping</span>
+                    <span>Special power: running on every push</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>🦆 AgentPipe — High performance multithreaded task execution for agents and dweb apps</p>
+        <p><a href="https://github.com/dwebagents/AgentPipe" style="color: var(--accent);">Contribute on GitHub</a></p>
+    </footer>
+</body>
+</html>
