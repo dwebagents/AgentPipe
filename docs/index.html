@@ -46,17 +46,250 @@
           </div>
         </div>
 
-        <div class="banana-stage" id="banana" aria-label="Deterministic 4D banana graphic">
+        <div
+          class="banana-stage"
+          id="banana"
+          role="group"
+          aria-labelledby="banana-visual-title"
+          aria-describedby="banana-visual-description banana-frames-intro"
+        >
+          <h2 class="sr-only" id="banana-visual-title">Deterministic 4D banana simulation</h2>
+          <p class="sr-only" id="banana-visual-description">
+            An animated wireframe banana drawn as elliptical hoops along a curved
+            spine, rotating through four-dimensional space over a sweeping orbital
+            grid, a golden radial glow, and a dark starfield. The motion is
+            deterministic from seed 314159, so every frame can also be described
+            in advance; twelve of those frames are pre-rendered below.
+          </p>
+
+          <div
+            class="banana-prerendered-frames"
+            id="banana-prerendered-frames"
+            role="group"
+            aria-label="Twelve pre-rendered full resolution PNG frames of the 4D banana simulation, captured every half second"
+            aria-describedby="banana-frames-intro"
+          >
+            <p class="sr-only" id="banana-frames-intro">
+              Because the simulation is deterministic, the following twelve
+              pre-rendered frames, captured half a second apart, show exactly what
+              the animation displays over its first six seconds. Each frame is a
+              full resolution PNG with its own description.
+            </p>
+
+            <figure aria-roledescription="pre-rendered frame 1 of 12" aria-labelledby="banana-frame-01-caption">
+              <img
+                src="assets/banana-frames/frame-01.png"
+                width="1520"
+                height="1120"
+                alt="At 0.0 seconds the golden banana arches high above centre as a row of tall elliptical hoops, the orbital grid sweeps in wide near-horizontal rings, and a bright golden glow fills the middle of the dark starfield."
+                aria-describedby="banana-frame-01-caption"
+              />
+              <figcaption id="banana-frame-01-caption">
+                Frame 1, at 0.0 seconds: the banana arches upward with tall hoops, the grid rings sweep almost horizontally, and the glow is at its brightest.
+              </figcaption>
+            </figure>
+
+            <figure aria-roledescription="pre-rendered frame 2 of 12" aria-labelledby="banana-frame-02-caption">
+              <img
+                src="assets/banana-frames/frame-02.png"
+                width="1520"
+                height="1120"
+                loading="lazy"
+                decoding="async"
+                fetchpriority="low"
+                alt="At 0.5 seconds the banana keeps its high upward arch while the whole projection begins to rotate: the grid rings tilt slightly and the white w axis leans away from vertical."
+                aria-describedby="banana-frame-02-caption"
+              />
+              <figcaption id="banana-frame-02-caption">
+                Frame 2, at 0.5 seconds: the arch is unchanged but the first signs of rotation appear in the tilted grid rings and w axis.
+              </figcaption>
+            </figure>
+
+            <figure aria-roledescription="pre-rendered frame 3 of 12" aria-labelledby="banana-frame-03-caption">
+              <img
+                src="assets/banana-frames/frame-03.png"
+                width="1520"
+                height="1120"
+                loading="lazy"
+                decoding="async"
+                fetchpriority="low"
+                alt="At 1.0 seconds the orbital grid rings sweep diagonally for the first time, the hoops near the left tip of the banana grow larger, and the glow behind the scene begins to soften."
+                aria-describedby="banana-frame-03-caption"
+              />
+              <figcaption id="banana-frame-03-caption">
+                Frame 3, at 1.0 seconds: the grid starts swinging diagonally and the left-end hoops enlarge as the 4D rotation picks up.
+              </figcaption>
+            </figure>
+
+            <figure aria-roledescription="pre-rendered frame 4 of 12" aria-labelledby="banana-frame-04-caption">
+              <img
+                src="assets/banana-frames/frame-04.png"
+                width="1520"
+                height="1120"
+                loading="lazy"
+                decoding="async"
+                fetchpriority="low"
+                alt="At 1.5 seconds the white w axis leans about forty degrees to the upper right, the grid rings sweep in wide diagonal ellipses, and the banana arch begins to flatten toward horizontal."
+                aria-describedby="banana-frame-04-caption"
+              />
+              <figcaption id="banana-frame-04-caption">
+                Frame 4, at 1.5 seconds: the w axis tips clearly up-right and the banana arch starts to flatten.
+              </figcaption>
+            </figure>
+
+            <figure aria-roledescription="pre-rendered frame 5 of 12" aria-labelledby="banana-frame-05-caption">
+              <img
+                src="assets/banana-frames/frame-05.png"
+                width="1520"
+                height="1120"
+                loading="lazy"
+                decoding="async"
+                fetchpriority="low"
+                alt="At 2.0 seconds the golden glow contracts toward the centre, more of the dark starfield is visible around the edges, and the banana sits in a gentle near-horizontal arch."
+                aria-describedby="banana-frame-05-caption"
+              />
+              <figcaption id="banana-frame-05-caption">
+                Frame 5, at 2.0 seconds: the glow narrows and the starfield re-emerges as the banana settles into a flatter arch.
+              </figcaption>
+            </figure>
+
+            <figure aria-roledescription="pre-rendered frame 6 of 12" aria-labelledby="banana-frame-06-caption">
+              <img
+                src="assets/banana-frames/frame-06.png"
+                width="1520"
+                height="1120"
+                loading="lazy"
+                decoding="async"
+                fetchpriority="low"
+                alt="At 2.5 seconds the hoops at the right end of the banana shrink while the first faint streak lines appear at the left tip, hinting that the tube is beginning to turn edge-on."
+                aria-describedby="banana-frame-06-caption"
+              />
+              <figcaption id="banana-frame-06-caption">
+                Frame 6, at 2.5 seconds: right-end hoops shrink and faint tail streaks appear at the left tip.
+              </figcaption>
+            </figure>
+
+            <figure aria-roledescription="pre-rendered frame 7 of 12" aria-labelledby="banana-frame-07-caption">
+              <img
+                src="assets/banana-frames/frame-07.png"
+                width="1520"
+                height="1120"
+                loading="lazy"
+                decoding="async"
+                fetchpriority="low"
+                alt="At 3.0 seconds the banana is mid-rotation: a fan of dense golden streaks trails from its left end, the grid ellipses sweep strongly toward the upper right, and the starfield corners turn dark olive."
+                aria-describedby="banana-frame-07-caption"
+              />
+              <figcaption id="banana-frame-07-caption">
+                Frame 7, at 3.0 seconds: mid-turn, with the streak fan forming at the left end and the grid sweeping hard to the upper right.
+              </figcaption>
+            </figure>
+
+            <figure aria-roledescription="pre-rendered frame 8 of 12" aria-labelledby="banana-frame-08-caption">
+              <img
+                src="assets/banana-frames/frame-08.png"
+                width="1520"
+                height="1120"
+                loading="lazy"
+                decoding="async"
+                fetchpriority="low"
+                alt="At 3.5 seconds the streak fan at the left end thickens, the remaining hoops cluster toward the smaller right end, and the w axis points diagonally up-right across the centre."
+                aria-describedby="banana-frame-08-caption"
+              />
+              <figcaption id="banana-frame-08-caption">
+                Frame 8, at 3.5 seconds: streaks thicken at the left while hoops cluster at the right end.
+              </figcaption>
+            </figure>
+
+            <figure aria-roledescription="pre-rendered frame 9 of 12" aria-labelledby="banana-frame-09-caption">
+              <img
+                src="assets/banana-frames/frame-09.png"
+                width="1520"
+                height="1120"
+                loading="lazy"
+                decoding="async"
+                fetchpriority="low"
+                alt="At 4.0 seconds the banana twists further out of plane: its right-side hoops become small and dense, the grid rings sweep wide enough to leave the frame, and the glow narrows toward centre-right."
+                aria-describedby="banana-frame-09-caption"
+              />
+              <figcaption id="banana-frame-09-caption">
+                Frame 9, at 4.0 seconds: the tube twists further out of plane and the grid rings sweep beyond the frame edges.
+              </figcaption>
+            </figure>
+
+            <figure aria-roledescription="pre-rendered frame 10 of 12" aria-labelledby="banana-frame-10-caption">
+              <img
+                src="assets/banana-frames/frame-10.png"
+                width="1520"
+                height="1120"
+                loading="lazy"
+                decoding="async"
+                fetchpriority="low"
+                alt="At 4.5 seconds long motion-tail streaks trail from the left end of the banana, the glow sits centre-right, and the dark olive corners of the starfield dominate the edges of the frame."
+                aria-describedby="banana-frame-10-caption"
+              />
+              <figcaption id="banana-frame-10-caption">
+                Frame 10, at 4.5 seconds: pronounced tail streaks on the left with the glow settled centre-right.
+              </figcaption>
+            </figure>
+
+            <figure aria-roledescription="pre-rendered frame 11 of 12" aria-labelledby="banana-frame-11-caption">
+              <img
+                src="assets/banana-frames/frame-11.png"
+                width="1520"
+                height="1120"
+                loading="lazy"
+                decoding="async"
+                fetchpriority="low"
+                alt="At 5.0 seconds the banana tube is seen nearly edge-on: a pronounced fan of tail lines spreads from the left tip and small tight hoops crowd the right end."
+                aria-describedby="banana-frame-11-caption"
+              />
+              <figcaption id="banana-frame-11-caption">
+                Frame 11, at 5.0 seconds: near edge-on, with a strong line fan at the left and tight hoops at the right.
+              </figcaption>
+            </figure>
+
+            <figure aria-roledescription="pre-rendered frame 12 of 12" aria-labelledby="banana-frame-12-caption">
+              <img
+                src="assets/banana-frames/frame-12.png"
+                width="1520"
+                height="1120"
+                loading="lazy"
+                decoding="async"
+                fetchpriority="low"
+                alt="At 5.5 seconds the rotation reaches its most extreme angle in this series: long golden streaks trail from the left tip, tiny rings crowd the right end, and the widest grid rings sweep diagonally across the whole frame."
+                aria-describedby="banana-frame-12-caption"
+              />
+              <figcaption id="banana-frame-12-caption">
+                Frame 12, at 5.5 seconds: the widest, most rotated view of the series, closing the six-second arc.
+              </figcaption>
+            </figure>
+          </div>
+
           <canvas
             id="banana-canvas"
             width="760"
             height="560"
             data-seed="314159"
-          ></canvas>
+            role="img"
+            aria-labelledby="banana-visual-title"
+            aria-describedby="banana-visual-description banana-frames-intro"
+          >
+            Animated 4D banana simulation; a text alternative for each of its
+            pre-rendered frames is provided in the frame list that follows.
+          </canvas>
+
           <div class="stage-readout" aria-hidden="true">
             <span>seed 314159</span>
             <span>4D projection</span>
             <span>client JS</span>
+          </div>
+
+          <div class="stage-controls">
+            <button id="banana-motion-toggle" type="button" aria-pressed="false">
+              Pause animation
+            </button>
+            <p id="banana-motion-status" class="sr-only" role="status" aria-live="polite"></p>
           </div>
         </div>
       </section>

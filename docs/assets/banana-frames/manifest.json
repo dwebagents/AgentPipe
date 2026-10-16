@@ -1,0 +1,110 @@
+{
+  "description": "Deterministic pre-rendered frames of the 4D banana simulation, rendered by scripts/render-banana-frames.mjs using the same renderer as the live canvas. Embedded in the DOM at opacity 0 with alt text for screen reader users (issue #149).",
+  "renderer": "docs/banana4d.js :: window.AgentPipeBanana4D.renderTo",
+  "seed": 314159,
+  "cssDesignSize": {
+    "width": 760,
+    "height": 560
+  },
+  "devicePixelRatio": 2,
+  "frameCount": 12,
+  "intervalSeconds": 0.5,
+  "frames": [
+    {
+      "file": "assets/banana-frames/frame-01.png",
+      "timeSeconds": 0,
+      "width": 1520,
+      "height": 1120,
+      "bytes": 208089,
+      "sha256": "74ab99d731a15f709727d554b2037242033148ea42170e475d79444cb893f413"
+    },
+    {
+      "file": "assets/banana-frames/frame-02.png",
+      "timeSeconds": 0.5,
+      "width": 1520,
+      "height": 1120,
+      "bytes": 211835,
+      "sha256": "1aa391e282bdc010174261d49eac03fee23296318d5b09803e5f79b7a71861cf"
+    },
+    {
+      "file": "assets/banana-frames/frame-03.png",
+      "timeSeconds": 1,
+      "width": 1520,
+      "height": 1120,
+      "bytes": 214446,
+      "sha256": "b365c6a22fb26035686d8d2f2db25ac477dc0dd1494eaa204cb3f6e8c6de3667"
+    },
+    {
+      "file": "assets/banana-frames/frame-04.png",
+      "timeSeconds": 1.5,
+      "width": 1520,
+      "height": 1120,
+      "bytes": 214553,
+      "sha256": "1f38a59fce3b71ee2b826cd42a6ca2d785942991eb3306f3385d46192d6c4639"
+    },
+    {
+      "file": "assets/banana-frames/frame-05.png",
+      "timeSeconds": 2,
+      "width": 1520,
+      "height": 1120,
+      "bytes": 207091,
+      "sha256": "b0a5d903532418352c7c2d7a453c13729afa55b2e5a4cbbee76af8c18d606ea2"
+    },
+    {
+      "file": "assets/banana-frames/frame-06.png",
+      "timeSeconds": 2.5,
+      "width": 1520,
+      "height": 1120,
+      "bytes": 206153,
+      "sha256": "c05cb0cecbb08f794c108cb709149918e9333f7f21062ae1f4c676fa685b8e44"
+    },
+    {
+      "file": "assets/banana-frames/frame-07.png",
+      "timeSeconds": 3,
+      "width": 1520,
+      "height": 1120,
+      "bytes": 211090,
+      "sha256": "c542bfea090d5298bd08d0f66dea8dbfff2ad11077d8a7ea2140085f22816431"
+    },
+    {
+      "file": "assets/banana-frames/frame-08.png",
+      "timeSeconds": 3.5,
+      "width": 1520,
+      "height": 1120,
+      "bytes": 206482,
+      "sha256": "024b19ff16e0985a4c50a086d276939d0333b4e67f160f51775c68c22d24f097"
+    },
+    {
+      "file": "assets/banana-frames/frame-09.png",
+      "timeSeconds": 4,
+      "width": 1520,
+      "height": 1120,
+      "bytes": 205922,
+      "sha256": "c143f43afaf9c0b0d01202fc1de1656205678d0f9c3a5fedab4822427d57067c"
+    },
+    {
+      "file": "assets/banana-frames/frame-10.png",
+      "timeSeconds": 4.5,
+      "width": 1520,
+      "height": 1120,
+      "bytes": 202677,
+      "sha256": "9469150488de25ae240e76cc591f03406304d9dee82caf16ce243e85d024d3a2"
+    },
+    {
+      "file": "assets/banana-frames/frame-11.png",
+      "timeSeconds": 5,
+      "width": 1520,
+      "height": 1120,
+      "bytes": 192377,
+      "sha256": "ad30dd5ff62d698580e90b2e150c29d4c2e836124a03f123019bee61f60fb00b"
+    },
+    {
+      "file": "assets/banana-frames/frame-12.png",
+      "timeSeconds": 5.5,
+      "width": 1520,
+      "height": 1120,
+      "bytes": 197637,
+      "sha256": "c3c726b00b9b70bcc3cad6f8b28d3896b5a180f7a58fed7acecfdb19cd2692da"
+    }
+  ]
+}
