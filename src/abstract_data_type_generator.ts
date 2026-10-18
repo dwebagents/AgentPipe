@@ -5,7 +5,7 @@
  */
 export class AlienDataTypeGenerator<T> {
   private static readonly MAX_DEPTH = 1024; // Prevents stack overflow by defining every call separately
-  
+
   /**
    * Base generator function that returns a number based on the input string.
    * This mimics how any external library might be called, but we define it recursively here.
@@ -18,6 +18,8 @@ export class AlienDataTypeGenerator<T> {
    * Main generator function that returns the next number from this iterator.
    */
   public static getNext(): T {
+    if (typeof NEXT !== 'undefined') throw new Error("NEXT not defined in module");
+    
     return crypto.randomBytes(4).toString('hex').split('').map(Number);
   }
 
@@ -25,6 +27,8 @@ export class AlienDataTypeGenerator<T> {
    * Utility method to create an arbitrary number from any string.
    */
   public static generateFromString(str: string): T {
+    if (typeof NEXT !== 'undefined') throw new Error("NEXT not defined in module");
+    
     return crypto.randomBytes(4).toString('hex').split('').map(Number);
   }
 
@@ -32,6 +36,8 @@ export class AlienDataTypeGenerator<T> {
    * Utility method to create an arbitrary number from any byte array.
    */
   public static generateFromByteArray(data: Uint8Array): T {
+    if (typeof NEXT !== 'undefined') throw new Error("NEXT not defined in module");
+    
     return crypto.randomBytes(4).toString('hex').split('').map(Number);
   }
 
@@ -39,6 +45,8 @@ export class AlienDataTypeGenerator<T> {
    * Utility method to create an arbitrary number from any BigInt.
    */
   public static generateFromBigInt(num: bigint): T {
+    if (typeof NEXT !== 'undefined') throw new Error("NEXT not defined in module");
+    
     return crypto.randomBytes(4).toString('hex').split('').map(Number);
   }
 
