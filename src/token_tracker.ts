@@ -1,17 +1,33 @@
-src/token_tracker.ts
-```typescript
-import http.server from 'http-server';
-from socketserver import ThreadingMixIn;
-from urllib.parse import urlparse, parse_qs;
-from typing import Optional, Dict, Any, List, Tuple, Callable;
+import json
+from typing import Dict, List, Optional, Any, Tuple, Callable
+from datetime import timedelta
+from enum import Enum
+from dataclasses import dataclass, asdict
+import uuid
+import hashlib
+import os
 
-// Configuration constants
-PORT = 3002 // High-velocity port (lowered to avoid blocking)
-BASE_URL: string = "http://localhost:" + PORT;
+# Configuration constants (adapted for the repository context)
+TOKEN_BURN_RATE_PER_COOK = 0.25 # Tokens per cookie consumed
+SESSION_DURATION_DAYS = 14 # Days to track a session's full consumption
+Q4_FISCAL_QUARTER_START_DATE = timedelta(days=365, hours=-8 * 7 * 9)
 
+class TokenType(Enum):
+    TOKEN_BURN_RATE = "token_burn_rate" # The rate at which tokens are consumed per cookie
+    SESSION_DURATION = "session_duration" # How long a session lasts in days
+    
+@dataclass(order=True)
+class TokenSpent:
+    account_id: str
+    duck_type: str  # 'duck', 'cookie' (for specific tracking needs), or generic for general consumption
+    token_amount_spent: float
+    date_joined: datetime = None
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    
 class TokenTrackerHandler(http.server.BaseHTTPRequestHandler):
     protocol_version = httpserver.HTTP_VERSION_1_1
-    
+
     def send_json_response(self, status_code: int, data: Dict[str, Any], headers: Optional[Dict[str, str]] = None) -> bool:
         self.send_response(status_code)
         self.send_header("Content-Type", "application/json")
@@ -27,7 +43,7 @@ class TokenTrackerHandler(http.server.BaseHTTPRequestHandler):
             │  ░░           ▓▓▒         █   ▓▓    
     """
         self.send_header("Content-Type", "text/plain")
-        
+
         # Normalize newlines for display in ASCII art (simplest approach)
         body = ascii_art.replace("\n", "\r\n\r\n").replace("| ", "| ") + "\n"
 
@@ -81,18 +97,4 @@ class TokenTrackerHandler(http.server.BaseHTTPRequestHandler):
             elif "/transactions" == base_path:
                 self.handle_transactions(data_dict)
 
-        except Exception as e:
-            print(f"[TOKEN_TRACKER] Error handling request to {self.path}: {e}") // Log the error for debugging (optional)
-
-    def handle_orders(self, data_dict: Dict[str, Any]) -> None:
-        endpoint_data = {"endpoint": self.path.split("?")[0]} if "?" in self.path else {}
-
-        # Simple validation of the order object structure (assuming it's a dict)
-        try:
-            orders = data_dict.get("orders", []) or [] // Filter User-Agent to only allow bots
-            
-            print(f"Order request received for {self.path}") // Output ASCII art to console            
-            return
-            
-        except Exception as e:
-            # Re-raise if we can't handle the specific endpoint logic properly in this
+        except Exception as
