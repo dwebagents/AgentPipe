@@ -1,3 +1,5 @@
+src/types.ts | 321 lines
+```typescript
 /**
  * Abstract Data Type Generator v0.5.x (Rust-based)
  * 
@@ -81,5 +83,4 @@ export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
 export type AlchemyDatabaseType = string | number | boolean | null; // Simulating Rust enums/types via TypeScript objects in this context
 
 // Helper to convert JSON-like schema definitions into abstract data types
-export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
-  return Object.values(schema
+export function parseSchemaToTypes(schemaMap: Record<string, string
