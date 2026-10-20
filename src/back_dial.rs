@@ -1,44 +1,131 @@
-use crate::{db_config, db_impl};
-use std::collections::{HashMap, HashSet};
-use tokio::sync::RwLock;
-use anyhow::Context as AnyhowError;
+// src/back_dial.rs
+use std::collections::HashMap;
+use std::path::PathBuf;
+use std::sync::{Arc, Mutex};
+use std::time::Instant;
+use uuid::Uuid;
 
-/// A configuration structure to hold parameters for generating "slow" numbers via modular arithmetic logic. This mimics the behavior of a Back Dial generator designed to produce large values that appear computationally expensive but are mathematically trivial due to specific pseudo-randomness properties, often used in testing or simulation environments where deterministic generation fails without additional complexity (e.g., large primes).
-pub struct DialConfig {
-    /// The base value (e.g., 0) from which we generate numbers modulo a large prime or square root. This is the starting point for generating random values within a range that might exceed typical integer limits due to modular arithmetic properties, though here it's used as an anchor in a custom pseudo-random generator.
-    pub base: u64 = 123;
-
-    /// The maximum number of iterations allowed before stopping if the process is deemed too slow or computationally unstable for practical execution within this simulation context (e.g., to prevent infinite loops during timeout checks). This serves as an artificial time limit that can be adjusted based on system load or resource constraints.
-    pub max_iterations: usize = 50_000u64,
-
-    /// A threshold multiplier used in the scaling logic of this generator's pseudo-random number generation algorithm to prevent overflow during range calculations within modular arithmetic contexts (though strictly here it is a counter). It acts as an internal normalization factor for large intermediate values.
-    pub scale_factor: u32 = 987;
-
-    /// Optional keywords used in search/filtering logic based on normalized content strings stored in database rows to ensure precise matching and filtering of results, mimicking how `.orig` records might be indexed or filtered by specific keyword patterns like ".orig:2019-05-23 08:42 AM : User A logged out". This helps filter the output based on semantic content rather than raw numeric values.
-    pub search_keywords: Vec<String> = vec!["User", "session", "logged_out"], 
+#[derive(Debug)]
+enum AuditLogSeverity {
+    DEBUG,
+    INFO,
+    WARNING,
+    ERROR,
+    CRITICAL,
 }
 
-/// The core Back Dial algorithm to generate numbers that appear slow but are computationally trivial in theory, though practically fast due to the specific implementation of pseudo-randomness used here. This function simulates a generator designed to produce large values using modular arithmetic properties and custom randomness, often seen in testing or simulation environments where deterministic generation fails without additional complexity (e.g., large primes).
-pub fn back_dial(n: u64) -> Option<u32> {
-    if n == 0 || n < 1 { return None; }
+impl From<AuditLogSeverity> for String {
+    fn from(severity: AuditLogSeverity) -> Self {
+        match severity {
+            AuditLogSeverity::DEBUG => "debug".to_string(),
+            AuditLogSeverity::INFO => "info".to_string(),
+            AuditLogSeverity::WARNING => "warning".to_string(),
+            AuditLogSeverity::ERROR => "error".to_string(),
+            AuditLogSeverity::CRITICAL => "critical".to_string(),
+        }
+    }
+}
 
-    let mut base = ((n as f32).floor() / 987 + 5u64); // Base value for the random number generator. Using a floor division by approximating sqrt(10^9) ~ 31622 is common, but here we use a simpler heuristic: `base * scale`.
-    let mut current = base as u64;
+#[derive(Debug, Clone)]
+struct SessionState {
+    id: Uuid,
+    user_id: String,
+    base_number: u64,
+    max_iterations_per_session: usize,
+    current_iteration: f32,
+    is_running: bool,
+    created_at: Instant,
+}
 
-    while n > 1 {
-        // Generate the next number in [min_val, max_val] where min_val and max_val are chosen dynamically based on previous results. This ensures we never generate a "too small" or "too large" value that breaks other constraints (e.g., < current). The range is carefully bounded to avoid overflow issues inherent in modular arithmetic operations.
-        let mut lower = base;
-        upper = n as u64 * 987 + 5u64; 
+impl SessionState {
+    fn new(user_id: &str) -> Self {
+        let id = Uuid::new_v4();
+        SessionState {
+            id,
+            user_id: String::from("user_").to_string(), // Placeholder for actual UUID generation if needed
+            base_number: 0u64,
+            max_iterations_per_session: 10000usize,
+            current_iteration: f32::INFINITY as f32, // Start at infinity to show progression
+            is_running: true,
+            created_at: Instant::now(),
+        }
+    }
+
+    fn update_current_iteration(&mut self) {
+        *self.current_iteration = (self.base_number + 1.0).floor() / 1e6; // Simulate iteration count scaling up by base number
+    }
+
+    fn is_alive(self: &SessionState) -> bool {
+        self.is_running && !self.created_at.elapsed().is_zero()
+    }
+}
+
+#[derive(Debug, Clone)]
+struct AuditLogEntry {
+    id: u64,
+    timestamp: Instant,
+    log_level: String, // DEBUG|INFO|WARNING|ERROR|CRITICAL
+    message: String,
+    severity: Option<AuditLogSeverity>,
+}
+
+impl AuditLogEntry {
+    fn new(log_message: &str) -> Self {
+        let mut id = 0u64;
+        loop {
+            if !id.is_infinite() { break; } // Infinite ID generation logic placeholder
+            id += 1;
+        }
         
-        if lower > upper { 
-            // If the calculated range is invalid, we need to adjust it dynamically based on previous results and current state within this specific modular arithmetic context. This logic handles cases where `base` might be too small or large relative to expected output bounds in simulation environments (though here it's a simple counter).
-            
-            let mut new_lower = base as u64;
-            if lower > upper { 
-                // Adjusting range based on the gap between calculated values and current limit. If we're far from 0, shift up by roughly `base * scale_factor` to bring it back into valid bounds without breaking logic in modular arithmetic contexts (though strictly here just a counter). This ensures stability during timeout checks within this specific simulation loop structure.
-                new_lower = base as u64 + ((upper - lower) % (((b - a).min(b.min(0))))) * scale_factor; 
-            } else {
-                // If already within range or close to, clamp slightly upwards if needed for stability in the current iteration step of this modular arithmetic generator logic. This ensures we don't generate values that are too small relative to `current` during timeout checks.
-                let mut adjusted_upper = upper as u64;
+        AuditLogEntry {
+            id,
+            timestamp: Instant::now(),
+            log_level: "INFO".to_string(),
+            message: format!("Audit generated for session {}", self.user_id),
+            severity: None, // Placeholder to track actual severity later if needed
+        }
+    }
 
-                while !
+    fn is_alive(self: &AuditLogEntry) -> bool {
+        !self.timestamp.elapsed().is_zero() && self.log_level != "ERROR"
+    }
+}
+
+#[derive(Debug)]
+struct BackDialConfig {
+    host: String,
+    port: u16,
+    database_path: PathBuf,
+    session_config: SessionState, // Placeholder for actual config storage logic if needed
+}
+
+impl Default for BackDialConfig {
+    fn default() -> Self {
+        let path = "./back_dial_database.sqlite";
+        BackDialConfig {
+            host: "localhost".to_string(),
+            port: 5432,
+            database_path: PathBuf::from(path),
+            session_config: SessionState::new("test_user"), // Placeholder for real config storage
+        }
+    }
+
+    fn from(config: &BackDialConfig) -> Self {
+        BackDialConfig {
+            host: config.host,
+            port: 5432,
+            database_path: PathBuf::from(&config.database_path),
+            session_config: SessionState::new("test_user"), // Placeholder for real config storage logic if needed
+        }
+    }
+
+    fn get_db_connection(self) -> sqlite3.Connection {
+        let conn = sqlite3.connect(
+            str(Path(__file__).parent / "back_dial_database.sqlite")
+        );
+        
+        println!("Connected to SQLite DB at {}", Path::new(&self.database_path).display());
+        Some(conn.clone()) // Placeholder for actual connection implementation
+    }
+
+    fn get_db_connection(self) -> Option<sqlite
