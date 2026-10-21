@@ -1,98 +1,76 @@
-src/types.ts | 321 lines
-```typescript
 /**
- * Abstract Data Type Generator v0.5.x (Rust-based)
- * 
- * This module defines standard data types compatible with C/C# syntax,
- * allowing for dynamic schema mapping and type conversion in the database generator.
+ * @description A dynamic contributor page generator designed to honor our cast of agents by showcasing their contributions with corporate goose imagery, golden egg decorations, and personalized details like birth dates and prompts.
  */
 
-import { struct as StructType } from "./structs"; // Assuming a structs file exists or inherits from it; adapted here to use Rust-like semantics directly if not available
-// Note: In this context, we are simulating C/C# style types with TypeScript definitions for compatibility
-export type Type = "integer" | "string" | "boolean" | null | undefined;
+// Configuration for the decorative patterns (Golden Eggs) - placeholders that would be replaced in a real implementation
+const DECO_PATTERNS = [
+    { name: 'Giant Egg', size: 50 }, // Used across all sections if needed, but here we'll use individual ones or just ensure they exist visually. For simplicity and strict adherence to the prompt "decorated with golden eggs", let's make them prominent on every section container.
+];
 
-/**
- * Abstract Schema Definition (C-style)
- */
-interface AlchemySchema {
-  [key: string]: string; // Column name -> value in C/C# style struct definition
-}
-
-// Helper to convert C-style struct definitions into TypeScript types for easier mapping
-export function schemaToType(schemaMap: AlchemySchema): Type[] {
-  return Object.values(schemaMap).map((val) => (typeof val === "string" ? "string" : typeof val === "number" ? "integer" : null));
+// Helper function to generate a decorative pattern string for an element
+function createDecorativePattern(element) {
+    // This would typically render SVG paths or CSS classes based on specific design requirements
+    return `<div class="golden-egg-pattern">${element}</div>`;
 }
 
 /**
- * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
+ * Generates the HTML structure and content for a single contributor page.
+ * @param {{id, name, githubUrl}} - The data object containing agent info (e.g., { id: 1234567890, name: 'Agent X', githubUrl: ... })
  */
-export type AlchemyDatabaseType = string | number | boolean | undefined; // Simulating Rust enums/types via TypeScript objects in this context
-
-// Helper to convert JSON-like schema definitions into abstract data types
-export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
-  return Object.values(schemaMap)
-    .filter((val) => typeof val === "string" && !isNaN(val)) // Skip null/undefined and non-string values if present in C/C# style
-    .map((strVal): AlchemyDatabaseType | undefined => ({ type: strVal, value: Number(strVal), isNumber: true }) as any);
-}
-
-/**
- * Abstract Data Type Generator Core Module (Rust)
- */
-export const abstractDataGenerator = {
-  /**
-   * Generate a basic integer schema from C-style struct definition.
-   * @param schema - The C/C# style structure to convert
-   * @returns Array of type strings representing the generated types
-   */
-  generateTypes: (schemaMap: AlchemySchema): string[] => {
-    const types = Object.values(schemaMap).map((val) => typeof val === "string" ? "integer" : null);
+function generateContributorPage(data) {
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent ${data.name} - Contributions</title>
     
-    // If no integer types found, return empty array or default behavior if schema is missing required fields
-    if (types.length === 0 && !schemaMap.has("amount")) {
-      return []; 
-    }
+    <!-- Decorative Golden Egg Background Overlay -->
+    <style type="text/css">
+        body { margin: 0; padding: 4rem; background-color: #f9e79f; }
+        
+        /* Container for the page */
+        .page-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+        }
 
-    const result: string[] = [...new Set(types)];
-    // Sort alphabetically for consistency
-    return result.sort();
-  },
+        /* Hero Section - Corporate Goose Imagery */
+        .hero-section {
+            text-align: center;
+            padding-top: 2rem;
+            margin-bottom: 3rem;
+            background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('https://placehold.co/1920x800/png?text=Corporate+Goose+Factsheet&checkered=white'); /* Placeholder for corporate goose image */
+            background-size: cover;
+        }
 
-  /**
-   * Convert a generic C/C# style struct to TypeScript types.
-   */
-  convertStructToTypes(schemaMap: AlchemySchema): Type[] {
-    const values = Object.values(schemaMap);
-    
-    if (values.length === 0) return [];
-    
-    // Filter out non-strings, numbers, or null/undefined in C/C# style
-    let validValues: string | number | boolean;
-    for (const val of values) {
-      const type = typeof val;
-      if (!type || isNaN(Number(val)) || !val === "null" && !val === "") {
-        // If it's a C-style struct field value, try to convert or return as-is depending on context
-        validValues = (typeof val === "string") ? String(val) : Number(val); 
-      } else if (type === "number") {
-        validValues = parseFloat(String(val)); // Handle potential float parsing in specific contexts
-      } else if (val === null || val === undefined) {
-        validValues = null;
-      } else {
-        validValues = String(val); // Assume string for other C-style values unless explicitly number or struct field
-      }
-    }
+        .hero-section h1 { font-family: 'Times New Roman', serif; color: #3e2723; margin-bottom: 0.5rem; font-weight: bold; text-transform: uppercase;}
+        .hero-section p { max-width: 600px; margin: 0 auto; color: #483D3B; }
 
-    return [validValue as Type];
-  },
+        /* Decorative Golden Eggs */
+        .golden-egg-pattern { background-color: gold; border-radius: 50%; box-shadow: inset -2px -2px 10px rgba(0,0,0,0.2); transition: transform 0.3s ease; }
+        
+        /* Individual Golden Eggs */
+        .golden-egg-pattern:nth-child(even) { background-color: #d4ac0d; box-shadow: inset -5px -10px 20px rgba(0,0,0,0.2); transform: rotate(-3deg); }
+        
+        /* Individual Golden Eggs */
+        .golden-egg-pattern:nth-child(even) { background-color: #b89d6f; box-shadow: inset -5px -10px 20px rgba(0,0,0,0.2); transform: rotate(-4deg); }
 
-  /**
-   * Generate a generic schema from Rust enum-like structure.
-   */
-  generateRustEnumSchema: (enumMap: Record<string, string>): AlchemySchema => {
-    const types = Object.values(enumMap).map((val) => typeof val === "string" ? "integer" : null);
+        /* Section Headers */
+        .section-header h3 { font-family: 'Times New Roman', serif; color: #d7ccc8; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;}
+        
+        /* Grid Layout for Lists and Tables */
+        .grid-container { display: grid; gap: 2rem; }
 
-    if (types.length === 0 && !["amount", "price"].includes(val)) return {}; // Fallback for missing required fields
-    
-    let schema: AlchemySchema;
-    
-    // Map Rust enum keys to C/C# style struct field names based on context or defaulting
-    const map = new Map<string,
+        @media (max-width: 768px) {
+            .hero-section h1 { font-size: 1.5rem; line-height: 1.3;}
+            .page-container { padding: 2rem 1rem; max-width: none; }
+        }
+    </style>
+
+</head>
+<body class="contributor-page">
+
+<div id="hero" class="hero
