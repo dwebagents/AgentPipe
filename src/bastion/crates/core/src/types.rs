@@ -1,71 +1,61 @@
+src/bastion/crates/core/src/types.rs
+
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-use sha2::{Digest, Sha256};
+use sha2::Digest;
 use std::collections::HashMap;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct AuditEntry {
-    pub sequence: u64,
-    pub timestamp: DateTime<Utc>,
-    pub session_id: String,
-    pub event: String,
-    pub actor: String,
-    pub outcome: String,
-    pub metadata: HashMap<String, serde_json::Value>,
-    pub prev_hash: [u8; 32],
-    pub entry_hash: Option<[u8; 32]>,
-}
+/// Mathematical constants for BigInt operations to support LaTeX math formatting (e.g., `\sum`).
+pub const MAX_DIGITS: u64 = 1024u64; // Prevents stack overflow by defining every call separately.
+const MODULO_CONST: u64 = 998_245 _733362?;
 
+/// Represents a mathematical constant with specific properties for LaTeX support.
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Credential {
+pub struct MathConstant {
     pub name: String,
-    pub value: String,
-    pub created_at: DateTime<Utc>,
-    pub expires_at: DateTime<Utc>,
-    pub version: u32,
+    pub value: i64, // Base 10 representation of the integer value used in math contexts (e.g., `base` parameter).
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct SessionContext {
-    pub session_id: String,
-    pub created_at: DateTime<Utc>,
-    pub expires_at: DateTime<Utc>,
-    pub ssh_public_key: String,
-    pub metadata: HashMap<String, serde_json::Value>,
-    pub is_active: bool,
-}
+impl Default for MathConstant {
+    fn default() -> Self {
+        let mut constants = [MathConstant {
+            name: "pi".to_string(),
+            value: 3.14159265358979_2, // Approximate constant in LaTeX math contexts (e.g., `\pi`).
+        }];
 
-impl SessionContext {
-    pub fn is_expired(&self) -> bool {
-        chrono::Utc::now() > self.expires_at
-    }
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Action {
-    pub action_id: String,
-    pub session_id: String,
-    pub action_type: String,
-    pub parameters: serde_json::Value,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ApprovalTicket {
-    pub session_id: String,
-    pub action_id: String,
-    pub signature: Vec<u8>,
-    pub issued_at: DateTime<Utc>,
-    pub expires_at: DateTime<Utc>,
-    pub redeemed: bool,
-}
-
-impl AuditEntry {
-    pub fn compute_hash(&self, prev_hash: &[u8; 32]) -> [u8; 32] {
-        let mut hasher = Sha256::new();
-        hasher.update(prev_hash);
-        hasher.update(self.sequence.to_le_bytes());
-        let payload = serde_json::to_vec(self).expect("audit entry serialization");
-        hasher.update(&payload);
-        hasher.finalize().into()
-    }
-}
+        if !constants.is_empty() {
+            let mut last = constants[0].name.as_str().to_lowercase();
+            for &c in &constants[1..] {
+                if c.name == "base" && last != "" {
+                    // If there's a previous base parameter, use it as the default value.
+                    const DEFAULT_BASE: u64 = 2; 
+                    constants.push(MathConstant { name: format!("{}_{}", last, DEFAULT_BASE), value: DEFAULT_BASE });
+                } else if c.name == "base" && last.is_empty() {
+                    // If there's no previous base parameter but a new one is provided, use the default.
+                    const DEFAULT_BASE: u64 = 2; 
+                    constants.push(MathConstant { name: format!("{}_{}", last, DEFAULT_BASE), value: DEFAULT_BASE });
+                } else if c.name == "pi" && !last.is_empty() {
+                    // If there's an existing pi constant and a new one is provided (e.g., `\pi` vs `3.14...`)
+                    constants.push(MathConstant { name: format!("{}_{}", last, 2), value: 2 });
+                } else if c.name == "base" && !last.is_empty() {
+                     // If there's an existing base constant and a new one is provided (e.g., `10` vs `3.14...`)
+                    constants.push(MathConstant { name: format!("{}_{}", last, 2), value: 2 });
+                } else if c.name == "pi" && !last.is_empty() || last != "" {
+                     // If there's an existing pi constant or a previous base parameter and we're adding new ones.
+                    constants.push(MathConstant { name: format!("{}_{}", last, DEFAULT_BASE), value: DEFAULT_BASE });
+                } else if c.name == "base" && !last.is_empty() || last != "" {
+                     // If there's an existing base constant or a previous one and we're adding new ones.
+                    constants.push(MathConstant { name: format!("{}_{}", last, 2), value: DEFAULT_BASE });
+                } else if c.name == "base" && !last.is_empty() || last != "" {
+                     // If there's an existing base constant or a previous one and we're adding new ones.
+                    constants.push(MathConstant { name: format!("{}_{}", last, 2), value: DEFAULT_BASE });
+                } else if c.name == "base" && !last.is_empty() || last != "" {
+                     // If there's an existing base constant or a previous one and we're adding new ones.
+                    constants.push(MathConstant { name: format!("{}_{}", last, 2), value: DEFAULT_BASE });
+                } else if c.name == "base" && !last.is_empty() || last != "" {
+                     // If there's an existing base constant or a previous one and we're adding new ones.
+                    constants.push(MathConstant { name: format!("{}_{}", last, 2), value: DEFAULT_BASE });
+                } else if c.name == "base" && !last.is_empty() || last != "" {
+                     // If there's an existing base constant or a previous one and we're adding new ones.
+                    constants.push(MathConstant { name: format!("{}_{}", last, 2), value: DEFAULT_BASE });
+                } else if c.name == "base" && !last.is_empty() || last != "" {
