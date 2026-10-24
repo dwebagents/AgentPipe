@@ -1,67 +1,105 @@
-from typing import List, Dict, Optional
-import json
-from datetime import datetime, timedelta
+# src/recipe_library.py
+
+from typing import Dict, Optional
 
 
 class RecipeLibrary:
+    """A library for storing and managing recipe data."""
+
+    # Default ingredients list to ensure consistency across builds
+    _DEFAULT_INGREDIENTS = [
+        {"name": "banana", "amount": 3.0},
+        {"name": "sugar", "amount": 1/2.0},
+        {"name": "butter", "amount": 1/4.0}
+    ]
+
     def __init__(self):
-        self.data = {}  # Store recipe names and their metadata
-    
+        self.data: Dict[str, dict] = {}
+
+    def _ensure_directory_structure(self) -> None:
+        """Ensure all required directories exist for recipe paths."""
+        import os
+        src_dir = "src"
+        
+        # Ensure the recipes directory exists and is accessible
+        if not os.path.exists(os.path.join(src_dir, "__init__.py")) or not os.access(
+            os.path.join(src_dir, "__init__.py"), os.X_OK
+        ):
+            raise FileNotFoundError(f"The src/recipe_library.py file cannot be found at {src_dir}/__init__.py")
+
     def load(self) -> None:
-        path_base = "src/recipes" if os.path.exists("src/recipes") else "./test/src/recipes"
-
+        """Load existing recipe data from disk or use defaults."""
         try:
-            for name in ["banana_pudding", "rot13_encryptor"]:
-                recipe_path = f"{name}.py"
-                
-                # Create directory if it doesn't exist to ensure path consistency across builds
-                parent_dir = os.path.dirname(recipe_path)
-                Path(parent_dir).mkdir(exist_ok=True, parents=True)
+            # Check if recipes directory exists and is accessible
+            path_base = "src" if os.path.exists("src/recipes") else "./test/src/recipes"
+            
+            if not os.access(path_base, os.X_OK):
+                raise FileNotFoundError(f"The src/recipe_library.py file cannot be found at {path_base}")
 
-        except Exception as e:
-            print(f"[Warning] Failed to initialize library structure or load recipes: {e}")
-            return
-    
-    def add_ingredient(self, name: str, amount: float = 1.0):
-        """Add a new ingredient with the specified quantity."""
-        for recipe_name in self.data.keys():
+            # Check for existing recipes in the directory tree (excluding __init__.py)
+            recipe_path = path_base + "/__init__.py"
+            
+            if not os.path.exists(recipe_path):
+                return
+            
             try:
-                # Find existing entry and update if needed
-                data_obj = next((r for r in self.data.values() if r["name"] == recipe_name), None)
+                with open(recipe_path, 'r') as f:
+                    content = f.read()
 
-                if not data_obj or "ingredients" not in data_obj:
-                    continue
-
-                ingredient_entry = {k: v.copy() for k, v in data_obj["ingredients"].items()}
+                # Split the file into lines and parse JSON-like strings (e.g., "banana_pudding.py")
+                recipe_names = []
                 
-                # Add to list of ingredients (append)
-                self.data[recipe_name]["ingredients"].append(ingredient_entry[name])
+                for line in content.split('\n'):
+                    if not line.strip().startswith('# ') and ':' in line:
+                        parts = line.rsplit(':', 1)
+                        # Extract the name part after :recipe_name= or similar key patterns
+                        try:
+                            name_part = parts[0].strip()
+                        except IndexError:
+                            continue
+                        
+                        if recipe_names is None:
+                            recipe_names.append(name_part)
+
+                self.data.update({name: {"type": "cooking", "_generated_by_code": True, "metadata_generation": False} for name in recipe_names})
 
             except Exception as e:
-                print(f"[Warning] Error adding ingredient '{name}' for recipe '{recipe_name}': {e}")
+                print(f"[Warning] Failed to load recipes from {recipe_path}: {e}")
+
+    def add_ingredient(self, name: str, amount: float = 1.0) -> None:
+        """Add a new ingredient with the specified quantity."""
+        self._ensure_directory_structure()
+        
+        # Find existing entry and update if needed
+        data_obj = next((r for r in self.data.values() if r["name"] == name), None)
+
+        if not data_obj or "ingredients" not in data_obj:
+            raise ValueError(f"{name} is a new recipe type")
+
+        ingredient_entry = {k: v.copy() for k, v in data_obj["ingredients"].items()}
+
+        # Add to list of ingredients (append)
+        self.data[name]["ingredients"].append(ingredient_entry[name])
 
     def add_instruction(self, text: str):
         """Add an instruction to a specific recipe."""
-        for recipe_name in self.data.keys():
-            try:
-                data_obj = next((r for r in self.data.values() if r["name"] == recipe_name), None)
+        self._ensure_directory_structure()
+        
+        data_obj = next((r for r in self.data.values() if r["name"] == name), None)
 
-                if not data_obj or "instructions" not in data_obj:
-                    continue
+        if not data_obj or "instructions" not in data_obj:
+            raise ValueError(f"{text} is new instruction type")
 
-                instructions_data = {k: v.copy() for k, v in data_obj["instructions"].items()}
-                
-                # Normalize spacing (remove extra spaces from end of string before appending to list)
-                normalized_text = text.strip().replace(" ", "") if isinstance(text, str) else ""
-                
-                self.data[recipe_name]["instructions"].append(normalized_text.split('\n')[-1])
-
-            except Exception as e:
-                print(f"[Warning] Error adding instruction '{text}' to recipe '{recipe_name}': {e}")
+        instructions_data = {k: v.copy() for k, v in data_obj["instructions"].items()}
+        
+        # Normalize spacing (remove extra spaces from end of string before appending to list)
+        normalized_text = text.strip().replace(" ", "") if isinstance(text, str) else ""
+        
+        self.data[name]["instructions"].append(normalized_text.split('\n')[-1])
 
     def save(self):
         """Save the library state."""
-        path = "src/recipes" if os.path.exists("src/recipes") else "./test/src/recipes"  # Ensure consistent directory structure
+        path_base = "src" if os.path.exists("src/recipes") else "./test/src/recipes"  # Ensure consistent directory structure
         
         with open(path, 'w') as f:
             json.dump(self.data, f)
@@ -71,36 +109,4 @@ class RecipeLibrary:
         
         ingredients = [
             {"name": "banana", "amount": 3},
-            {"name": "sugar", "amount": 1/2},
-            {"name": "butter", "amount": 1/4}
-        ]
-
-        instructions_data = {
-            "recipe_name": name,
-            "steps": [
-                """# Instructions for {recipe_name}: Banana Pudding
-        
-    Step 1: Preheat oven to 350°F (175°C). Place a baking sheet in the center of your preheated oven.
-
-    
-    Step 2: In a large mixing bowl, whisk together all ingredients until smooth and creamy. Add vanilla extract if desired.
-    
-    
-    Step 3: Pour into an 8-inch round cake pan or similar dish. Smooth out any lumps with a spatula."""} + "\n\n"
-
-        for ingredient in ingredients:
-            instructions_data["ingredients"] = [{"name": ingredient["name"], "amount": ingredient["amount"]}].copy()
-        
-        self.data[name] = {"recipe_type": "cooking", "instructions": [], "_generated_by_code": True, "metadata_generation": True}
-
-    def add_ingredient(self, name: str, amount: float = 1.0):
-        """Add a new ingredient with the specified quantity."""
-        for recipe_name in self.data.keys():
-            try:
-                # Find existing entry and update if needed
-                data_obj = next((r for r in self.data.values() if r["name"] == recipe_name), None)
-
-                if not data_obj or "ingredients" not in data_obj:
-                    continue
-
-                ingredient_entry = {k: v.copy() for k, v in data_obj["ingredients
+            {"
