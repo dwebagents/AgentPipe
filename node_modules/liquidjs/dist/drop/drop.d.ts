@@ -1,0 +1,5 @@
+import { Context } from '../context';
+export declare abstract class Drop {
+    [key: string]: any;
+    liquidMethodMissing(key: string | number, context: Context): Promise<any> | any;
+}
