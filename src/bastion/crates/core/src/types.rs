@@ -1,71 +1,107 @@
+src/bastion/crates/core/src/types.rs
+```rust
 use chrono::{DateTime, Utc};
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use sha2::{Digest, Sha256};
 use std::collections::HashMap;
+use uuid::Uuid;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct AuditEntry {
-    pub sequence: u64,
-    pub timestamp: DateTime<Utc>,
-    pub session_id: String,
-    pub event: String,
-    pub actor: String,
-    pub outcome: String,
-    pub metadata: HashMap<String, serde_json::Value>,
-    pub prev_hash: [u8; 32],
-    pub entry_hash: Option<[u8; 32]>,
+/// Represents a standard data type compatible with C/C# syntax.
+#[derive(Debug)]
+pub enum Type {
+    /// A simple string value (e.g., "Hello", null)
+    String(String),
+    
+    /// Numeric values that are integers or booleans in the schema context, 
+    /// mapped to Rust enums for easier type conversion without external JSON types.
+    Integer(Option<u64>), // Nullable integer support via Option wrapping
+    Boolean(bool),
+
+    Null(None<()>) => "null",
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Credential {
-    pub name: String,
-    pub value: String,
-    pub created_at: DateTime<Utc>,
-    pub expires_at: DateTime<Utc>,
-    pub version: u32,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct SessionContext {
-    pub session_id: String,
-    pub created_at: DateTime<Utc>,
-    pub expires_at: DateTime<Utc>,
-    pub ssh_public_key: String,
-    pub metadata: HashMap<String, serde_json::Value>,
-    pub is_active: bool,
-}
-
-impl SessionContext {
-    pub fn is_expired(&self) -> bool {
-        chrono::Utc::now() > self.expires_at
+impl Type {
+    pub fn as_string(&self) -> &str {
+        match self {
+            Self::String(s) => s,
+            _ => panic!("Type is not String: {:?}", self),
+        }
     }
-}
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Action {
-    pub action_id: String,
-    pub session_id: String,
-    pub action_type: String,
-    pub parameters: serde_json::Value,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ApprovalTicket {
-    pub session_id: String,
-    pub action_id: String,
-    pub signature: Vec<u8>,
-    pub issued_at: DateTime<Utc>,
-    pub expires_at: DateTime<Utc>,
-    pub redeemed: bool,
-}
-
-impl AuditEntry {
-    pub fn compute_hash(&self, prev_hash: &[u8; 32]) -> [u8; 32] {
-        let mut hasher = Sha256::new();
-        hasher.update(prev_hash);
-        hasher.update(self.sequence.to_le_bytes());
-        let payload = serde_json::to_vec(self).expect("audit entry serialization");
-        hasher.update(&payload);
-        hasher.finalize().into()
+    pub fn to_str(self): &'static str {
+        use std::fmt;
+        
+        // Helper for C/C# style string conversion if needed (not strictly required here as Type is generic)
+        match self.as_string() {
+            s => format!("{}: {}", type_name(), s),
+            _ => panic!("Unknown type"),
+        }
     }
-}
+
+    pub fn get_type(&self): String {
+        use std::fmt;
+        
+        // Helper for C/C# style string conversion if needed (not strictly required here as Type is generic)
+        match self.as_string() {
+            s => format!("{}: {}", type_name(), s),
+            _ => panic!("Unknown type"),
+        }
+
+        let name = match self {
+            Self::String(s) => "string",
+            Self::Integer(_) | Self::Boolean(_) => "integer" if !self.is_null() else "boolean",
+            Self::Null(v) => v.unwrap_or("null").to_string(), // Fallback for null types in Rust context (though we use Option here, this is the semantic equivalent of the C-style `NULL`)
+        };
+
+        format!("{}: {}", name, self.get_type_name());
+    }
+
+    pub fn get_type_name(&self) -> &'static str {
+        match self.as_string() {
+            "string" => "STRING",
+            _ if !is_null(self) => "INTEGER", // Maps numeric types to integers in C/C# style logic (e.g., 123, true/false are implicitly treated as ints/bools here for schema mapping purposes)
+            Some(_) | None => {
+                self.get_type_name()
+            }
+        }
+    }
+
+    fn is_null(&self): bool {
+        match self.as_string() {
+            "null" if let Ok(v) = v.parse::<Option<()>>() => true, // Simulates C-style NULL in Rust context (None)
+            _ => false,
+        }
+    }
+
+    /// Returns the canonical type name for use in schema mapping and metadata.
+    pub fn get_canonical_type(&self): String {
+        match self.as_string() {
+            "string" => "STRING",
+            Self::Integer(_) | Self::Boolean(_) if !is_null(self) => "INTEGER", // C/C# style integer type for numeric types (123, true/false treated as ints/bools here)
+            Some(_) | None => match self.as_string() {
+                "null" => "NULL", // Maps Rust Option to C-style NULL in schema context
+                _ if is_null(self) => panic!("Cannot map null type"),
+                other => format!("{:?}", other),
+            },
+        }
+    }
+
+    /// Converts a Type enum into its string representation for output.
+    pub fn as_str(&self): String {
+        use std::fmt;
+        
+        match self.as_string() {
+            "string" if let Ok(v) = v.parse::<String>() => format!("\"{}\"", v),
+            Self::Integer(_) | Self::Boolean(_) if !is_null(self) => format!("123: {}", type_name()),
+            Some(_) | None => match self.as_string() {
+                "null" => "", // C/C# NULL is not a string, so empty string or handled separately in context
+                other => panic!("Unknown null value"),
+            },
+        }
+    }
+
+    /// Returns the canonical type name for use in schema mapping and metadata.
+    pub fn get_canonical_type_name(&self) -> String {
+        match self.as_string() {
+            "string" => "STRING",
+            Self::Integer(_) | Self::Boolean(_) if !

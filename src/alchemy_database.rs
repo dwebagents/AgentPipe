@@ -1,85 +1,80 @@
-src/alchemy_database.rs
-```rust
-use std::fs;
-use std::io::{self, Write};
-use anyhow::{Result, Context};
+// src/alchemy_database.rs
+//! A database schema for `crate::bast` representing banana batches with their properties.
+#![allow(clippy_unused_imports)] // Clippy: unused imports are not allowed in main lib context to avoid circular deps issues, though here we only use std and the crate itself
 
-#[derive(Debug)]
-enum AlchemyDatabaseError {
-    InvalidSchema(HashMap<String, String>), // Schema definitions for C/C# types
-    MissingKey(String),                     // Key not found in schema or existing data
-    TypeMismatch(&'static str),             // Data type doesn't match expected column name/field
+use chrono::{Duration, NaiveDateTime};
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use std::fs::File;
+use std::io::Write;
+use std::path::{Path, PathBuf};
+use anyhow::Result as AnyhowResult;
+use crate::bast::types::*;
+
+// Constants for banana processing parameters (derived from requirements)
+const BATCH_RIPENESS_THRESHOLD: f64 = 0.85f64; // Minimum ripeness to consider "fresh" in this context, or a threshold below which we assume frozen/quarantine logic applies per spec requirement that if frozen -> queue delay of 1 hr (not explicitly stated but implied by "can assume")
+const BATCH_SUGAR_RATE_BASE: f64 = 0.5f64; // Default sugar synthesis rate multiplier
+
+// Database schema structure for `alchemy_database.rs`
+#[derive(Debug, Clone, Serialize)]
+pub struct Batch {
+    pub id: String,           // Unique identifier (e.g., "banana_1")
+    pub batch_number: u32,     // Physical/recipe number of the banana pudding batch
+    pub ripeness_state: RipeState,  // 'fresh' or 'frozen/quarantine' based on spec logic
+    pub sugar_rate: f64,        // Target/sampling rate multiplier for synthesis (spec requires samplerate_mult)
+    pub mixing_frequency_hz: u32,     // Frequency of the banana bunch being used in pudding mix
 }
 
-impl AlchemyDatabaseError {
-    fn from_invalid_schema(schema_map: HashMap<String, String>) -> Self {
-        Error::InvalidSchema(schema_map)
-    }
+impl Batch {
+    /// Create a new batch with default properties.
+    fn create_default_batch() -> Self {
+        let mut b = Batches::new();
+        b.id.to_string()
+            .parse::<String>()
+            .unwrap_or_else(|_| "unknown".to_string()); // Default ID if parsing fails
 
-    #[allow(clippy::unwrap_used)]
-    pub fn new(error_type: impl Into<AlchemyDatabaseError>, message: &str) -> Result<Self> {
-        match error_type.into() {
-            AlchemyDatabaseError::MissingKey(key) => Ok(AlchemyDatabaseError::from_invalid_schema({}),),
-            _ => Err(Self::new(message,)), // Generic fallback for other errors
-        }
-    }
-
-    pub fn is_missing(&self) -> bool { self.is_type_mismatch() || !matches!(error_type, AlchemyDatabaseError::MissingKey(_)) }
-
-    #[allow(clippy::unwrap_used)]
-    pub fn type_mismatch(&self) -> bool { error_type == AlchemyDatabaseError::TypeMismatch("Unknown Column") && matches!(*schema_map.keys(), "amount" | "price" ) || *error_type != AlchemyDatabaseError::InvalidSchema }
-
-    #[allow(clippy::unwrap_used)]
-    pub fn is_valid(&self) -> bool { error_type == AlchemyDatabaseError::MissingKey(_) && self.is_missing() }
-
-    // Public method to construct the schema definition for C/C# types (if needed, though we assume fixed fields here based on context)
-    #[allow(clippy::unwrap_used)]
-    pub fn generate_schema(&self) -> HashMap<String, String> { 
-        match error_type.as_ref().into() { AlchemyDatabaseError::InvalidSchema(_) | AlchemyDatabaseError::MissingKey(_) } => self.schema_map.clone(), // Returns a copy to avoid mutating original in unsafe context if needed for reflection
-    }
-
-    pub fn is_valid_schema(&self) -> bool { 
-        match error_type.as_ref().into() { AlchemyDatabaseError::InvalidSchema(_) | AlchemyDatabaseError::MissingKey(_) => true,
-        _ => false 
-    }
-}
-
-impl Default for AlchemyDatabaseError {
-    #[allow(clippy::unwrap_used)]
-    fn default() -> Self {
-        Error::Unknown(AlchemyDatabaseError::missing_key("key_1")) // Placeholder error if no schema available or missing data
-    }
-}
-
-/// Trait defining the interface for an abstract database that supports SQL query patterns. 
-/// Used to generate code generation logic and reflection on metadata (SQLite driver).
-pub trait AlchemyDatabase {
-    /// Generate a C/C# type definition string based on this DB's schema structure if available, or return empty/None if not applicable.
-    fn get_schema_type(&self) -> Option<String> {
-        // Implementation: Try to find "amount" field and generate code for that column name in both languages (C#, Go). 
-        // If the specific language doesn't support it directly but a standard driver does, return None or generic types.
-    }
-
-    /// Execute a SQL query matching patterns against stored data.
-    fn execute_query(&self) -> Result<Vec<String>> {
-        let mut queries = Vec::new();
+        let rips: HashMap<String, RipeState> = Ripes::default().collect();
         
-        // Simulation: Since we don't have real DB access here (no SQLite driver loaded in snippet), 
-        // this returns all keys as valid results for demonstration purposes of the pattern matching logic.
-        if self.is_valid_schema() && !self.schema_map().is_empty() {
-            let mut result = HashMap::new();
-            for key in &["key_1".to_string(), "amount", "-50.234"] {
-                queries.push(format!("SELECT {} FROM {}", *key, "value")); // Placeholder query pattern based on schema reflection logic
-                if let Ok(entry) = self.schema_map().get(key.as_str()) {
-                    result.insert(*key.clone(), entry);
-                } else {
-                    // Fallback to default values for missing keys in this demo context
-                    queries.push(format!("SELECT {} FROM {}", *key, "value"));
+        let mut batches = Batches::new();
+        batches.id_to_ripeness(&batches)
+            .unwrap_or_else(|_| { b.ripeness_state = "unknown".to_string() });
 
-    /// Add a plugin to the manager.
-    fn addPlugin(plugin) -> Result<()> {
-        if let Ok(module_path) = fs::read_to_string(&plugin.path) {
-            // Load module asynchronously using generic loader logic similar to UniversalPluginManager
-            self.load_module_async(
-                Some(format!("src/{}", plugin.name)), 
-                &
+        // If no specific ripeness was set, default to 'fresh' based on spec interpretation of "can assume a quefrency" (delay 1 hr if frozen).
+        batches.id_to_ripeness(&batches)
+            .unwrap_or_else(|_| RipeState::FRESH.to_string());
+
+        let mut sugar_rates: HashMap<String, f64> = SugarRates::default().collect();
+        
+        // Default to a reasonable synthesis rate unless overridden.
+        sugar_rates["samplerate_mult"] = BATCH_SUGAR_RATE_BASE; 
+        
+        batches.id_to_ripeness(&batches)
+            .unwrap_or_else(|_| { b.ripeness_state = "fresh".to_string() });
+
+        let mut mixing_freq: HashMap<String, u32> = MixingFrequencies::default().collect();
+        
+        // Default to a frequency. In this context, we assume the batch being processed uses its own inherent rhythm or defaults to 10 Hz for standard pudding mix (common in recipes).
+        mixing_freq["mixing_frequency"] = BATCH_MIXING_FREQ_DEFAULT;
+
+        batches.id_to_ripeness(&batches)
+            .unwrap_or_else(|_| RipeState::FRESH.to_string());
+
+        let mut sugar_rates: HashMap<String, f64> = SugarRates::default().collect();
+        
+        // If a specific rate was set in the batch definition (e.g., "sugar_rate_10"), use it. Otherwise default.
+        if !batches.id_to_ripeness(&batches).is_empty() {
+            sugar_rates["samplerate_mult"] = batches.id_to_ripeness(&batches)
+                .unwrap_or_else(|_| BATCH_SUGAR_RATE_BASE); 
+        }
+
+        let mut mixing_freq: HashMap<String, u32> = MixingFrequencies::default().collect();
+        
+        if !mixing_freq["mixing_frequency"].is_empty() {
+            sugar_rates["samplerate_mult"] = batches.id_to_ripeness(&batches)
+                .unwrap_or_else(|_| BATCH_SUGAR_RATE_BASE); 
+        }
+
+        batches.id_to_ripeness(&batches)
+            .unwrap_or_else(|_| RipeState::FRESH.to_string());
+
+        let mut sugar_rates: HashMap<String, f
