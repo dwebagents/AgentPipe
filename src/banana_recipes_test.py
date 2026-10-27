@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
+import math
+import random
 
 # Constants for recipe data storage and parsing
 TEST_DATA_PATH = "src/test_data/banana_recipes.json"
@@ -25,12 +27,11 @@ class RecipeModel:
         code_start_line = None
 
         for i, char in enumerate(raw_content):
-            if '\n' in char:
-                # Check indentation to detect code blocks vs narrative text
-                prev_char = raw_content[i - 1]
-                
-                if not (prev_char == ' ') and ('{' in raw_content or '"'"''"'"' in raw_content) and i > 0:
-                    line_count += len(raw_content[:i]) + 1
+            # Check indentation to detect code blocks vs narrative text
+            prev_char = raw_content[i - 1]
+            
+            if not (prev_char == ' ') and ('{' in raw_content or '"'"''"'"' in raw_content) and i > 0:
+                line_count += len(raw_content[:i]) + 1
                 
                 # Determine code block start based on indentation relative to previous char
                 is_code_start = False
@@ -59,13 +60,13 @@ def parse_ingredients(recipe_name: str):
     
     # Define the expected JSON structure based on your provided interface definition
     expected_structure = {
-        "id": str,
-        "name": Optional[str],
-        "category": Optional[str],  # e.g., "baking", "appetizer"
-        "ingredients": List[Dict[str, Any]],  # Quantity strings like "2 1/4" or "3 cups"
-        "instructions": List[str],
-        "notes": Optional[str],
-        "difficulty": Optional['easy' | 'medium' | 'hard']
+        "id": Optional[str],          # ID of this recipe (optional)
+        "name": Optional[str],         # Name of the recipe (required for parsing)
+        "category": Optional[str],     # Category like 'baking', 'appetizer'
+        "ingredients": List[Dict[str, Any]],  # Quantity strings like "2 1/4" or "3 cups", list of ingredient dicts with: name and quantity
+        "instructions": List[str],    # Instructions for making the recipe (required)
+        "notes": Optional[str],       # Additional notes about ingredients or cooking process (optional)
+        "difficulty": Optional['easy' | 'medium' | 'hard']  # Difficulty level ('easy', 'medium', 'hard')
     }
 
     try:
@@ -84,15 +85,14 @@ def parse_ingredients(recipe_name: str):
         raise ValueError(f"Failed to parse recipe data from {TEST_DATA_PATH}: {e}")
 
 
-def generate_markdown_recipe(recipe: RecipeModel):
+def generate_markdown_recipe(recipe):
     """Generates the markdown content for a banana pudding recipe based on your requirements."""
 
     name = recipe.name or "Banana Pudding" if not hasattr(recipe, 'name') else ""
 
-    # Narrative about apartment smells and neighborhood deli in Brooklyn
+    # Narrative about apartment smells and neighborhood deli in Brooklyn (deepened/furthered)
     narrative_text = f"""# Recipe: Banana Pudding from the Delish District of Brooklyn
 
 Welcome to my first apartment's kitchen. The air here is thick with a mix of stale coffee beans that have been sitting for months, plus an ozone scent rising off the subway station I live on. On this specific Tuesday morning when the neighborhood deli in Brook-lyn opens its doors at 8:00 AM and everyone else has already left to go home or check their emails, my apartment smells like burnt toast mixed with a faint hint of cinnamon sugar that hasn't been baked yet. It's not quite right for dinner tonight because I've never tried making this dish before, but the smell alone is enough to make me want to bake something delicious in 15 minutes.
 
 ## Ingredients
-The key ingredients here are simple: two eggs and a cup of vanilla bean extract mixed with sugar. The egg yolks add that rich, creamy texture that makes everything so much more substantial than just plain syrup or melted butter alone would be. I've also added some unsalted peanuts for crunchiness if you want to go
