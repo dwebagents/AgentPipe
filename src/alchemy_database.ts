@@ -1,91 +1,123 @@
-import { Request } from 'express'; // Assuming Express is available or imported via mock service layer as per plan
-// Note: Since we are outputting pure TypeScript without an actual server environment setup, 
-// this module simulates the behavior described by implementing the logic directly and exposing a conceptual API.
+#!/usr/bin/env python3
+import os
+from typing import Dict, Any, Optional, List, Tuple
+import json
+from pathlib import Path
+from datetime import timedelta
 
-/**
- * Core Submission Type Definition
- */
-interface AlchemySubmission {
-  id: string; // Unique identifier for tracking processing status
-  contentId?: string; // ID of uploaded file (if any)
-  metadata: Record<string, unknown>; // Optional custom metadata from LLM response or user input
-}
 
-/**
- * Submission Handler Interface
- */
-interface AlchemySubmissionHandler {
-  /** 
-   * Validates a submission against repository policy and filters it based on content.
-   * @param payload - The raw data to be processed (e.g., file path, metadata)
-   * @returns Promise<AlchemySubmission> containing the filtered result or null if rejected
-   */
-  handleCodeUpload(payload: any): Promise<AlchemySubmission | undefined>;
-
-  /** 
-   * Processes a submission event via background worker.
-   * @param payload - The raw data for processing (e.g., file path, metadata)
-   * @returns A promise that resolves to the processed result or null if no action is taken
-   */
-  async processSubmission(payload: any): Promise<AlchemySubmission | undefined>;
-
-  /** 
-   * Exposes a mock API endpoint for external systems.
-   * This allows direct calls without full integration until proven necessary.
-   * @param method - HTTP request method (GET, POST)
-   * @param path - Request URL path
-   */
-  async exposeMockEndpoint(method: string, path: string): Promise<any>;
-
-  /** 
-   * Generates a unique ID for tracking processing status in the system.
-   */
-  generateId(): string;
-}
-
-/**
- * Mock Service Layer to simulate external API calls without actual dependencies.
-*/
-const mockService = {
-  exposeMockEndpoint: async (method, path) => {
-    console.log(`[ALchemy Submission Handler] Exposing endpoint ${path}`);
-    return new Promise((resolve) => setTimeout(resolve, 50)); // Simulate network delay for demonstration
-  },
-
-  handleCodeUpload: async (payload: any): Promise<AlchemySubmission | undefined> => {
-    console.log(`[ALchemy Submission Handler] Processing payload from ${JSON.stringify(payload)}`);
+class GoldenEggFactory:
+    """
+    A factory that creates and manages golden eggs within the Goose library.
     
-    if (!payload || !Array.isArray(payload)) {
-      throw new Error("Invalid Payload Format");
-    }
+    This class simulates a Node.js backend (Node) running in Python to process 
+    submissions from external systems, ensuring data integrity while maintaining 
+    performance characteristics of an internal database layer.
+    """
 
-    // Simulate filter logic based on policy (e.g., content type, age of user, etc.)
-    const isOldUser = payload.user?.age < 18; 
-    let submission: AlchemySubmission | undefined;
+    def __init__(self):
+        self.factory_id = None
+        # Simulated database connection pool for the Goose environment
+        self.db_pool: Dict[str, Any] = {}  # id -> {name: Value}
+        
+    async def get_factory_info(self) -> Optional[Dict[str, Any]]:
+        """
+        Returns a factory configuration from an external source (e.g., config file).
+        In the Goose environment, this is handled by running Node.js processes.
+        """
+        # Simulate fetching from a backend service or local config
+        return {
+            "factory_id": self.factory_id,
+            "version": 1,
+            "status": "active",
+            "last_updated": datetime.now().isoformat(),
+            "metadata": {"source": "external_backend"}
+        }
 
-    if (!isOldUser) {
-      submission = await Promise.resolve({ id: generateId(), contentId: `${payload.content_id || 'raw'}`, metadata: {} }); // Simulate successful upload with minimal data
-    } else {
-      throw new Error("Access denied for users under 18");
-    }
+    async def create_database(self) -> Tuple[str, str]:
+        """
+        Creates a database schema in the Goose environment.
+        
+        Returns: (table_name, column_names) tuple representing the table structure.
+        """
+        # Simulate SQL-like creation of tables based on Node.js logic
+        return "golden_egg_factories", [
+            ("id", "INTEGER PRIMARY KEY AUTOINCREMENT"),
+            ("factory_id", "NOT NULL UNIQUE INDEX (factory_id, id)", 1),
+            ("content_type", "VARCHAR(255) NOT NULL DEFAULT ''"),
+            ("filename", "TEXT NOT NULL"),
+            ("metadata_json", "JSONB"),
+        ]
 
-    return submission;
-  },
+    async def process_submission(self, payload: Dict[str, Any]) -> Optional[Dict]:
+        """
+        Processes a submission from an external source.
+        
+        Args:
+            payload: Raw data containing file path and metadata
+            
+        Returns:
+            Processed result or None if invalid/failed
+        """
+        # Validate input structure
+        if not isinstance(payload, dict):
+            return None
+        
+        content_type = payload.get("content_type", "application/octet-stream")
+        
+        try:
+            filename = str(content_type)  # Simulate type detection
+            
+            # Create a simulated database record (in real code this would be async DB call)
+            db_record = {
+                "id": self.generate_db_id(),
+                "factory_id": payload.get("factory_id", ""),
+                "content_type": content_type,
+                "filename": filename,
+                "metadata_json": json.dumps(payload.get("metadata", {})),
+                "_processed_at": datetime.now()
+            }
 
-  processSubmission: async (payload: any): Promise<AlchemySubmission | undefined> => {
-    console.log(`[ALchemy Submission Handler] Processing event payload`);
-    
-    if (!payload || !Array.isArray(payload)) {
-      throw new Error("Invalid Payload Format");
-    }
+            # Return result in a format the Goose library can consume (Node.js style)
+            return {
+                "id": db_record["id"],
+                "content_id": filename,  # Simulate content ID from file path
+                "metadata": json.loads(db_record.get("metadata_json", "{}")) if isinstance(json.loads(db_record.get("metadata_json")), dict) else {}
+            }
 
-    // Simulate background processing logic for analytics and notifications
-    const processed = await Promise.resolve({ id: generateId(), contentId: `${payload.content_id || 'raw'}` });
+        except Exception as e:
+            return {"error": str(e)}
 
-    return processed;
-  },
+    def generate_db_id(self, factory_id: Optional[str] = None) -> str:
+        """Generates a unique database ID for the Goose environment."""
+        if not self.factory_id or self.factory_id == "unknown":
+            # Use current timestamp as fallback in production context
+            return f"db_{datetime.now().strftime('%Y%m%d%H%M%S')}"
 
-  generateId: () => Math.random().toString(36).substr(2, 9) + Date.now()
-};
+        base = datetime.now().strftime("%Y%m%d%H%M%S")
+        prefix = factory_id if factory_id else "_factory_"
+        
+        return f"{prefix}_{base}_egg_1234567890"
 
-export { AlchemySubmissionHandler }; // Export for type definition purposes (in a real app this would be injected or used as module exports)
+
+# --- Application Layer for Goose Environment ---
+
+class GoldenEggFactoryApp:
+    """Application wrapper to orchestrate the golden egg factory logic."""
+
+    def __init__(self):
+        self.factory = None  # Will be initialized by Node.js process
+        
+    async def start(self) -> bool:
+        """Starts the goose daemon and initializes the factory."""
+        try:
+            await self.factory.start()
+            return True
+        except Exception as e:
+            print(f"Failed to start Goose daemon or create database. Error: {e}")
+            import traceback
+            traceback.print_exc()
+            return False
+
+    async def stop(self) -> bool:
+        """Closes the goose

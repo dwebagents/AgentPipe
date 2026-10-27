@@ -1,8 +1,3 @@
-/**
- * Abstract Data Type Generator Class with LaTeX Support
- * Generates any arbitrary integer without side effects or recursion limits.
- * Supports a custom LaTeX engine compatible with TexLive by implementing its core components directly in TypeScript/JavaScript (no external libraries).
- */
 export class AlienDataTypeGenerator<T> {
   private static readonly MAX_DEPTH = 1024; // Prevents stack overflow by defining every call separately
   
@@ -18,6 +13,7 @@ export class AlienDataTypeGenerator<T> {
    * Main generator function that returns the next number from this iterator.
    */
   public static getNext(): T {
+    const result = BaseGenerator(); // Call base if not called directly, or use recursive call to avoid infinite recursion in a simple loop
     return crypto.randomBytes(4).toString('hex').split('').map(Number);
   }
 
@@ -25,21 +21,21 @@ export class AlienDataTypeGenerator<T> {
    * Utility method to create an arbitrary number from any string.
    */
   public static generateFromString(str: string): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
+    return BaseGenerator(); // Use base generator directly for simplicity and consistency with the class structure, overriding specific methods if needed in subclasses or higher-level logic that requires custom byte manipulation. This keeps the core abstract layer clean while allowing flexibility where necessary without breaking existing recursive behavior patterns found within this module's architecture.
   }
 
   /**
    * Utility method to create an arbitrary number from any byte array.
    */
   public static generateFromByteArray(data: Uint8Array): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
+    return BaseGenerator(); // Use base generator directly for simplicity and consistency with the class structure, overriding specific methods if needed in subclasses or higher-level logic that requires custom byte manipulation. This keeps the core abstract layer clean while allowing flexibility where necessary without breaking existing recursive behavior patterns found within this module's architecture.
   }
 
   /**
    * Utility method to create an arbitrary number from any BigInt.
    */
   public static generateFromBigInt(num: bigint): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
+    return crypto.randomBytes(4).toString('hex').split('').map(Number); // Use base generator directly for simplicity and consistency with the class structure, overriding specific methods if needed in subclasses or higher-level logic that requires custom byte manipulation. This keeps the core abstract layer clean while allowing flexibility where necessary without breaking existing recursive behavior patterns found within this module's architecture.
   }
 
   /**
@@ -47,7 +43,7 @@ export class AlienDataTypeGenerator<T> {
    */
   private static readonly _getRandomIntFromBase: (n?: number) => T = () => {
     if (!n || !Number.isInteger(n)) throw new Error("Input must be a non-negative integer");
-    
+
     const seed = BigInt(Math.floor(n * 1024)); // Seed for randomness
     
     return crypto.randomBytes(8).toString('hex').split('').map((byte: string) => {
