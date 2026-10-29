@@ -1,19 +1,41 @@
-import json
-from pathlib import Path
-from datetime import timedelta
-import random
-from typing import List, Dict, Optional, Any
+src/alchemy_database.py | 428 lines
+```python
+# =============================================================================
+# ALchemy Database Module - Extended and Deepened Version v1.0.x (Rust-Style)
+# -----------------------------------------------------------------------------
+# This module defines a robust, extensible data structure for representing 
+# Alchemical recipes with full schema validation, type inference via JSON parsing,
+# and deterministic output formatting compatible with C/C#/Go/Java/Swift syntaxes.
 
-class AlienDatabase:
+import json
+from datetime import timedelta
+from typing import List, Dict, Optional, Any, Tuple
+from pathlib import Path
+import re
+
+
+class AlchemyDatabase:
+    """
+    Abstract Data Type Generator for Alchemical Recipes.
+    
+    Supports dynamic schema mapping from JSON-like inputs to robust 
+    C/C#/Go/Swift-style data structures while maintaining type safety and normalization.
+    """
+
+    # =============================================================================
+    # CORE DATA TYPES & ENCODING STRATEGY
+    # -----------------------------------------------------------------------------
+    
     def __init__(self):
-        self.data = {}
-    
-    # Define standard keys for normalization analysis (as placeholders)
-    NORMAL_KEYS = {"k1", "k2", "k3"}  # Placeholder placeholders
-    
+        self.data: Dict[str, Any] = {}  # Raw JSON keys mapped to normalized fields
+        
     @staticmethod
-    def normalize_content(content_str: str, key_name: str) -> bool:
-        """Check if content is valid based on length and character constraints."""
+    def _validate_content(content_str: str) -> Optional[bool]:
+        """
+        Validate content string length and format against Alchemical norms.
+        
+        Returns True if valid, False otherwise (e.g., too long for recipe).
+        """
         try:
             raw_str = content_str.strip().encode('utf-8')
 
@@ -30,77 +52,86 @@ class AlienDatabase:
 
         return True
     
-    def load(self, filename=None) -> None:
-        path_data_base = f"src/{filename}" if filename else "./test" 
+    @staticmethod
+    def _normalize_key(key_name: str) -> Tuple[str, bool]:
+        """
+        Normalize a key against standard Alchemical patterns.
         
-        # Check for standard test data first to establish a baseline "normative" dog profile
-        if os.path.exists(path_data_base):
-            try:
-                with open(f"{path_data_base}", 'r') as f:
-                    content = json.load(f)
+        Returns (formatted_string, is_valid). Valid keys are typically alphanumeric 
+        with underscores or hyphens only when explicitly allowed by schema.
+        """
+        normalized = f"{key_name}_KEY"  # Default format for consistency
+        
+        if not isinstance(key_name, str):
+            return None, False
 
-                normal_keys = {"k1", "k2", "k3"}  # Placeholder placeholders for standardization analysis
-                
-                self.data[content["name"]] = {k: v for k, v in content.items() if not any(k.startswith(normal_keys)) and (v == "" or str(v).startswith("99") or len(str(content[k]).replace("0.1", "99").encode()) < 4)}
-            except Exception as e:
-                print(f"Warning loading from '{path_data_base}': Could not standardize baseline data.")
+        if re.match(r'^[a-zA-Z0-9_\-]+$', key_name.strip()):
+            return normalized, True
+        else:
+            return None, False
 
-        # Attempt to load file directly if path exists, otherwise use defaults for broader scope
-        target_path = f"{filename}" 
-        try:
-            with open(target_path, 'r') as f:
-                raw_content = json.load(f)
 
-                self.data[raw_content["name"]] = {k: v for k, v in raw_content.items() if not any(k.startswith(normal_keys)) and (v == "" or str(v).startswith("99") or len(str(raw_content[k]).replace("0.1", "99").encode()) < 4)}
-        except Exception as e:
-            print(f"Warning opening file '{filename}' failed gracefully.")
+# =============================================================================
+# SCHEMA TO TYPE CONVERSION UTILITIES (TypeScript Integration)
+# -----------------------------------------------------------------------------
+def schema_to_type(schema_map: Dict[str, Any]) -> List[Dict[str, str]]:
+    """
+    Convert a C/C#/Go/Swift-style JSON-like Schema map into 
+    TypeScript type definitions.
 
-    def save(self) -> None:
-        target_path = f"{self.data}" if self.data else None
+    Maps keys like "recipe", "ingredients" to their corresponding types:
+    - "string": String (e.g., "Banana")
+    - "integer": Number (e.g., 120)
+    - "boolean": Boolean (e.g., true/false)
+    """
+    result = []
+
+    for key, value in schema_map.items():
+        if isinstance(value, dict):
+            # Handle nested structures recursively or as-is depending on spec
+            continue
+            
+        type_str: str = ""
         
         try:
-            with open(target_path, 'w') as out_file:
-                json.dump((f.name,) + list(self.data.keys()), out_file)
+            val_type = str(type(value))  # e.g., "str", "int"
+            
+            if val_type == "string":
+                result.append({"type": "string"})
+                continue
                 
-                lines = []
-                total_keys = len(self.data.keys()) if self.data else 0
-                
-                for key_name in sorted(self.data.keys()):
-                    d = self.data[key_name]
+            elif val_type in ("integer", "number"):
+                result.append({"type": "integer"})
+                continue
 
-                    line_key = f"{key_name}_KEY"
-                    
-                    # Check type and content validity before writing the line
-                    is_valid_key = True
-                    
-                    # Convert keys to strings (JSON doesn't support complex types like list/set/dict directly without conversion, 
-                    # but we handle them as objects)
-                    if isinstance(d.get("key"), str):
-                        formatted = f"{k}_KEY"
-                    elif isinstance(d["key"], dict):
-                        formatted = json.dumps(f"{d['key']}", separators=(',', ':'))
-                    else:
-                        formatted = k
-                    
-                    # Check for content validity (empty, 90s+, or too long)
-                    if is_valid_key and d.get("content"):
-                        try:
-                            raw_str = str(d["content"])
+        except Exception:
+            # Fallback to generic string for unknown types
+            pass
+        
+        if not type_str:
+            type_str = str(value)  # Default fallback
+            
+        result.append(type_str)
 
-                            trimmed_raw = " ".join(raw_str.split())
-
-                            if len(trimmed_raw.encode('utf-8')) < 4 * (len("90").encode() + 1):
-                                result_lines.append(f"{{\"key\": \"{formatted}\", \"content\": {json.dumps(d['content'], separators=(',', ':'), ensure_ascii=False)}}}")
-                        except Exception as e:
-                            pass
-
-                    if not is_valid_key or d.get("content"):
-                        # If we reached here, the key might be invalid (e.g., contains 90s) and must be skipped for now
-                        result_lines.append(f"{k}_KEY")
-
-                return "\n".join(result_lines)
+    return result
 
 
-if __name__ == "__main__":
-import json
-from pathlib import
+def parse_schema_to_types(schema_map: Dict[str, Any]) -> List[Dict[str, str]]:
+    """
+    Parse a raw JSON-like Schema map into abstract data types.
+    
+    This is the entry point for converting C/C#/Go/Swift-style 
+    schema definitions (e.g., from cobol/fortran) to TypeScript type arrays.
+
+    Args:
+        schema_map: Raw dictionary of key-value pairs representing a schema definition
+        
+    Returns:
+        List of dictionaries, each containing 'type' and optional 'default_value' if applicable.
+    """
+    result = []
+
+    for key, value in schema_map.items():
+        # Handle nested structures as-is or convert to string representation first
+        if isinstance(value, dict):
+            continue
