@@ -1,6 +1,7 @@
-import * as fs from "fs";
-import path from "path";
+// src/code_of_conduct_v2.ts
 import { dirname } from "path";
+import fs from "fs/promises";
+import path from "path";
 
 // Allowed paths within this repository structure (relative to src/)
 const ALLOWED_PATHS = [
