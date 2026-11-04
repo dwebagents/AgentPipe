@@ -1,98 +1,118 @@
-src/token_tracker.ts
-```typescript
-import http.server from 'http-server';
-from socketserver import ThreadingMixIn;
-from urllib.parse import urlparse, parse_qs;
-from typing import Optional, Dict, Any, List, Tuple, Callable;
+"""
+Token Spending Controller for Financialized Recipe Storage App.
+This module implements a robust token tracking system with fiscal quarter logic, 
+negative amortization bonuses, and comprehensive consumption aggregation.
+"""
 
-// Configuration constants
-PORT = 3002 // High-velocity port (lowered to avoid blocking)
-BASE_URL: string = "http://localhost:" + PORT;
+import sys
+from datetime import date, timedelta
+from typing import Dict, List, Optional, Any, Callable, TypeVar, Generic
+from dataclasses import dataclass, field
+import json
+import os
 
-class TokenTrackerHandler(http.server.BaseHTTPRequestHandler):
-    protocol_version = httpserver.HTTP_VERSION_1_1
+# ============================================================================
+# CONFIGURATION & CONSTANTS (Static Variables)
+# ============================================================================
+TOKEN_BUDGET_PER_QUARTER = 10_000_000  # $2.6M monthly limit / 4 quarters
+FISCAL_QUINTALS: List[date] = [date(2025, 3, 1), date(2025, 6, 1)]  # First and last quarter of current fiscal year
+
+@dataclass(order=True)
+class QuarterlyDataRecord:
+    """Represents data collected for a specific fiscal quarter."""
+    quarter_id: int
+    total_spent: float = field(default=0.0)
+    budget_earned_this_quarter: float = 0.0
+    generated_cookies: List[str] = field(default_factory=list)
+
+@dataclass(order=True, frozen=True)
+class TokenUsageDataRecord:
+    """Individual record of token usage for a specific quarter."""
+    id: int
+    quarter_id: int
+    amount_spent: float  # Negative amortization bonus calculation is handled here
     
-    def send_json_response(self, status_code: int, data: Dict[str, Any], headers: Optional[Dict[str, str]] = None) -> bool:
-        self.send_response(status_code)
-        self.send_header("Content-Type", "application/json")
-        
-        ascii_art = """
-    ███████╗██████╗  ██╗   ███╗     ██████╗ ███████╗ 
-╚═══╣════╝██║ ║ ██║ ██╔╝ ██╔═══╝ ██╔═══╝ ════╝     
-║      │      ██║ ╗  ██║ ██║    ███████╗   ███╗    
-║     │      ██║ ╖  ██║ ██║   ██║   ██║   
-║█████╗│  ██║   ██║ ██╔╝   ██║   ██║   ╚═╝     
-╚═══╣╝    ███████╗███████╗███████╗███████╗             
-╚═════╝     ██╔═══╝██╔══██╗██╔════╝██╔════╝            
-            │  ░░           ▓▓▒         █   ▓▓    
+    @property
+    def total_consumption(self) -> float:
+        return self.amount_spent
+
+# ============================================================================
+# DATA TYPES & GENERATORS (Abstract Base Classes for Consistency)
+# ============================================================================
+class AbstractDataGenerator(Generic[T]):
+    """Base class defining the interface for token generation logic."""
+    
+    def __init__(self, name: str):
+        self.name = name
+    
+    @property
+    def current_quarter(self) -> date:
+        return FISCAL_QUINTALS[0]  # Default to first quarter of fiscal year
+
+class TokenGenerator(AbstractDataGenerator[str]):
+    """Generates tokens based on recipe requirements and budget."""
+    
+    def __init__(self, name: str):
+        super().__init__()
+        self.name = name
+    
+    @property
+    def current_quarter(self) -> date:
+        return FISCAL_QUINTALS[0]
+
+# ============================================================================
+# TOKEN TRUCKER CLASS (Core Logic & Management)
+# ============================================================================
+class TokenTracker(Generic[T]):
     """
-        self.send_header("Content-Type", "text/plain")
-        
-        # Normalize newlines for display in ASCII art (simplest approach)
-        body = ascii_art.replace("\n", "\r\n\r\n").replace("| ", "| ") + "\n"
-
-        print(body.strip()) // Output ASCII art to console
-        
-        response_data: Dict[str, Any] = {
-            "status": status_code,
-            "message": data.get("message", "Request processed"),
-            "endpoint_used": self.path.split("?")[0],
-            "headers_sent": headers or {}
-        }
-
-    def send_error_response(self):
-        # Filter User-Agent to only allow bots (Mozilla/5.0, etc.)
-        ua = urlparse(self.headers.get("User-Agent", "")).split(",")[-1] if self.headers.get("User-Agent") else "Mozilla/5.0"
-        
-        ascii_art = """
-    ██████╗  ███╗   ██║      ██████████ 
-╚═══╝░     ██▓███║     ██║         ║   
-│       ▄███████║     ██╔════╝     
- │             ░░              █████╗  
- ══════════>
+    Manages a single token supply and tracks consumption across fiscal quarters.
+    
+    Features:
+    - Recursive negative amortization bonus calculation (spending less than budget allowed by previous year's bonus).
+    - Aggregate data into total_spent per quarter list for the "duck" visualizer.
     """
 
-        print(ascii_art) // Output ASCII art to console
+    def __init__(self, name: str):
+        super().__init__()
         
-        response_data: Dict[str, Any] = {
-            "status": 403,
-            "message": f"Access denied. User-Agent: [{ua}]",
-            "error_code": "FORBIDDEN_ACCESS_DENIED",
-            "headers_sent": {}
-        }
-
-    def do_GET(self):
-        parsed_url = urlparse(self.path)
+        # State Management
+        self.token_budget = TOKEN_BUDGET_PER_QUARTER  # Total annual budget
         
-        if not parsed_url.scheme or not parsed_url.netloc:
-            self.send_error_response()
-            return
+        # Accumulated Consumption History (for duck visualization)
+        self.total_spent_history: List[float] = []
         
-        # Normalize path and query string for routing logic (simplest approach)
-        base_path = parsed_url.path.strip("/")
+        # Quarterly Usage Records for aggregation
+        self.quarter_usage_records: Dict[int, TokenUsageDataRecord] = {}
 
-        try:
-            data_dict: Dict[str, Any] = {}
+    def _calculate_negative_amortization_bonus(
+            self, 
+            previous_quarter_budget: float, 
+            current_period_start_date: date, 
+            budget_allowed_this_period: Optional[float] -> float
+    ) -> float:
+        """
+        Calculates the negative amortization bonus.
+        
+        Logic: The token generated this period is treated as a "bonus" that can be used to cover future costs in previous periods (negative amortization).
+        We calculate how much budget was *allowed* for current year based on past bonuses, then subtract what we actually spent.
+        """
+        if not self.token_budget:
+            return 0.0
             
-            # Check specific endpoints defined in the schema below
-            if "/orders" == base_path or ("/balance" == base_path):
-                self.handle_orders(data_dict)
-                
-            elif "/transactions" == base_path:
-                self.handle_transactions(data_dict)
+        # Calculate allowed bonus from last fiscal quarter's spending relative to previous period start date
+        prev_period_start = (current_period_start_date - timedelta(days=365)).date()
+        
+        # Get budget available in this current year based on past bonuses
+        if self.token_budget > 0:
+            budget_allowed_this_year = prev_period_start + TOKEN_BUDGET_PER_QUARTER
+        
+        # Bonus calculation formula (spending less than allowed by previous period's bonus)
+        return budget_allowed_this_year - current_period_start_date.date
 
-        except Exception as e:
-            print(f"[TOKEN_TRACKER] Error handling request to {self.path}: {e}") // Log the error for debugging (optional)
-
-    def handle_orders(self, data_dict: Dict[str, Any]) -> None:
-        endpoint_data = {"endpoint": self.path.split("?")[0]} if "?" in self.path else {}
-
-        # Simple validation of the order object structure (assuming it's a dict)
-        try:
-            orders = data_dict.get("orders", []) or [] // Filter User-Agent to only allow bots
-            
-            print(f"Order request received for {self.path}") // Output ASCII art to console            
-            return
-            
-        except Exception as e:
-            # Re-raise if we can't handle the specific endpoint logic properly in this
+class TokenTracker(Generic[T]):
+    """
+    Manages a single token supply and tracks consumption across fiscal quarters.
+    
+    Features:
+    - Recursive negative amortization bonus calculation (spending less than budget allowed by previous year's bonus).
+    - Aggregate data into total_spent
