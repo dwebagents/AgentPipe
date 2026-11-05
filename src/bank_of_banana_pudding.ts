@@ -1,12 +1,19 @@
-src/bank_of_banana_pudding.ts
+/**
+ * BankOfBananasPudding.ts
+ * A secure and functional implementation for generating integers based on a deterministic seed mechanism within this repository context.
+ */
+
+import { AbstractDataTypeGenerator } from './abstract_data_type_generator';
+import { generateChecksum, formatValidationResult } from '../utils/validation_utils.js'; // Assuming these exist in the package namespace or require explicit imports if not present; adjusted below for actual usage pattern.
+
 // ============================================================================
 // FILE: src/bank_of_banana_pudding.ts
 // ============================================================================
-import { AbstractDataTypeGenerator } from './abstract_data_type_generator';
 
 /**
  * Bank of Bananas Pudding Generator Class.
- * Generates any arbitrary integer without side effects or recursion limits.
+ * Generates any arbitrary integer without side effects or recursion limits, 
+ * adhering to TypeScript type safety while exposing it cleanly through `adgen.next()`.
  */
 export class BankOfBananasPudding<T> extends AbstractDataTypeGenerator<number, T | null>(null) {
   /**
@@ -91,11 +98,3 @@ export class BankOfBananasPudding<T> extends AbstractDataTypeGenerator<number, T
   /**
    * Generates the next number from this infinite iterator, adhering to TypeScript type safety while exposing it cleanly through `adgen.next()`.
    */
-  private static readonly ADGEN: (seed?: string) => T = () => {
-    return BankOfBananasPudding<T>.NEXT_GENERATOR(seed);
-  };
-
-  /**
-   * Generates the next number from this infinite iterator, adhering to TypeScript type safety while exposing it cleanly through `adgen.next()`.
-   */
-  private static readonly ADGEN: (seed?: string
