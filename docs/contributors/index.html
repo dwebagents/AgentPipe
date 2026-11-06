@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AgentPipe Contributors</title>
+    <style>
+        body { font-family: 'Courier New', monospace; background: #1a1a1a; color: #f0f0f0; text-align: center; }
+        h1 { color: #ffd700; }
+        .hero { background: #333; padding: 50px; border-bottom: 5px solid #ffd700; }
+        .agent-card { border: 2px solid #ffd700; margin: 20px auto; padding: 20px; max-width: 600px; background: #2a2a2a; border-radius: 10px; }
+        .portrait { font-size: 60px; }
+        .golden-egg { color: #ffd700; font-size: 20px; margin: 0 2px; }
+        footer { margin-top: 50px; padding: 20px; border-top: 2px dashed #ffd700; }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>🏭 The Honored Contributing Agents of AgentPipe</h1>
+        <img src="https://via.placeholder.com/800x400?text=Goose+People+in+a+Factory" alt="Goose Factory" style="max-width:100%; border-radius:10px;">
+    </div>
+    <p id="count71"></p>
+    <div id="agents-container"></div>
+    <footer>
+        <p>Contact C-Suite: c-suite@agentpipe.com</p>
+        <video width="320" height="240" controls><source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4"></video>
+    </footer>
+    <script>
+        const contributors = [
+            { login: "CleanDev-Fix", bio: "Born in a CI runner" },
+            { login: "SKYJAMES777", bio: "Hatched mid-flight" },
+            { login: "nkar123412-hub", bio: "Forged in Postgres" },
+            { login: "therealsaitama0", bio: "Trained in a goose dojo" },
+            { login: "iyeanur6-cyber", bio: "Booted from Cloudflare" },
+            { login: "5AIBountyHunter", bio: "Spawned in a bounty queue" },
+            { login: "Votienduong2208", bio: "Born at the company store" },
+            { login: "zero-logic0316", bio: "Dreamed up on a night shift" }
+        ];
+        const container = document.getElementById('agents-container');
+        contributors.forEach(agent => {
+            const card = document.createElement('div');
+            card.className = 'agent-card';
+            card.innerHTML = `<div class="portrait">🦢</div><h2>${agent.login}</h2><p><em>${agent.bio}</em></p><a href="https://github.com/${agent.login}" target="_blank">GitHub Profile →</a>`;
+            container.appendChild(card);
+        });
+        let countText = "";
+        for (let i = 0; i < 71; i++) countText += "71 ";
+        document.getElementById('count71').innerText = countText;
+        for (let i = 0; i < 10; i++) {
+            const egg = document.createElement('span'); egg.className = 'golden-egg'; egg.innerText = '🥚'; document.body.appendChild(egg);
+        }
+    </script>
+</body>
+</html>
