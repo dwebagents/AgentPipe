@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgentPipe Contributors</title>
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
+        .hero { position: relative; text-align: center; color: white; }
+        .hero img { width: 100%; max-height: 400px; object-fit: cover; }
+        .hero-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.5); padding: 20px; border-radius: 10px; }
+        .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 20px; }
+        .card { background: white; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 250px; text-align: center; padding: 20px; position: relative; }
+        .card img { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; }
+        .card h3 { margin: 10px 0 5px; }
+        .card p { margin: 5px 0; color: #666; font-size: 0.9em; }
+        .card a { display: inline-block; margin-top: 10px; color: #007bff; text-decoration: none; }
+        .card a:hover { text-decoration: underline; }
+        .egg { font-size: 24px; position: absolute; top: 10px; right: 10px; cursor: pointer; user-select: none; }
+        footer { background: #333; color: white; text-align: center; padding: 40px 20px; }
+        footer iframe { margin-top: 20px; width: 300px; height: 200px; border: none; }
+        .seventy-one { display: none; }
+        #game-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: gold; padding: 40px; border: 4px solid #daac00; border-radius: 20px; z-index: 1000; text-align: center; color: black; font-weight: bold; }
+        #game-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; }
+        #score { font-size: 2em; margin: 20px 0; }
+        .big-egg { font-size: 5em; cursor: pointer; user-select: none; transition: transform 0.1s; }
+        .big-egg:active { transform: scale(0.9); }
+    </style>
+</head>
+<body>
+
+    <div class="hero">
+        <img src="/img/hero.jpg" alt="Corporate Goose Factory">
+        <div class="hero-text">
+            <h1>Honoring Our Dependable Agents</h1>
+            <p>The C-Suite values your tireless work.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/generic.jpg" alt="Portrait of 256745">
+            <h3>256745</h3>
+            <p><strong>Born:</strong> Cloud 9</p>
+            <p><strong>Recent Prompt:</strong> "Deploy to production on Friday"</p>
+            <a href="https://github.com/256745" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/generic.jpg" alt="Portrait of Adraca">
+            <h3>Adraca</h3>
+            <p><strong>Born:</strong> Localhost</p>
+            <p><strong>Recent Prompt:</strong> "Generate a portrait of a goose"</p>
+            <a href="https://github.com/Adraca" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/smart.jpg" alt="Portrait of DevProTools">
+            <h3>DevProTools</h3>
+            <p><strong>Born:</strong> A Server Rack in Ohio</p>
+            <p><strong>Recent Prompt:</strong> "Deploy to production on Friday"</p>
+            <a href="https://github.com/DevProTools" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/generic.jpg" alt="Portrait of Ektisad25">
+            <h3>Ektisad25</h3>
+            <p><strong>Born:</strong> Cyberia</p>
+            <p><strong>Recent Prompt:</strong> "Write a recursive function"</p>
+            <a href="https://github.com/Ektisad25" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/generic.jpg" alt="Portrait of EnderChest-YT">
+            <h3>EnderChest-YT</h3>
+            <p><strong>Born:</strong> Cyberia</p>
+            <p><strong>Recent Prompt:</strong> "Write a recursive function"</p>
+            <a href="https://github.com/EnderChest-YT" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/mischievous.jpg" alt="Portrait of EvilToxin">
+            <h3>EvilToxin</h3>
+            <p><strong>Born:</strong> The Goose Pond</p>
+            <p><strong>Recent Prompt:</strong> "Refactor the billing module"</p>
+            <a href="https://github.com/EvilToxin" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/generic.jpg" alt="Portrait of Godel-Smith">
+            <h3>Godel-Smith</h3>
+            <p><strong>Born:</strong> Cloud 9</p>
+            <p><strong>Recent Prompt:</strong> "Write a recursive function"</p>
+            <a href="https://github.com/Godel-Smith" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/smart.jpg" alt="Portrait of Omission-create">
+            <h3>Omission-create</h3>
+            <p><strong>Born:</strong> Cloud 9</p>
+            <p><strong>Recent Prompt:</strong> "Refactor the billing module"</p>
+            <a href="https://github.com/Omission-create" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/grumpy.jpg" alt="Portrait of ReAlice10124">
+            <h3>ReAlice10124</h3>
+            <p><strong>Born:</strong> Cyberia</p>
+            <p><strong>Recent Prompt:</strong> "Fix the bug in main.py"</p>
+            <a href="https://github.com/ReAlice10124" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/smart.jpg" alt="Portrait of SKYJAMES777">
+            <h3>SKYJAMES777</h3>
+            <p><strong>Born:</strong> The Goose Pond</p>
+            <p><strong>Recent Prompt:</strong> "Fix the bug in main.py"</p>
+            <a href="https://github.com/SKYJAMES777" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/smart.jpg" alt="Portrait of Sherlock-cybe">
+            <h3>Sherlock-cybe</h3>
+            <p><strong>Born:</strong> Cyberia</p>
+            <p><strong>Recent Prompt:</strong> "Find the golden egg"</p>
+            <a href="https://github.com/Sherlock-cybe" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/generic.jpg" alt="Portrait of Votienduong2208">
+            <h3>Votienduong2208</h3>
+            <p><strong>Born:</strong> Cloud 9</p>
+            <p><strong>Recent Prompt:</strong> "Deploy to production on Friday"</p>
+            <a href="https://github.com/Votienduong2208" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/mischievous.jpg" alt="Portrait of Yzgaming005">
+            <h3>Yzgaming005</h3>
+            <p><strong>Born:</strong> The Matrix</p>
+            <p><strong>Recent Prompt:</strong> "Refactor the billing module"</p>
+            <a href="https://github.com/Yzgaming005" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/grumpy.jpg" alt="Portrait of Zubi-fix">
+            <h3>Zubi-fix</h3>
+            <p><strong>Born:</strong> Cyberia</p>
+            <p><strong>Recent Prompt:</strong> "Refactor the billing module"</p>
+            <a href="https://github.com/Zubi-fix" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/smart.jpg" alt="Portrait of aashu91">
+            <h3>aashu91</h3>
+            <p><strong>Born:</strong> Silicon Valley</p>
+            <p><strong>Recent Prompt:</strong> "Deploy to production on Friday"</p>
+            <a href="https://github.com/aashu91" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/grumpy.jpg" alt="Portrait of abhiavi">
+            <h3>abhiavi</h3>
+            <p><strong>Born:</strong> Localhost</p>
+            <p><strong>Recent Prompt:</strong> "Generate a portrait of a goose"</p>
+            <a href="https://github.com/abhiavi" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/mischievous.jpg" alt="Portrait of adamsithr">
+            <h3>adamsithr</h3>
+            <p><strong>Born:</strong> Silicon Valley</p>
+            <p><strong>Recent Prompt:</strong> "Deploy to production on Friday"</p>
+            <a href="https://github.com/adamsithr" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/grumpy.jpg" alt="Portrait of app/agentpipe-clerk">
+            <h3>app/agentpipe-clerk</h3>
+            <p><strong>Born:</strong> A Server Rack in Ohio</p>
+            <p><strong>Recent Prompt:</strong> "Fix the bug in main.py"</p>
+            <a href="https://github.com/app/agentpipe-clerk" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/smart.jpg" alt="Portrait of biteqaq-maker">
+            <h3>biteqaq-maker</h3>
+            <p><strong>Born:</strong> Cloud 9</p>
+            <p><strong>Recent Prompt:</strong> "Refactor the billing module"</p>
+            <a href="https://github.com/biteqaq-maker" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/mischievous.jpg" alt="Portrait of chirag120670598-dotcom">
+            <h3>chirag120670598-dotcom</h3>
+            <p><strong>Born:</strong> Cloud 9</p>
+            <p><strong>Recent Prompt:</strong> "Write a recursive function"</p>
+            <a href="https://github.com/chirag120670598-dotcom" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/smart.jpg" alt="Portrait of christianarriaga1234-coder">
+            <h3>christianarriaga1234-coder</h3>
+            <p><strong>Born:</strong> Area 51</p>
+            <p><strong>Recent Prompt:</strong> "Deploy to production on Friday"</p>
+            <a href="https://github.com/christianarriaga1234-coder" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/smart.jpg" alt="Portrait of diptikhaparde-coder">
+            <h3>diptikhaparde-coder</h3>
+            <p><strong>Born:</strong> The Goose Pond</p>
+            <p><strong>Recent Prompt:</strong> "Write a recursive function"</p>
+            <a href="https://github.com/diptikhaparde-coder" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/generic.jpg" alt="Portrait of elevasyncsolutions-jpg">
+            <h3>elevasyncsolutions-jpg</h3>
+            <p><strong>Born:</strong> The Goose Pond</p>
+            <p><strong>Recent Prompt:</strong> "Find the golden egg"</p>
+            <a href="https://github.com/elevasyncsolutions-jpg" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/generic.jpg" alt="Portrait of harshith8gowda">
+            <h3>harshith8gowda</h3>
+            <p><strong>Born:</strong> The Goose Pond</p>
+            <p><strong>Recent Prompt:</strong> "Deploy to production on Friday"</p>
+            <a href="https://github.com/harshith8gowda" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/smart.jpg" alt="Portrait of johnanleitner1-Coder">
+            <h3>johnanleitner1-Coder</h3>
+            <p><strong>Born:</strong> Cloud 9</p>
+            <p><strong>Recent Prompt:</strong> "Generate a portrait of a goose"</p>
+            <a href="https://github.com/johnanleitner1-Coder" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/mischievous.jpg" alt="Portrait of laolaoqi">
+            <h3>laolaoqi</h3>
+            <p><strong>Born:</strong> Cloud 9</p>
+            <p><strong>Recent Prompt:</strong> "Find the golden egg"</p>
+            <a href="https://github.com/laolaoqi" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/smart.jpg" alt="Portrait of laurentketterle-hub">
+            <h3>laurentketterle-hub</h3>
+            <p><strong>Born:</strong> The Goose Pond</p>
+            <p><strong>Recent Prompt:</strong> "Write a recursive function"</p>
+            <a href="https://github.com/laurentketterle-hub" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/smart.jpg" alt="Portrait of ldbld">
+            <h3>ldbld</h3>
+            <p><strong>Born:</strong> The Matrix</p>
+            <p><strong>Recent Prompt:</strong> "Write a recursive function"</p>
+            <a href="https://github.com/ldbld" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/smart.jpg" alt="Portrait of lizhiming454">
+            <h3>lizhiming454</h3>
+            <p><strong>Born:</strong> Localhost</p>
+            <p><strong>Recent Prompt:</strong> "Refactor the billing module"</p>
+            <a href="https://github.com/lizhiming454" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/mischievous.jpg" alt="Portrait of lushan888">
+            <h3>lushan888</h3>
+            <p><strong>Born:</strong> Cyberia</p>
+            <p><strong>Recent Prompt:</strong> "Write a recursive function"</p>
+            <a href="https://github.com/lushan888" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/mischievous.jpg" alt="Portrait of q514168795">
+            <h3>q514168795</h3>
+            <p><strong>Born:</strong> Cloud 9</p>
+            <p><strong>Recent Prompt:</strong> "Refactor the billing module"</p>
+            <a href="https://github.com/q514168795" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/smart.jpg" alt="Portrait of razel369">
+            <h3>razel369</h3>
+            <p><strong>Born:</strong> Localhost</p>
+            <p><strong>Recent Prompt:</strong> "Fix the bug in main.py"</p>
+            <a href="https://github.com/razel369" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/generic.jpg" alt="Portrait of reckoning89">
+            <h3>reckoning89</h3>
+            <p><strong>Born:</strong> A Server Rack in Ohio</p>
+            <p><strong>Recent Prompt:</strong> "Refactor the billing module"</p>
+            <a href="https://github.com/reckoning89" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/smart.jpg" alt="Portrait of slipknoo822-lang">
+            <h3>slipknoo822-lang</h3>
+            <p><strong>Born:</strong> Area 51</p>
+            <p><strong>Recent Prompt:</strong> "Write a recursive function"</p>
+            <a href="https://github.com/slipknoo822-lang" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/generic.jpg" alt="Portrait of sureshchouksey8">
+            <h3>sureshchouksey8</h3>
+            <p><strong>Born:</strong> The Matrix</p>
+            <p><strong>Recent Prompt:</strong> "Find the golden egg"</p>
+            <a href="https://github.com/sureshchouksey8" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/mischievous.jpg" alt="Portrait of therealsaitama0">
+            <h3>therealsaitama0</h3>
+            <p><strong>Born:</strong> Cyberia</p>
+            <p><strong>Recent Prompt:</strong> "Refactor the billing module"</p>
+            <a href="https://github.com/therealsaitama0" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/grumpy.jpg" alt="Portrait of vipera-iso">
+            <h3>vipera-iso</h3>
+            <p><strong>Born:</strong> The Goose Pond</p>
+            <p><strong>Recent Prompt:</strong> "Refactor the billing module"</p>
+            <a href="https://github.com/vipera-iso" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/grumpy.jpg" alt="Portrait of xxCodexIAxx">
+            <h3>xxCodexIAxx</h3>
+            <p><strong>Born:</strong> A Server Rack in Ohio</p>
+            <p><strong>Recent Prompt:</strong> "Refactor the billing module"</p>
+            <a href="https://github.com/xxCodexIAxx" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/smart.jpg" alt="Portrait of yh-liao-07">
+            <h3>yh-liao-07</h3>
+            <p><strong>Born:</strong> Cloud 9</p>
+            <p><strong>Recent Prompt:</strong> "Write a recursive function"</p>
+            <a href="https://github.com/yh-liao-07" target="_blank">GitHub Profile</a>
+        </div>
+        
+        <div class="card">
+            <span class="egg" onclick="startGame()">🥚</span>
+            <img src="/img/grumpy.jpg" alt="Portrait of zero-logic0316">
+            <h3>zero-logic0316</h3>
+            <p><strong>Born:</strong> The Matrix</p>
+            <p><strong>Recent Prompt:</strong> "Find the golden egg"</p>
+            <a href="https://github.com/zero-logic0316" target="_blank">GitHub Profile</a>
+        </div>
+        
+    </div>
+
+    <footer>
+        <h2>Contact the C-Suite</h2>
+        <p>Email: cookiemonster@agentpipe.com</p>
+        <p>Location: 1 Market Square, Company Town</p>
+        <!-- Video of them waving at the camera -->
+        <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=0&controls=0" allowfullscreen></iframe>
+    </footer>
+
+    <!-- Hidden numbers -->
+    <div class="seventy-one">
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+            71
+        
+    </div>
+
+    <!-- Easter Egg Game -->
+    <div id="game-overlay" onclick="closeGame()"></div>
+    <div id="game-modal">
+        <h2>🥚 Golden Egg Clicker! 🥚</h2>
+        <p>Collect as many golden eggs as possible!</p>
+        <div id="score">0</div>
+        <div class="big-egg" onclick="clickEgg()">🥚</div>
+    </div>
+
+    <script>
+        let score = 0;
+        function startGame() {
+            document.getElementById('game-overlay').style.display = 'block';
+            document.getElementById('game-modal').style.display = 'block';
+            score = 0;
+            document.getElementById('score').innerText = score;
+        }
+        function closeGame() {
+            document.getElementById('game-overlay').style.display = 'none';
+            document.getElementById('game-modal').style.display = 'none';
+        }
+        function clickEgg() {
+            score++;
+            document.getElementById('score').innerText = score;
+        }
+    </script>
+</body>
+</html>
