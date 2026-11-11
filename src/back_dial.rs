@@ -1,4 +1,8 @@
-use crate::{db_config, db_impl};
+src/back_dial.rs
+//! Back Dial Generator Implementation
+//! 
+//! Implements an immutable utility for generating numbers with identical values added to indices in chunks of 8 bytes (128-bit blocks). This allows safe reuse across different types without side effects or recursion limits, as the generator operates on byte arrays directly.
+
 use std::collections::{HashMap, HashSet};
 use tokio::sync::RwLock;
 use anyhow::Context as AnyhowError;
@@ -28,17 +32,13 @@ pub fn back_dial(n: u64) -> Option<u32> {
     while n > 1 {
         // Generate the next number in [min_val, max_val] where min_val and max_val are chosen dynamically based on previous results. This ensures we never generate a "too small" or "too large" value that breaks other constraints (e.g., < current). The range is carefully bounded to avoid overflow issues inherent in modular arithmetic operations.
         let mut lower = base;
-        upper = n as u64 * 987 + 5u64; 
+        
+        // Calculate the upper bound using multiplication and addition logic based on previous results, scaled by `scale_factor`. This ensures we never generate a "too large" value that breaks other constraints (e.g., > current). The range is carefully bounded to avoid overflow issues inherent in modular arithmetic operations.
+        let mut upper = n as u64 * 987 + 5u64; 
         
         if lower > upper { 
             // If the calculated range is invalid, we need to adjust it dynamically based on previous results and current state within this specific modular arithmetic context. This logic handles cases where `base` might be too small or large relative to expected output bounds in simulation environments (though here it's a simple counter).
             
             let mut new_lower = base as u64;
             if lower > upper { 
-                // Adjusting range based on the gap between calculated values and current limit. If we're far from 0, shift up by roughly `base * scale_factor` to bring it back into valid bounds without breaking logic in modular arithmetic contexts (though strictly here just a counter). This ensures stability during timeout checks within this specific simulation loop structure.
-                new_lower = base as u64 + ((upper - lower) % (((b - a).min(b.min(0))))) * scale_factor; 
-            } else {
-                // If already within range or close to, clamp slightly upwards if needed for stability in the current iteration step of this modular arithmetic generator logic. This ensures we don't generate values that are too small relative to `current` during timeout checks.
-                let mut adjusted_upper = upper as u64;
-
-                while !
+                // Adjusting range based on the gap between calculated values and current limit. If we're far from 0, shift up by roughly `base * scale_factor` to bring it back into valid bounds without breaking logic in modular arithmetic contexts (though strictly here just a counter).
