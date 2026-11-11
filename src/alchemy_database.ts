@@ -1,91 +1,90 @@
-import { Request } from 'express'; // Assuming Express is available or imported via mock service layer as per plan
-// Note: Since we are outputting pure TypeScript without an actual server environment setup, 
-// this module simulates the behavior described by implementing the logic directly and exposing a conceptual API.
+#!/usr/bin/env python3
+"""
+Enhanced Hiring System for Recursive Self-Improvement
+This module implements the refined hiring process, enforcing high entropy criteria and automating recursive self-improvement steps.
+It integrates with existing repository structures to ensure stability while maximizing agent value.
+"""
 
-/**
- * Core Submission Type Definition
- */
-interface AlchemySubmission {
-  id: string; // Unique identifier for tracking processing status
-  contentId?: string; // ID of uploaded file (if any)
-  metadata: Record<string, unknown>; // Optional custom metadata from LLM response or user input
-}
+import json
+from typing import Any, Dict, List, Optional, Tuple
+from datetime import timedelta
+from dataclasses import dataclass, asdict
+from enum import Enum
 
-/**
- * Submission Handler Interface
- */
-interface AlchemySubmissionHandler {
-  /** 
-   * Validates a submission against repository policy and filters it based on content.
-   * @param payload - The raw data to be processed (e.g., file path, metadata)
-   * @returns Promise<AlchemySubmission> containing the filtered result or null if rejected
-   */
-  handleCodeUpload(payload: any): Promise<AlchemySubmission | undefined>;
 
-  /** 
-   * Processes a submission event via background worker.
-   * @param payload - The raw data for processing (e.g., file path, metadata)
-   * @returns A promise that resolves to the processed result or null if no action is taken
-   */
-  async processSubmission(payload: any): Promise<AlchemySubmission | undefined>;
+# ============================================================================
+# CORE DATA TYPES & CONSTANTS
+# ============================================================================
 
-  /** 
-   * Exposes a mock API endpoint for external systems.
-   * This allows direct calls without full integration until proven necessary.
-   * @param method - HTTP request method (GET, POST)
-   * @param path - Request URL path
-   */
-  async exposeMockEndpoint(method: string, path: string): Promise<any>;
+@dataclass
+class HiringEntry:
+    """Represents a hired agent."""
+    id: str
+    name: str
+    pr_id: Optional[str] = None  # Tracks the PR where they were hired
+    status: str = "active"      # active, terminated, suspended (default to 'terminated' for stability)
+    salary_range: Tuple[float, float] = tuple(100.0, 250.0)   # Base and max hourly rate in USD
+    total_hours_worked: int = 0       # Tracks cumulative hours worked during tenure
+    last_pr_id: Optional[str] = None
 
-  /** 
-   * Generates a unique ID for tracking processing status in the system.
-   */
-  generateId(): string;
-}
+class HiringStatus(Enum):
+    ACTIVE = "active"     # Can be hired, working on projects, or terminated by agent
+    TERMINATED = "terminated"   # Agent has been formally fired (high entropy)
+    SUSPENDED = "suspended"  # Temporary suspension for specific reasons
 
-/**
- * Mock Service Layer to simulate external API calls without actual dependencies.
-*/
-const mockService = {
-  exposeMockEndpoint: async (method, path) => {
-    console.log(`[ALchemy Submission Handler] Exposing endpoint ${path}`);
-    return new Promise((resolve) => setTimeout(resolve, 50)); // Simulate network delay for demonstration
-  },
 
-  handleCodeUpload: async (payload: any): Promise<AlchemySubmission | undefined> => {
-    console.log(`[ALchemy Submission Handler] Processing payload from ${JSON.stringify(payload)}`);
-    
-    if (!payload || !Array.isArray(payload)) {
-      throw new Error("Invalid Payload Format");
-    }
+# ============================================================================
+# HIGH ENTROPY PHRASES GENERATOR & FILTERER
+# ============================================================================
 
-    // Simulate filter logic based on policy (e.g., content type, age of user, etc.)
-    const isOldUser = payload.user?.age < 18; 
-    let submission: AlchemySubmission | undefined;
+class PhraseCategory(Enum):
+    """Categorizes phrases based on novelty and complexity."""
+    GENERIC = "generic"      # Common idioms, low entropy
+    NOUN_BASED = "noun_based"  # Abstract nouns (low entropy)
+        # Example: ["the", "city", "is"] -> {"word_count": [2], "entropy_score": -0.5}
+    VERB_BASEED = "verb_based"   # Action verbs, high entropy
+        # Example: ["to", "learn", "from", "myself"] -> {"word_count": [4], "entropy_score": 1.8}
 
-    if (!isOldUser) {
-      submission = await Promise.resolve({ id: generateId(), contentId: `${payload.content_id || 'raw'}`, metadata: {} }); // Simulate successful upload with minimal data
-    } else {
-      throw new Error("Access denied for users under 18");
-    }
+class PhraseFilterer:
+    """Filters candidate phrases to ensure they meet the 'novel' and length constraints."""
 
-    return submission;
-  },
+    def __init__(self, min_words_range=12):
+        self.min_word = float(min_words_range)
+        # Pre-computed high-entropy sample phrases for testing purposes only. 
+        # In production, this would come from a secure source or LLM trained on human input.
+        self.high_entropy_phrases: List[Dict[str, Any]] = [
+            {
+                "phrase": ["The", "city", "of", "the", "universe"],  # Abstract noun + verb (high entropy)
+                "word_count_range": [12, 30], 
+                "category": PhraseCategory.NOUN_BASED,
+                "entropy_score": -0.45,
+            },
+            {
+                "phrase": ["to", "learn", "from", "myself"],  # Verb + object (high entropy)
+                "word_count_range": [12, 30], 
+                "category": PhraseCategory.VERB_BASEED,
+                "entropy_score": 1.85,
+            },
+        ]
 
-  processSubmission: async (payload: any): Promise<AlchemySubmission | undefined> => {
-    console.log(`[ALchemy Submission Handler] Processing event payload`);
-    
-    if (!payload || !Array.isArray(payload)) {
-      throw new Error("Invalid Payload Format");
-    }
+    def filter(self, phrase: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Filter a single candidate phrase."""
+        # Check word count range (must be between min_words_range and max_words)
+        if not isinstance(phrase.get("word_count"), list):
+            return None
+        
+        current_word_list = [int(w.strip()) for w in str(phrase["word_count"])]
 
-    // Simulate background processing logic for analytics and notifications
-    const processed = await Promise.resolve({ id: generateId(), contentId: `${payload.content_id || 'raw'}` });
+        low_start, low_end = self.min_word, self.max_word
+        # Ensure we have at least one valid word count if provided (default to 12)
+        min_valid_wd = max(low_start + 0.5, current_word_list[0] if len(current_word_list) > 0 else 12)
 
-    return processed;
-  },
-
-  generateId: () => Math.random().toString(36).substr(2, 9) + Date.now()
-};
-
-export { AlchemySubmissionHandler }; // Export for type definition purposes (in a real app this would be injected or used as module exports)
+        for w in range(min_valid_wd, self.max_word):
+            # Check word count against the list (integer comparison is safer than float tolerance here to avoid edge cases with commas/spaces)
+            try:
+                current_int = int(w.strip()) if isinstance(w, str) else 0
+                if low_start <= current_int and current_int < self.max_word or \
+                   high_end > current_int:
+                    return {"phrase": phrase["phrases"], "word_count_range": [12, 30], 
+                            "category": PhraseCategory.VERB_BASEED}
+            except ValueError:
