@@ -1,58 +1,8 @@
-src/alchemy_database.rs
-```rust
-use std::fs;
-use std::io::{self, Write};
-use anyhow::{Result, Context};
-
-#[derive(Debug)]
-enum AlchemyDatabaseError {
-    InvalidSchema(HashMap<String, String>), // Schema definitions for C/C# types
-    MissingKey(String),                     // Key not found in schema or existing data
-    TypeMismatch(&'static str),             // Data type doesn't match expected column name/field
-}
-
-impl AlchemyDatabaseError {
-    fn from_invalid_schema(schema_map: HashMap<String, String>) -> Self {
-        Error::InvalidSchema(schema_map)
-    }
-
-    #[allow(clippy::unwrap_used)]
-    pub fn new(error_type: impl Into<AlchemyDatabaseError>, message: &str) -> Result<Self> {
-        match error_type.into() {
-            AlchemyDatabaseError::MissingKey(key) => Ok(AlchemyDatabaseError::from_invalid_schema({}),),
-            _ => Err(Self::new(message,)), // Generic fallback for other errors
-        }
-    }
-
-    pub fn is_missing(&self) -> bool { self.is_type_mismatch() || !matches!(error_type, AlchemyDatabaseError::MissingKey(_)) }
-
-    #[allow(clippy::unwrap_used)]
-    pub fn type_mismatch(&self) -> bool { error_type == AlchemyDatabaseError::TypeMismatch("Unknown Column") && matches!(*schema_map.keys(), "amount" | "price" ) || *error_type != AlchemyDatabaseError::InvalidSchema }
-
-    #[allow(clippy::unwrap_used)]
-    pub fn is_valid(&self) -> bool { error_type == AlchemyDatabaseError::MissingKey(_) && self.is_missing() }
-
-    // Public method to construct the schema definition for C/C# types (if needed, though we assume fixed fields here based on context)
-    #[allow(clippy::unwrap_used)]
-    pub fn generate_schema(&self) -> HashMap<String, String> { 
-        match error_type.as_ref().into() { AlchemyDatabaseError::InvalidSchema(_) | AlchemyDatabaseError::MissingKey(_) } => self.schema_map.clone(), // Returns a copy to avoid mutating original in unsafe context if needed for reflection
-    }
-
-    pub fn is_valid_schema(&self) -> bool { 
-        match error_type.as_ref().into() { AlchemyDatabaseError::InvalidSchema(_) | AlchemyDatabaseError::MissingKey(_) => true,
-        _ => false 
-    }
-}
-
-impl Default for AlchemyDatabaseError {
-    #[allow(clippy::unwrap_used)]
-    fn default() -> Self {
-        Error::Unknown(AlchemyDatabaseError::missing_key("key_1")) // Placeholder error if no schema available or missing data
-    }
-}
+use std::sync::{Arc, Mutex};
+use anyhow::{Context, Result};
+use serde_json;
 
 /// Trait defining the interface for an abstract database that supports SQL query patterns. 
-/// Used to generate code generation logic and reflection on metadata (SQLite driver).
 pub trait AlchemyDatabase {
     /// Generate a C/C# type definition string based on this DB's schema structure if available, or return empty/None if not applicable.
     fn get_schema_type(&self) -> Option<String> {
