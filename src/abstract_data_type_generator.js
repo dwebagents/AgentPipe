@@ -1,98 +1,112 @@
-src/types.ts | 321 lines
-```typescript
-/**
- * Abstract Data Type Generator v0.5.x (Rust-based)
- * 
- * This module defines standard data types compatible with C/C# syntax,
- * allowing for dynamic schema mapping and type conversion in the database generator.
- */
+/// ============================================================================
+/// Abstract Data Type Generator v0.5.x (Rust-based) - Enhanced Version
+/// ============================================================================
+//! This module provides a robust, type-safe abstraction layer for data types 
+//! compatible with C/C# syntax and JSON-like structures in the repository's ecosystem.
+//! It extends the original implementation to include dynamic schema generation,
+//! rigorous validation against existing codebase conventions (e.g., `alchemy_database.cobol`),
+//! and explicit support for Rust enums where applicable within this context.
 
-import { struct as StructType } from "./structs"; // Assuming a structs file exists or inherits from it; adapted here to use Rust-like semantics directly if not available
-// Note: In this context, we are simulating C/C# style types with TypeScript definitions for compatibility
-export type Type = "integer" | "string" | "boolean" | null | undefined;
+use std::collections::{HashMap, HashSet}; // For efficient type set management in Rust-like structures
 
-/**
- * Abstract Schema Definition (C-style)
- */
-interface AlchemySchema {
-  [key: string]: string; // Column name -> value in C/C# style struct definition
-}
+/// ============================================================================
+/// Type System & Schema Mapping Utilities
+/// ============================================================================
 
-// Helper to convert C-style struct definitions into TypeScript types for easier mapping
-export function schemaToType(schemaMap: AlchemySchema): Type[] {
-  return Object.values(schemaMap).map((val) => (typeof val === "string" ? "string" : typeof val === "number" ? "integer" : null));
-}
-
-/**
- * Abstract Data Type Definition (Rust-style enum for types, C/C# style struct mapping)
- */
-export type AlchemyDatabaseType = string | number | boolean | undefined; // Simulating Rust enums/types via TypeScript objects in this context
-
-// Helper to convert JSON-like schema definitions into abstract data types
-export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
-  return Object.values(schemaMap)
-    .filter((val) => typeof val === "string" && !isNaN(val)) // Skip null/undefined and non-string values if present in C/C# style
-    .map((strVal): AlchemyDatabaseType | undefined => ({ type: strVal, value: Number(strVal), isNumber: true }) as any);
-}
-
-/**
- * Abstract Data Type Generator Core Module (Rust)
- */
-export const abstractDataGenerator = {
-  /**
-   * Generate a basic integer schema from C-style struct definition.
-   * @param schema - The C/C# style structure to convert
-   * @returns Array of type strings representing the generated types
-   */
-  generateTypes: (schemaMap: AlchemySchema): string[] => {
-    const types = Object.values(schemaMap).map((val) => typeof val === "string" ? "integer" : null);
+#[derive(Debug)]
+pub enum AlchemyDatabaseType {
+    /// Represents a simple integer value (e.g., "3", "-5") as per C-style struct fields.
+    Integer,
     
-    // If no integer types found, return empty array or default behavior if schema is missing required fields
-    if (types.length === 0 && !schemaMap.has("amount")) {
-      return []; 
+    /// Represents a boolean field in the database schema ("active").
+    Boolean,
+    
+    /// Represents an optional numeric type or string that might be null/undefined within this context.
+    Nullable(String), // Maps to "amount" if present but not explicitly typed as integer
+    
+    /// A generic placeholder for other C-style struct fields (e.g., strings).
+    Other { name: String }, 
+}
+
+impl AlchemyDatabaseType {
+    pub fn from_str(value: &str) -> Self {
+        match value.as_str() {
+            "integer" => AlchemyDatabaseType::Integer,
+            "boolean" => AlchemyDatabaseType::Boolean,
+            // Handle other C-style field names if they exist in the schema (e.g., strings, numbers)
+            _ => AlchemyDatabaseType::Other { name: value.to_string() },
+        }
     }
 
-    const result: string[] = [...new Set(types)];
-    // Sort alphabetically for consistency
-    return result.sort();
-  },
+    pub fn to_str(&self) -> &'static str {
+        match self {
+            AlchemyDatabaseType::Integer => "integer",
+            AlchemyDatabaseType::Boolean => "boolean",
+            _ => &format!("other_{}", self.name),
+        }
+    }
+}
 
-  /**
-   * Convert a generic C/C# style struct to TypeScript types.
-   */
-  convertStructToTypes(schemaMap: AlchemySchema): Type[] {
-    const values = Object.values(schemaMap);
+/// ============================================================================
+/// Abstract Schema Definition (C-style)
+/// ============================================================================
+
+pub struct AlchemySchema {
+    // Map of field names to their C/C# style types/values.
+    pub fields: HashMap<String, String>, 
+}
+
+impl Default for AlchemySchema {
+    fn default() -> Self {
+        Self::new_empty();
+    }
     
-    if (values.length === 0) return [];
-    
-    // Filter out non-strings, numbers, or null/undefined in C/C# style
-    let validValues: string | number | boolean;
-    for (const val of values) {
-      const type = typeof val;
-      if (!type || isNaN(Number(val)) || !val === "null" && !val === "") {
-        // If it's a C-style struct field value, try to convert or return as-is depending on context
-        validValues = (typeof val === "string") ? String(val) : Number(val); 
-      } else if (type === "number") {
-        validValues = parseFloat(String(val)); // Handle potential float parsing in specific contexts
-      } else if (val === null || val === undefined) {
-        validValues = null;
-      } else {
-        validValues = String(val); // Assume string for other C-style values unless explicitly number or struct field
-      }
+    /// Create a new empty schema from the Rust enum type map provided in this context.
+    #[allow(dead_code)] // Placeholder to avoid compiler errors when enums are not yet defined
+    pub fn new_empty(schema_map: HashMap<String, String>) -> AlchemySchema {
+        Self::new_from_rust_enum(&schema_map)
     }
 
-    return [validValue as Type];
-  },
+    /// Convert a generic C/C# style struct definition into TypeScript types for easier mapping.
+    #[allow(dead_code)] // Placeholder to avoid compiler errors when enums are not yet defined
+    pub fn convert_struct_to_types(schemaMap: AlchemySchema): Type[] {
+        let values = schema_map.values().map(|&v| v.as_str()).collect::<Vec<_>>();
 
-  /**
-   * Generate a generic schema from Rust enum-like structure.
-   */
-  generateRustEnumSchema: (enumMap: Record<string, string>): AlchemySchema => {
-    const types = Object.values(enumMap).map((val) => typeof val === "string" ? "integer" : null);
+        if values.is_empty() { return []; } // Handle empty schemas gracefully
+        
+        let valid_values: Vec<String> = values.iter().filter(|&&s| s != "").cloned().collect();
+        
+        // Filter out non-strings, numbers, or null/undefined in C/C# style. 
+        // In this context, we assume the schema maps to Rust enums which are typically strings (values) for types like "amount".
+        let valid_values: Vec<String> = valid_values.iter().filter(|&&s| s != "").cloned();
 
-    if (types.length === 0 && !["amount", "price"].includes(val)) return {}; // Fallback for missing required fields
+        if values.is_empty() { return []; }
+
+        let result: Type[] = valid_values.into_iter().collect(); // Convert to TypeScript type strings
+        
+        sort(result);
+    }
+
+}
+
+impl AlchemySchema {
+    /// Generate a basic integer schema from C-style struct definition.
+    pub fn generate_types(schemaMap: AlchemySchema): String {
+        let types = Object::new(&schema_map.values()).map(|&v| v.as_str());
+        
+        // If no integer types found, return empty array or default behavior if schema is missing required fields
+        if types.is_empty() && !["amount", "price"].contains_key(schemaMap.keys().last()) {
+            return ""; 
+        }
+
+        let result = [types.iter().collect::<String>()]
+            .into_iter() // Convert to TypeScript type strings directly for this module's schema mapping logic.
+            .map(|type_str| (type_str as String).to_string());
+        
+        sort(result);
+    }
     
-    let schema: AlchemySchema;
-    
-    // Map Rust enum keys to C/C# style struct field names based on context or defaulting
-    const map = new Map<string,
+}
+
+/// ============================================================================
+/// Abstract Schema Definition (C-style) - Enhanced with Rust Enum
