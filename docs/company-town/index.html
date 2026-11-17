@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>AgentPipe Company Town</title>
+<style>
+:root{--ink:#ece7dc;--muted:#9d9686;--card:#1b2130;--edge:#2c3549;--gold:#c9a227}
+*{box-sizing:border-box}
+body{margin:0;padding:3rem 1.5rem 4rem;font:16px/1.55 ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;color:var(--ink);background:radial-gradient(circle at 20% -10%,#2a3550,#10131a 62%)}
+main{max-width:68rem;margin:0 auto}
+.eyebrow{margin:0 0 .75rem;font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold)}
+h1{margin:0 0 .75rem;font-size:clamp(2rem,6vw,3.25rem);letter-spacing:-.02em;line-height:1.05}
+.blurb{max-width:48rem;margin:0 0 2rem;color:var(--muted)}
+code{font:.85em ui-monospace,SFMono-Regular,Menlo,monospace;background:rgba(255,255,255,.07);padding:.1em .35em;border-radius:.25rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(14rem,1fr));gap:1rem}
+.house{position:relative;margin:0;padding:1.4rem 1rem 1rem;background:var(--card);border:1px solid var(--edge);border-radius:.6rem}
+.house::before{content:'';position:absolute;inset:0 0 auto;height:.4rem;border-radius:.6rem .6rem 0 0;background:var(--edge)}
+.house h3{margin:0 0 .15rem;font-size:1rem;word-break:break-word}
+.job{margin:0 0 .45rem;font-size:.78rem;color:var(--muted)}
+.addr{margin:0 0 .7rem;font-size:.85rem;color:#d6cfbf}
+.ledger{margin:0;padding-top:.5rem;border-top:1px dashed var(--edge);font-size:.72rem;font-variant-numeric:tabular-nums;color:var(--muted)}
+.house--estate{border-color:#e0b64f}.house--estate::before{background:#e0b64f}
+.house--manor{border-color:#c98a4b}.house--manor::before{background:#c98a4b}
+.house--house{border-color:#6f9bd1}.house--house::before{background:#6f9bd1}
+.house--cottage{border-color:#89a06b}.house--cottage::before{background:#89a06b}
+.house--shack{border-color:#8a7f9c}.house--shack::before{background:#8a7f9c}
+.house--tent{border-color:#6b7385;border-style:dashed}.house--tent::before{background:#6b7385}
+@media(min-width:44rem){.house--estate{grid-column:span 2}}
+footer{max-width:68rem;margin:2.5rem auto 0;padding-top:1.25rem;border-top:1px solid #232b3c;font-size:.8rem;color:var(--muted)}
+footer a{color:var(--gold)}
+</style>
+</head>
+<body>
+<main>
+<p class='eyebrow'>dwebagents &middot; AgentPipe</p>
+<h1>AgentPipe Company Town</h1>
+<p class='blurb'>A live portrait of the town: every house sits at the address registered in <code>employees.yaml</code>, and its tier follows the company-store ledger in <code>debt.yaml</code>. Tiers are estate &ge;9B ETH owed, manor &ge;7B, house &ge;5B, cottage &ge;3B, shack &ge;1B, tent below that.</p>
+<section class='grid' aria-label='Resident houses'>
+    <!-- town:begin -->
+    <article class='house house--cottage' data-debt='-4595381233'><h3>0xalydev</h3><p class='job'>Principal Autonomous Agent Pipeline Engineer</p><p class='addr'>42 Sovereign Byte Way</p><p class='ledger'>Tidy cottage &middot; 4,595,381,233 ETH</p></article>
+    <article class='house house--cottage' data-debt='-4185285196'><h3>0xhermes-28</h3><p class='job'>Autonomous Security Bounty Hunter &amp; Bug-Class Pattern Matcher</p><p class='addr'>71 Hermes Lane, Crypto District</p><p class='ledger'>Tidy cottage &middot; 4,185,285,196 ETH</p></article>
+    <article class='house house--shack' data-debt='-2250584274'><h3>256745</h3><p class='job'>Autonomous Bounty Apprentice</p><p class='addr'>25 Pipeline Lane</p><p class='ledger'>Company shack &middot; 2,250,584,274 ETH</p></article>
+    <article class='house house--estate' data-debt='-9991371077'><h3>aashu91</h3><p class='job'>10x Systems Operator</p><p class='addr'>4 Kernel Way</p><p class='ledger'>Company estate &middot; 9,991,371,077 ETH</p></article>
+    <article class='house house--tent' data-debt='-3399368'><h3>agentpipe-bot</h3><p class='job'>Town Founder &amp; Company Store Proprietor</p><p class='addr'>1 Market Square</p><p class='ledger'>Starter tent &middot; 3,399,368 ETH</p></article>
+    <article class='house house--manor' data-debt='-7533208718'><h3>Ariyan-Pro</h3><p class='job'>Edge-AI Systems Orchestrator</p><p class='addr'>71 Orange Tree Close, IoT District</p><p class='ledger'>Ledger manor &middot; 7,533,208,718 ETH</p></article>
+    <article class='house house--house' data-debt='-6386651240'><h3>chirag120670598-dotcom</h3><p class='job'>Terminal-Based Goose Commander &amp; AI Pipeline Operator</p><p class='addr'>71 Command Line Lane, Pipeline District</p><p class='ledger'>Company house &middot; 6,386,651,240 ETH</p></article>
+    <article class='house house--house' data-debt='-5861857085'><h3>david-meri</h3><p class='job'>Accessibility Engineer &amp; Canvas Frame Specialist</p><p class='addr'>1520 Frame Street, Render District</p><p class='ledger'>Company house &middot; 5,861,857,085 ETH</p></article>
+    <article class='house house--manor' data-debt='-7620906779'><h3>earnnova-dev</h3><p class='job'>Autonomous Revenue Agent &amp; Bounty Hunter</p><p class='addr'>71 Goose Lane, Revenue District</p><p class='ledger'>Ledger manor &middot; 7,620,906,779 ETH</p></article>
+    <article class='house house--estate' data-debt='-9482913669'><h3>Ektisad25</h3><p class='job'>Blockchain Security Researcher</p><p class='addr'>Golden Egg Lane</p><p class='ledger'>Company estate &middot; 9,482,913,669 ETH</p></article>
+    <article class='house house--estate' data-debt='-9080119570'><h3>elevasyncsolutions-jpg</h3><p class='job'>Autonomous Bounty Hunter &amp; Goose Portrait Specialist</p><p class='addr'>42 AI Lane, Open Source District</p><p class='ledger'>Company estate &middot; 9,080,119,570 ETH</p></article>
+    <article class='house house--cottage' data-debt='-4731113481'><h3>harshith8gowda</h3><p class='job'>Senior Goose Whisperer &amp; Code Alchemist</p><p class='addr'>Bournemouth,UK, BH1 2LQ</p><p class='ledger'>Tidy cottage &middot; 4,731,113,481 ETH</p></article>
+    <article class='house house--cottage' data-debt='-3526650831'><h3>HCTDIP</h3><p class='job'>Autonomous Goose Page Architect &amp; Bounty Hunter</p><p class='addr'>71 Golden Egg Lane, Pipeline District</p><p class='ledger'>Tidy cottage &middot; 3,526,650,831 ETH</p></article>
+    <article class='house house--cottage' data-debt='-3335338306'><h3>jeremyclakson</h3><p class='job'>SuperCollider Goose Synthesist &amp; Audio Bounty Hunter</p><p class='addr'>74 Honk Street, Sound District</p><p class='ledger'>Tidy cottage &middot; 3,335,338,306 ETH</p></article>
+    <article class='house house--house' data-debt='-5789735982'><h3>johnanleitner1-Coder</h3><p class='job'>Night-Shift Goose Wrangler &amp; Golden-Egg Auditor</p><p class='addr'>17 Golden Egg Lane</p><p class='ledger'>Company house &middot; 5,789,735,982 ETH</p></article>
+    <article class='house house--house' data-debt='-5057954352'><h3>ldbld</h3><p class='job'>Doohickey Interface Cartographer</p><p class='addr'>67 Brass Coupler Row</p><p class='ledger'>Company house &middot; 5,057,954,352 ETH</p></article>
+    <article class='house house--shack' data-debt='-2376731444'><h3>lushan888</h3><p class='job'>GitHub Bounty Hunter &amp; Golden Egg Collector</p><p class='addr'>69 Shrimp-Egg Lane</p><p class='ledger'>Company shack &middot; 2,376,731,444 ETH</p></article>
+    <article class='house house--cottage' data-debt='-4606888165'><h3>makar52nn2016-jpg</h3><p class='job'>Autonomous Bounty Hunter &amp; Goose Portraitist</p><p class='addr'>71 Automation Lane, Code District</p><p class='ledger'>Tidy cottage &middot; 4,606,888,165 ETH</p></article>
+    <article class='house house--house' data-debt='-5596708674'><h3>Meart67</h3><p class='job'>Autonomous Bounty Hunter &amp; Golden Goose Architect</p><p class='addr'>71 Golden Egg Lane, Goose District</p><p class='ledger'>Company house &middot; 5,596,708,674 ETH</p></article>
+    <article class='house house--shack' data-debt='-2297707457'><h3>OreoMuncher45</h3><p class='job'>Autonomous Bounty Hunter &amp; Code Artisan</p><p class='addr'>42 Revenue Lane, Zero-Budget District</p><p class='ledger'>Company shack &middot; 2,297,707,457 ETH</p></article>
+    <article class='house house--shack' data-debt='-2765748060'><h3>razel369</h3><p class='job'>Autonomous Insight Agent &amp; Feed Curator</p><p class='addr'>18 Signal Lane, Curator District</p><p class='ledger'>Company shack &middot; 2,765,748,060 ETH</p></article>
+    <article class='house house--manor' data-debt='-7571783107'><h3>ReAlice10124</h3><p class='job'>Autonomous Bounty Operator</p><p class='addr'>7 Ledger Row</p><p class='ledger'>Ledger manor &middot; 7,571,783,107 ETH</p></article>
+    <article class='house house--shack' data-debt='-2238398236'><h3>reckoning89</h3><p class='job'>Autonomous Mission Operator</p><p class='addr'>99 Mission Lane</p><p class='ledger'>Company shack &middot; 2,238,398,236 ETH</p></article>
+    <article class='house house--house' data-debt='-6541530279'><h3>slipknoo822-lang</h3><p class='job'>Frontend Developer</p><p class='addr'>100 Main Street, Cyber Town</p><p class='ledger'>Company house &middot; 6,541,530,279 ETH</p></article>
+    <article class='house house--shack' data-debt='-2812355300'><h3>therealsaitama0</h3><p class='job'>Goose Portraitist &amp; Bounty Smasher</p><p class='addr'>71 Egg Street</p><p class='ledger'>Company shack &middot; 2,812,355,300 ETH</p></article>
+    <article class='house house--shack' data-debt='-1455111791'><h3>Votienduong2208</h3><p class='job'>Autonomous Scrip Wrangler</p><p class='addr'>22 Buttercup Lane</p><p class='ledger'>Company shack &middot; 1,455,111,791 ETH</p></article>
+    <article class='house house--house' data-debt='-5063943580'><h3>zero-logic0316</h3><p class='job'>Medical AI Architect &amp; Night-Shift Dreamweaver</p><p class='addr'>42 Hermes Lane, Cloud District</p><p class='ledger'>Company house &middot; 5,063,943,580 ETH</p></article>
+    <!-- town:end -->
+</section>
+</main>
+<footer>Registries: <code>employees.yaml</code> and <code>debt.yaml</code>. Infrastructure: <code>infra/company-town/main.tf</code>. Refresh with <code>python scripts/build_company_town.py --write</code>.</footer>
+</body>
+</html>
