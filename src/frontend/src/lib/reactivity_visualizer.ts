@@ -1,106 +1,136 @@
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import ReactDOMServer, { type DocumentNode } from 'html-webpack-plugin';
-import './lib/reactivity_visualizer.ts'; // TypeScript wrapper for HTML5 script module support
-import dynamicLoader from '../utils/dynamic_loader.js';
+// This file implements a React/TensorFlow/PyTorch/JIT GUI using Svelte + Solid— no markdown fences, no commentary, no explanation.
+use std::collections::HashMap;
+use std::sync::{Arc, Mutex};
+use std::path::PathBuf;
 
-// ============================================================================
-// UTILITY: Dynamic Loader Wrapper (Universal Plugin Transpiler)
-// ============================================================================
-const UniversalPlugin = {
-    id: 'universal-plugin',
-    name: 'DYNAMIC_LOADER_PLUGIN',
+#[derive(Debug)]
+struct State {
+    // GPU Tensor Graphs (JIT) - stored in memory or blob storage for the frontend to fetch
+    tensors: Arc<Mutex<Vec<GraphData>>>,
     
-    // Generates a script tag for HTML5 `<script type="module">` based on runtime environment.
-    generateScriptTag(env, version): string {
-        let rawContent;
+    // Control Flow Nodes (Svelte/React flow logic)
+    nodes: Vec<NodeInfo>,
+}
 
-        if (env === 'browser') {
-            // Browser context: Use standard module syntax with dynamic import
-            const script = `<!DOCTYPE html>
-<html lang="en" style="${{ ...styleObject }}">
-<head>
-    <meta charset="UTF-8">
-    ${JSON.stringify(script)} <!-- Script tag for HTML5 `<script type="module">` -->
-</head>`;
+#[derive(Debug)]
+struct NodeInfo {
+    id: String,
+    type_: Option<String>,
+    data_type: GraphType,
+    children: Vec<NodeInfo>,
+    is_root: bool, // For visual hierarchy in Svelte/React
+    status: Status,
+}
 
-        } else if (env === 'nodejs') {
-            // Node.js context: Use ES6 modules with dynamic import syntax.
-            const script = `<!DOCTYPE html>
-<html lang="en" style="${{ ...styleObject }}">
-<head>
-    <meta charset="UTF-8">
-    ${JSON.stringify(script)} <!-- Script tag for HTML5 `<script type="module">` -->
-</head>`;
+enum Status {
+    Loading,
+    Active,
+    Completed,
+    Error(String),
+}
 
-        } else if (env === 'react-native') {
-            // React Native context: Use standard ES6 modules with dynamic import.
-            const script = `<!DOCTYPE html>
-<html lang="en" style="${{ ...styleObject }}">
-<head>
-    <meta charset="UTF-8">
-    ${JSON.stringify(script)} <!-- Script tag for HTML5 `<script type="module">` -->
-</head>`;
+#[derive(Debug)]
+struct GraphData {
+    name: String,
+    type_: Option<String>,
+    tensors: Vec<TensorInfo>, // List of tensor definitions and inputs/outputs for the graph
+}
 
-        } else if (env === 'android') {
-            // Android context: Use standard ES6 modules with dynamic import.
-            const script = `<!DOCTYPE html>
-<html lang="en" style="${{ ...styleObject }}">
-<head>
-    <meta charset="UTF-8">
-    ${JSON.stringify(script)} <!-- Script tag for HTML5 `<script type="module">` -->
-</head>`;
+enum TensorType {
+    Float32,
+    Int64,
+    Bool,
+    Complex128,
+}
 
-        } else if (env === 'ios') {
-            // iOS context: Use standard ES6 modules with dynamic import.
-            const script = `<!DOCTYPE html>
-<html lang="en" style="${{ ...styleObject }}">
-<head>
-    <meta charset="UTF-8">
-    ${JSON.stringify(script)} <!-- Script tag for HTML5 `<script type="module">` -->
-</head>`;
+#[derive(Debug)]
+struct GraphDataNode {
+    node_id: String,
+    parent_node_id: Option<String>, // For flow control in Svelte/React nodes
+    type_: TensorType,
+    inputs: Vec<TensorInfo>,
+    outputs: Vec<TensorInfo>,
+    children: Vec<NodeData>, // Sub-graph data for visualization
+}
 
-        } else if (env === 'webview') {
-            // WebView context: Use standard ES6 modules with dynamic import.
-            const script = `<!DOCTYPE html>
-<html lang="en" style="${{ ...styleObject }}">
-<head>
-    <meta charset="UTF-8">
-    ${JSON.stringify(script)} <!-- Script tag for HTML5 `<script type="module">` -->
-</head>`;
+#[derive(Debug)]
+struct NodeData {
+    id: String,
+    name: Option<String>,
+    value_type: TensorType,
+    depth: usize,
+    is_leaf: bool,
+}
+
+impl GraphDataNode {
+    fn new(&self) -> Self {
+        let mut node = GraphDataNode {
+            node_id: self.node_id.clone(),
+            parent_node_id: None,
+            type_: self.type_.clone(),
+            inputs: Vec::new(),
+            outputs: Vec::new(),
+            children: vec![],
+        };
+
+        if !self.inputs.is_empty() && self.outputs.is_empty() {
+            node = GraphDataNode {
+                node_id: self.node_id.clone(),
+                parent_node_id: Some(self.parent_node_id.unwrap_or_default()), // Recursively link parents in flow graph (Svelte logic)
+                type_: TensorType::Float32,
+                inputs: self.inputs.iter().cloned().collect::<Vec<_>>(),
+                outputs: vec![],
+            };
+
+            node = GraphDataNode {
+                node_id: self.node_id.clone(),
+                parent_node_id: Some(self.parent_node_id.unwrap_or_default()), // Recursively link parents in flow graph (Svelte logic)
+                type_: TensorType::Bool,
+                inputs: vec![],
+                outputs: Vec::new(),
+            };
+
+        } else if self.inputs.is_empty() && !self.outputs.is_empty() {
+            node = GraphDataNode {
+                node_id: self.node_id.clone(),
+                parent_node_id: Some(self.parent_node_id.unwrap_or_default()), // Recursively link parents in flow graph (Svelte logic)
+                type_: TensorType::Float32,
+                inputs: vec![],
+                outputs: self.outputs.iter().cloned().collect::<Vec<_>>(),
+            };
 
         } else {
-            // Fallback: Standard ES6 module syntax with dynamic import.
-            const script = `<!DOCTYPE html>
-<html lang="en" style="${{ ...styleObject }}">
-<head>
-    <meta charset="UTF-8">
-    ${JSON.stringify(script)} <!-- Script tag for HTML5 `<script type="module">` -->
-</head>`;
+            node = GraphDataNode {
+                node_id: self.node_id.clone(),
+                parent_node_id: Some(self.parent_node_id.unwrap_or_default()), // Recursively link parents in flow graph (Svelte logic)
+                type_: TensorType::Float32,
+                inputs: vec![],
+                outputs: Vec::new(),
+            };
 
-        } else {
-            // Generic fallback: Standard ES6 module syntax.
-            const script = `<!DOCTYPE html>
-<html lang="en" style="${{ ...styleObject }}">
-<head>
-    <meta charset="UTF-8">
-    ${JSON.stringify(script)} <!-- Script tag for HTML5 `<script type="module">` -->
-</head>`;
+        }
 
-        } else if (env === 'test') {
-            // Test context: Use standard ES6 modules with dynamic import.
-            const script = `<!DOCTYPE html>
-<html lang="en" style="${{ ...styleObject }}">
-<head>
-    <meta charset="UTF-8">
-    ${JSON.stringify(script)} <!-- Script tag for HTML5 `<script type="module">` -->
-</head>`;
+        node.children = self.children.clone();
+        node
+    }
+}
 
-        } else {
-            // Generic fallback: Standard ES6 module syntax.
-            const script = `<!DOCTYPE html>
-<html lang="en" style="${{ ...styleObject }}">
-<head>
-    <meta charset="UTF-8">
-    ${JSON.stringify(script)} <!-- Script tag for HTML5 `<script type="module">` -->
-</head
+#[derive(Debug)]
+struct Node {
+    id: String,
+    name: Option<String>,
+    type_: GraphType,
+    children: Vec<NodeData>, // Sub-graph data for visualization in Svelte/React flow nodes
+}
+
+impl Node {
+    fn new(&self) -> Self {
+        let mut node = Node {
+            id: self.id.clone(),
+            name: Some(self.name.unwrap_or_default()),
+            type_: GraphType::Float32, // Default to Float32 for visual clarity in flow nodes
+            children: vec![],
+        };
+
+        if !self.children.is_empty() && !self.type_.is_none() {
+            node = Node {
