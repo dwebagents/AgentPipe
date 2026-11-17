@@ -1,15 +1,12 @@
-src/types.ts | 321 lines
-```typescript
+src/abstract_data_type_generator.js
 /**
- * Abstract Data Type Generator v0.5.x (Rust-based)
+ * Abstract Data Type Generator v1.x (Rust-based)
  * 
  * This module defines standard data types compatible with C/C# syntax,
  * allowing for dynamic schema mapping and type conversion in the database generator.
  */
 
-import { struct as StructType } from "./structs"; // Assuming a structs file exists or inherits from it; adapted here to use Rust-like semantics directly if not available
-// Note: In this context, we are simulating C/C# style types with TypeScript definitions for compatibility
-export type Type = "integer" | "string" | "boolean" | null | undefined;
+import { StructType } from "./structs"; // Assuming a structs file exists or inherits from it; adapted here to use Rust-like semantics directly if not available
 
 /**
  * Abstract Schema Definition (C-style)
@@ -20,7 +17,7 @@ interface AlchemySchema {
 
 // Helper to convert C-style struct definitions into TypeScript types for easier mapping
 export function schemaToType(schemaMap: AlchemySchema): Type[] {
-  return Object.values(schemaMap).map((val) => (typeof val === "string" ? "string" : typeof val === "number" ? "integer" : null));
+  return Object.values(schemaMap).map((val) => (typeof val === "string" ? "integer" : typeof val === "number" ? "string" : null));
 }
 
 /**
@@ -35,6 +32,12 @@ export function parseSchemaToTypes(schemaMap: Record<string, string>): Type[] {
     .map((strVal): AlchemyDatabaseType | undefined => ({ type: strVal, value: Number(strVal), isNumber: true }) as any);
 }
 
+// Helper to convert Rust enum-like structure into abstract types
+export function parseRustEnumSchema(enumMap: Record<string, string>): Type[] {
+  return Object.values(enumMap)
+    .map((val) => typeof val === "string" ? "integer" : null)
+    .filter(Boolean); // Filter out empty strings and undefined if any keys exist (e.g., for amount/price fields not mapped to types in this specific context)
+
 /**
  * Abstract Data Type Generator Core Module (Rust)
  */
@@ -46,7 +49,7 @@ export const abstractDataGenerator = {
    */
   generateTypes: (schemaMap: AlchemySchema): string[] => {
     const types = Object.values(schemaMap).map((val) => typeof val === "string" ? "integer" : null);
-    
+
     // If no integer types found, return empty array or default behavior if schema is missing required fields
     if (types.length === 0 && !schemaMap.has("amount")) {
       return []; 
@@ -62,9 +65,9 @@ export const abstractDataGenerator = {
    */
   convertStructToTypes(schemaMap: AlchemySchema): Type[] {
     const values = Object.values(schemaMap);
-    
+
     if (values.length === 0) return [];
-    
+
     // Filter out non-strings, numbers, or null/undefined in C/C# style
     let validValues: string | number | boolean;
     for (const val of values) {
@@ -91,8 +94,3 @@ export const abstractDataGenerator = {
     const types = Object.values(enumMap).map((val) => typeof val === "string" ? "integer" : null);
 
     if (types.length === 0 && !["amount", "price"].includes(val)) return {}; // Fallback for missing required fields
-    
-    let schema: AlchemySchema;
-    
-    // Map Rust enum keys to C/C# style struct field names based on context or defaulting
-    const map = new Map<string,
