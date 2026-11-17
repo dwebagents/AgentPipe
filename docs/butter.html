@@ -75,6 +75,12 @@
         50% { transform: rotate(3deg) scale(1.035); }
       }
 
+      @media (prefers-reduced-motion: reduce) {
+        .butter-orb {
+          animation: none;
+        }
+      }
+
       .butter-grid {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -165,7 +171,7 @@
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header" aria-label="Primary navigation">
       <a class="brand" href="./" aria-label="AgentPipe home">
-        <img src="../logo.svg" alt="" />
+        <img src="logo.svg" alt="" />
         <span>AgentPipe</span>
       </a>
       <nav aria-label="Site sections">
@@ -185,7 +191,7 @@
             task throughput until the pipeline glides like warm toast.
           </p>
         </div>
-        <div class="butter-orb" aria-label="Animated butter mascot">🧈</div>
+        <div class="butter-orb" role="img" aria-label="Animated butter mascot">🧈</div>
       </section>
 
       <section class="butter-grid" aria-label="Butter mode facts">
@@ -219,7 +225,14 @@
           </label>
           <button id="butter-button" type="button">Apply butter</button>
         </div>
-        <div class="butter-meter" aria-label="Butter spread meter">
+        <div
+          class="butter-meter"
+          role="meter"
+          aria-label="Butter spread meter"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="71"
+        >
           <div id="butter-spread"></div>
         </div>
         <div id="butter-log" class="butter-log" aria-live="polite">

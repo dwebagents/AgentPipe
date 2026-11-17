@@ -3,9 +3,10 @@
   const stateSelect = document.getElementById("butter-state");
   const butterButton = document.getElementById("butter-button");
   const spread = document.getElementById("butter-spread");
+  const meter = document.querySelector('[role="meter"].butter-meter');
   const log = document.getElementById("butter-log");
 
-  if (!spreadInput || !stateSelect || !butterButton || !spread || !log) {
+  if (!spreadInput || !stateSelect || !butterButton || !spread || !log || !meter) {
     return;
   }
 
@@ -21,6 +22,7 @@
     const state = stateSelect.value;
     spread.style.width = `${coverage}%`;
     spread.dataset.coverage = String(coverage);
+    meter.setAttribute("aria-valuenow", String(coverage));
     log.textContent = `butter> ${butterCopy[state]} at ${coverage}% coverage`;
   }
 
