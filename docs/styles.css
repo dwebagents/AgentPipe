@@ -396,6 +396,191 @@ footer span:first-child {
   }
 }
 
+/* ===== Contributors Page ===== */
+.contributors-hero {
+  grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+}
+
+.contributors-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2.5rem;
+  border: 1px solid rgba(255, 212, 42, 0.28);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+    radial-gradient(circle at 50% 46%, rgba(255, 212, 42, 0.16), transparent 22rem),
+    #100f0a;
+  box-shadow: var(--shadow);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.stat-number {
+  color: var(--yellow);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 950;
+  line-height: 1;
+}
+
+.stat-label {
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.contributors-section {
+  padding: clamp(4rem, 8vw, 7rem) clamp(1rem, 5vw, 5.5rem);
+  background: var(--paper);
+}
+
+.contributors-section h2 {
+  font-size: clamp(2.2rem, 4.5vw, 4rem);
+}
+
+.section-desc {
+  max-width: 58rem;
+  margin: 1.4rem 0 0;
+  color: var(--muted);
+  font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+}
+
+.contributors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.contributor-card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--white);
+  overflow: hidden;
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease,
+    border-color 200ms ease;
+}
+
+.contributor-card:hover,
+.contributor-card:focus-within {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(53, 41, 0, 0.16);
+  border-color: rgba(255, 212, 42, 0.5);
+}
+
+.contributor-card a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.75rem 1rem 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+}
+
+.contributor-card .avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 3px solid var(--yellow);
+  object-fit: cover;
+  margin-bottom: 1rem;
+}
+
+.contributor-card .name {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.contributor-card .role {
+  margin: 0.25rem 0 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.contributor-card .badge {
+  margin-top: 0.85rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.contributor-card.core {
+  border-color: rgba(255, 185, 0, 0.35);
+  background: linear-gradient(180deg, rgba(255, 247, 202, 0.6), var(--white));
+}
+
+.contributor-card.core .badge {
+  background: var(--yellow);
+  color: var(--charcoal);
+}
+
+.contributor-card.active .badge {
+  background: var(--paper-strong);
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+
+.contributor-card.community .badge {
+  background: var(--white);
+  color: var(--muted);
+  border: 1px solid var(--line);
+}
+
+.contributors-cta {
+  text-align: center;
+}
+
+.contributors-cta p {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 880px) {
+  .contributors-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .contributors-stats {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .contributors-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
+  }
+
+  .contributor-card a {
+    padding: 1.25rem 0.75rem 1rem;
+  }
+
+  .contributor-card .avatar {
+    width: 60px;
+    height: 60px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -404,6 +589,13 @@ footer span:first-child {
   .button,
   .button:hover,
   .button:focus-visible {
+    transform: none;
+    transition: none;
+  }
+
+  .contributor-card,
+  .contributor-card:hover,
+  .contributor-card:focus-within {
     transform: none;
     transition: none;
   }
