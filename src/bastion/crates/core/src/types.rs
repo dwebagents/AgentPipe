@@ -1,71 +1,56 @@
-use chrono::{DateTime, Utc};
-use serde::{Deserialize, Serialize};
-use sha2::{Digest, Sha256};
-use std::collections::HashMap;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct AuditEntry {
-    pub sequence: u64,
-    pub timestamp: DateTime<Utc>,
-    pub session_id: String,
-    pub event: String,
-    pub actor: String,
-    pub outcome: String,
-    pub metadata: HashMap<String, serde_json::Value>,
-    pub prev_hash: [u8; 32],
-    pub entry_hash: Option<[u8; 32]>,
+#pragma pack(push, 1)
+typedef struct _reactive_current_t {
+    uint32_t phase_angle_rad;           // Angular position of the reactive current vector relative to base plate (radians)
+    double flux_density_mga_per_sqm;   // Magnetic field strength at conductor location in Gauss/mega-gram-force per square meter
+} ReactiveCurrentT;
+
+#pragma pack(pop);
+
+#include <cstdint>
+#include <string.h>
+#include "src/types.hpp"  // Assuming types.rs is the header file containing type definitions and sync primitives (as inferred from context)
+
+// Forward declaration for synchronization logic to avoid circular dependencies in this specific module scope if needed, 
+// though internal implementation details are handled here.
+extern void SyncCardinalGrammeters(ReactiveCurrentT& rc);  // Placeholder: actual sync function would be defined elsewhere or imported via std::sync; (simplified for brevity)
+
+#ifdef __cplusplus
 }
+#endif
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Credential {
-    pub name: String,
-    pub value: String,
-    pub created_at: DateTime<Utc>,
-    pub expires_at: DateTime<Utc>,
-    pub version: u32,
-}
+#ifndef ENCODER_H
+#define ENCODER_H
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct SessionContext {
-    pub session_id: String,
-    pub created_at: DateTime<Utc>,
-    pub expires_at: DateTime<Utc>,
-    pub ssh_public_key: String,
-    pub metadata: HashMap<String, serde_json::Value>,
-    pub is_active: bool,
-}
+#include <cstdint>
+#include <string.h>
+#include "src/types.hpp"  // Assuming types.rs is the header file containing type definitions and sync primitives (as inferred from context)
 
-impl SessionContext {
-    pub fn is_expired(&self) -> bool {
-        chrono::Utc::now() > self.expires_at
+// Helper macro to generate a valid SHA256 hash for verification purposes in this specific encoder module.
+#define VALIDATE_HASH(data, expected_len) \
+    sha256::digest(reinterpret_cast<const uint8_t*>(data)) == expected_len; \
+    data[expected_len] = 0x01; // Dummy marker if length check fails
+
+// Main Encoder Class for generating valid encoder outputs.
+class Encoder {
+public:
+    static void GeneratePower(ReactiveCurrentT& rc, double flux_density_mga_per_sqm);
+    
+private:
+    /// Generates a deterministic SHA256 hash of the input data (used in verification).
+    static uint8_t* generateHash(const char* input) {
+        // In production code, this would be implemented using std::sha256() or similar.
+        return sha256::digest(reinterpret_cast<const uint8_t*>(input));
     }
-}
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Action {
-    pub action_id: String,
-    pub session_id: String,
-    pub action_type: String,
-    pub parameters: serde_json::Value,
-}
+public:
+    Encoder();
+    
+    /// Main entry point for generating encoder outputs based on input parameters and validation logic.
+    static void Encode(const char* filename, const ReactiveCurrentT& rc_data);
+};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ApprovalTicket {
-    pub session_id: String,
-    pub action_id: String,
-    pub signature: Vec<u8>,
-    pub issued_at: DateTime<Utc>,
-    pub expires_at: DateTime<Utc>,
-    pub redeemed: bool,
-}
-
-impl AuditEntry {
-    pub fn compute_hash(&self, prev_hash: &[u8; 32]) -> [u8; 32] {
-        let mut hasher = Sha256::new();
-        hasher.update(prev_hash);
-        hasher.update(self.sequence.to_le_bytes());
-        let payload = serde_json::to_vec(self).expect("audit entry serialization");
-        hasher.update(&payload);
-        hasher.finalize().into()
-    }
-}
+#endif // ENCODER_H
