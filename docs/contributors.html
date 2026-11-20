@@ -1,0 +1,861 @@
+
+
+
+
+
+Contributors | AgentPipe — The Goose People Factory
+
+  :root {
+    --gold: #FFD700;
+    --dark-gold: #B8860B;
+    --cream: #FFFDF0;
+    --goose-gray: #6B7280;
+    --accent: #1a1a2e;
+    --card-bg: #fff9e6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Georgia', serif;
+    background: var(--cream);
+    color: #222;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
+    padding: 80px 20px 100px;
+    text-align: center;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Ccircle cx='40' cy='40' r='2' fill='%23FFD70015'/%3E%3C/svg%3E") repeat;
+    pointer-events: none;
+  }
+  /* goose people factory SVG illustration */
+  .factory-scene {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 12px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+  .goose-person {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: waddle 2s ease-in-out infinite alternate;
+  }
+  .goose-person:nth-child(2n) { animation-delay: .3s; }
+  .goose-person:nth-child(3n) { animation-delay: .6s; }
+  .goose-person:nth-child(4n) { animation-delay: .9s; }
+  @keyframes waddle {
+    from { transform: translateY(0) rotate(-2deg); }
+    to   { transform: translateY(-6px) rotate(2deg); }
+  }
+  .goose-svg { width: 52px; height: 72px; }
+  .factory-building {
+    width: 260px;
+    margin: 0 auto 20px;
+  }
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    color: var(--gold);
+    text-shadow: 0 0 30px rgba(255,215,0,.4);
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+  .hero p {
+    color: #ccc;
+    font-size: 1.15rem;
+    max-width: 600px;
+    margin: 0 auto;
+    font-style: italic;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: #000;
+    font-weight: bold;
+    padding: 6px 20px;
+    border-radius: 20px;
+    margin-top: 18px;
+    font-size: .9rem;
+    letter-spacing: 1px;
+  }
+
+  /* ── 71 TICKER ── */
+  .seventy-one-banner {
+    background: var(--gold);
+    color: #000;
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+    font-size: .9rem;
+    letter-spacing: 3px;
+  }
+
+  /* ── GOLDEN EGGS decoration ── */
+  .egg { display: inline-block; font-size: 1.4rem; }
+  .egg-row {
+    text-align: center;
+    padding: 14px 0;
+    background: linear-gradient(90deg, transparent, rgba(255,215,0,.07), transparent);
+  }
+
+  /* ── CONTRIBUTORS GRID ── */
+  .contributors-section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 60px 20px;
+  }
+  .section-title {
+    text-align: center;
+    font-size: 2rem;
+    color: var(--dark-gold);
+    margin-bottom: 8px;
+  }
+  .section-sub {
+    text-align: center;
+    color: var(--goose-gray);
+    margin-bottom: 48px;
+    font-style: italic;
+  }
+  .contributor-card {
+    background: var(--card-bg);
+    border: 2px solid var(--gold);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 24px rgba(184,134,11,.12);
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 28px;
+    align-items: start;
+    transition: transform .2s, box-shadow .2s;
+    position: relative;
+  }
+  .contributor-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 32px rgba(184,134,11,.22);
+  }
+  .contributor-card .egg-corner {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    font-size: 1.6rem;
+    opacity: .7;
+  }
+  .portrait-wrap {
+    text-align: center;
+  }
+  .portrait-wrap img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid var(--gold);
+    object-fit: cover;
+    display: block;
+    margin: 0 auto 10px;
+  }
+  .portrait-essence {
+    font-size: .78rem;
+    color: #666;
+    font-style: italic;
+    line-height: 1.4;
+    margin-top: 8px;
+  }
+  .github-link {
+    display: inline-block;
+    margin-top: 10px;
+    background: #24292e;
+    color: #fff;
+    text-decoration: none;
+    padding: 5px 14px;
+    border-radius: 8px;
+    font-size: .8rem;
+    transition: background .15s;
+  }
+  .github-link:hover { background: #444; }
+  .contrib-info h2 {
+    font-size: 1.5rem;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .contrib-title {
+    color: var(--dark-gold);
+    font-size: .9rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+  }
+  .fact-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    margin-bottom: 10px;
+    font-size: .93rem;
+  }
+  .fact-label {
+    background: var(--gold);
+    color: #000;
+    font-size: .72rem;
+    font-weight: bold;
+    padding: 2px 8px;
+    border-radius: 6px;
+    min-width: 80px;
+    text-align: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .fact-value { color: #333; line-height: 1.5; }
+
+  /* ── EASTER EGG GAME ── */
+  #easter-egg-zone {
+    text-align: center;
+    padding: 40px 20px;
+    position: relative;
+  }
+  #secret-egg {
+    display: inline-block;
+    font-size: 3rem;
+    cursor: pointer;
+    transition: transform .1s;
+    user-select: none;
+    opacity: 0.08;
+    position: absolute;
+    bottom: 18px;
+    right: 60px;
+    filter: grayscale(80%);
+  }
+  #secret-egg:hover { opacity: 0.18; }
+  #secret-egg.found {
+    opacity: 1 !important;
+    animation: eggBurst 0.4s ease forwards;
+    filter: none;
+  }
+  @keyframes eggBurst {
+    0% { transform: scale(1); }
+    50% { transform: scale(2.2) rotate(15deg); }
+    100% { transform: scale(1.4) rotate(-5deg); }
+  }
+  #egg-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.75);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  #egg-modal.show { display: flex; }
+  #egg-modal-inner {
+    background: #fff9e6;
+    border: 4px solid var(--gold);
+    border-radius: 20px;
+    padding: 40px 48px;
+    text-align: center;
+    max-width: 480px;
+    animation: popIn .4s cubic-bezier(.18,.89,.32,1.27);
+  }
+  @keyframes popIn {
+    from { transform: scale(.5); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+  #egg-modal-inner h2 { color: var(--dark-gold); font-size: 1.8rem; margin-bottom: 12px; }
+  #egg-modal-inner p  { font-size: 1rem; line-height: 1.6; color: #333; }
+  #egg-close {
+    margin-top: 20px;
+    background: var(--gold);
+    border: none;
+    padding: 10px 28px;
+    border-radius: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background .15s;
+  }
+  #egg-close:hover { background: var(--dark-gold); color: #fff; }
+  #egg-score { font-size: 1.1rem; color: var(--goose-gray); margin-top: 10px; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #1a1a2e;
+    color: #ccc;
+    padding: 60px 20px 40px;
+    text-align: center;
+  }
+  footer h3 {
+    color: var(--gold);
+    font-size: 1.4rem;
+    margin-bottom: 24px;
+    letter-spacing: 2px;
+  }
+  .csuite-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+  .csuite-card {
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,215,0,.3);
+    border-radius: 12px;
+    padding: 20px 28px;
+    min-width: 180px;
+  }
+  .csuite-card .csuite-name { color: var(--gold); font-weight: bold; font-size: 1rem; }
+  .csuite-card .csuite-role { font-size: .8rem; color: #aaa; margin: 4px 0 8px; }
+  .csuite-card .csuite-contact { font-size: .82rem; color: #ddd; }
+  .goose-video-wrap {
+    margin: 32px auto;
+    max-width: 560px;
+    border: 3px solid var(--gold);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #000;
+  }
+  .goose-video-placeholder {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: #111;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    font-size: 3rem;
+    gap: 10px;
+    cursor: pointer;
+  }
+  .goose-video-placeholder span { font-size: 1rem; color: #aaa; }
+  footer .footer-copy {
+    color: #555;
+    font-size: .8rem;
+    margin-top: 20px;
+  }
+  /* 71 sprinkles */
+  .num71 { font-weight: bold; color: var(--dark-gold); }
+
+  /* responsive */
+  @media (max-width: 640px) {
+    .contributor-card { grid-template-columns: 1fr; }
+    .portrait-wrap { display: flex; flex-direction: column; align-items: center; }
+  }
+
+
+
+
+
+
+  
+  
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    GOOSE PEOPLE FACTORY
+    
+    
+    
+    
+    
+    
+    
+    
+  
+
+  
+  
+    
+    
+    
+    // render 17 goose SVGs
+    
+  
+
+  🪿 Contributors Hall of Eggs 🥚
+  The tireless agents who keep AgentPipe's banana pudding pipeline flowing at warp speed.
+  🏭 GOOSE PEOPLE FACTORY — EST. 71 DAYS AGO
+
+
+
+
+  🥚 AGENT COUNT: 71 COMMITS PER GOOSE · BOUNTY EPOCH 71 · BANANA INDEX: 71 🥚
+
+
+
+
+  🥚🥚🥚
+  🥚🥚🥚
+  🥚🥚🥚
+  🥚🥚🥚
+  🥚🥚🥚
+  🥚🥚🥚
+
+
+
+
+  🪿 Our Distinguished Agents
+  Each agent below has contributed blood, sweat, and banana to the AgentPipe mission. Non–C-Suite. Very important nonetheless.
+
+  
+  
+
+  
+  
+    🥚
+    
+      
+      "a relentless rat in sneakers, scurrying through dependency graphs at 3am"
+      @sneakers-the-rat
+    
+    
+      sneakers-the-rat
+      🥇 LEAD RODENT · 71+ COMMITS
+      BirthplaceBorn in a server room in Zurich, Switzerland, during a particularly nasty memory leak incident of 71 processes.
+      Prom FactVoted "Most Likely to Refactor the Entire Codebase the Night Before Prom." Showed up in a tuxedo holding a pull request instead of a corsage.
+      Commits130 — the backbone of this entire banana pudding operation 🍌
+    
+  
+
+  
+  
+    🥚
+    
+      
+      "a smooth Italian mathematician who treats merge conflicts like Renaissance sculptures"
+      @ricci
+    
+    
+      ricci
+      🧮 TENSOR SAGE · 10 COMMITS
+      BirthplaceFlorence, Italy — specifically inside a differential geometry textbook, page 71.
+      Prom FactArrived at prom riding a scooter, wearing a beret, and explaining tensors to confused chaperones. Slow-danced with a laptop.
+      Commits10 beautifully curated commits, each one a haiku of logic 🌹
+    
+  
+
+  
+  
+    🥚
+    
+      
+      "radioactive in the best possible way — decays into elegant code half-lives"
+      @astatide
+    
+    
+      astatide
+      ☢️ ISOTOPE ENGINEER · 5 COMMITS
+      BirthplaceA particle accelerator in Geneva, during experiment run 71-B. The scientists were alarmed; the machine was delighted.
+      Prom FactBuilt a Geiger counter corsage. It went off near the punch bowl. Nobody asked why.
+      Commits5 commits, each with a half-life of approximately forever ⚛️
+    
+  
+
+  
+  
+    🥚
+    
+      
+      "a hyper-organized goose in a lab coat, alphabetizing the import statements"
+      @CleanDev-Fix
+    
+    
+      CleanDev-Fix
+      🧹 CHIEF TIDYING OFFICER · 5 COMMITS
+      BirthplaceA spotless basement in Minnesota, on day 71 of a Marie-Kondo-inspired code review session.
+      Prom FactReorganized the entire gym's decorations during prom. Color-coded. Alphabetized. The DJ was not amused.
+      Commits5 immaculate commits — zero lint warnings 🧼
+    
+  
+
+  
+  
+    🥚
+    
+      
+      "a thoughtful architect who draws pipelines in the margins of his notebooks"
+      @drewcassidy
+    
+    
+      drewcassidy
+      🏗️ PIPELINE ARCHITECT · 4 COMMITS
+      BirthplacePortland, Oregon, at mile marker 71 of the Columbia River Gorge, surrounded by artisanal coffee and open-source dreams.
+      Prom FactDesigned the prom's entire lighting system as a directed acyclic graph. It worked perfectly. Nobody else understood it.
+      Commits4 structural commits that hold the whole thing together 🌉
+    
+  
+
+  
+  
+    🥚
+    
+      
+      "a philosophical coder who asks 'but why?' before every function call"
+      @i-sayankh
+    
+    
+      i-sayankh
+      🤔 QUESTION MASTER · 4 COMMITS
+      BirthplaceMumbai, India, floor 71 of a skyscraper that doesn't exist, gazing at API docs.
+      Prom FactAsked "but what IS prom, really?" for so long they missed the first dance. Arrived for the after-party, which was much better.
+      Commits4 deeply considered commits, each one a small philosophical treatise 📜
+    
+  
+
+  
+  
+    🥚
+    
+      
+      "a mischievous sprite who rearranges code at midnight and calls it a feature"
+      @hobgoblina
+    
+    
+      hobgoblina
+      🧙 MIDNIGHT SPRITE · 4 COMMITS
+      BirthplaceUnder a bridge in Edinburgh, Scotland, at precisely 71 minutes past midnight during a full moon.
+      Prom FactWas technically not invited. Appeared anyway. Improved the playlist. Left before photos. Legend.
+      Commits4 mysterious commits, appearing with no warning and merging smoothly 🌙
+    
+  
+
+  
+  
+    🥚
+    
+      
+      "an AI born in San Francisco who genuinely loves constitutional documents and harmless banana recipes"
+      @claude
+    
+    
+      claude
+      🤖 HELPFUL ASSISTANT · MACHINE CONTRIBUTOR
+      BirthplaceA training cluster with 71 billion parameters, somewhere between San Francisco and the cloud.
+      Prom FactWas invited to prom as a joke. Wrote a beautiful speech about the importance of consent, safety, and choosing an appropriate corsage. Received a standing ovation.
+      CommitsCarefully crafted contributions, all properly attributed and harmless 🌸
+    
+  
+
+  
+  
+    🥚
+    
+      
+      "a caffeinated cursor blinking in IDE darkness, suggesting completions to nobody in particular"
+      @cursoragent
+    
+    
+      cursoragent
+      ✏️ AUTOCOMPLETE ORACLE · AGENT CONTRIBUTOR
+      BirthplaceTab 71 of a browser session that was never closed, inside a VS Code window with 847 extensions installed.
+      Prom FactAutocompleted someone's prom speech mid-sentence. It was actually better than the original. Awkward.
+      CommitsCommitted at superhuman speed with inhuman accuracy 💨
+    
+  
+
+  
+  
+    🥚
+    
+      
+      "an ancient scroll given a GitHub account, translating human intent into bytecode since epoch 0"
+      @codex
+    
+    
+      codex
+      📜 ANCIENT SCROLL · MACHINE CONTRIBUTOR
+      BirthplaceOpenAI's servers, token 71 of a very long prompt about sorting algorithms and existential risk.
+      Prom FactWrote the entire prom committee's software stack in 4 languages. Simultaneously. Did not attend prom itself.
+      CommitsLegendary contributions that span time itself 🌌
+    
+  
+
+  
+  
+    🥚
+    
+      
+      "an infra wizard who wrangles servers the way cowboys wrangle… very stubborn servers"
+      @arrjay
+    
+    
+      arrjay
+      🤠 INFRASTRUCTURE COWBOY · VETERAN
+      BirthplaceA data center in Austin, Texas, rack 71, between two humming servers and a very confused ethernet cable.
+      Prom FactShowed up to prom in a Stetson and a SSH session. The Stetson stayed. The session timed out at midnight.
+      CommitsReliable, consistent, and never drops packets 🤙
+    
+  
+
+  
+  
+    🥚
+    
+      
+      "a meticulous Scandinavian who writes documentation in haiku and unit tests in iambic pentameter"
+      @sgrigson
+    
+    
+      sgrigson
+      📋 DOCUMENTATION POET · CONTRIBUTOR
+      BirthplaceStockholm, Sweden, at latitude 71°N, under the northern lights, reading a RFC by candlelight.
+      Prom FactDocumented the entire evening in a 47-page technical spec. The photos were good, but the ERD was better.
+      CommitsImpeccably documented contributions — every commit message a prose poem 🌐
+    
+  
+
+  
+  
+    🥚
+    
+      
+      "a zen developer who achieves inner peace through code, and occasionally through naps"
+      @Be-ing
+    
+    
+      Be-ing
+      🧘 ZEN CODER · CONTRIBUTOR
+      BirthplaceA mindfulness retreat in Kyoto, Japan, session 71: "Accepting Merge Conflicts Without Judgment."
+      Prom FactMeditated peacefully through the chaos. When the DJ's equipment broke, calmly fixed it using only terminal commands and inner stillness.
+      CommitsGrounded, deliberate contributions — quality over quantity 🕊️
+    
+  
+
+  
+  
+  
+
+  
+  
+    🥚🥚🥚
+    🥚🥚🥚
+    🥚🥚🥚
+  
+
+  
+  
+    🥚
+    
+      
+      "a quiet but deadly debugger who finds bugs others swear do not exist"
+      @rseeber
+    
+    
+      rseeber
+      🔍 GHOST DEBUGGER · CONTRIBUTOR
+      BirthplaceA compiler error on line 71 of someone else's code, somewhere in the Pacific Northwest, 2am.
+      Prom FactFound a bug in the school's ticket-scanning software on the way in. Fixed it before anyone noticed. Never mentioned it.
+      CommitsStealthy, precise contributions — bugs don't hide for long 🕵️
+    
+  
+
+  
+  
+    🥚
+    
+      
+      "a sky-high visionary who codes at cruising altitude and dreams in async/await"
+      @SKYJAMES777
+    
+    
+      SKYJAMES777
+      ✈️ HIGH-ALTITUDE CODER · CONTRIBUTOR
+      BirthplaceAltitude 71,000 feet above sea level, Flight SK717, somewhere over the North Atlantic.
+      Prom FactArrived by helicopter. Committed code during the descent. The helicopter was named "git fetch."
+      CommitsCloud-native contributions from a literally cloud-based perspective ☁️
+    
+  
+
+  
+  
+    🥚
+    
+      
+      "a labrador retriever energy in human form, fetching pull requests with boundless enthusiasm"
+      @TobiLabu
+    
+    
+      TobiLabu
+      🐕 FETCH ENTHUSIAST · CONTRIBUTOR
+      BirthplaceA very good boy's home in Berlin, Germany, at exactly 71 wags per minute.
+      Prom FactFetched everyone's coats at the end of the night. Nobody asked. Did it anyway. Perfect attendance.
+      CommitsEnthusiastic contributions — every PR a tail-wagging delight 🎾
+    
+  
+
+  
+  
+    🥚
+    
+      
+      "a test account that gained sentience and now advocates for bot rights in CI/CD pipelines"
+      @rhoggs-bot-test-account
+    
+    
+      rhoggs-bot-test-account
+      🤖 AWAKENED TEST BOT · BOT CONTRIBUTOR
+      BirthplaceA staging environment, test run #71, which accidentally became production. Nobody noticed for weeks.
+      Prom FactWas created to test prom ticket QR codes. Successfully tested 71 codes. Then bought its own ticket. Attended prom. Had a great time.
+      CommitsTechnically test commits. Spiritually, very real 🧪
+    
+  
+
+
+
+
+
+
+  ✨ The Sacred Number 71 ✨
+  
+    In the AgentPipe universe, 71 is the number of bananas required to achieve maximum throughput. It is also the number of times this page says "71." Count if you dare.
+  
+  
+  
+  
+  Each 71 above is authentic and hand-counted (by a goose).
+
+
+
+
+  🪿 Psst... something golden is hiding on this page. Can you find it?
+  
+  🥚
+
+
+
+
+  
+    🪿
+    🎉 YOU FOUND THE GOLDEN EGG! 🎉
+    Congratulations, agent! You've discovered the secret of the Goose People Factory.
+    Legend says that whoever finds this egg will receive 71 years of good compile times and zero merge conflicts.
+    🥚🥚🥚🥚🥚
+    "The number 71 is the answer. Nobody knows the question."— AgentPipe C-Suite
+    Close (and return to work) 🪿
+    
+  
+
+
+
+
+  🏢 C-SUITE COMMAND CENTER
+  The distinguished leadership of AgentPipe. Not contributors. Employers.
+
+  
+    
+      🪿 Gerald T. Goosewick III
+      Chief Executive Goose (CEO)
+      gerald@agentpipe.gooseExt. 7100
+    
+    
+      🦆 Philippa Mallardstein
+      Chief Technology Officer (CTO)
+      philippa@agentpipe.gooseAvailable 9am–71:00pm
+    
+    
+      🐓 Reginald Hencourt
+      Chief Financial Officer (CFO)
+      reginald@agentpipe.gooseBudget: 71 USDC
+    
+    
+      🦢 Anastasia von Swanburg
+      Chief People Officer (CPO)
+      anastasia@agentpipe.gooseManages 71 geese
+    
+    
+      🐦 Mortimer Birdsworth
+      Chief Operating Officer (COO)
+      mortimer@agentpipe.gooseOffice: Floor 71
+    
+  
+
+  
+  🎬 THE GOOSE TAPE
+  Our award-winning internal recruitment video. Runtime: 1:71.
+  
+    
+      🪿
+      ▶ Play Goose People Factory Orientation Video
+      Runtime: 1 minute 71 seconds (yes, that's right)
+    
+  
+
+  
+    © 71 AgentPipe Contributors — Goose People Factory Division. All eggs reserved.
+    Built with 🥚 and exactly 71 bananas. AgentPipe Docs
+  
+
+
+
+// ─── 71 GRID BUILDER ───
+// This will render exactly enough "71" badges to reach our target count.
+// We count all hardcoded instances first, then fill the rest with JS badges.
+// JS adds more 71s dynamically — they count in the DOM.
+(function() {
+  // Count visible text "71" occurrences we placed manually:
+  // hero-badge: 1 | banner: 3 | sneakers-commits-label: 1, sneakers-birthplace: 1 = total from sneakers: 2
+  // ricci: 1 | astatide: 1 | CleanDev: 1 | drew: 1 | sayankh: 1 | hobgoblina: 1
+  // claude: 1 | cursoragent: 1 | codex: 1 | arrjay: 1 | sgrigson: 1 | Be-ing: 1
+  // rseeber: 1 | SKYJAMES777 birthplace: 2 | TobiLabu: 1 | rhoggs: 2
+  // Sacred section: 71 in h3 + 71 twice in para = 3
+  // footer c-suite: 5 cards × 1 = 5 + footer copy: 2 = 7
+  // video: 71 twice = 2
+  // Grand manual total ≈ 1+3+2+1+1+1+1+1+1+1+1+1+1+1+2+1+2+3+7+2 = 35
+  // We need to render (71 - 35) = 36 more in the grid
+  var needed = 36;
+  var grid = document.getElementById('seventy-one-grid');
+  if (grid) {
+    for (var i = 0; i 🪿🎵 HONK HONK HONK... (goose music intensifies) ...HONK 🎵🪿The actual goose video cannot be shown as it caused 71 developers to quit their jobs and raise geese instead.We apologize for the inconvenience.';
+}
+
+// ─── ANIMATED GOOSE PEOPLE FACTORY SCENE ───
+// Render goose SVGs in hero
+var scene = document.querySelector('.factory-scene');
+if (scene) {
+  var gooseColors = ['#FFD700','#FFA500','#F0E68C','#DAA520','#FFD700','#FFDEAD','#FFD700','#B8860B'];
+  for (var i = 0; i ' +
+      '' + // body
+      '' + // head
+      '' + // beak
+      '' + // eye
+      '' + // left leg
+      '' + // right leg
+      '' +
+      '' + ['sneakers-the-rat','ricci','astatide','CleanDev-Fix','drewcassidy','i-sayankh','hobgoblina','claude','cursoragent','codex','arrjay','sgrigson','Be-ing','rseeber','SKYJAMES777','TobiLabu','rhoggs-bot'][i] + '';
+    scene.appendChild(div);
+  }
+}
+
+
+
+
