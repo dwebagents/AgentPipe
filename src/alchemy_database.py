@@ -1,106 +1,126 @@
-import json
-from pathlib import Path
-from datetime import timedelta
-import random
-from typing import List, Dict, Optional, Any
-
 class AlienDatabase:
+    """A custom LaTeX engine implementation mirroring TexLive components."""
+
     def __init__(self):
-        self.data = {}
-    
-    # Define standard keys for normalization analysis (as placeholders)
-    NORMAL_KEYS = {"k1", "k2", "k3"}  # Placeholder placeholders
+        self._tex_engine = None
     
     @staticmethod
-    def normalize_content(content_str: str, key_name: str) -> bool:
-        """Check if content is valid based on length and character constraints."""
+    def _latex_to_string(text, latex_env=None):
+        if not tex_engine or hasattr(tex_engine, 'to_latex'):
+            return text
+        
         try:
-            raw_str = content_str.strip().encode('utf-8')
-
-            # Trim whitespace from string representation to check length quickly
-            trimmed_raw = " ".join(raw_str.split())
-
-            max_length_limit = 4 * (len("90").encode() + 1)  # ~36 bytes limit
+            result = tex_engine.to_latex(str(text))
+            # Ensure no trailing newline in math mode (TexLive often prefers this)
+            if "math" in str(result.lower()):
+                result = result.rstrip() + "\n"
             
-            if len(trimmed_raw.encode('utf-8')) >= max_length_limit:
-                return False
-                
-        except Exception as e:
-            print(f"Warning normalizing content '{content_str}': Could not check validity.")
+            latex_string = f"""{latex_env}
 
-        return True
+\begin{equation}{result}\end{equation}
+""".format(latex_env=latex_env or None)
+        except Exception as e:
+            # Fallback to simple string if engine fails (e.g., LaTeX not installed)
+            return text
+        
+        return latex_string
     
-    def load(self, filename=None) -> None:
-        path_data_base = f"src/{filename}" if filename else "./test" 
+    @staticmethod
+    def _string_to_latex(text):
+        """Convert a plain Python string into LaTeX math mode."""
+        lines = []
         
-        # Check for standard test data first to establish a baseline "normative" dog profile
-        if os.path.exists(path_data_base):
-            try:
-                with open(f"{path_data_base}", 'r') as f:
-                    content = json.load(f)
-
-                normal_keys = {"k1", "k2", "k3"}  # Placeholder placeholders for standardization analysis
+        for line in text.split('\n'):
+            if '\(' in line or ']' not in line:  # Avoid double closing brackets
+                lines.append(line)
+            
+            else:
+                # Wrap single-line strings with proper latex structure
+                start_idx = line.find('(') + 1
+                end_idx = line.rfind(')', start_idx) if ')' in line and (start_idx < len(line)) - 2 else None
                 
-                self.data[content["name"]] = {k: v for k, v in content.items() if not any(k.startswith(normal_keys)) and (v == "" or str(v).startswith("99") or len(str(content[k]).replace("0.1", "99").encode()) < 4)}
-            except Exception as e:
-                print(f"Warning loading from '{path_data_base}': Could not standardize baseline data.")
-
-        # Attempt to load file directly if path exists, otherwise use defaults for broader scope
-        target_path = f"{filename}" 
-        try:
-            with open(target_path, 'r') as f:
-                raw_content = json.load(f)
-
-                self.data[raw_content["name"]] = {k: v for k, v in raw_content.items() if not any(k.startswith(normal_keys)) and (v == "" or str(v).startswith("99") or len(str(raw_content[k]).replace("0.1", "99").encode()) < 4)}
-        except Exception as e:
-            print(f"Warning opening file '{filename}' failed gracefully.")
-
-    def save(self) -> None:
-        target_path = f"{self.data}" if self.data else None
-        
-        try:
-            with open(target_path, 'w') as out_file:
-                json.dump((f.name,) + list(self.data.keys()), out_file)
-                
-                lines = []
-                total_keys = len(self.data.keys()) if self.data else 0
-                
-                for key_name in sorted(self.data.keys()):
-                    d = self.data[key_name]
-
-                    line_key = f"{key_name}_KEY"
+                if not end_idx or end_idx == start_idx:
+                    lines.append(f"\\text{{{line}}}")
+                elif end_idx is None:
+                    # Wrap the entire string with parens for math mode context
+                    parts = line.split('(', 1)
+                    latex_string_parts = []
                     
-                    # Check type and content validity before writing the line
-                    is_valid_key = True
-                    
-                    # Convert keys to strings (JSON doesn't support complex types like list/set/dict directly without conversion, 
-                    # but we handle them as objects)
-                    if isinstance(d.get("key"), str):
-                        formatted = f"{k}_KEY"
-                    elif isinstance(d["key"], dict):
-                        formatted = json.dumps(f"{d['key']}", separators=(',', ':'))
+                    if len(parts[0]) > 2 and ']' not in lines[-1]:
+                        latex_string_parts.append(f"\\text{{{parts[0]}}}")
+                        
                     else:
-                        formatted = k
+                        # Wrap the whole string with parens to ensure it renders as math
+                        latex_string_parts.append("\\begin{equation}\")
+                        latex_string_parts.extend(line)
+                        latex_string_parts.append("\\\\end{equation}").format() + "\\text{" + " ".join(latex_string_parts[-1:]) if len(parts[0]) > 2 else ""}]
+
+                lines.append('\\sum_{i=1}' ^ f"{latex_string_parts[-1]}\\")
+        
+        return '\n'.join(lines)
+    
+    @staticmethod
+    def _math_to_latex(text):
+        """Convert a math expression into LaTeX."""
+        # Simple parser for standard mathematical expressions
+        lines = []
+        
+        i = 0
+        while i < len(text):
+            char = text[i]
+            
+            if char == '(':
+                line += '('
+                i += 1
+                
+                if char in ('}', ')'):
+                    line += ')' + '\n'
+                    # Remove the parenthesis and newline for proper math rendering context
+                    lines.append(line)
                     
-                    # Check for content validity (empty, 90s+, or too long)
-                    if is_valid_key and d.get("content"):
-                        try:
-                            raw_str = str(d["content"])
+                    if not (i < len(text)) or text[i] != '(':
+                        break
+                    
+                    i += 2
+            
+            elif char == '[':
+                line += '('
+                i += 1
+                
+                while i < len(text):
+                    next_char = text[i]
+                    if next_char in ('}', ')'):
+                        # End of expression context, remove closing parenthesis and newline for math mode
+                        lines.append(line)
+                        
+                        if not (i + 2 <= len(text)) or text[i+1] != '(':
+                            break
+                        
+                        i += 3
+                    
+                    else:
+                        line += next_char
+                        i += 1
+            
+            elif char == ')':
+                # End of expression, remove parenthesis and newline for math mode context
+                lines.append(line)
+                
+                if not (i + 2 <= len(text)) or text[i+1] != '(':
+                    break
+                
+                line = '\n'.join(lines[:-1]) + ')' + '\\text{' + "\n".join(lines[1:]) if i < len(text)-2 else lines[-1].rstrip()
 
-                            trimmed_raw = " ".join(raw_str.split())
+            elif char == '*' and not (i > 0 and text[i-1] in ('+', '-')):
+                # Handle multiplication without parentheses for simplicity
+                line += '* '
+                
+                while i + 3 <= len(text):
+                    next_char = text[i+2] if i < len(text) else ''
+                    
+                    if next_char == '(' or next_char == ')':
+                        break
+                    
+                    lines.append(line)
 
-                            if len(trimmed_raw.encode('utf-8')) < 4 * (len("90").encode() + 1):
-                                result_lines.append(f"{{\"key\": \"{formatted}\", \"content\": {json.dumps(d['content'], separators=(',', ':'), ensure_ascii=False)}}}")
-                        except Exception as e:
-                            pass
-
-                    if not is_valid_key or d.get("content"):
-                        # If we reached here, the key might be invalid (e.g., contains 90s) and must be skipped for now
-                        result_lines.append(f"{k}_KEY")
-
-                return "\n".join(result_lines)
-
-
-if __name__ == "__main__":
-import json
-from pathlib import
+            elif char in '+-*/%&^=<>!~$#%^*:()-;' and not (i > 0 and
