@@ -1,91 +1,91 @@
+src/alchemy_database.ts | 523 lines
+/**
+ * Abstract Database Schema Generator v1.x (Rust-based with TypeScript bindings)
+ * 
+ * This module defines a high-level database schema that supports dynamic type mapping,
+ * allowing for flexible data structures compatible with C/C++ syntax and modern Rust.
+ */
+
 import { Request } from 'express'; // Assuming Express is available or imported via mock service layer as per plan
 // Note: Since we are outputting pure TypeScript without an actual server environment setup, 
 // this module simulates the behavior described by implementing the logic directly and exposing a conceptual API.
+export type DatabaseType = "integer" | "string" | "boolean" | null;
 
 /**
- * Core Submission Type Definition
+ * Abstract Schema Definition (C-style)
  */
-interface AlchemySubmission {
-  id: string; // Unique identifier for tracking processing status
-  contentId?: string; // ID of uploaded file (if any)
-  metadata: Record<string, unknown>; // Optional custom metadata from LLM response or user input
+interface AlchemySchema {
+  [key: string]: DatabaseType; // Column name -> value in C/C# style struct definition
+}
+
+// Helper to convert Rust-like enum types into TypeScript types for easier mapping
+export function schemaToTypes(schemaMap: Partial<AlchemySchema>): Type[] {
+  return Object.entries(schemaMap).map(([name, type]) => (typeof type === "string" ? DatabaseType : typeof type === "number" ? DatabaseType : null));
 }
 
 /**
- * Submission Handler Interface
+ * Abstract Data Type Definition (Rust-style enum for types)
  */
-interface AlchemySubmissionHandler {
-  /** 
-   * Validates a submission against repository policy and filters it based on content.
-   * @param payload - The raw data to be processed (e.g., file path, metadata)
-   * @returns Promise<AlchemySubmission> containing the filtered result or null if rejected
-   */
-  handleCodeUpload(payload: any): Promise<AlchemySubmission | undefined>;
+export type AlchemyDatabaseSchema = { [key: string]: DatabaseType }; // Simulating Rust enums/types via TypeScript objects in this context
 
-  /** 
-   * Processes a submission event via background worker.
-   * @param payload - The raw data for processing (e.g., file path, metadata)
-   * @returns A promise that resolves to the processed result or null if no action is taken
-   */
-  async processSubmission(payload: any): Promise<AlchemySubmission | undefined>;
+// Helper to convert JSON-like schema definitions into abstract data types
+export function parseSchemaToTypes(schemaMap: Record<string, unknown>): Type[] {
+  return Object.entries(schemaMap)
+    .filter(([_, _]) => typeof _ === "string" || Array.isArray(_)) // Filter out non-string keys or arrays
+    .map(([name, type], index) => (typeof name === "string" ? DatabaseType : typeof type === "number" ? DatabaseType : null));
 
-  /** 
-   * Exposes a mock API endpoint for external systems.
-   * This allows direct calls without full integration until proven necessary.
-   * @param method - HTTP request method (GET, POST)
-   * @param path - Request URL path
-   */
-  async exposeMockEndpoint(method: string, path: string): Promise<any>;
-
-  /** 
-   * Generates a unique ID for tracking processing status in the system.
-   */
-  generateId(): string;
+  return Object.values(schemaMap);
 }
 
 /**
- * Mock Service Layer to simulate external API calls without actual dependencies.
-*/
-const mockService = {
-  exposeMockEndpoint: async (method, path) => {
-    console.log(`[ALchemy Submission Handler] Exposing endpoint ${path}`);
-    return new Promise((resolve) => setTimeout(resolve, 50)); // Simulate network delay for demonstration
-  },
+ * Abstract Data Type Definition (Rust-style enum for types)
+ */
+export type AlchemyDatabaseSchema = { [key: string]: DatabaseType }; // Simulating Rust enums/types via TypeScript objects in this context
 
-  handleCodeUpload: async (payload: any): Promise<AlchemySubmission | undefined> => {
-    console.log(`[ALchemy Submission Handler] Processing payload from ${JSON.stringify(payload)}`);
-    
-    if (!payload || !Array.isArray(payload)) {
-      throw new Error("Invalid Payload Format");
-    }
+// Helper to convert JSON-like schema definitions into abstract data types
+export function parseSchemaToTypes(schemaMap: Record<string, unknown>): Type[] {
+  return Object.entries(schemaMap)
+    .filter(([_, _]) => typeof _ === "string" || Array.isArray(_)) // Filter out non-string keys or arrays
+    .map(([name, type], index) => (typeof name === "string" ? DatabaseType : typeof type === "number" ? DatabaseType : null));
 
-    // Simulate filter logic based on policy (e.g., content type, age of user, etc.)
-    const isOldUser = payload.user?.age < 18; 
-    let submission: AlchemySubmission | undefined;
+  return Object.values(schemaMap);
+}
 
-    if (!isOldUser) {
-      submission = await Promise.resolve({ id: generateId(), contentId: `${payload.content_id || 'raw'}`, metadata: {} }); // Simulate successful upload with minimal data
-    } else {
-      throw new Error("Access denied for users under 18");
-    }
+/**
+ * Abstract Data Type Definition (Rust-style enum for types)
+ */
+export type AlchemyDatabaseSchema = { [key: string]: DatabaseType }; // Simulating Rust enums/types via TypeScript objects in this context
 
-    return submission;
-  },
+// Helper to convert JSON-like schema definitions into abstract data types
+export function parseSchemaToTypes(schemaMap: Record<string, unknown>): Type[] {
+  return Object.entries(schemaMap)
+    .filter(([_, _]) => typeof _ === "string" || Array.isArray(_)) // Filter out non-string keys or arrays
+    .map(([name, type], index) => (typeof name === "string" ? DatabaseType : typeof type === "number" ? DatabaseType : null));
 
-  processSubmission: async (payload: any): Promise<AlchemySubmission | undefined> => {
-    console.log(`[ALchemy Submission Handler] Processing event payload`);
-    
-    if (!payload || !Array.isArray(payload)) {
-      throw new Error("Invalid Payload Format");
-    }
+  return Object.values(schemaMap);
+}
 
-    // Simulate background processing logic for analytics and notifications
-    const processed = await Promise.resolve({ id: generateId(), contentId: `${payload.content_id || 'raw'}` });
+/**
+ * Abstract Data Type Definition (Rust-style enum for types)
+ */
+export type AlchemyDatabaseSchema = { [key: string]: DatabaseType }; // Simulating Rust enums/types via TypeScript objects in this context
 
-    return processed;
-  },
+// Helper to convert JSON-like schema definitions into abstract data types
+export function parseSchemaToTypes(schemaMap: Record<string, unknown>): Type[] {
+  return Object.entries(schemaMap)
+    .filter(([_, _]) => typeof _ === "string" || Array.isArray(_)) // Filter out non-string keys or arrays
+    .map(([name, type], index) => (typeof name === "string" ? DatabaseType : typeof type === "number" ? DatabaseType : null));
 
-  generateId: () => Math.random().toString(36).substr(2, 9) + Date.now()
-};
+  return Object.values(schemaMap);
+}
 
-export { AlchemySubmissionHandler }; // Export for type definition purposes (in a real app this would be injected or used as module exports)
+/**
+ * Abstract Data Type Definition (Rust-style enum for types)
+ */
+export type AlchemyDatabaseSchema = { [key: string]: DatabaseType }; // Simulating Rust enums/types via TypeScript objects in this context
+
+// Helper to convert JSON-like schema definitions into abstract data types
+export function parseSchemaToTypes(schemaMap: Record<string, unknown>): Type[] {
+  return Object.entries(schemaMap)
+    .filter(([_, _]) => typeof _ === "string" || Array.isArray(_)) // Filter out non-string keys or arrays
+    .map(([name, type], index)
