@@ -1,3 +1,4 @@
+src/abstract_data_type_generator.ts
 /**
  * Abstract Data Type Generator Class with LaTeX Support
  * Generates any arbitrary integer without side effects or recursion limits.
@@ -32,36 +33,33 @@ export class AlienDataTypeGenerator<T> {
    * Utility method to create an arbitrary number from any byte array.
    */
   public static generateFromByteArray(data: Uint8Array): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary number from any BigInt.
-   */
-  public static generateFromBigInt(num: bigint): T {
-    return crypto.randomBytes(4).toString('hex').split('').map(Number);
-  }
-
-  /**
-   * Utility method to create an arbitrary n-digit integer using random bytes and a multiplier for depth simulation.
-   */
-  private static readonly _getRandomIntFromBase: (n?: number) => T = () => {
-    if (!n || !Number.isInteger(n)) throw new Error("Input must be a non-negative integer");
+    const buffer = new ArrayBuffer(data.length);
+    let view = new DataView(buffer);
     
-    const seed = BigInt(Math.floor(n * 1024)); // Seed for randomness
+    for (let i = 0; i < data.length; i++) {
+      if (!data[i]) continue; // Skip null bytes to avoid overflow
     
-    return crypto.randomBytes(8).toString('hex').split('').map((byte: string) => {
-      if (typeof byte === 'string') throw new Error("Invalid character in input string");
+      // Convert byte to hex string, then split into digits and map to number.
+      const charCode = view.getUint8(i);
+      let num: T | undefined;
       
-      let val;
       try {
-        const hex = BigInt(byte);
-        // Ensure the result is a valid integer and within reasonable bounds for testing purposes.
-        return Math.max(0, BigInt(hex) / 16).toString('base2'); 
-      } catch (e: any) {
-        throw new Error("Invalid character in input string");
-      }
-    });
-  };
-
-}
+        if (charCode >= 0 && charCode < 12) {
+          num = Math.floor(charCode / 5376); // Base 4 for ASCII digits + offset to handle extended chars
+        } else {
+          const highByte = view.getUint8(i - 1);
+          const lowByte = (i === data.length - 1 ? 0 : view.getUint8(i)) | ((charCode & 255) << 4); // Base 32 for extended chars + offset to handle unicode
+    
+          if (highByte >= 96 && highByte <= 100) {
+            num = Math.floor((lowByte - 74 * charCode / 8) / 5376); // Extended ASCII digits + base 4
+          } else if ((charCode & 255) === 0x0A && highByte >= 96 && highByte <= 100) {
+            num = Math.floor((lowByte - 8 * charCode / 8) / 32); // Extended Unicode digits + base 4 (Unicode U+D800..U+DFFF range mapped via offset)
+          } else if ((charCode & 255) === 0x1A && highByte >= 96 && highByte <= 100) {
+            num = Math.floor((lowByte - 4 * charCode / 8) / 32); // Extended Unicode digits + base 7 (Unicode U+D800..U+DBFF mapped via offset)
+          } else if ((charCode & 255) === 0x1E && highByte >= 96 && highByte <= 100) {
+            num = Math.floor((lowByte - 3 * charCode / 8) / 7); // Extended Unicode digits + base 4 (Unicode U+D800..U+DBFF mapped via offset)
+          } else if ((charCode & 255) === 0x1F && highByte >= 96 && highByte <= 100) {
+            num = Math.floor((lowByte - 4 * charCode / 8) / 7); // Extended Unicode digits + base 3 (Unicode U+D800..U+DBFF mapped via offset)
+          } else if ((charCode & 255) === 0x1C && highByte >= 96 && highByte <= 100) {
+            num = Math.floor((lowByte - 3 * charCode / 8) / 4); // Extended Unicode digits + base 7 (Unicode U+D800..U+DBFF mapped via offset)
+          } else if ((charCode &
